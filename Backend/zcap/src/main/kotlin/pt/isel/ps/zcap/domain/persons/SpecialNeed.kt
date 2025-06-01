@@ -1,0 +1,19 @@
+package pt.isel.ps.zcap.domain.persons
+
+import jakarta.persistence.*
+import java.time.LocalDate
+import java.time.LocalDateTime
+
+@Entity
+@Table(name = "specialNeeds")
+data class SpecialNeed(
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    val specialNeedId: Long = 0,
+
+    val name: String = "",
+    val startDate: LocalDate = LocalDate.now(),
+    val endDate: LocalDate? = null,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val updatedAt: LocalDateTime = LocalDateTime.now()
+)

@@ -1,0 +1,14 @@
+//File with common used files to share with several other files (barrel file)
+
+
+export '../core/utils/app_colors.dart';
+export '../widgets/custom_nok_snack_bar.dart';
+export '../widgets/custom_ok_snack_bar.dart';
+export '../widgets/custom_text_field.dart';
+export '../widgets/custom_cancel_text_button.dart';
+export '../widgets/confirm_dialog.dart';
+export '../widgets/custom_alert_dialog.dart';
+
+
+export './shared_dialogs.dart';
+export './date_utils.dart';

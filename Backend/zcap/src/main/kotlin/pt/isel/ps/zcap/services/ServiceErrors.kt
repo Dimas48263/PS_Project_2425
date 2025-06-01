@@ -1,0 +1,30 @@
+package pt.isel.ps.zcap.services
+
+
+sealed class ServiceErrors {
+    data object InvalidUserNameOrPassword : ServiceErrors()
+    data object InvalidPasswordComplexity : ServiceErrors()
+    data object InvalidDataInput : ServiceErrors()
+    data object RecordNotFound : ServiceErrors()
+    data object RecordAlreadyExists : ServiceErrors()
+    data object InsertFailed: ServiceErrors()
+    data object UpdateFailed: ServiceErrors()
+    data object TreeNotFound :ServiceErrors()
+    data object TreeLevelNotFound : ServiceErrors()
+    data object ParentNotFound: ServiceErrors()
+    data object TreeRecordDetailTypeNotFound: ServiceErrors()
+    data object TreeRecordDetailNotFound: ServiceErrors()
+    data object CountryCodeNotFound: ServiceErrors()
+    data object NationalityNotFound: ServiceErrors()
+    data object DepartureDestinationNotFound: ServiceErrors()
+    data object PersonNotFound: ServiceErrors()
+    data object SpecialNeedNotFound: ServiceErrors()
+    data object SupportNeededNotFound: ServiceErrors()
+    data object RelationTypeNotFound: ServiceErrors()
+    data object IncidentTypeNotFound: ServiceErrors()
+    data object BuildingTypeNotFound: ServiceErrors()
+    data object EntityNotFound: ServiceErrors()
+    data object IncidentNotFound: ServiceErrors()
+    data object ZcapNotFound: ServiceErrors()
+    data object IncidentZcapNotFound: ServiceErrors()
+}

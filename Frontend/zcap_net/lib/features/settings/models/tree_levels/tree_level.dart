@@ -1,0 +1,74 @@
+import 'package:zcap_net_app/core/services/remote_table.dart';
+
+class TreeLevel implements ApiTable{
+  @override
+  int id;
+  final int levelId;
+  final String name;
+  final String? description;
+  final DateTime startDate;
+  final DateTime? endDate;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  TreeLevel({
+    required this.id,
+    required this.levelId,
+    required this.name,
+    this.description,
+    required this.startDate,
+    this.endDate,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+factory TreeLevel.fromJson(Map<String, dynamic> json) {
+  return TreeLevel(
+    id: json['treeLevelId'],
+    levelId: json['levelId'],
+    name: json['name'],
+    description: json['description'],
+    startDate: DateTime.parse(json['startDate']),
+    endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+    createdAt: json['createdAt'] != null
+        ? DateTime.parse(json['createdAt'])
+        : DateTime.now(),
+    updatedAt: json['updatedAt'] != null
+        ? DateTime.parse(json['updatedAt'])
+        : DateTime.now(),
+  );
+}
+
+@override
+  Map<String, dynamic> toJsonInput() {
+    return {
+      'levelId': levelId,
+      'name': name,
+      'description': description,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
+  TreeLevel copyWith({
+    int? id,
+    int? levelId,
+    String? name,
+    String? description,
+    DateTime? startDate,
+    DateTime? endDate,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return TreeLevel(
+      id: id ?? this.id,
+      levelId: levelId ?? this.levelId,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+}
