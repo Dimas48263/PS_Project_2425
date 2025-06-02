@@ -125,7 +125,7 @@ class TreeLevelControllerTests(
             .andExpect(status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Level with ID 99 not found"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Level with ID 99 not found."))
     }
 
     @Test
@@ -169,7 +169,7 @@ class TreeLevelControllerTests(
         )
             .andExpect(status().isBadRequest)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("INVALID_DATA"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided."))
             .andExpect(MockMvcResultMatchers.jsonPath("$.details").value(null))
     }
 
@@ -192,7 +192,7 @@ class TreeLevelControllerTests(
         )
             .andExpect(status().isBadRequest)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("INVALID_DATA"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided."))
             .andExpect(MockMvcResultMatchers.jsonPath("$.details").value(null))
     }
 
@@ -239,7 +239,7 @@ class TreeLevelControllerTests(
             .andExpect(status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Level with ID 99 not found"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Level with ID 99 not found."))
     }
 
     @Test
@@ -261,7 +261,7 @@ class TreeLevelControllerTests(
         )
             .andExpect(status().isBadRequest)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("INVALID_DATA"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided."))
             .andExpect(MockMvcResultMatchers.jsonPath("$.details").value(null))
     }
 
@@ -278,6 +278,6 @@ class TreeLevelControllerTests(
             .andExpect(status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Level with ID 99 not found"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Level with ID 99 not found."))
     }
 }

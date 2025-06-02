@@ -7,12 +7,10 @@ import 'package:zcap_net_app/features/settings/models/trees/tree.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
-import 'package:zcap_net_app/core/services/sync_service.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
 import 'package:zcap_net_app/widgets/custom_list_view.dart';
 import 'package:zcap_net_app/widgets/custom_form.dart';
-import 'package:dropdown_search/dropdown_search.dart';
 import 'package:zcap_net_app/widgets/custom_search_bar.dart';
 
 class TreesScreen extends StatefulWidget {
@@ -37,10 +35,6 @@ class _TreesScreenState extends State<TreesScreen> {
         .buildQuery<TreeIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
-      for (var t in data) {
-        if (!t.treeLevel.isLoaded) await t.treeLevel.load();
-        if (!t.parent.isLoaded) await t.parent.load();
-      }
       setState(() {
         trees = data;
       });
@@ -145,6 +139,10 @@ class _TreesScreenState extends State<TreesScreen> {
   }
 
   void _addOrEditTree(TreeIsar? tree) async {
+    if (tree != null) {
+      if (!tree.treeLevel.isLoaded) await tree.treeLevel.load();
+      if (!tree.parent.isLoaded) await tree.parent.load();
+    }
     final availableTreeLevels =
         await DatabaseService.db.treeLevelIsars.where().findAll();
     final nameController = TextEditingController(text: tree?.name ?? '');
