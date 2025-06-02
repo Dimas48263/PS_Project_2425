@@ -1,7 +1,7 @@
-SELECT * FROM userDataProfiles
-SELECT * FROM userDataProfileDetails
-SELECT * FROM userProfiles
-SELECT * FROM users
+--SELECT * FROM userDataProfiles
+--SELECT * FROM userDataProfileDetails
+--SELECT * FROM userProfiles
+--SELECT * FROM users
 
 -- DATA INSERTION
 

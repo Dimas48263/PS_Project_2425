@@ -1,4 +1,5 @@
-
+USE zcapNet2
+GO
 
 IF EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'treeRecordDetails' and [TABLE_TYPE] = 'BASE TABLE')
 	BEGIN
@@ -85,27 +86,3 @@ CREATE TABLE treeRecordDetails (
 );
 	END
 GO
-
-/**********************************************************************************************/
-
---CREATE TRIGGER TR_Validate_Tree_Parent_Insert
---ON tree
---INSTEAD OF INSERT
---AS
---BEGIN
---    -- Verifica se o parent pertence ao nível anterior ao do registo
---    IF (
---		(SELECT treeLevelId FROM inserted) > 1
---		AND  ((SELECT [treeLevelId] FROM inserted) - (SELECT [treeLevelId] FROM tree WHERE [treeRecordId] = (SELECT [parentId] FROM inserted)) != 1 )
---		)
---    BEGIN
---        RAISERROR('O registo associado não pertence ao nível hierarquico correto.', 16, 1);
---        ROLLBACK TRANSACTION;
---        RETURN;
---    END
-
---    -- Se não houver erro, insere normalmente
---	INSERT INTO tree ([name], [treeLevelId], [parentId], [startDate], [timestamp]) 
---	SELECT  [name], [treeLevelId], [parentId], [startDate], CURRENT_TIMESTAMP FROM inserted
---END;
---GO
