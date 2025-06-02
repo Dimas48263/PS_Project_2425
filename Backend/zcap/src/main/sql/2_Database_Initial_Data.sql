@@ -1,4 +1,7 @@
 
+USE ZCAPNET
+GO
+
 /* 1 - Address Tables initial data START */
 print 'Inserting Address Tables initial data:'
 -- SELECT * FROM treeLevels
