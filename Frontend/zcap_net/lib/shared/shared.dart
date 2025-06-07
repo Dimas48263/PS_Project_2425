@@ -8,6 +8,8 @@ export '../widgets/custom_text_field.dart';
 export '../widgets/custom_cancel_text_button.dart';
 export '../widgets/confirm_dialog.dart';
 export '../widgets/custom_alert_dialog.dart';
+export '../widgets/custom_search_bar.dart';
+export '../widgets/custom_search_and_add_bar.dart';
 
 
 export './shared_dialogs.dart';

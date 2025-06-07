@@ -63,18 +63,23 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                TextField(
+                CustomSearchAndAddBar(
                   controller: _searchController,
-                  decoration: InputDecoration(
-                    labelText: 'Pesquisar',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8.0)),
-                  ),
+                  onSearchChanged: (value) => setState(() {
+                    _searchTerm = value.toLowerCase();
+                  }),
+                  onAddPressed: () async {
+                    await showDialog(
+                        context: context,
+                        builder: (context) => CustomAlertDialog(
+                              title: 'Aviso',
+                              content:
+                                  'A funcionalidade não está implementada.',
+                            ));
+                    _addOrEditUserProfile();
+                  },
                 ),
-                const SizedBox(
-                  height: 16.0,
-                ),
+                const SizedBox(height: 16),
                 Expanded(
                   child: ListView.builder(
                     itemCount: userProfiles.length,
@@ -113,8 +118,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                   ),
                                 ),
                               IconButton(
-                                onPressed: () {
-                                  showDialog(
+                                onPressed: () async {
+                                  await showDialog(
                                       context: context,
                                       builder: (context) => CustomAlertDialog(
                                             title: 'Aviso',
@@ -128,6 +133,13 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                               ),
                               IconButton(
                                 onPressed: () async {
+                                  await showDialog(
+                                      context: context,
+                                      builder: (context) => CustomAlertDialog(
+                                            title: 'Aviso',
+                                            content:
+                                                'A funcionalidade não está implementada',
+                                          ));
                                   final confirm = await showDialog<bool>(
                                     context: context,
                                     builder: (context) => const ConfirmDialog(
@@ -138,13 +150,6 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                   );
 
                                   if (confirm == true) {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) => CustomAlertDialog(
-                                              title: 'Aviso',
-                                              content:
-                                                  'A funcionalidade não está implementada',
-                                            ));
                                     await DatabaseService.db.writeTxn(() async {
                                       await DatabaseService.db.userProfilesIsars
                                           .delete(userProfile.id);
@@ -165,18 +170,6 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
             ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (context) => CustomAlertDialog(
-                    title: 'Aviso',
-                    content: 'A funcionalidade não está implementada',
-                  ));
-          _addOrEditUserProfile();
-        },
-        child: Icon(Icons.add),
       ),
     );
   }

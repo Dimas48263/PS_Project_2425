@@ -68,14 +68,12 @@ class _UsersScreenState extends State<UsersScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  TextField(
+                  CustomSearchAndAddBar(
                     controller: _searchController,
-                    decoration: InputDecoration(
-                      labelText: 'Pesquisar',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0)),
-                    ),
+                    onSearchChanged: (value) => setState(() {
+                      _searchTerm = value.toLowerCase();
+                    }),
+                    onAddPressed: _addOrEditUser,
                   ),
                   const SizedBox(height: 16),
                   Expanded(
@@ -163,10 +161,6 @@ class _UsersScreenState extends State<UsersScreen> {
                 ],
               )),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addOrEditUser,
-        child: Icon(Icons.add),
       ),
     );
   }
@@ -330,7 +324,8 @@ class _UsersScreenState extends State<UsersScreen> {
                       await DatabaseService.db.writeTxn(() async {
                         final editedUser = user ?? UsersIsar();
 
-                        editedUser.userName = userNameController.text.trim().toLowerCase();
+                        editedUser.userName =
+                            userNameController.text.trim().toLowerCase();
                         editedUser.name = nameController.text.trim();
                         editedUser.startDate = selectedStartDate;
                         editedUser.endDate = selectedEndDate;

@@ -65,14 +65,13 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  TextField(
+                  // Shared Custom Search and Add Bar
+                  CustomSearchAndAddBar(
                     controller: _searchController,
-                    decoration: InputDecoration(
-                      labelText: 'Pesquisar',
-                      prefixIcon: Icon(Icons.search),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0)),
-                    ),
+                    onSearchChanged: (value) => setState(() {
+                      _searchTerm = value.toLowerCase();
+                    }),
+                    onAddPressed: _addOrEditEntity,
                   ),
                   const SizedBox(height: 16),
                   Expanded(
@@ -159,10 +158,6 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                 ],
               )),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addOrEditEntity,
-        child: Icon(Icons.add),
       ),
     );
   }
