@@ -112,8 +112,9 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                 style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(12),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.grey,
                   foregroundColor: Colors.white,
+                  minimumSize: Size(50.0, 50.0),
                 ),
                 child: const Icon(Icons.add),
               ),
@@ -230,8 +231,11 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
 
   Future<void> _loadTreeLevels() async {
     if (await syncServiceV3.isApiReachable()) {
-      await syncServiceV3.updateLocalData(DatabaseService.db.treeLevelIsars,
-          "tree-levels", TreeLevel.fromJson, (TreeLevel treeLevel) async => TreeLevelIsar.toRemote(treeLevel));
+      await syncServiceV3.updateLocalData(
+          DatabaseService.db.treeLevelIsars,
+          "tree-levels",
+          TreeLevel.fromJson,
+          (TreeLevel treeLevel) async => TreeLevelIsar.toRemote(treeLevel));
     }
     setState(() {
       _isLoading = false;

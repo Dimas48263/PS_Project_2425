@@ -1,5 +1,5 @@
 import 'package:jwt_decoder/jwt_decoder.dart';
-
+import 'package:zcap_net_app/core/services/notifiers.dart';
 
 class SessionManager {
   static final SessionManager _instance = SessionManager._internal();
@@ -25,6 +25,7 @@ class SessionManager {
 
   void setToken(String token) {
     _jwtToken = token;
+    isOnlineNotifier.value = true;
   }
 
   void setUserName(String name) {
@@ -34,6 +35,6 @@ class SessionManager {
   Future<void> clearSession() async {
     _jwtToken = null;
     _userName = null;
+    isOnlineNotifier.value = false;
   }
-
 }

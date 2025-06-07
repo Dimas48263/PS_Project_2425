@@ -29,6 +29,7 @@ class StatusBar extends StatelessWidget {
           ValueListenableBuilder<bool>(
               valueListenable: isOnlineNotifier,
               builder: (context, isOnline, child) {
+                print('isOnline: $isOnline');
                 return isOnline
                     ? Icon(
                         Icons.cloud_outlined,

@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   isOnlineNotifier.value = SessionManager().isOnline;
+   isOnlineNotifier.value = sessionManager.isOnline;
 
     return ValueListenableBuilder(
       valueListenable: isDarkModeNotifier,

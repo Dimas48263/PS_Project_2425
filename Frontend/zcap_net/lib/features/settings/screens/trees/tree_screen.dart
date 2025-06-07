@@ -104,7 +104,7 @@ class _TreesScreenState extends State<TreesScreen> {
                 style: ElevatedButton.styleFrom(
                   shape: const CircleBorder(),
                   padding: const EdgeInsets.all(12),
-                  backgroundColor: Colors.blue,
+                  backgroundColor: Colors.grey,
                   foregroundColor: Colors.white,
                 ),
                 child: const Icon(Icons.add),
