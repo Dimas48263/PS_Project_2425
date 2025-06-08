@@ -179,6 +179,7 @@ class _TreesScreenState extends State<TreesScreen> {
                   onSelected: (TreeLevelIsar? value) {
                     setModalState(() {
                       treeLevel = value;
+                      parent = null;
                     });
                   },
                   validator: (value) =>
@@ -212,7 +213,7 @@ class _TreesScreenState extends State<TreesScreen> {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
                       final newTree = tree ?? TreeIsar();
-                      newTree.entityId = tree?.id;
+                      newTree.remoteId = tree?.remoteId ?? 0;
                       newTree.name = nameController.text;
                       newTree.treeLevel.value = treeLevel;
                       newTree.parent.value = parent;

@@ -198,7 +198,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
                       final newTreeLevel = treeLevel ?? TreeLevelIsar();
-
+                      newTreeLevel.remoteId = treeLevel?.remoteId ?? 0;
                       newTreeLevel.levelId = int.parse(levelIdController.text);
                       newTreeLevel.name = nameController.text;
                       newTreeLevel.description = descriptionController.text;

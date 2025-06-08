@@ -13,7 +13,7 @@ class TreeIsar extends IsarTable<Tree> {
   Id id = Isar.autoIncrement;
   
   @override
-  int? entityId;
+  int? remoteId;
   late String name;
   IsarLink<TreeLevelIsar> treeLevel = IsarLink<TreeLevelIsar>();
   IsarLink<TreeIsar> parent = IsarLink<TreeIsar>();
@@ -28,21 +28,21 @@ class TreeIsar extends IsarTable<Tree> {
   TreeIsar();
   
   static Future<TreeLevelIsar> findOrBuildTreeLevel(int id, TreeLevel treeLevel) async {
-    final tl = await DatabaseService.db.treeLevelIsars.filter().entityIdEqualTo(id).findFirst();//.where().findAll();
+    final tl = await DatabaseService.db.treeLevelIsars.filter().remoteIdEqualTo(id).findFirst();//.where().findAll();
     return tl ?? TreeLevelIsar.toRemote(treeLevel);
   }
 
   static Future<TreeIsar> findOrBuildTree(int? id, Tree tree) async {
     TreeIsar? t;
     if (id != null) {
-      t = await DatabaseService.db.treeIsars.filter().entityIdEqualTo(id).findFirst();
+      t = await DatabaseService.db.treeIsars.filter().remoteIdEqualTo(id).findFirst();
     }
     return t ?? TreeIsar.toRemote(tree);
   }
 
   static Future<TreeIsar> toRemote(Tree tree) async {
   final treeIsar = TreeIsar()
-    ..entityId = tree.id
+    ..remoteId = tree.id
     ..name = tree.name
     ..startDate = tree.startDate
     ..endDate = tree.endDate
@@ -74,10 +74,10 @@ class TreeIsar extends IsarTable<Tree> {
 
 
   @override
-  IsarTable<ApiTable> setEntityIdAndSync({int? entityId, bool? isSynced}) {
+  IsarTable<ApiTable> setEntityIdAndSync({int? remoteId, bool? isSynced}) {
     return TreeIsar()
       ..id = id 
-      ..entityId = entityId ?? this.entityId
+      ..remoteId = remoteId ?? this.remoteId
       ..name = name 
       ..treeLevel.value = treeLevel.value
       ..parent.value = parent.value
@@ -91,7 +91,7 @@ class TreeIsar extends IsarTable<Tree> {
   @override
   Tree toEntity() {
     return Tree(
-      id: entityId ?? 0,
+      id: remoteId ?? 0,
       name: name,
       treeLevel: treeLevel.value!.toEntity(),
       parent: parent.value?.toEntity(),

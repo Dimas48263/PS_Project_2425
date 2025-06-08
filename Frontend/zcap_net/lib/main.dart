@@ -21,10 +21,8 @@ void main() async {
 
   final session = SessionManager();
 
-  treeLevelIsarService.init(DatabaseService.db);
-  treeLevelSyncService.startListening();
   syncService.startListening();
-
+  syncServiceV3.startListening();
   runApp(MyApp(sessionManager: session,));
 }
 

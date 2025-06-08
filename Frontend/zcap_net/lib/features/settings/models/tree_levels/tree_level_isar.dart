@@ -10,7 +10,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   Id id = Isar.autoIncrement;
   
   @override
-  late int entityId;
+  late int remoteId;
   late int levelId;
   late String name;
   String? description;
@@ -27,7 +27,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
 
   factory TreeLevelIsar.toRemote(TreeLevel treeLevel) {
     return TreeLevelIsar()
-      ..entityId = treeLevel.id
+      ..remoteId = treeLevel.id
       ..levelId = treeLevel.levelId
       ..name = treeLevel.name
       ..description = treeLevel.description
@@ -41,7 +41,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   @override
   TreeLevel toEntity() {
     return TreeLevel(
-      id: entityId,
+      id: remoteId,
       levelId: levelId,
       name: name,
       description: description,
@@ -53,7 +53,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   }
 
   TreeLevelIsar copyWith({
-    int? entityId, 
+    int? remoteId, 
     int? levelId, 
     String? name, 
     String? description, 
@@ -65,7 +65,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   }) {
     return TreeLevelIsar()
       ..id = id
-      ..entityId = entityId ?? this.entityId
+      ..remoteId = remoteId ?? this.remoteId
       ..levelId = levelId ?? this.levelId
       ..name = name ?? this.name
       ..description = description ?? this.description
@@ -77,10 +77,10 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   }
   
   @override
-  IsarTable<ApiTable> setEntityIdAndSync({int? entityId, bool? isSynced}) {
+  IsarTable<ApiTable> setEntityIdAndSync({int? remoteId, bool? isSynced}) {
     return TreeLevelIsar()
       ..id = id 
-      ..entityId = entityId ?? this.entityId
+      ..remoteId = remoteId ?? this.remoteId
       ..levelId = levelId
       ..name = name 
       ..description = description 

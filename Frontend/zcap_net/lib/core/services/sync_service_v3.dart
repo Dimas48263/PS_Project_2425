@@ -1,7 +1,19 @@
 import 'dart:async';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/api_service.dart';
+import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
+import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
+import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
+import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 
 class SyncServiceV3 {
   final Isar isar;
@@ -24,7 +36,7 @@ class SyncServiceV3 {
     _syncTimer = Timer.periodic(const Duration(minutes: 1), (timer) async {
       if (await isApiReachable()) {
         print("Reconectado. Verificando dados pendentes...");
-        //await synchronizeAll(); TODO()
+        await synchronizeAll();
       }
     });
   }
@@ -48,56 +60,75 @@ class SyncServiceV3 {
         '[Sync] Iniciando sincronização. ${unsynced.length} entidades não sincronizadas.');
 
     for (var local in unsynced) {
-      final apiObj = local.toEntity();
+      sync(local, collection, endpoint, idName);
+    }
+  }
 
-      try {
-        if (apiObj.id <= 0) {
-          // Criação de novo registo na API
-          print('[Sync] Criando nova entidade');
-          final created = await ApiService.post(endpoint, apiObj.toJsonInput());
+  Future<void> synchronizeAll() async {
+    for (var entry in DatabaseService.collectionSchemas) {
+      final col = entry.collection(DatabaseService.db);
 
-          if (created[idName] != null) {
-            final newRecord = local.setEntityIdAndSync(
-              entityId: created[idName],
-              isSynced: true,
-            ) as T;
-            await isar.writeTxn(() async {
-              await collection.put(newRecord);
-            });
-            print('[Sync] Criado e guardado localmente');
-          }
-        } else {
-          // Atualização na API
-          print('[Sync] Atualizando entidade existente: (id: ${apiObj.id})');
-          await ApiService.put('$endpoint/${apiObj.id}', apiObj.toJsonInput());
-          final newRecord = local.setEntityIdAndSync(
-            isSynced: true,
-          ) as T;
-          await isar.writeTxn(() async {
-            await collection.put(newRecord);
-          });
-          print('[Sync] Atualizado e marcado como sincronizado');
-        }
-      } catch (e) {
-        print('[Sync] Falha ao sincronizar: $e');
-        // Ignorar falhas — será refeito depois
+      switch (entry.endpoint) {
+        //case 'entities':
+        //  await syncAllPending<EntitiesIsar>(
+        //      col as IsarCollection<EntitiesIsar>,
+        //      entry.endpoint,
+        //      entry.idName);
+        case 'entity-types':
+          await syncAllPending<EntityTypeIsar>(
+            col as IsarCollection<EntityTypeIsar>,
+            entry.endpoint,
+            entry.idName,
+          );
+          final remaining = await getAllUnsynced<EntityTypeIsar>(col);
+          _reportRemaining(remaining.length);
+        //case 'users':
+        //  await syncAllPending<UsersIsar>(
+        //      col as IsarCollection<UsersIsar>, entry.endpoint, entry.idName);
+        //case 'user-profiles':
+        //  await syncAllPending<UserProfilesIsar>(
+        //      col as IsarCollection<UserProfilesIsar>,
+        //      entry.endpoint,
+        //      entry.idName);
+        case 'trees':
+          await syncAllPending<TreeIsar>(
+            col as IsarCollection<TreeIsar>,
+            entry.endpoint,
+            entry.idName,
+          );
+          final remaining =
+              await getAllUnsynced<TreeIsar>(col);
+          _reportRemaining(remaining.length);
+
+        case 'tree-levels':
+          await syncAllPending<TreeLevelIsar>(
+            col as IsarCollection<TreeLevelIsar>,
+            entry.endpoint,
+            entry.idName,
+          );
+          final remaining = await getAllUnsynced<TreeLevelIsar>(col);
+          _reportRemaining(remaining.length);
+
+        case 'tree-record-detail-types':
+          await syncAllPending<TreeRecordDetailTypeIsar>(
+            col as IsarCollection<TreeRecordDetailTypeIsar>,
+            entry.endpoint,
+            entry.idName,
+          );
+          final remaining = await getAllUnsynced<TreeRecordDetailTypeIsar>(col);
+          _reportRemaining(remaining.length);
       }
     }
   }
 
-/*
-  Future<void> synchronizeAll() async {
-
-    await _syncAllPending(collection, endpoint, idName);
-
-    final remaining = await getAllUnsynced(collection);
-    if (remaining.isNotEmpty) {
+  void _reportRemaining(int count) {
+    if (count > 0) {
       print(
-          '[Sync] Existem ainda ${remaining.length} registos locais por sincronizar. Aguardar nova tentativa...');
-
+          '[Sync] Existem ainda $count registos locais por sincronizar. Aguardar nova tentativa...');
+    } else {
+      print('[Sync] Sincronizado com sucesso.');
     }
   }
-  */
 
   Future<void> sync<T extends IsarTable>(T entity, IsarCollection<T> collection,
       String endpoint, String idName) async {
@@ -108,10 +139,9 @@ class SyncServiceV3 {
         print('[Sync] Criando nova entidade');
         final created =
             await ApiService.post(endpoint, apiEntity.toJsonInput());
-
         if (created[idName] != null) {
           final newRecord = entity.setEntityIdAndSync(
-            entityId: created[idName],
+            remoteId: created[idName],
             isSynced: true,
           ) as T;
 
@@ -138,7 +168,7 @@ class SyncServiceV3 {
     }
   }
 
-  Future<void>  updateLocalData<TIsar extends IsarTable, TApi extends ApiTable>(
+  Future<void> updateLocalData<TIsar extends IsarTable, TApi extends ApiTable>(
       IsarCollection<TIsar> collection,
       String endpoint,
       TApi Function(Map<String, dynamic>) fromJson,

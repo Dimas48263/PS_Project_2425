@@ -32,25 +32,25 @@ const TreeLevelIsarSchema = CollectionSchema(
       name: r'endDate',
       type: IsarType.dateTime,
     ),
-    r'entityId': PropertySchema(
-      id: 3,
-      name: r'entityId',
-      type: IsarType.long,
-    ),
     r'isSynced': PropertySchema(
-      id: 4,
+      id: 3,
       name: r'isSynced',
       type: IsarType.bool,
     ),
     r'levelId': PropertySchema(
-      id: 5,
+      id: 4,
       name: r'levelId',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 6,
+      id: 5,
       name: r'name',
       type: IsarType.string,
+    ),
+    r'remoteId': PropertySchema(
+      id: 6,
+      name: r'remoteId',
+      type: IsarType.long,
     ),
     r'startDate': PropertySchema(
       id: 7,
@@ -116,10 +116,10 @@ void _treeLevelIsarSerialize(
   writer.writeDateTime(offsets[0], object.createdAt);
   writer.writeString(offsets[1], object.description);
   writer.writeDateTime(offsets[2], object.endDate);
-  writer.writeLong(offsets[3], object.entityId);
-  writer.writeBool(offsets[4], object.isSynced);
-  writer.writeLong(offsets[5], object.levelId);
-  writer.writeString(offsets[6], object.name);
+  writer.writeBool(offsets[3], object.isSynced);
+  writer.writeLong(offsets[4], object.levelId);
+  writer.writeString(offsets[5], object.name);
+  writer.writeLong(offsets[6], object.remoteId);
   writer.writeDateTime(offsets[7], object.startDate);
   writer.writeDateTime(offsets[8], object.updatedAt);
 }
@@ -134,11 +134,11 @@ TreeLevelIsar _treeLevelIsarDeserialize(
   object.createdAt = reader.readDateTime(offsets[0]);
   object.description = reader.readStringOrNull(offsets[1]);
   object.endDate = reader.readDateTimeOrNull(offsets[2]);
-  object.entityId = reader.readLong(offsets[3]);
   object.id = id;
-  object.isSynced = reader.readBool(offsets[4]);
-  object.levelId = reader.readLong(offsets[5]);
-  object.name = reader.readString(offsets[6]);
+  object.isSynced = reader.readBool(offsets[3]);
+  object.levelId = reader.readLong(offsets[4]);
+  object.name = reader.readString(offsets[5]);
+  object.remoteId = reader.readLong(offsets[6]);
   object.startDate = reader.readDateTime(offsets[7]);
   object.updatedAt = reader.readDateTime(offsets[8]);
   return object;
@@ -158,13 +158,13 @@ P _treeLevelIsarDeserializeProp<P>(
     case 2:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 3:
-      return (reader.readLong(offset)) as P;
-    case 4:
       return (reader.readBool(offset)) as P;
-    case 5:
+    case 4:
       return (reader.readLong(offset)) as P;
-    case 6:
+    case 5:
       return (reader.readString(offset)) as P;
+    case 6:
+      return (reader.readLong(offset)) as P;
     case 7:
       return (reader.readDateTime(offset)) as P;
     case 8:
@@ -607,62 +607,6 @@ extension TreeLevelIsarQueryFilter
     });
   }
 
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
-      entityIdEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'entityId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
-      entityIdGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'entityId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
-      entityIdLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'entityId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
-      entityIdBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'entityId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition> idEqualTo(
       Id value) {
     return QueryBuilder.apply(this, (query) {
@@ -919,6 +863,62 @@ extension TreeLevelIsarQueryFilter
   }
 
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
+      remoteIdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'remoteId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
+      remoteIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'remoteId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
+      remoteIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'remoteId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
+      remoteIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'remoteId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
       startDateEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1077,19 +1077,6 @@ extension TreeLevelIsarQuerySortBy
     });
   }
 
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> sortByEntityId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'entityId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
-      sortByEntityIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'entityId', Sort.desc);
-    });
-  }
-
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> sortByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
@@ -1124,6 +1111,19 @@ extension TreeLevelIsarQuerySortBy
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> sortByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> sortByRemoteId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remoteId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
+      sortByRemoteIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remoteId', Sort.desc);
     });
   }
 
@@ -1194,19 +1194,6 @@ extension TreeLevelIsarQuerySortThenBy
     });
   }
 
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> thenByEntityId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'entityId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
-      thenByEntityIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'entityId', Sort.desc);
-    });
-  }
-
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -1253,6 +1240,19 @@ extension TreeLevelIsarQuerySortThenBy
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> thenByNameDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> thenByRemoteId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remoteId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
+      thenByRemoteIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'remoteId', Sort.desc);
     });
   }
 
@@ -1304,12 +1304,6 @@ extension TreeLevelIsarQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QDistinct> distinctByEntityId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'entityId');
-    });
-  }
-
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QDistinct> distinctByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSynced');
@@ -1326,6 +1320,12 @@ extension TreeLevelIsarQueryWhereDistinct
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QDistinct> distinctByRemoteId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'remoteId');
     });
   }
 
@@ -1368,12 +1368,6 @@ extension TreeLevelIsarQueryProperty
     });
   }
 
-  QueryBuilder<TreeLevelIsar, int, QQueryOperations> entityIdProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'entityId');
-    });
-  }
-
   QueryBuilder<TreeLevelIsar, bool, QQueryOperations> isSyncedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSynced');
@@ -1389,6 +1383,12 @@ extension TreeLevelIsarQueryProperty
   QueryBuilder<TreeLevelIsar, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, int, QQueryOperations> remoteIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'remoteId');
     });
   }
 

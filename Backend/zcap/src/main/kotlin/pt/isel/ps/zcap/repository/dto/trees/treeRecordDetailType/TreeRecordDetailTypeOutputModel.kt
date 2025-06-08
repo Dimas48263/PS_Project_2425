@@ -10,5 +10,5 @@ data class TreeRecordDetailTypeOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createAt: LocalDateTime,
-    val timestamp: LocalDateTime
+    val updatedAt: LocalDateTime
 )

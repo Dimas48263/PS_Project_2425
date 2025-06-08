@@ -24,21 +24,21 @@ class Tree implements ApiTable {
   });
 
   factory Tree.fromJson(Map<String, dynamic> json) {
-  return Tree(
-    id: json['treeRecordId'],
-    name: json['name'],
-    treeLevel: TreeLevel.fromJson(json['treeLevel']),
-    parent: json['parent'] != null ? Tree.fromJson(json['parent']) : null,
-    startDate: DateTime.parse(json['startDate']),
-    endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-    createdAt: json['createdAt'] != null
-        ? DateTime.parse(json['createdAt'])
-        : DateTime.now(),
-    updatedAt: json['updatedAt'] != null
-        ? DateTime.parse(json['updatedAt'])
-        : DateTime.now(),
-  );
-}
+    return Tree(
+      id: json['treeRecordId'],
+      name: json['name'],
+      treeLevel: TreeLevel.fromJson(json['treeLevel']),
+      parent: json['parent'] != null ? Tree.fromJson(json['parent']) : null,
+      startDate: DateTime.parse(json['startDate']),
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'])
+          : DateTime.now(),
+    );
+  }
 
   @override
   Map<String, dynamic> toJsonInput() {
@@ -72,4 +72,4 @@ class Tree implements ApiTable {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
-} 
+}

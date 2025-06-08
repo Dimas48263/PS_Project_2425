@@ -41,7 +41,7 @@ class SyncService {
         '[Sync] Iniciando sincronização. ${unsynced.length} entidades não sincronizadas.');
 
     for (var local in unsynced) {
-      final entity = local.toEntityType();
+      final entity = local.toEntity();
 
       try {
         if (entity.id <= 0) {

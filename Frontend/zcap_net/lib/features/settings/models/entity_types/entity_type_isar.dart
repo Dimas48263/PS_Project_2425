@@ -1,15 +1,19 @@
 import 'package:isar/isar.dart';
+import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'entity_type.dart';
 
 part 'entity_type_isar.g.dart';
 
 @collection
-class EntityTypeIsar {
+class EntityTypeIsar implements IsarTable<EntityType>{
   /*Local variables*/
+  @override
   Id id = Isar.autoIncrement;
+  @override
   bool isSynced = false;
   
   /* Remote variables */
+  @override
   int? remoteId; 
 
   @Index(type: IndexType.value)
@@ -59,10 +63,10 @@ class EntityTypeIsar {
   }
 
   // Método para converter para o modelo EntityType
-  EntityType toEntityType() {
+  @override
+  EntityType toEntity() {
     return EntityType(
       id: id,
-      
       name: name,
       startDate: startDate,
       endDate: endDate,
@@ -70,5 +74,18 @@ class EntityTypeIsar {
       updatedAt: updatedAt,
       isSynced: isSynced,
     );
+  }
+  
+  @override
+  IsarTable<ApiTable> setEntityIdAndSync({int? remoteId, bool? isSynced}) {
+    throw EntityTypeIsar()
+      ..id = id
+      ..remoteId = remoteId ?? this.remoteId
+      ..name = name
+      ..startDate = startDate
+      ..endDate = endDate
+      ..createdAt = createdAt
+      ..updatedAt = updatedAt
+      ..isSynced = isSynced ?? this.isSynced;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/features/settings/screens/entity_types/entity_type_screen.dart';
-import 'package:zcap_net_app/features/settings/screens/tree_levels/tree_levels_screnn.dart';
+import 'package:zcap_net_app/features/settings/screens/tree_levels/tree_levels_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/tree_record_detail_types/tree_record_detail_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_data_access/user_data_access_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_profiles_screen.dart';
@@ -44,6 +45,15 @@ class SettingsScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const TreesScreen()),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: const Text("Tipos de detalhes"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const TreeRecordDetailTypesScreen()),
                     );
                   },
                 ),

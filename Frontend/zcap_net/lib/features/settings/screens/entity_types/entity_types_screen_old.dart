@@ -64,7 +64,7 @@ class _EntityTypesScreenOldState extends State<EntityTypesScreenOld> {
           await DatabaseService.db.entityTypeIsars.where().findAll();
 
       setState(() {
-        _entityTypes = localData.map((e) => e.toEntityType()).toList();
+        _entityTypes = localData.map((e) => e.toEntity()).toList();
         _isLoading = false;
       });
     }

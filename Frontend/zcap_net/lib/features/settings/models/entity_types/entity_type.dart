@@ -1,4 +1,7 @@
-class EntityType {
+import 'package:zcap_net_app/core/services/remote_table.dart';
+
+class EntityType implements ApiTable{
+  @override
   int id;
   final String name;
   final DateTime startDate;
@@ -32,6 +35,7 @@ factory EntityType.fromJson(Map<String, dynamic> json) {
   );
 }
 
+@override
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
