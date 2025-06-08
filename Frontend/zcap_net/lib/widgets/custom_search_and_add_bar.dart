@@ -7,11 +7,11 @@ class CustomSearchAndAddBar extends StatelessWidget {
   final VoidCallback onAddPressed;
 
   const CustomSearchAndAddBar({
-    Key? key,
+    super.key,
     required this.controller,
     required this.onSearchChanged,
     required this.onAddPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
