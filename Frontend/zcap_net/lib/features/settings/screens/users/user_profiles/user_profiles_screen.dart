@@ -138,7 +138,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                       builder: (context) => CustomAlertDialog(
                                             title: 'Aviso',
                                             content:
-                                                'A funcionalidade não está implementada',
+                                                'A funcionalidade não está implementada.',
                                           ));
                                   final confirm = await showDialog<bool>(
                                     context: context,
@@ -201,44 +201,17 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                         const SizedBox(
                           height: 12.0,
                         ),
-                        ListTile(
-                          title: Text(
-                              "Início: ${selectedStartDate.toLocal().toString().split(' ')[0]}"),
-                          trailing: const Icon(Icons.calendar_today),
-                          onTap: () async {
-                            final picked = await showDatePicker(
-                              context: context,
-                              initialDate: selectedStartDate,
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2100),
-                            );
-                            if (picked != null) {
-                              setModalState(() {
-                                selectedStartDate = picked;
-                              });
-                            }
-                          },
-                        ),
-                        ListTile(
-                          title: Text(
-                              "Fim: ${selectedEndDate != null ? selectedEndDate!.toLocal().toString().split(' ')[0] : 'Sem data'}"),
-                          trailing: const Icon(Icons.calendar_today),
-                          onTap: () async {
-                            final picked = await showDatePicker(
-                              context: context,
-                              initialDate: selectedEndDate ?? DateTime.now(),
-                              firstDate: DateTime(2000),
-                              lastDate: DateTime(2100),
-                            );
-                            if (picked != null) {
-                              setModalState(() {
-                                selectedEndDate = picked;
-                              });
-                            }
-                          },
-                          onLongPress: () {
+                        CustomDateRangePicker(
+                          startDate: selectedStartDate,
+                          endDate: selectedEndDate,
+                          onStartDateChanged: (newStart) {
                             setModalState(() {
-                              selectedEndDate = null;
+                              selectedStartDate = newStart;
+                            });
+                          },
+                          onEndDateChanged: (newEnd) {
+                            setModalState(() {
+                              selectedEndDate = newEnd;
                             });
                           },
                         ),

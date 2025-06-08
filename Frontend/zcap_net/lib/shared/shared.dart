@@ -10,6 +10,7 @@ export '../widgets/confirm_dialog.dart';
 export '../widgets/custom_alert_dialog.dart';
 export '../widgets/custom_search_bar.dart';
 export '../widgets/custom_search_and_add_bar.dart';
+export '../widgets/custom_date_range_picker.dart';
 
 
 export './shared_dialogs.dart';

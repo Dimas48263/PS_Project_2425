@@ -22,29 +22,30 @@ class SettingsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-
             /* Hierarchical Tree tables */
             ExpansionTile(
               title: const Text("Estrutura"),
               leading: const Icon(Icons.account_tree),
               childrenPadding:
-                  EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               children: [
                 ListTile(
-                  title: const Text("Nível de Arvore"),
+                  title: const Text("Níveis de Arvore"),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const TreeLevelsScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const TreeLevelsScreen()),
                     );
                   },
                 ),
                 ListTile(
-                  title: const Text("Elementos de Árvores"),
+                  title: const Text("Elementos da Árvore"),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const TreesScreen()),
+                      MaterialPageRoute(
+                          builder: (context) => const TreesScreen()),
                     );
                   },
                 ),
@@ -65,33 +66,43 @@ class SettingsScreen extends StatelessWidget {
             ExpansionTile(
               title: const Text("Utilizadores"),
               leading: const Icon(Icons.manage_accounts),
+              childrenPadding:
+                  EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               children: [
-                ListTile(
-                  title: const Text("Utilizadores"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const UsersScreen()),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Perfis de utilizador"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const UserProfilesScreen()),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Acesso a dados"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const UserDataAccessScreen()),
-                    );
-                  },
+                Column(
+                  children: [
+                    ListTile(
+                      title: const Text("Utilizadores"),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UsersScreen()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      title: const Text("Perfis de utilizador"),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const UserProfilesScreen()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      title: const Text("TODO: Acesso a dados"),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  const UserDataAccessScreen()),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -101,37 +112,145 @@ class SettingsScreen extends StatelessWidget {
             ExpansionTile(
               title: const Text("Tabelas Suporte"),
               leading: const Icon(Icons.settings),
+              childrenPadding:
+                  EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               children: [
-                ListTile(
-                  title: const Text("Tipos Entidade OLD"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const EntityTypesScreenOld()),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: const Text("Tipos Entidade"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const EntityTypesScreen()),
-                    );
-                  },
-                ),
-
-                ListTile(
-                  title: const Text("Entidades"),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const EntitiesScreen()),
-                    );
-                  },
-                ),
+                ExpansionTile(
+                    title: const Text("Entidades"),
+                    leading: const Icon(Icons.account_balance),
+                    childrenPadding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    children: [
+                      Column(
+                        children: [
+                          ListTile(
+                            title: const Text("Tipos Entidade"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const EntityTypesScreen()),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Entidades"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const EntitiesScreen()),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            title: const Text("Tipos Entidade OLD"),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const EntityTypesScreenOld()),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ]),
+                ExpansionTile(
+                    title: const Text("Edificios / ZCAP"),
+                    leading: const Icon(Icons.maps_home_work_outlined),
+                    childrenPadding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    children: [
+                      ListTile(
+                        title: const Text("TODO: Tipos de Edificio"),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                      ListTile(
+                        title:
+                            const Text("TODO: Tipos de Categoria de detalhe"),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                      ListTile(
+                        title: const Text("TODO: Tipos de detalhe"),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                      ListTile(
+                        title: const Text("TODO: Detalhe por Edificio / ZCAP"),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                    ]),
+                ExpansionTile(
+                    title: const Text("Pessoas"),
+                    leading: const Icon(Icons.people),
+                    childrenPadding:
+                        EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    children: [
+                      ListTile(
+                        title: const Text("TODO: Graus de parentesco"),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                      ListTile(
+                        title: const Text("TODO: Tipos de necessidade"),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                      ListTile(
+                        title: const Text("TODO: Tipos de apoio"),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                    ]),
               ],
             ),
           ],
