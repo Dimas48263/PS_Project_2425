@@ -6,6 +6,7 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/custom_cancel_text_button.dart';
 import 'package:zcap_net_app/widgets/custom_form.dart';
 import 'package:zcap_net_app/widgets/custom_list_view.dart';
@@ -35,9 +36,9 @@ class _TreeRecordDetailTypesScreenState
         .buildQuery<TreeRecordDetailTypeIsar>()
         .watch(fireImmediately: true)
         .listen((data) {
-          setState(() {
-            treeRecordDetailTypes = data;
-          });
+      setState(() {
+        treeRecordDetailTypes = data;
+      });
     });
     _searchController.addListener(() {
       setState(() {
@@ -90,7 +91,13 @@ class _TreeRecordDetailTypesScreenState
       padding: const EdgeInsets.all(10.0),
       child: Column(
         children: [
-          Row(
+          CustomSearchAndAddBar(
+              controller: _searchController,
+              onSearchChanged: (value) => setState(() {
+                    _searchTerm = value.toLowerCase();
+                  }),
+              onAddPressed: () => _addOrEditTreerRecordDetailType(null)),
+/*          Row(
             children: [
               customSearchBar(
                   _searchController,
@@ -111,7 +118,7 @@ class _TreeRecordDetailTypesScreenState
                 child: const Icon(Icons.add),
               ),
             ],
-          ),
+          ),*/
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
@@ -119,8 +126,11 @@ class _TreeRecordDetailTypesScreenState
                   filteredList,
                   getLabelsList(filteredList),
                   (detailType) {
-                    syncServiceV3.synchronize(detailType, DatabaseService.db.treeRecordDetailTypeIsars,
-                        'tree-record-detail-types', 'detailTypeId');
+                    syncServiceV3.synchronize(
+                        detailType,
+                        DatabaseService.db.treeRecordDetailTypeIsars,
+                        'tree-record-detail-types',
+                        'detailTypeId');
                     print('update pressed');
                   },
                   (detailType) => _addOrEditTreerRecordDetailType(detailType),
@@ -130,15 +140,17 @@ class _TreeRecordDetailTypesScreenState
     );
   }
 
-  void _addOrEditTreerRecordDetailType(TreeRecordDetailTypeIsar? detailType) async {
+  void _addOrEditTreerRecordDetailType(
+      TreeRecordDetailTypeIsar? detailType) async {
     final nameController = TextEditingController(text: detailType?.name ?? '');
     final unitController = TextEditingController(text: detailType?.unit ?? '');
     DateTime? startDate = detailType?.startDate ?? DateTime.now();
     DateTime? endDate = detailType?.endDate;
 
-    List<TextControllersInputFormCongig> textControllersConfig = [
-      TextControllersInputFormCongig(controller: nameController, label: 'Nome'),
-      TextControllersInputFormCongig(controller: unitController, label: 'Unidade'),
+    List<TextControllersInputFormConfig> textControllersConfig = [
+      TextControllersInputFormConfig(controller: nameController, label: 'Nome'),
+      TextControllersInputFormConfig(
+          controller: unitController, label: 'Unidade'),
     ];
 
     showDialog(
@@ -146,7 +158,8 @@ class _TreeRecordDetailTypesScreenState
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
-            title: Text(detailType == null ? 'Novo Elemento' : 'Editar Estrutura'),
+            title:
+                Text(detailType == null ? 'Novo Elemento' : 'Editar Estrutura'),
             content: buildForm2(
                 context, textControllersConfig, startDate, endDate, (value) {
               setState(() => startDate = value);
@@ -164,17 +177,20 @@ class _TreeRecordDetailTypesScreenState
               TextButton(
                 child: const Text('Guardar'),
                 onPressed: () async {
-                  if (nameController.text.isNotEmpty && unitController.text.isNotEmpty) {
+                  if (nameController.text.isNotEmpty &&
+                      unitController.text.isNotEmpty) {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
-                      final newDetailType = detailType ?? TreeRecordDetailTypeIsar();
+                      final newDetailType =
+                          detailType ?? TreeRecordDetailTypeIsar();
                       newDetailType.remoteId = detailType?.remoteId ?? 0;
                       newDetailType.name = nameController.text;
                       newDetailType.unit = unitController.text;
                       newDetailType.startDate = startDate ?? now;
                       newDetailType.endDate = endDate;
                       newDetailType.isSynced = false;
-                      await DatabaseService.db.treeRecordDetailTypeIsars.put(newDetailType);
+                      await DatabaseService.db.treeRecordDetailTypeIsars
+                          .put(newDetailType);
                     });
                     // ignore: use_build_context_synchronously
                     Navigator.pop(context);
@@ -187,7 +203,6 @@ class _TreeRecordDetailTypesScreenState
       },
     );
   }
-
 
   Future<void> _loadDetails() async {
     if (await syncServiceV3.isApiReachable()) {
@@ -203,11 +218,15 @@ class _TreeRecordDetailTypesScreenState
     });
   }
 
-  List<List<String>> getLabelsList(List<TreeRecordDetailTypeIsar> filteredList) {
+  List<List<String>> getLabelsList(
+      List<TreeRecordDetailTypeIsar> filteredList) {
     List<List<String>> labelsList = [];
     for (var detailType in filteredList) {
-      labelsList.add(
-          [detailType.name, 'Inicio: ${detailType.startDate}', 'Fim: ${detailType.endDate}']);
+      labelsList.add([
+        detailType.name,
+        'Inicio: ${detailType.startDate}',
+        'Fim: ${detailType.endDate}'
+      ]);
     }
     return labelsList;
   }

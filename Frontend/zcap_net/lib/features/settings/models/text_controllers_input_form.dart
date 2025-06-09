@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 
-class TextControllersInputFormCongig {
+class TextControllersInputFormConfig {
   final TextEditingController controller;
   final String label;
   final String? Function(String?)? validator;
 
-  TextControllersInputFormCongig({
+  TextControllersInputFormConfig({
     required this.controller,
     required this.label,
     this.validator,

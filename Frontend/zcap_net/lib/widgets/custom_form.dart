@@ -79,7 +79,7 @@ Widget buildForm(
 /** START SECOND VERSION */
 Widget customDatesForm(BuildContext context, DateTime? date,
     void Function(DateTime) onDateChanged, bool isStartDate, void Function()? onLongPress) {
-  String title = isStartDate ? "Início:" : "Fim:";
+  String title = isStartDate ? "Início" : "Fim";
   return ListTile(
     title: Text(
         "$title: ${date != null ? date.toLocal().toString().split(' ')[0] : 'Sem data'}"),
@@ -105,7 +105,7 @@ Widget customDatesForm(BuildContext context, DateTime? date,
 
 Widget buildForm2(
     BuildContext context,
-    List<TextControllersInputFormCongig> textControllersConfig,
+    List<TextControllersInputFormConfig> textControllersConfig,
     DateTime? startDate,
     DateTime? endDate,
     void Function(DateTime) onStartDateChanged,

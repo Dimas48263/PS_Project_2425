@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
+import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/custom_list_view.dart';
 import 'package:zcap_net_app/widgets/custom_form.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
@@ -85,7 +86,13 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
       padding: const EdgeInsets.all(10.0),
       child: Column(
         children: [
-          Row(
+          CustomSearchAndAddBar(
+              controller: _searchController,
+              onSearchChanged: (value) => setState(() {
+                    _searchTerm = value.toLowerCase();
+                  }),
+              onAddPressed: () => _addOrEditTreeLevel(null)),
+/*          Row(
             children: [
               // Campo de pesquisa expandido para ocupar o espaço disponível
               Expanded(
@@ -119,7 +126,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                 child: const Icon(Icons.add),
               ),
             ],
-          ),
+          ),*/
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()

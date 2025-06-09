@@ -154,8 +154,8 @@ class _TreesScreenState extends State<TreesScreen> {
     DateTime? startDate = tree?.startDate ?? DateTime.now();
     DateTime? endDate = tree?.endDate;
 
-    List<TextControllersInputFormCongig> textControllersConfig = [
-      TextControllersInputFormCongig(controller: nameController, label: 'Nome'),
+    List<TextControllersInputFormConfig> textControllersConfig = [
+      TextControllersInputFormConfig(controller: nameController, label: 'Nome'),
     ];
 
     showDialog(
