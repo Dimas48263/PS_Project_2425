@@ -19,12 +19,19 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _passwordFocusNode = FocusNode();
 
   void _login() async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
     final success = await _loginViewModel.login(
       _usernameController.text,
       _passwordController.text,
     );
 
     if (!mounted) return;
+    Navigator.of(context).pop();
 
     if (success) {
       CustomOkSnackBar.show(

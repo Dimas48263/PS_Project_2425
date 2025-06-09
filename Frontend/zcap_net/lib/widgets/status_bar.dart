@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
+import 'package:zcap_net_app/features/sync/force_sync.dart';
 
 class StatusBar extends StatelessWidget {
   final String? userName;
@@ -29,18 +31,24 @@ class StatusBar extends StatelessWidget {
           ValueListenableBuilder<bool>(
               valueListenable: isOnlineNotifier,
               builder: (context, isOnline, child) {
-                print('isOnline: $isOnline');
+                LogService.log('Online: $isOnline');
                 return isOnline
-                    ? Icon(
-                        Icons.cloud_outlined,
-                        color: Colors.green,
-                        size: 18.0,
-                      )
-                    : Icon(
-                        Icons.cloud_off,
-                        color: Colors.red,
-                        size: 18.0,
-                      );
+                    ? InkWell(
+                      onTap: () => forceSync(context),
+                      child: Icon(
+                          Icons.cloud_outlined,
+                          color: Colors.green,
+                          size: 18.0,
+                        ),
+                    )
+                    : InkWell(
+                      onTap: () => forceSync(context),
+                      child: Icon(
+                          Icons.cloud_off,
+                          color: Colors.red,
+                          size: 18.0,
+                        ),
+                    );
               })
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
@@ -8,8 +9,6 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
 
 class CollectionSchemaEntry {
   final CollectionSchema schema;
@@ -24,6 +23,7 @@ class DatabaseService {
   static late final Isar db;
 
   static final List<CollectionSchemaEntry> collectionSchemas = [
+    CollectionSchemaEntry(BuildingTypesIsarSchema, (db) => db.buildingTypesIsars, 'buildingTypes', 'buildingTypeId'),
     CollectionSchemaEntry(EntitiesIsarSchema, (db) => db.entitiesIsars, 'entities', 'entityId'),
     CollectionSchemaEntry(EntityTypeIsarSchema, (db) => db.entityTypeIsars, 'entity-types', 'entityTypeId'),
     CollectionSchemaEntry(UsersIsarSchema, (db) => db.usersIsars, 'users', 'userId'),

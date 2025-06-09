@@ -20,9 +20,6 @@ class AuthController(
     private val userService: UserService
 ) {
 
-    @GetMapping
-    fun ping() = ResponseEntity.ok("pong")
-
     @PostMapping("login")
     fun login(@RequestBody userLogin: LoginInputModel, response: HttpServletResponse): ResponseEntity<Any> {
 

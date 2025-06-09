@@ -54,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.maps_home_work_outlined),
               title: const Text('Menu principal'),
               onTap: () {
-                debugPrint("Navegando para Menu Principal...");
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -79,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.settings),
               title: const Text('Configurações'),
               onTap: () {
-                debugPrint("Navegando para Configurações...");
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SettingsScreen()),

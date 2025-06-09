@@ -127,7 +127,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                   filteredList,
                   getLabelsList(filteredList),
                   (treeLevel) {
-                    syncServiceV3.sync(
+                    syncServiceV3.synchronize(
                         treeLevel,
                         DatabaseService.db.treeLevelIsars,
                         'tree-levels',

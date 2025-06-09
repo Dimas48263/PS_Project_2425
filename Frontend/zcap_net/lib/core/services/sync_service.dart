@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:isar/isar.dart';
@@ -15,7 +16,7 @@ class SyncService {
 
   Future<bool> _isApiReachable() async {
     try {
-      print("Tentando reconectar...");
+      print("OLD SyncService Tentando reconectar...");
       final response =
           await ApiService.ping().timeout(const Duration(seconds: 5));
       return response.statusCode == 200;
@@ -140,3 +141,4 @@ class SyncService {
     }
   }
 }
+*/

@@ -1,19 +1,15 @@
 import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'entity_type.dart';
+import 'package:zcap_net_app/features/settings/models/building_types/building_type.dart';
 
-part 'entity_type_isar.g.dart';
+part 'building_types_isar.g.dart';
 
 @collection
-class EntityTypeIsar implements IsarTable<EntityType>{
+class BuildingTypesIsar {
   /*Local variables*/
-  @override
   Id id = Isar.autoIncrement;
-  @override
   bool isSynced = false;
   
   /* Remote variables */
-  @override
   int? remoteId; 
 
   @Index(type: IndexType.value)
@@ -25,9 +21,9 @@ class EntityTypeIsar implements IsarTable<EntityType>{
   DateTime updatedAt = DateTime.now();
   
   // Construtor sem nome (necessário para o Isar)
-  EntityTypeIsar();
+  BuildingTypesIsar();
 
-  EntityTypeIsar copyWith({
+  BuildingTypesIsar copyWith({
     int? id,
     int? remoteId,
     String? name,
@@ -37,7 +33,7 @@ class EntityTypeIsar implements IsarTable<EntityType>{
     DateTime? updatedAt,
     bool? isSynced,
   }) {
-    final copy = EntityTypeIsar()
+    final copy = BuildingTypesIsar()
       ..id = id ?? this.id
       ..remoteId = remoteId ?? this.remoteId
       ..name = name ?? this.name
@@ -50,23 +46,22 @@ class EntityTypeIsar implements IsarTable<EntityType>{
     return copy;
   }
 
-    // Método para converter a partir do modelo EntityType
-  factory EntityTypeIsar.fromEntityType(EntityType entity) {
-    return EntityTypeIsar()
-      ..id = entity.id
-      ..name = entity.name
-      ..startDate = entity.startDate
-      ..endDate = entity.endDate
-      ..createdAt = entity.createdAt
-      ..updatedAt = entity.updatedAt
-      ..isSynced = entity.isSynced;
+    // Método para converter a partir do modelo BuildingType
+  factory BuildingTypesIsar.fromBuildingType(BuildingTypesIsar building) {
+    return BuildingTypesIsar()
+      ..id = building.id
+      ..name = building.name
+      ..startDate = building.startDate
+      ..endDate = building.endDate
+      ..createdAt = building.createdAt
+      ..updatedAt = building.updatedAt
+      ..isSynced = building.isSynced;
   }
 
   // Método para converter para o modelo EntityType
-  @override
-  EntityType toEntity() {
-    return EntityType(
-      id: remoteId ?? -1,
+  BuildingType toBuildingType() {
+    return BuildingType(
+      id: id,
       name: name,
       startDate: startDate,
       endDate: endDate,
@@ -74,18 +69,5 @@ class EntityTypeIsar implements IsarTable<EntityType>{
       updatedAt: updatedAt,
       isSynced: isSynced,
     );
-  }
-  
-  @override
-  IsarTable<ApiTable> setEntityIdAndSync({int? remoteId, bool? isSynced}) {
-    return EntityTypeIsar()
-      ..id = id
-      ..remoteId = remoteId ?? this.remoteId
-      ..name = name
-      ..startDate = startDate
-      ..endDate = endDate
-      ..createdAt = createdAt
-      ..updatedAt = updatedAt
-      ..isSynced = isSynced ?? this.isSynced;
   }
 }

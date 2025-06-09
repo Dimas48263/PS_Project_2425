@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
+import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
+import 'package:zcap_net_app/features/settings/screens/building_types/building_types_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/entity_types/entity_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/tree_levels/tree_levels_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/tree_record_detail_types/tree_record_detail_type_screen.dart';
@@ -6,7 +9,6 @@ import 'package:zcap_net_app/features/settings/screens/trees/tree_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_data_access/user_data_access_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_profiles_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/users/users_screen.dart';
-import 'entity_types/entity_types_screen_old.dart';
 import 'entities/entities_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -54,7 +56,9 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const TreeRecordDetailTypesScreen()),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const TreeRecordDetailTypesScreen()),
                     );
                   },
                 ),
@@ -152,7 +156,7 @@ class SettingsScreen extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
-                                        const EntityTypesScreenOld()),
+                                        const EntityTypesScreen()),
                               );
                             },
                           ),
@@ -166,15 +170,15 @@ class SettingsScreen extends StatelessWidget {
                         EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     children: [
                       ListTile(
-                        title: const Text("TODO: Tipos de Edificio"),
-//                            onTap: () {
-//                              Navigator.push(
-//                                context,
-//                                MaterialPageRoute(
-//                                    builder: (context) =>
-//                                        const EntityTypesScreenOld()),
-//                              );
-//                            },
+                        title: const Text("Tipos de Edificio"),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const BuildingTypesScreen()),
+                          );
+                        },
                       ),
                       ListTile(
                         title:
@@ -252,6 +256,18 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ]),
               ],
+            ),
+            AdminExpansionTile(
+              child: ListTile(
+                title: const Text("ISAR Explorer"),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const IsarExplorerScreen()),
+                  );
+                },
+              ),
             ),
           ],
         ),

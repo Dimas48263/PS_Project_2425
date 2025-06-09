@@ -8,10 +8,6 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
-import 'package:zcap_net_app/widgets/custom_list_view.dart';
-import 'package:zcap_net_app/widgets/custom_form.dart';
-import 'package:zcap_net_app/widgets/custom_search_bar.dart';
 
 class TreesScreen extends StatefulWidget {
   const TreesScreen({super.key});
@@ -118,7 +114,7 @@ class _TreesScreenState extends State<TreesScreen> {
                   filteredList,
                   getLabelsList(filteredList),
                   (tree) {
-                    syncServiceV3.sync(tree, DatabaseService.db.treeIsars,
+                    syncServiceV3.synchronize(tree, DatabaseService.db.treeIsars,
                         'trees', 'treeRecordId');
                     print('update pressed');
                   },

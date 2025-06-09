@@ -119,7 +119,7 @@ class _TreeRecordDetailTypesScreenState
                   filteredList,
                   getLabelsList(filteredList),
                   (detailType) {
-                    syncServiceV3.sync(detailType, DatabaseService.db.treeRecordDetailTypeIsars,
+                    syncServiceV3.synchronize(detailType, DatabaseService.db.treeRecordDetailTypeIsars,
                         'tree-record-detail-types', 'detailTypeId');
                     print('update pressed');
                   },

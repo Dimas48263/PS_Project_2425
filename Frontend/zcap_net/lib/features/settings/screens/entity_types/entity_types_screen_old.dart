@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/api_service.dart';
@@ -324,3 +325,4 @@ class _EntityTypesScreenOldState extends State<EntityTypesScreenOld> {
     );
   }
 }
+*/

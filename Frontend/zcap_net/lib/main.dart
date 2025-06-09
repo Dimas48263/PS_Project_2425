@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:window_size/window_size.dart';
+import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
@@ -21,19 +25,29 @@ void main() async {
 
   final session = SessionManager();
 
-  syncService.startListening();
   syncServiceV3.startListening();
-  runApp(MyApp(sessionManager: session,));
+  runApp(MyApp(
+    sessionManager: session,
+  ));
 }
 
 Future<void> _setup() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  final configString = await rootBundle.loadString('assets/config/config.json');
+  final configMap = jsonDecode(configString) as Map<String, dynamic>;
+
+  AppConfig.initFromJson(configMap);
+
   await DatabaseService.setup();
+  await LogService.init(AppConfig.instance);
+
+  LogService.log("Aplicação iniciada com API: ${AppConfig.instance.apiUrl}");
 }
 
 class MyApp extends StatelessWidget {
   final SessionManager sessionManager;
-  
+
   const MyApp({
     super.key,
     required this.sessionManager,
@@ -41,7 +55,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   isOnlineNotifier.value = sessionManager.isOnline;
+    isOnlineNotifier.value = sessionManager.isOnline;
 
     return ValueListenableBuilder(
       valueListenable: isDarkModeNotifier,
@@ -56,7 +70,9 @@ class MyApp extends StatelessWidget {
             ),
             useMaterial3: true,
           ),
-          home: sessionManager.isLoggedIn ? const HomeScreen() : const LoginScreen(),          
+          home: sessionManager.isLoggedIn
+              ? const HomeScreen()
+              : const LoginScreen(),
         );
       },
     );
