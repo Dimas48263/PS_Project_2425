@@ -3,7 +3,13 @@ import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
+import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 
 class IsarExplorerScreen extends StatefulWidget {
   const IsarExplorerScreen({super.key});
@@ -29,10 +35,20 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
             child: DropdownButton<String>(
               value: selectedTable,
               items: const [
+                DropdownMenuItem(value: 'tree', child: Text("Tree")),
                 DropdownMenuItem(
-                    value: 'BuildingTypes', child: Text("Building Types")),
+                    value: 'treeLevels', child: Text("Tree Levels")),
+                DropdownMenuItem(
+                    value: 'treeRecordDetailTypes',
+                    child: Text("Tree Record Detail Types")),
+                DropdownMenuItem(value: 'Users', child: Text("Users")),
                 DropdownMenuItem(
                     value: 'UserProfiles', child: Text("User Profiles")),
+                DropdownMenuItem(
+                    value: 'EntityTypes', child: Text("Entity Types")),
+                DropdownMenuItem(value: 'Entities', child: Text("Entities")),
+                DropdownMenuItem(
+                    value: 'BuildingTypes', child: Text("Building Types")),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -51,9 +67,9 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
 
   Widget _buildSelectedTableView() {
     switch (selectedTable) {
-      case 'BuildingTypes':
-        return FutureBuilder<List<BuildingTypesIsar>>(
-          future: isar.buildingTypesIsars.where().findAll(),
+      case 'tree':
+        return FutureBuilder<List<TreeIsar>>(
+          future: isar.treeIsars.where().findAll(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return const Center(child: CircularProgressIndicator());
@@ -65,6 +81,8 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DataColumn(label: Text("Name")),
                 DataColumn(label: Text("Start Date")),
                 DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
                 DataColumn(label: Text("Is Sync")),
               ],
               rows: items
@@ -76,6 +94,78 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.endDate != null
                             ? formatter.format(e.endDate!)
                             : '')),
+                        DataCell(Text(formatter.format(e.createdAt))),
+                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+      case 'treeLevels':
+        return FutureBuilder<List<TreeLevelIsar>>(
+          future: isar.treeLevelIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("RemoteId")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? formatter.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(formatter.format(e.createdAt))),
+                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+      case 'treeRecordDetailTypes':
+        return FutureBuilder<List<TreeRecordDetailTypeIsar>>(
+          future: isar.treeRecordDetailTypeIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("RemoteId")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? formatter.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(formatter.format(e.createdAt))),
+                        DataCell(Text(formatter.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -83,6 +173,41 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
           },
         );
 
+      case 'Users':
+        return FutureBuilder<List<UsersIsar>>(
+          future: isar.usersIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("RemoteId")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? formatter.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(formatter.format(e.createdAt))),
+                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
       case 'UserProfiles':
         return FutureBuilder<List<UserProfilesIsar>>(
           future: isar.userProfilesIsars.where().findAll(),
@@ -97,6 +222,8 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DataColumn(label: Text("Name")),
                 DataColumn(label: Text("Start Date")),
                 DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
                 DataColumn(label: Text("Is Sync")),
               ],
               rows: items
@@ -108,6 +235,115 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.endDate != null
                             ? formatter.format(e.endDate!)
                             : '')),
+                        DataCell(Text(formatter.format(e.createdAt))),
+                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+      case 'EntityTypes':
+        return FutureBuilder<List<EntityTypeIsar>>(
+          future: isar.entityTypeIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("Local ID")),
+                DataColumn(label: Text("Remote Id")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? formatter.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(formatter.format(e.createdAt))),
+                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+
+      case 'Entities':
+        return FutureBuilder<List<EntitiesIsar>>(
+          future: isar.entitiesIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("Local ID")),
+                DataColumn(label: Text("Remote Id")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? formatter.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(formatter.format(e.createdAt))),
+                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+
+      case 'BuildingTypes':
+        return FutureBuilder<List<BuildingTypesIsar>>(
+          future: isar.buildingTypesIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("RemoteId")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? formatter.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(formatter.format(e.createdAt))),
+                        DataCell(Text(formatter.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -130,4 +366,3 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
     );
   }
 }
-

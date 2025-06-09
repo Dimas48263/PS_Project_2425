@@ -85,7 +85,14 @@ class _TreesScreenState extends State<TreesScreen> {
       padding: const EdgeInsets.all(10.0),
       child: Column(
         children: [
-          Row(
+          CustomSearchAndAddBar(
+            controller: _searchController,
+            onSearchChanged: (value) => setState(() {
+              _searchTerm = value.toLowerCase();
+            }),
+            onAddPressed: () => _addOrEditTree(null),
+          ),
+          /*Row(
             children: [
               customSearchBar(
                   _searchController,
@@ -106,7 +113,7 @@ class _TreesScreenState extends State<TreesScreen> {
                 child: const Icon(Icons.add),
               ),
             ],
-          ),
+          ),*/
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
