@@ -17,8 +17,8 @@ class LogService {
       final dir = await getApplicationDocumentsDirectory();
       final dateStr = DateFormat('yyyyMMdd').format(DateTime.now());
 
-      final logPath = _config.logPath;
-      final logFile = _config.logFile;
+      final logPath = p.join(_config.appDataPath, 'logs');
+      final logFile = _config.logFileName;
       final baseName = p.basenameWithoutExtension(logFile);
       final extension = p.extension(logFile);
 
