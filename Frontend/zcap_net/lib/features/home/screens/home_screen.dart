@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:zcap_net_app/core/services/sync_services/sync_manager.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
 import '../../../core/services/session_manager.dart';

@@ -51,7 +51,7 @@ class EntityTypeIsar implements IsarTable<EntityType> {
   }
 
   void updateFromApiEntity(EntityType entity) {
-    remoteId = entity.id;
+    remoteId = entity.remoteId;
     name = entity.name;
     startDate = entity.startDate;
     endDate = entity.endDate;
@@ -63,7 +63,7 @@ class EntityTypeIsar implements IsarTable<EntityType> {
   // Método para converter a partir do modelo EntityType
   factory EntityTypeIsar.fromEntityType(EntityType entity) {
     return EntityTypeIsar()
-      ..remoteId = entity.id
+      ..remoteId = entity.remoteId
       ..name = entity.name
       ..startDate = entity.startDate
       ..endDate = entity.endDate
@@ -76,7 +76,7 @@ class EntityTypeIsar implements IsarTable<EntityType> {
   @override
   EntityType toEntity() {
     return EntityType(
-      id: remoteId ?? -1,
+      remoteId: remoteId ?? -1,
       name: name,
       startDate: startDate,
       endDate: endDate,

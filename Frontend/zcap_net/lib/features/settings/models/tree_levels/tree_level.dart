@@ -2,7 +2,7 @@ import 'package:zcap_net_app/core/services/remote_table.dart';
 
 class TreeLevel implements ApiTable{
   @override
-  int id;
+  int remoteId;
   final int levelId;
   final String name;
   final String? description;
@@ -12,7 +12,7 @@ class TreeLevel implements ApiTable{
   final DateTime updatedAt;
 
   TreeLevel({
-    required this.id,
+    required this.remoteId,
     required this.levelId,
     required this.name,
     this.description,
@@ -24,7 +24,7 @@ class TreeLevel implements ApiTable{
 
 factory TreeLevel.fromJson(Map<String, dynamic> json) {
   return TreeLevel(
-    id: json['treeLevelId'],
+    remoteId: json['treeLevelId'],
     levelId: json['levelId'],
     name: json['name'],
     description: json['description'],
@@ -61,7 +61,7 @@ factory TreeLevel.fromJson(Map<String, dynamic> json) {
     DateTime? updatedAt,
   }) {
     return TreeLevel(
-      id: id ?? this.id,
+      remoteId: id ?? this.remoteId,
       levelId: levelId ?? this.levelId,
       name: name ?? this.name,
       description: description ?? this.description,

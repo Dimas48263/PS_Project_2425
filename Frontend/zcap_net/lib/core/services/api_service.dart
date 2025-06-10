@@ -54,7 +54,7 @@ class ApiService {
       return jsonDecode(utf8.decode(response.bodyBytes))
           as Map<String, dynamic>;
     } else {
-      throw Exception('Erro ao carregar item: ${response.statusCode}');
+      throw Exception('Erro ao carregar item: ${response.statusCode}: ${response.body}');
     }
   }
 
@@ -72,7 +72,7 @@ class ApiService {
     if (response.statusCode == 201) {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception('Erro ao enviar dados: ${response.statusCode}');
+      throw Exception('Erro ao enviar dados: ${response.statusCode}: ${response.body}');
     }
   }
 
@@ -90,7 +90,7 @@ class ApiService {
     if (response.statusCode == 200) {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception('Erro ao atualizar dados: ${response.statusCode}');
+      throw Exception('Erro ao atualizar dados: ${response.statusCode}: ${response.body}');
     }
   }
 
@@ -104,7 +104,7 @@ class ApiService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Erro ao deletar dados: ${response.statusCode}');
+      throw Exception('Erro ao deletar dados: ${response.statusCode}: ${response.body}');
     }
   }
 

@@ -2,7 +2,7 @@ import 'package:zcap_net_app/core/services/remote_table.dart';
 
 class EntityType implements ApiTable{
   @override
-  int id;
+  int remoteId;
   final String name;
   final DateTime startDate;
   final DateTime? endDate;
@@ -11,7 +11,7 @@ class EntityType implements ApiTable{
   bool isSynced;
 
   EntityType({
-    required this.id,
+    required this.remoteId,
     required this.name,
     required this.startDate,
     this.endDate,
@@ -22,7 +22,7 @@ class EntityType implements ApiTable{
 
 factory EntityType.fromJson(Map<String, dynamic> json) {
   return EntityType(
-    id: json['entityTypeId'],
+    remoteId: json['entityTypeId'],
     name: json['name'],
     startDate: DateTime.parse(json['startDate']),
     endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,

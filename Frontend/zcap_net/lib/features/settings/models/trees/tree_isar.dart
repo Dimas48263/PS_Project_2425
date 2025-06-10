@@ -42,7 +42,7 @@ class TreeIsar extends IsarTable<Tree> {
 
   static Future<TreeIsar> toRemote(Tree tree) async {
   final treeIsar = TreeIsar()
-    ..remoteId = tree.id
+    ..remoteId = tree.remoteId
     ..name = tree.name
     ..startDate = tree.startDate
     ..endDate = tree.endDate
@@ -51,13 +51,13 @@ class TreeIsar extends IsarTable<Tree> {
     ..isSynced = true;
 
   // Usar o objeto já existente ou criar novo (TreeLevel)
-  final treeLevelIsar = await findOrBuildTreeLevel(tree.treeLevel.id, tree.treeLevel);
+  final treeLevelIsar = await findOrBuildTreeLevel(tree.treeLevel.remoteId, tree.treeLevel);
   treeIsar.treeLevel.value = treeLevelIsar;
 
 
   // Recursivamente associar o parent (se existir)
   if (tree.parent != null) {
-    final parentIsar = await findOrBuildTree(tree.parent?.id, tree);
+    final parentIsar = await findOrBuildTree(tree.parent?.remoteId, tree);
     treeIsar.parent.value = parentIsar;
   }
 
@@ -91,7 +91,7 @@ class TreeIsar extends IsarTable<Tree> {
   @override
   Tree toEntity() {
     return Tree(
-      id: remoteId ?? 0,
+      remoteId: remoteId ?? 0,
       name: name,
       treeLevel: treeLevel.value!.toEntity(),
       parent: parent.value?.toEntity(),

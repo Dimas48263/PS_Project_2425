@@ -15,6 +15,9 @@ class EntitiesIsar {
 
   @Index(type: IndexType.value)
   String name = "";
+  String email = "";
+  String phone1 = "";
+  String phone2 = "";
 
   final entityType = IsarLink<EntityTypeIsar>();
 
@@ -30,6 +33,9 @@ class EntitiesIsar {
     int? remoteId,
     String? name,
     IsarLink<EntityTypeIsar>? entityType,
+    String? email,
+    String? phone1,
+    String? phone2,
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,
@@ -41,6 +47,9 @@ class EntitiesIsar {
       ..remoteId = remoteId ?? this.remoteId
       ..name = name ?? this.name
       ..entityType.value = entityType?.value ?? this.entityType.value
+      ..email = email ?? this.email
+      ..phone1 = phone1 ?? this.phone1
+      ..phone2 = phone2 ?? this.phone2
       ..startDate = startDate ?? this.startDate
       ..endDate = endDate ?? this.endDate
       ..createdAt = createdAt ?? this.createdAt
@@ -51,30 +60,36 @@ class EntitiesIsar {
   }
 
   factory EntitiesIsar.fromEntity(Entity entity) {
-  final isarEntity = EntitiesIsar()
-    ..remoteId = entity.id
-    ..name = entity.name
-    ..startDate = entity.startDate
-    ..endDate = entity.endDate
-    ..createdAt = entity.createdAt
-    ..updatedAt = entity.updatedAt
-    ..isSynced = true;
+    final isarEntity = EntitiesIsar()
+      ..remoteId = entity.remoteId
+      ..name = entity.name
+      ..email = entity.email!
+      ..phone1 = entity.phone1
+      ..phone2 = entity.phone2!
+      ..startDate = entity.startDate
+      ..endDate = entity.endDate
+      ..createdAt = entity.createdAt
+      ..updatedAt = entity.updatedAt
+      ..isSynced = true;
 
-  isarEntity.entityType.value = EntityTypeIsar()..remoteId = entity.entityTypeId;
-  return isarEntity;
-}
+    isarEntity.entityType.value = EntityTypeIsar()
+      ..remoteId = entity.entityTypeId;
+    return isarEntity;
+  }
 
-Entity toEntity() {
-  return Entity(
-    id: remoteId ?? -1,
-    name: name,
-    entityTypeId: entityType.value?.remoteId ?? -1,
-    startDate: startDate,
-    endDate: endDate,
-    createdAt: createdAt,
-    updatedAt: updatedAt,
-    isSynced: isSynced,
-  );
-}
-
+  Entity toEntity() {
+    return Entity(
+      remoteId: remoteId ?? -1,
+      name: name,
+      entityTypeId: entityType.value?.remoteId ?? -1,
+      email: email,
+      phone1: phone1,
+      phone2: phone2,
+      startDate: startDate,
+      endDate: endDate,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      isSynced: isSynced,
+    );
+  }
 }

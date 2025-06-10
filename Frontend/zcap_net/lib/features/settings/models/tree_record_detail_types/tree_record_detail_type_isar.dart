@@ -41,7 +41,7 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType>{
   @override
   TreeRecordDetailType toEntity() {
     return TreeRecordDetailType(
-      id: remoteId ?? 0,
+      remoteId: remoteId ?? 0,
       name: name,
       unit: unit,
       startDate: startDate,
@@ -57,9 +57,9 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType>{
   }
 
   static TreeRecordDetailTypeIsar toRemote(TreeRecordDetailType detailType) {
-    print("To remote! id - ${detailType.id}");
+    print("To remote! id - ${detailType.remoteId}");
     return TreeRecordDetailTypeIsar()
-      ..remoteId = detailType.id
+      ..remoteId = detailType.remoteId
       ..name = detailType.name
       ..unit = detailType.unit
       ..startDate = detailType.startDate

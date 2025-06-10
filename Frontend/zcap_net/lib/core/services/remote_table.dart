@@ -8,7 +8,7 @@ abstract class IsarTable<T extends ApiTable> {
 }
 
 abstract class ApiTable {
-  int get id;
+  int get remoteId;
   Map<String, dynamic> toJsonInput();
 }
 

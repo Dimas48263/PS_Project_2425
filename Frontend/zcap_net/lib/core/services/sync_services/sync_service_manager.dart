@@ -22,7 +22,7 @@ class SyncServiceManager {
   void setup() {
     _syncManager = SyncManager([
       EntityTypeSyncService(DatabaseService.db),
-//      EntitySyncService(DatabaseService.db),
+      EntitySyncService(DatabaseService.db),
   // TreeSyncService(DatabaseService.db),
   // TreeLevelSyncService(DatabaseService.db),
     ]);

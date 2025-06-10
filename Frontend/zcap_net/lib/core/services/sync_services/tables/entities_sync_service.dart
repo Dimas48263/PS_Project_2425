@@ -22,14 +22,14 @@ class EntitySyncService implements SyncableService {
       final apiEntity = item.toEntity();
       try {
         final dataToSend = apiEntity.toJsonInput();
-        if (apiEntity.id <= 0) {
+        if (apiEntity.remoteId == null || apiEntity.remoteId <= 0) {
           LogService.log('[Entity Sync2] Enviando novo registo: dados $dataToSend');
           final created = await ApiService.post('entities', dataToSend);
           if (created['entityId'] != null) {
             final newRecord = item.copyWith(
               remoteId: created['entityId'],
               isSynced: true,
-              updatedAt: created['updatedAt'],
+              updatedAt: DateTime.parse(created['updatedAt']),
             );
             await isar.writeTxn(() async {
               await isar.entitiesIsars.put(newRecord);
@@ -40,8 +40,8 @@ class EntitySyncService implements SyncableService {
           }
         } else {
           LogService.log(
-              '[Entity Sync2] Atualizando remotamente o registo: (id: ${apiEntity.id}), dados: $dataToSend');
-          await ApiService.put('entities/${apiEntity.id}', dataToSend);
+              '[Entity Sync2] Atualizando remotamente o registo: (id: ${apiEntity.remoteId}), dados: $dataToSend');
+          await ApiService.put('entities/${apiEntity.remoteId}', dataToSend);
 
           final newRecord = item.copyWith(
             isSynced: true,
@@ -77,7 +77,7 @@ class EntitySyncService implements SyncableService {
         for (final apiEntity in apiData) {
           final localEntity = await isar.entitiesIsars
               .filter()
-              .remoteIdEqualTo(apiEntity.id)
+              .remoteIdEqualTo(apiEntity.remoteId)
               .findFirst();
 
           if (localEntity == null) {

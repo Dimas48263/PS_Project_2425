@@ -76,7 +76,7 @@ class EntityTypeSyncService implements SyncableService {
         for (final apiEntity in apiData) {
           final localEntity = await isar.entityTypeIsars
               .filter()
-              .remoteIdEqualTo(apiEntity.id)
+              .remoteIdEqualTo(apiEntity.remoteId)
               .findFirst();
 
           if (localEntity == null) {

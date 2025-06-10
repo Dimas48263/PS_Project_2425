@@ -27,7 +27,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
 
   factory TreeLevelIsar.toRemote(TreeLevel treeLevel) {
     return TreeLevelIsar()
-      ..remoteId = treeLevel.id
+      ..remoteId = treeLevel.remoteId
       ..levelId = treeLevel.levelId
       ..name = treeLevel.name
       ..description = treeLevel.description
@@ -41,7 +41,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   @override
   TreeLevel toEntity() {
     return TreeLevel(
-      id: remoteId,
+      remoteId: remoteId,
       levelId: levelId,
       name: name,
       description: description,

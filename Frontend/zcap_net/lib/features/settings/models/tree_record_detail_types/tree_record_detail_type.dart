@@ -2,7 +2,7 @@ import 'package:zcap_net_app/core/services/remote_table.dart';
 
 class TreeRecordDetailType implements ApiTable {
   @override
-  int id;
+  int remoteId;
   final String name;
   final String unit;
   final DateTime startDate;
@@ -11,7 +11,7 @@ class TreeRecordDetailType implements ApiTable {
   final DateTime updatedAt;
 
   TreeRecordDetailType(
-      {required this.id,
+      {required this.remoteId,
       required this.name,
       required this.unit,
       required this.startDate,
@@ -31,7 +31,7 @@ class TreeRecordDetailType implements ApiTable {
 
   factory TreeRecordDetailType.fromJson(Map<String, dynamic> json) {
     return TreeRecordDetailType(
-      id: json['detailTypeId'],
+      remoteId: json['detailTypeId'],
       name: json['name'],
       unit: json['unit'],
       startDate: DateTime.parse(json['startDate']),
@@ -55,7 +55,7 @@ class TreeRecordDetailType implements ApiTable {
     DateTime? updatedAt,
   }) {
     return TreeRecordDetailType(
-      id: id ?? this.id,
+      remoteId: id ?? this.remoteId,
       name: name ?? this.name,
       unit: unit ?? this.unit,
       startDate: startDate ?? this.startDate,

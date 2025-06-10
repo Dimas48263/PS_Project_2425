@@ -3,7 +3,7 @@ import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dar
 
 class Tree implements ApiTable {
   @override
-  int id;
+  int remoteId;
   final String name;
   final TreeLevel treeLevel;
   final Tree? parent;
@@ -13,7 +13,7 @@ class Tree implements ApiTable {
   final DateTime updatedAt;
 
   Tree({
-    required this.id,
+    required this.remoteId,
     required this.name,
     required this.treeLevel,
     this.parent,
@@ -25,7 +25,7 @@ class Tree implements ApiTable {
 
   factory Tree.fromJson(Map<String, dynamic> json) {
     return Tree(
-      id: json['treeRecordId'],
+      remoteId: json['treeRecordId'],
       name: json['name'],
       treeLevel: TreeLevel.fromJson(json['treeLevel']),
       parent: json['parent'] != null ? Tree.fromJson(json['parent']) : null,
@@ -44,8 +44,8 @@ class Tree implements ApiTable {
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
-      'treeLevelId': treeLevel.id,
-      'parentId': parent?.id,
+      'treeLevelId': treeLevel.remoteId,
+      'parentId': parent?.remoteId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
@@ -62,7 +62,7 @@ class Tree implements ApiTable {
     DateTime? updatedAt,
   }) {
     return Tree(
-      id: id ?? this.id,
+      remoteId: id ?? this.remoteId,
       name: name ?? this.name,
       treeLevel: treeLevel ?? this.treeLevel,
       parent: parent ?? this.parent,
