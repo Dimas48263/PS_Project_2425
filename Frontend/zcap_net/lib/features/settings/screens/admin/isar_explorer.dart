@@ -24,7 +24,8 @@ class IsarExplorerScreen extends StatefulWidget {
 class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
   final isar = DatabaseService.db;
   String selectedTable = 'EntityTypes';
-  final formatter = DateFormat('yyyy-MM-dd');
+  final smallDate = DateFormat('yyyy-MM-dd');
+  final fullDate = DateFormat('yyyy-MM-dd HH:mm:ss.SSS');
 
   @override
   Widget build(BuildContext context) {
@@ -93,12 +94,12 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
-                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
-                            ? formatter.format(e.endDate!)
+                            ? smallDate.format(e.endDate!)
                             : '')),
-                        DataCell(Text(formatter.format(e.createdAt))),
-                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -128,12 +129,12 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
-                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
-                            ? formatter.format(e.endDate!)
+                            ? smallDate.format(e.endDate!)
                             : '')),
-                        DataCell(Text(formatter.format(e.createdAt))),
-                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -163,12 +164,12 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
-                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
-                            ? formatter.format(e.endDate!)
+                            ? smallDate.format(e.endDate!)
                             : '')),
-                        DataCell(Text(formatter.format(e.createdAt))),
-                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -199,12 +200,12 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
-                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
-                            ? formatter.format(e.endDate!)
+                            ? smallDate.format(e.endDate!)
                             : '')),
-                        DataCell(Text(formatter.format(e.createdAt))),
-                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -234,12 +235,12 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
-                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
-                            ? formatter.format(e.endDate!)
+                            ? smallDate.format(e.endDate!)
                             : '')),
-                        DataCell(Text(formatter.format(e.createdAt))),
-                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -269,12 +270,12 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
-                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
-                            ? formatter.format(e.endDate!)
+                            ? smallDate.format(e.endDate!)
                             : '')),
-                        DataCell(Text(formatter.format(e.createdAt))),
-                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -305,12 +306,12 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
-                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
-                            ? formatter.format(e.endDate!)
+                            ? smallDate.format(e.endDate!)
                             : '')),
-                        DataCell(Text(formatter.format(e.createdAt))),
-                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -341,12 +342,12 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
-                        DataCell(Text(formatter.format(e.startDate))),
+                        DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
-                            ? formatter.format(e.endDate!)
+                            ? smallDate.format(e.endDate!)
                             : '')),
-                        DataCell(Text(formatter.format(e.createdAt))),
-                        DataCell(Text(formatter.format(e.updatedAt))),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),

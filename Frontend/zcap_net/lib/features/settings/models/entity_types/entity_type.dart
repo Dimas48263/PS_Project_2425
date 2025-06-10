@@ -44,6 +44,7 @@ factory EntityType.fromJson(Map<String, dynamic> json) {
     };
   }
 
+/*
   EntityType copyWith({
     int? id,
     String? name,
@@ -62,5 +63,5 @@ factory EntityType.fromJson(Map<String, dynamic> json) {
       updatedAt: updatedAt ?? this.updatedAt,
       isSynced: isSynced ?? this.isSynced,
     );
-  }
+  }*/
 }

@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 
 part 'entities_isar.g.dart';
@@ -49,6 +50,31 @@ class EntitiesIsar {
     return copy;
   }
 
-  //TODO: Método para converter a partir do modelo Entity
-  //TODO: Método para converter para o modelo Entity
+  factory EntitiesIsar.fromEntity(Entity entity) {
+  final isarEntity = EntitiesIsar()
+    ..remoteId = entity.id
+    ..name = entity.name
+    ..startDate = entity.startDate
+    ..endDate = entity.endDate
+    ..createdAt = entity.createdAt
+    ..updatedAt = entity.updatedAt
+    ..isSynced = true;
+
+  isarEntity.entityType.value = EntityTypeIsar()..remoteId = entity.entityTypeId;
+  return isarEntity;
+}
+
+Entity toEntity() {
+  return Entity(
+    id: remoteId ?? -1,
+    name: name,
+    entityTypeId: entityType.value?.remoteId ?? -1,
+    startDate: startDate,
+    endDate: endDate,
+    createdAt: createdAt,
+    updatedAt: updatedAt,
+    isSynced: isSynced,
+  );
+}
+
 }

@@ -1,4 +1,4 @@
-
+/*
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../../models/entity_types/entity_type.dart';
@@ -73,3 +73,4 @@ class EntityTypeListItem extends StatelessWidget {
     );
   }
 }
+*/

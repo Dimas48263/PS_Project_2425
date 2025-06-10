@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
-import 'package:zcap_net_app/core/services/sync_services/sync_service_manager.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';

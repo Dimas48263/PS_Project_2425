@@ -22,30 +22,30 @@ class EntityTypeSyncService implements SyncableService {
         final dataToSend = apiEntity.toJsonInput();
 
         if (item.remoteId == null || item.remoteId! <= 0) {
-          LogService.log('[EntityType Sync2] Criando nova entidade: dados $dataToSend');
+          LogService.log('[EntityType Sync2] Enviando novo registo: dados $dataToSend');
           final created = await ApiService.post('entityTypes', dataToSend);
 
           if (created['entityTypeId'] != null) {
             final updatedItem = item.setEntityIdAndSync(
               remoteId: created['entityTypeId'],
               isSynced: true,
-              updatedAt: DateTime.now(),
+              updatedAt: DateTime.parse(created['updatedAt']),
             );
             await isar.writeTxn(() async {
               await isar.entityTypeIsars.put(updatedItem);
             });
             LogService.log('[EntityType Sync2] Criado e guardado localmente');
           } else {
-            throw Exception('Resposta da API não contém o ID esperado.');
+            throw Exception('A API não contém o ID esperado.');
           }
         } else {
           LogService.log(
-              '[EntityType Sync2] Atualizando entidade existente: (remoteId: ${item.remoteId}), dados: $dataToSend');
+              '[EntityType Sync2] Atualizando remotamente o registo: (remoteId: ${item.remoteId}), dados: $dataToSend');
           await ApiService.put('entityTypes/${item.remoteId}', dataToSend);
 
           final updatedItem = item.setEntityIdAndSync(
             isSynced: true,
-            updatedAt: DateTime.now(),
+            updatedAt: item.updatedAt,
           );
           await isar.writeTxn(() async {
             await isar.entityTypeIsars.put(updatedItem);
@@ -98,7 +98,7 @@ class EntityTypeSyncService implements SyncableService {
 
   @override
   Future<void> syncAll() async {
+     await syncFromServer();
     await syncToServer();
-    await syncFromServer();
   }
 }

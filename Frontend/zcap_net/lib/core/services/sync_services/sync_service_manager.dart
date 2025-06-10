@@ -4,7 +4,8 @@ import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/sync_services/sync_manager.dart';
-import 'package:zcap_net_app/core/services/sync_services/entity_type_sync_service.dart';
+import 'package:zcap_net_app/core/services/sync_services/tables/entities_sync_service.dart';
+import 'package:zcap_net_app/core/services/sync_services/tables/entity_type_sync_service.dart';
 
 
 class SyncServiceManager {
@@ -21,6 +22,7 @@ class SyncServiceManager {
   void setup() {
     _syncManager = SyncManager([
       EntityTypeSyncService(DatabaseService.db),
+//      EntitySyncService(DatabaseService.db),
   // TreeSyncService(DatabaseService.db),
   // TreeLevelSyncService(DatabaseService.db),
     ]);
