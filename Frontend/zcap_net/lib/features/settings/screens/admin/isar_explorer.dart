@@ -1,3 +1,6 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
@@ -20,7 +23,7 @@ class IsarExplorerScreen extends StatefulWidget {
 
 class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
   final isar = DatabaseService.db;
-  String selectedTable = 'BuildingTypes';
+  String selectedTable = 'EntityTypes';
   final formatter = DateFormat('yyyy-MM-dd');
 
   @override
@@ -355,14 +358,23 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
         return const Center(child: Text("Tabela não suportada."));
     }
   }
-
-  Widget _buildDataTable({
-    required List<DataColumn> columns,
-    required List<DataRow> rows,
-  }) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: DataTable(columns: columns, rows: rows),
-    );
-  }
 }
+
+Widget _buildDataTable({
+  required List<DataColumn> columns,
+  required List<DataRow> rows,
+}) {
+  return DataTable2(
+    columns: columns,
+    rows: rows,
+    columnSpacing: 12,
+    horizontalMargin: 12,
+    minWidth: 600,
+    headingRowHeight: 56,
+    dataRowHeight: 56,
+    dividerThickness: 1,
+    isHorizontalScrollBarVisible: true,
+    isVerticalScrollBarVisible: true,
+  );
+}
+

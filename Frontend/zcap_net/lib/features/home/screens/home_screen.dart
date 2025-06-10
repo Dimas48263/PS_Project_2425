@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/sync_services/sync_manager.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
 import '../../../core/services/session_manager.dart';
@@ -109,6 +110,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text("Bem-vindo!", style: TextStyle(fontSize: 24)),
                   SizedBox(height: 10.0),
+/*                  IconButton(
+                    onPressed: () async =>
+                        {await SyncServiceManager().syncNow()},
+                    icon: const Icon(
+                      Icons.sync_problem,
+                      color: Colors.amberAccent,
+                    ),
+                  )*/
                 ],
               ),
             ),
@@ -152,5 +161,4 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
   }
-
 }

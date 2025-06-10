@@ -7,10 +7,6 @@ import 'package:zcap_net_app/features/settings/models/text_controllers_input_for
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/custom_cancel_text_button.dart';
-import 'package:zcap_net_app/widgets/custom_form.dart';
-import 'package:zcap_net_app/widgets/custom_list_view.dart';
-import 'package:zcap_net_app/widgets/custom_search_bar.dart';
 
 class TreeRecordDetailTypesScreen extends StatefulWidget {
   const TreeRecordDetailTypesScreen({super.key});

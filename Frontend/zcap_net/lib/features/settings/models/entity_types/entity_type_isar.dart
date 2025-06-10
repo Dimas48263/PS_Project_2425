@@ -5,16 +5,16 @@ import 'entity_type.dart';
 part 'entity_type_isar.g.dart';
 
 @collection
-class EntityTypeIsar implements IsarTable<EntityType>{
+class EntityTypeIsar implements IsarTable<EntityType> {
   /*Local variables*/
   @override
   Id id = Isar.autoIncrement;
   @override
   bool isSynced = false;
-  
+
   /* Remote variables */
   @override
-  int? remoteId; 
+  int? remoteId;
 
   @Index(type: IndexType.value)
   String name = "";
@@ -23,7 +23,7 @@ class EntityTypeIsar implements IsarTable<EntityType>{
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
-  
+
   // Construtor sem nome (necessário para o Isar)
   EntityTypeIsar();
 
@@ -50,10 +50,20 @@ class EntityTypeIsar implements IsarTable<EntityType>{
     return copy;
   }
 
-    // Método para converter a partir do modelo EntityType
+  void updateFromApiEntity(EntityType entity) {
+    remoteId = entity.id;
+    name = entity.name;
+    startDate = entity.startDate;
+    endDate = entity.endDate;
+    createdAt = entity.createdAt;
+    updatedAt = entity.updatedAt;
+    isSynced = true;
+  }
+
+  // Método para converter a partir do modelo EntityType
   factory EntityTypeIsar.fromEntityType(EntityType entity) {
     return EntityTypeIsar()
-      ..id = entity.id
+      ..remoteId = entity.id
       ..name = entity.name
       ..startDate = entity.startDate
       ..endDate = entity.endDate
@@ -75,9 +85,10 @@ class EntityTypeIsar implements IsarTable<EntityType>{
       isSynced: isSynced,
     );
   }
-  
+
   @override
-  IsarTable<ApiTable> setEntityIdAndSync({int? remoteId, bool? isSynced}) {
+  EntityTypeIsar setEntityIdAndSync(
+      {int? remoteId, bool? isSynced, DateTime? updatedAt}) {
     return EntityTypeIsar()
       ..id = id
       ..remoteId = remoteId ?? this.remoteId
@@ -85,7 +96,7 @@ class EntityTypeIsar implements IsarTable<EntityType>{
       ..startDate = startDate
       ..endDate = endDate
       ..createdAt = createdAt
-      ..updatedAt = updatedAt
+      ..updatedAt = updatedAt ?? this.updatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
 }

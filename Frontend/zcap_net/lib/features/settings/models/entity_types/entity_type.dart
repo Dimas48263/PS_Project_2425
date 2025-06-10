@@ -51,6 +51,7 @@ factory EntityType.fromJson(Map<String, dynamic> json) {
     DateTime? endDate,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isSynced,
   }) {
     return EntityType(
       id: id ?? this.id,
@@ -59,6 +60,7 @@ factory EntityType.fromJson(Map<String, dynamic> json) {
       endDate: endDate ?? this.endDate,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      isSynced: isSynced ?? this.isSynced,
     );
   }
 }

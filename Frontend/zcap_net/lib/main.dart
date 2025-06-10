@@ -7,8 +7,8 @@ import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
+import 'package:zcap_net_app/core/services/sync_services/sync_service_manager.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
-import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/home/screens/home_screen.dart';
 import 'core/services/session_manager.dart';
 import 'features/login/widgets/login_screen.dart';
@@ -25,7 +25,7 @@ void main() async {
 
   final session = SessionManager();
 
-  syncServiceV3.startListening();
+//  syncServiceV3.startListening();
   runApp(MyApp(
     sessionManager: session,
   ));
@@ -40,6 +40,8 @@ Future<void> _setup() async {
   AppConfig.initFromJson(configMap);
 
   await DatabaseService.setup();
+  SyncServiceManager().setup();
+
   await LogService.init(AppConfig.instance);
 
   LogService.log("Aplicação iniciada com API: ${AppConfig.instance.apiUrl}");

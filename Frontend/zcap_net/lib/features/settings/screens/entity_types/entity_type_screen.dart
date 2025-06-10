@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/sync_services/sync_service_manager.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
-import 'package:zcap_net_app/features/sync/force_sync.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/custom_unsynced_icon.dart';
 
 class EntityTypesScreen extends StatefulWidget {
   const EntityTypesScreen({super.key});
@@ -100,14 +101,7 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            if (!entityType.isSynced)
-                              IconButton(
-                                onPressed: () => forceSync(context),
-                                icon: const Icon(
-                                  Icons.sync_problem,
-                                  color: Colors.amberAccent,
-                                ),
-                              ),
+                            if (!entityType.isSynced) CustomUnsyncedIcon(),
                             IconButton(
                               onPressed: () {
                                 _addOrEditEntityType(entityType: entityType);
