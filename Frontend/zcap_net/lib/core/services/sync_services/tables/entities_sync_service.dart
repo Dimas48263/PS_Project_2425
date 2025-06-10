@@ -22,7 +22,7 @@ class EntitySyncService implements SyncableService {
       final apiEntity = item.toEntity();
       try {
         final dataToSend = apiEntity.toJsonInput();
-        if (apiEntity.remoteId == null || apiEntity.remoteId <= 0) {
+        if (apiEntity.remoteId <= 0) {
           LogService.log('[Entity Sync2] Enviando novo registo: dados $dataToSend');
           final created = await ApiService.post('entities', dataToSend);
           if (created['entityId'] != null) {

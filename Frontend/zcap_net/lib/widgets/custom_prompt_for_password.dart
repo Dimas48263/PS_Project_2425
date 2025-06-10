@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Future<String?> promptForPassword(BuildContext context, String userName) async {
+Future<String?> customPromptForPassword(BuildContext context, String userName) async {
   final controller = TextEditingController();
 
   return showDialog<String>(

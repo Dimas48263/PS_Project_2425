@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/auth_service.dart';
 import 'package:zcap_net_app/core/services/session_manager.dart';
 import 'package:zcap_net_app/core/services/sync_services/sync_service_manager.dart';
-import 'package:zcap_net_app/features/sync/ui/prompt_for_password.dart';
+import 'package:zcap_net_app/widgets/custom_prompt_for_password.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
-
-Future<void> forceSync(BuildContext context) async {
+Future<void> requestSync(BuildContext context) async {
   final session = SessionManager();
 
+  // Se não houver token válido, pede a senha
   if (session.token == null || session.isTokenExpired()) {
     final username = session.userName ?? "";
-    final password = await promptForPassword(context, username);
+    final password = await customPromptForPassword(context, username);
 
     if (password == null || password.isEmpty) {
       CustomNOkSnackBar.show(context, "Sincronização cancelada.");
@@ -25,8 +25,12 @@ Future<void> forceSync(BuildContext context) async {
     }
   }
 
-  await SyncServiceManager().syncNow();
-  CustomOkSnackBar.show(context, "Sincronização concluída com sucesso.");
+  try {
+    await SyncServiceManager().syncNow();
+    if (!context.mounted) return;
+    CustomOkSnackBar.show(context, "Sincronização concluída com sucesso.");
+  } catch (e) {
+    if (!context.mounted) return;
+    CustomNOkSnackBar.show(context, "Erro na sincronização: $e");
+  }
 }
-
-

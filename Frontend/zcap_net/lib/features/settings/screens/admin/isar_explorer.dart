@@ -295,6 +295,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DataColumn(label: Text("Local ID")),
                 DataColumn(label: Text("Remote Id")),
                 DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Entity Type Code")),
                 DataColumn(label: Text("Start Date")),
                 DataColumn(label: Text("End Date")),
                 DataColumn(label: Text("Created at")),
@@ -306,6 +307,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
+                        DataCell(Text(e.entityType.toString())),
                         DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
                             ? smallDate.format(e.endDate!)
@@ -378,4 +380,3 @@ Widget _buildDataTable({
     isVerticalScrollBarVisible: true,
   );
 }
-

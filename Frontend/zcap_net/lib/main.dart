@@ -63,7 +63,7 @@ class MyApp extends StatelessWidget {
       valueListenable: isDarkModeNotifier,
       builder: (context, isDarkMode, child) {
         return MaterialApp(
-          debugShowCheckedModeBanner: true,
+          debugShowCheckedModeBanner: false,
           title: 'Zcap Net',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(

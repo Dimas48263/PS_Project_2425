@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
-import 'package:zcap_net_app/core/services/sync_services/sync_service_manager.dart';
+import 'package:zcap_net_app/core/services/sync_services/request_sync.dart';
 
 class StatusBar extends StatelessWidget {
   final String? userName;
@@ -34,8 +34,9 @@ class StatusBar extends StatelessWidget {
                 LogService.log('Online: $isOnline');
                 return isOnline
                     ? InkWell(
-                        onTap: () async =>
-                            {await SyncServiceManager().syncNow()},
+                        onTap: () async {
+                          await requestSync(context);
+                        },
                         child: Icon(
                           Icons.cloud_outlined,
                           color: Colors.green,
@@ -43,8 +44,9 @@ class StatusBar extends StatelessWidget {
                         ),
                       )
                     : InkWell(
-                        onTap: () async =>
-                            {await SyncServiceManager().syncNow()},
+                        onTap: () async {
+                          await requestSync(context);
+                        },
                         child: Icon(
                           Icons.cloud_off,
                           color: Colors.red,
