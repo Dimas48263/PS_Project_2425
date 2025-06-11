@@ -137,10 +137,8 @@ class TreeIsar extends IsarTable<Tree> {
 
     await DatabaseService.db.writeTxn(() async {
       await DatabaseService.db.treeIsars.put(this);
-      print("a guardar treeLevel: ${treeLevel.value?.name}");
       await treeLevel.save(); 
       if (entity.parent != null) {
-        print("a guardar parent: ${parent.value?.name}");
         await parent.save(); 
       }
     });
