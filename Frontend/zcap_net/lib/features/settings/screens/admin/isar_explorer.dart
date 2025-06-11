@@ -285,7 +285,11 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
 
       case 'Entities':
         return FutureBuilder<List<EntitiesIsar>>(
-          future: isar.entitiesIsars.where().findAll(),
+          future: () async {
+            final items = await isar.entitiesIsars.where().findAll();
+            await Future.wait(items.map((e) => e.entityType.load()));
+            return items;
+          }(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return const Center(child: CircularProgressIndicator());
@@ -295,28 +299,30 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DataColumn(label: Text("Local ID")),
                 DataColumn(label: Text("Remote Id")),
                 DataColumn(label: Text("Name")),
-                DataColumn(label: Text("Entity Type Code")),
+                DataColumn(label: Text("Entity Type Local Code")),
+                DataColumn(label: Text("Entity Type Api Code")),
                 DataColumn(label: Text("Start Date")),
                 DataColumn(label: Text("End Date")),
                 DataColumn(label: Text("Created at")),
                 DataColumn(label: Text("Updated at")),
                 DataColumn(label: Text("Is Sync")),
               ],
-              rows: items
-                  .map((e) => DataRow(cells: [
-                        DataCell(Text(e.id.toString())),
-                        DataCell(Text(e.remoteId.toString())),
-                        DataCell(Text(e.name)),
-                        DataCell(Text(e.entityType.toString())),
-                        DataCell(Text(smallDate.format(e.startDate))),
-                        DataCell(Text(e.endDate != null
-                            ? smallDate.format(e.endDate!)
-                            : '')),
-                        DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
-                        DataCell(Text(e.isSynced.toString())),
-                      ]))
-                  .toList(),
+              rows: items.map((e) {
+                final entityType = e.entityType.value;
+                return DataRow(cells: [
+                  DataCell(Text(e.id.toString())),
+                  DataCell(Text(e.remoteId.toString())),
+                  DataCell(Text(e.name)),
+                  DataCell(Text(entityType?.id.toString() ?? '')),
+                  DataCell(Text(entityType?.remoteId.toString() ?? '')),
+                  DataCell(Text(smallDate.format(e.startDate))),
+                  DataCell(Text(
+                      e.endDate != null ? smallDate.format(e.endDate!) : '')),
+                  DataCell(Text(smallDate.format(e.createdAt))),
+                  DataCell(Text(fullDate.format(e.updatedAt))),
+                  DataCell(Text(e.isSynced.toString())),
+                ]);
+              }).toList(),
             );
           },
         );

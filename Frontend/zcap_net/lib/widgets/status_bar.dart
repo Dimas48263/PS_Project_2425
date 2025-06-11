@@ -21,11 +21,11 @@ class StatusBar extends StatelessWidget {
         children: [
           Text(
             'User: ',
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           Text(
             userName ?? '',
-            style: const TextStyle(fontSize: 14),
+            style: const TextStyle(fontSize: 16),
           ),
           const Spacer(),
           ValueListenableBuilder<bool>(
@@ -40,7 +40,7 @@ class StatusBar extends StatelessWidget {
                         child: Icon(
                           Icons.cloud_outlined,
                           color: Colors.green,
-                          size: 18.0,
+                          size: 25.0,
                         ),
                       )
                     : InkWell(
@@ -50,7 +50,7 @@ class StatusBar extends StatelessWidget {
                         child: Icon(
                           Icons.cloud_off,
                           color: Colors.red,
-                          size: 18.0,
+                          size: 25.0,
                         ),
                       );
               })
