@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 
 Widget buildListView<T extends IsarTable>(
-  List<T> list,
-  List<List<String>> labelsList,
-  void Function(T) onSync,
-  void Function(T) onEdit,
-) {
+    List<T> list,
+    List<List<String>> labelsList,
+    void Function(T) onSync,
+    void Function(T) onEdit,
+    Future<void> Function(T) onDelete) {
   return Expanded(
     child: ListView.builder(
       itemCount: list.length,
@@ -17,7 +17,8 @@ Widget buildListView<T extends IsarTable>(
         return Card(
           child: ListTile(
             contentPadding: const EdgeInsets.only(left: 10.0),
-            title: Text(labels[0], style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(labels[0],
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -30,11 +31,16 @@ Widget buildListView<T extends IsarTable>(
                 if (!item.isSynced)
                   IconButton(
                     onPressed: () => onSync(item),
-                    icon: const Icon(Icons.sync_problem, color: Colors.orange, size: 30),
+                    icon: const Icon(Icons.sync_problem,
+                        color: Colors.orange, size: 30),
                   ),
                 IconButton(
                   icon: const Icon(Icons.edit),
                   onPressed: () => onEdit(item),
+                ),
+                IconButton(
+                  onPressed: () => onDelete(item),
+                  icon: const Icon(Icons.delete, color: Colors.red),
                 ),
               ],
             ),

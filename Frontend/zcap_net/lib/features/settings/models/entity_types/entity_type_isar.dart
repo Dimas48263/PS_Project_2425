@@ -13,6 +13,7 @@ class EntityTypeIsar implements IsarTable<EntityType> {
   bool isSynced = false;
 
   /* Remote variables */
+  @Index()
   @override
   int? remoteId;
 
@@ -22,6 +23,7 @@ class EntityTypeIsar implements IsarTable<EntityType> {
   DateTime startDate = DateTime(DateTime.now().year, 1, 1);
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
+  @override
   DateTime updatedAt = DateTime.now();
 
   // Construtor sem nome (necessário para o Isar)
@@ -50,7 +52,8 @@ class EntityTypeIsar implements IsarTable<EntityType> {
     return copy;
   }
 
-  void updateFromApiEntity(EntityType entity) {
+  @override
+  Future<void> updateFromApiEntity(EntityType entity) async {
     remoteId = entity.remoteId;
     name = entity.name;
     startDate = entity.startDate;

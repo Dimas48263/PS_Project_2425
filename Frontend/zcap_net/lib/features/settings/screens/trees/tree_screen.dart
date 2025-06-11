@@ -92,28 +92,6 @@ class _TreesScreenState extends State<TreesScreen> {
             }),
             onAddPressed: () => _addOrEditTree(null),
           ),
-          /*Row(
-            children: [
-              customSearchBar(
-                  _searchController,
-                  (value) => setState(() {
-                        _searchTerm = value.toLowerCase();
-                      })),
-              // Campo de pesquisa expandido para ocupar o espaço disponível
-              const SizedBox(width: 8.0),
-              // Botão adicionar ao lado
-              ElevatedButton(
-                onPressed: () => _addOrEditTree(null),
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(12),
-                  backgroundColor: Colors.grey,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Icon(Icons.add),
-              ),
-            ],
-          ),*/
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
@@ -121,11 +99,26 @@ class _TreesScreenState extends State<TreesScreen> {
                   filteredList,
                   getLabelsList(filteredList),
                   (tree) {
-                    syncServiceV3.synchronize(tree, DatabaseService.db.treeIsars,
-                        'trees', 'treeRecordId');
+                    syncServiceV3.synchronize(tree,
+                        DatabaseService.db.treeIsars, 'trees', 'treeRecordId');
                     print('update pressed');
                   },
                   (tree) => _addOrEditTree(tree),
+                  (tree) async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => const ConfirmDialog(
+                        title: 'Confirmar eliminação',
+                        content:
+                            'Tem certeza que deseja eliminar este elemento?',
+                      ),
+                    );
+                    if (confirm == true) {
+                      await DatabaseService.db.writeTxn(() async {
+                        await DatabaseService.db.treeIsars.delete(tree.id);
+                      });
+                    }
+                  },
                 ),
         ],
       ),
@@ -188,7 +181,7 @@ class _TreesScreenState extends State<TreesScreen> {
                   validator: (value) =>
                       value == null ? 'Campo obrigatório' : null),
               customDropdownSearch<TreeIsar>(
-                enabled: treeLevel != null,
+                enabled: treeLevel != null && treeLevel!.levelId > 1,
                 items: treeLevel == null
                     ? trees
                     : trees
@@ -248,7 +241,9 @@ class _TreesScreenState extends State<TreesScreen> {
           DatabaseService.db.treeIsars,
           "trees",
           Tree.fromJson,
-          (tree) async => TreeIsar.toRemote(tree));
+          (tree) async => TreeIsar.toRemote(tree),
+          (collection, remoteId) =>
+              collection.where().remoteIdEqualTo(remoteId).findFirst());
     }
     setState(() {
       _isLoading = false;

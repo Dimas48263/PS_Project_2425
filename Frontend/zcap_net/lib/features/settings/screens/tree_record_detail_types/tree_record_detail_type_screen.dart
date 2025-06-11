@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
@@ -130,6 +131,21 @@ class _TreeRecordDetailTypesScreenState
                     print('update pressed');
                   },
                   (detailType) => _addOrEditTreerRecordDetailType(detailType),
+                  (detailType) async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => const ConfirmDialog(
+                        title: 'Confirmar eliminação',
+                        content:
+                            'Tem certeza que deseja eliminar este tipo de detalhe?',
+                      ),
+                    );
+                    if (confirm == true) {
+                      await DatabaseService.db.writeTxn(() async {
+                        await DatabaseService.db.treeRecordDetailTypeIsars.delete(detailType.id);
+                      });
+                    }
+                  }
                 ),
         ],
       ),
@@ -207,7 +223,9 @@ class _TreeRecordDetailTypesScreenState
               DatabaseService.db.treeRecordDetailTypeIsars,
               "tree-record-detail-types",
               TreeRecordDetailType.fromJson,
-              (tree) async => TreeRecordDetailTypeIsar.toRemote(tree));
+              (tree) async => TreeRecordDetailTypeIsar.toRemote(tree),
+              (collection, remoteId) =>
+                  collection.where().remoteIdEqualTo(remoteId).findFirst());
     }
     setState(() {
       _isLoading = false;

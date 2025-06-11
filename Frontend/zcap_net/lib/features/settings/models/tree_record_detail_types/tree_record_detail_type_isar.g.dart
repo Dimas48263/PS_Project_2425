@@ -64,7 +64,21 @@ const TreeRecordDetailTypeIsarSchema = CollectionSchema(
   deserialize: _treeRecordDetailTypeIsarDeserialize,
   deserializeProp: _treeRecordDetailTypeIsarDeserializeProp,
   idName: r'id',
-  indexes: {},
+  indexes: {
+    r'remoteId': IndexSchema(
+      id: 6301175856541681032,
+      name: r'remoteId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'remoteId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    )
+  },
   links: {},
   embeddedSchemas: {},
   getId: _treeRecordDetailTypeIsarGetId,
@@ -169,6 +183,15 @@ extension TreeRecordDetailTypeIsarQueryWhereSort on QueryBuilder<
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar, QAfterWhere>
+      anyRemoteId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'remoteId'),
+      );
+    });
+  }
 }
 
 extension TreeRecordDetailTypeIsarQueryWhere on QueryBuilder<
@@ -236,6 +259,121 @@ extension TreeRecordDetailTypeIsarQueryWhere on QueryBuilder<
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> remoteIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> remoteIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> remoteIdEqualTo(int? remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [remoteId],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> remoteIdNotEqualTo(int? remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> remoteIdGreaterThan(
+    int? remoteId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [remoteId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> remoteIdLessThan(
+    int? remoteId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [],
+        upper: [remoteId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> remoteIdBetween(
+    int? lowerRemoteId,
+    int? upperRemoteId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [lowerRemoteId],
+        includeLower: includeLower,
+        upper: [upperRemoteId],
         includeUpper: includeUpper,
       ));
     });

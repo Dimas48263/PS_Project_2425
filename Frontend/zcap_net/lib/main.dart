@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:window_size/window_size.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
 import 'package:zcap_net_app/core/services/sync_services/sync_service_manager.dart';
@@ -25,7 +26,7 @@ void main() async {
 
   final session = SessionManager();
 
-//  syncServiceV3.startListening();
+  syncServiceV3.startListening();
   runApp(MyApp(
     sessionManager: session,
   ));

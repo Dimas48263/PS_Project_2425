@@ -30,7 +30,9 @@ class SyncServiceV3 {
   }
 
   void startListening() {
-    _syncTimer = Timer.periodic(Duration(seconds: AppConfig.instance.apiSyncIntervalSeconds), (timer) async {
+    _syncTimer = Timer.periodic(
+        Duration(seconds: AppConfig.instance.apiSyncIntervalSeconds),
+        (timer) async {
       if (await isApiReachable()) {
         LogService.log('Reconectado. Verificando dados pendentes.');
         await synchronizeAll();
@@ -60,7 +62,6 @@ class SyncServiceV3 {
 
     await Future.wait(unsynced
         .map((local) => synchronize(local, collection, endpoint, idName)));
-
   }
 
   Future<void> synchronizeAll() async {
@@ -140,7 +141,9 @@ class SyncServiceV3 {
       IsarCollection<TIsar> collection,
       String endpoint,
       TApi Function(Map<String, dynamic>) fromJson,
-      Future<TIsar> Function(TApi) toIsar) async {
+      Future<TIsar> Function(TApi) toIsar,
+      Future<TIsar?> Function(IsarCollection<TIsar>, int)
+          findByRemoteId) async {
     final all = await collection.where().findAll();
     final unsynced = all.where((e) => !e.isSynced).toList();
 
@@ -149,17 +152,22 @@ class SyncServiceV3 {
           '[Sync] Existem ainda ${unsynced.length} registos locais por sincronizar. Não é possivel atualizar os dados locais. Aguardar nova tentativa...');
       return;
     }
-    final ids = all.map((e) => e.id).toList();
     final apiData =
         await ApiService.getList(endpoint, (json) => fromJson(json));
-    await isar.writeTxn(() async {
-      await collection.deleteAll(ids);
-    }); // Limpa os dados locais
+
     for (var item in apiData) {
-      final local = await toIsar(item);
-      await isar.writeTxn(() async {
-        await collection.put(local);
-      });
+      final oldLocal = await findByRemoteId(collection, item.remoteId);
+      if (oldLocal != null && item.updatedAt.isAfter(oldLocal.updatedAt)) {
+        await oldLocal.updateFromApiEntity(item);
+        await isar.writeTxn(() async {
+          await collection.put(oldLocal);
+        });
+      } else if (oldLocal == null) {
+        final newLocal = await toIsar(item);
+        await isar.writeTxn(() async {
+          await collection.put(newLocal);
+        });
+      }
     }
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
@@ -142,6 +143,21 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                     print('update pressed');
                   },
                   (treeLevel) => _addOrEditTreeLevel(treeLevel),
+                  (treeLevel) async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => const ConfirmDialog(
+                        title: 'Confirmar eliminação',
+                        content:
+                            'Tem certeza que deseja eliminar este nível?',
+                      ),
+                    );
+                    if (confirm == true) {
+                      await DatabaseService.db.writeTxn(() async {
+                        await DatabaseService.db.treeLevelIsars.delete(treeLevel.id);
+                      });
+                    }
+                  }
                 ),
         ],
       ),
@@ -242,7 +258,11 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
           DatabaseService.db.treeLevelIsars,
           "tree-levels",
           TreeLevel.fromJson,
-          (TreeLevel treeLevel) async => TreeLevelIsar.toRemote(treeLevel));
+          (TreeLevel treeLevel) async => TreeLevelIsar.toRemote(treeLevel),
+          (collection, remoteId) => collection
+              .where()
+              .remoteIdEqualTo(remoteId)
+              .findFirst());
     }
     setState(() {
       _isLoading = false;

@@ -9,6 +9,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   @override
   Id id = Isar.autoIncrement;
   
+  @Index()
   @override
   late int remoteId;
   late int levelId;
@@ -17,6 +18,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   late DateTime startDate;
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
+  @override
   DateTime updatedAt = DateTime.now(); 
 
   @Index()
@@ -94,5 +96,18 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   @override
   String toString() {
     return name;
+  }
+  
+  @override
+  Future<void> updateFromApiEntity(TreeLevel entity) async{
+    remoteId = entity.remoteId;
+    levelId = entity.levelId;
+    name = entity.name;
+    description = entity.description;
+    startDate = entity.startDate;
+    endDate = entity.endDate;
+    createdAt = entity.createdAt;
+    updatedAt = entity.updatedAt;
+    isSynced = true;
   }
 }
