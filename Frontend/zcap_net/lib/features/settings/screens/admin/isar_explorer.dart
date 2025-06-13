@@ -10,6 +10,7 @@ import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dar
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
@@ -45,6 +46,9 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DropdownMenuItem(
                     value: 'treeRecordDetailTypes',
                     child: Text("Tree Record Detail Types")),
+                DropdownMenuItem(
+                    value: 'treeRecordDetails',
+                    child: Text("Tree Record Details")),
                 DropdownMenuItem(value: 'Users', child: Text("Users")),
                 DropdownMenuItem(
                     value: 'UserProfiles', child: Text("User Profiles")),
@@ -92,7 +96,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DataColumn(label: Text("ID")),
                 DataColumn(label: Text("RemoteId")),
                 DataColumn(label: Text("Name")),
-                DataColumn(label: Text("TreLevelId")),
+                DataColumn(label: Text("TreeLevelId")),
                 DataColumn(label: Text("Start Date")),
                 DataColumn(label: Text("End Date")),
                 DataColumn(label: Text("Created at")),
@@ -175,6 +179,54 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
+                        DataCell(Text(smallDate.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? smallDate.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+      case 'treeRecordDetails':
+        return FutureBuilder<List<TreeRecordDetailIsar>>(
+          future: () async {
+            final details = await isar.treeRecordDetailIsars.where().findAll();
+
+            for (final detail in details) {
+              await detail.tree.load();
+              await detail.detailType.load(); 
+            }
+
+            return details;
+          }(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("RemoteId")),
+                DataColumn(label: Text("ValueCol")),
+                DataColumn(label: Text("TreeId")),
+                DataColumn(label: Text("DetailTypeId")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.valueCol)),
+                        DataCell(Text(e.tree.value?.id.toString() ?? '')),
+                        DataCell(Text(e.detailType.value?.id.toString() ?? '')),
                         DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
                             ? smallDate.format(e.endDate!)

@@ -1,8 +1,11 @@
 
 import 'package:isar/isar.dart';
+import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 
 part 'tree_record_detail_isar.g.dart';
@@ -46,7 +49,7 @@ class TreeRecordDetailIsar implements IsarTable<TreeRecordDetail> {
   @override
   TreeRecordDetail toEntity() {
     return TreeRecordDetail(
-      remoteId: id, 
+      remoteId: remoteId ?? 0, 
       tree: tree.value!.toEntity(), 
       detailType: detailType.value!.toEntity(), 
       valueCol: valueCol, 
@@ -71,6 +74,9 @@ class TreeRecordDetailIsar implements IsarTable<TreeRecordDetail> {
       ..updatedAt = trd.updatedAt
       ..isSynced = true;
 
+    remote.tree.value = await getOrBuildTree(trd.tree);
+    remote.detailType.value = await getOrBuildDetailType(trd.detailType);
+
     return remote;
   }
   
@@ -83,5 +89,27 @@ class TreeRecordDetailIsar implements IsarTable<TreeRecordDetail> {
     createdAt = entity.createdAt;
     updatedAt = entity.updatedAt;
     isSynced = true;
+  }
+
+  static Future<TreeIsar> getOrBuildTree(Tree tree) async {
+    TreeIsar? treeIsar = await DatabaseService.db.treeIsars.where().remoteIdEqualTo(tree.remoteId).findFirst();
+    if (treeIsar != null) return treeIsar;
+
+    TreeIsar newTree = await TreeIsar.toRemote(tree);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.treeIsars.put(newTree);
+    });
+    return newTree;
+  }
+
+  static Future<TreeRecordDetailTypeIsar> getOrBuildDetailType(TreeRecordDetailType detailType) async {
+    TreeRecordDetailTypeIsar? detailTypeIsar = await DatabaseService.db.treeRecordDetailTypeIsars.where().remoteIdEqualTo(detailType.remoteId).findFirst();
+    if (detailTypeIsar != null) return detailTypeIsar;
+
+    TreeRecordDetailTypeIsar newdetailType = TreeRecordDetailTypeIsar.toRemote(detailType);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.treeRecordDetailTypeIsars.put(newdetailType);
+    });
+    return newdetailType;
   }
 }

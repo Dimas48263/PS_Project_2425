@@ -7,6 +7,7 @@ import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 
 class SyncServiceV3 {
@@ -225,5 +226,10 @@ final List<SyncEntry> syncEntries = [
     endpoint: 'tree-record-detail-types',
     getCollection: (isar) => isar.treeRecordDetailTypeIsars,
     idName: 'treeRecordDetailTypeId',
+  ),
+  SyncEntry<TreeRecordDetailIsar>(
+    endpoint: 'tree-record-details',
+    getCollection: (isar) => isar.treeRecordDetailIsars,
+    idName: 'detailId',
   ),
 ];

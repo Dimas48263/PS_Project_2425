@@ -29,7 +29,7 @@ class TreeRecordDetail implements ApiTable {
   
   factory TreeRecordDetail.fromJson(Map<String, dynamic> json) {
     return TreeRecordDetail(
-      remoteId: json['treeRecordId'],
+      remoteId: json['detailId'],
       tree: Tree.fromJson(json['treeRecord']),
       detailType: TreeRecordDetailType.fromJson(json['detailType']),
       valueCol: json['valueCol'],
