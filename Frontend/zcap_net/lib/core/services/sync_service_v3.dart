@@ -8,6 +8,7 @@ import 'package:zcap_net_app/features/settings/models/building_types/building_ty
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 
 class SyncServiceV3 {
@@ -139,12 +140,13 @@ class SyncServiceV3 {
   }
 
   Future<void> updateLocalData<TIsar extends IsarTable, TApi extends ApiTable>(
-      IsarCollection<TIsar> collection,
-      String endpoint,
-      TApi Function(Map<String, dynamic>) fromJson,
-      Future<TIsar> Function(TApi) toIsar,
-      Future<TIsar?> Function(IsarCollection<TIsar>, int)
-          findByRemoteId) async {
+    IsarCollection<TIsar> collection,
+    String endpoint,
+    TApi Function(Map<String, dynamic>) fromJson,
+    Future<TIsar> Function(TApi) toIsar,
+    Future<TIsar?> Function(IsarCollection<TIsar>, int) findByRemoteId, {
+    Future<void> Function(TIsar)? saveLinksAfterPut, // <--- função opcional
+  }) async {
     final all = await collection.where().findAll();
     final unsynced = all.where((e) => !e.isSynced).toList();
 
@@ -156,17 +158,37 @@ class SyncServiceV3 {
     final apiData =
         await ApiService.getList(endpoint, (json) => fromJson(json));
 
+    final ids = [];
+
     for (var item in apiData) {
       final oldLocal = await findByRemoteId(collection, item.remoteId);
-      if (oldLocal != null && item.updatedAt.isAfter(oldLocal.updatedAt)) {
-        await oldLocal.updateFromApiEntity(item);
-        await isar.writeTxn(() async {
-          await collection.put(oldLocal);
-        });
+      ids.add(item.remoteId);
+      if (oldLocal != null) {
+        if (item.updatedAt == oldLocal.updatedAt) continue;
+        if (item.updatedAt.isAfter(oldLocal.updatedAt)) {
+          await oldLocal.updateFromApiEntity(item);
+          await isar.writeTxn(() async {
+            await collection.put(oldLocal);
+            if (saveLinksAfterPut != null) {
+              await saveLinksAfterPut(oldLocal);
+            }
+          });
+        }
       } else if (oldLocal == null) {
         final newLocal = await toIsar(item);
         await isar.writeTxn(() async {
           await collection.put(newLocal);
+          if (saveLinksAfterPut != null) {
+            await saveLinksAfterPut(newLocal);
+          }
+        });
+      }
+    }
+    // Apaga todos os elementos que nao estao na api
+    for (var local in await collection.where().findAll()) {
+      if (!ids.contains(local.remoteId)) {
+        await isar.writeTxn(() async {
+          await collection.delete(local.id);
         });
       }
     }
@@ -194,7 +216,7 @@ final List<SyncEntry> syncEntries = [
   SyncEntry<TreeIsar>(
     endpoint: 'trees',
     getCollection: (isar) => isar.treeIsars,
-    idName: 'treeId',
+    idName: 'treeRecordId',
   ),
   SyncEntry<TreeLevelIsar>(
     endpoint: 'tree-levels',
@@ -205,6 +227,11 @@ final List<SyncEntry> syncEntries = [
     endpoint: 'tree-record-detail-types',
     getCollection: (isar) => isar.treeRecordDetailTypeIsars,
     idName: 'treeRecordDetailTypeId',
+  ),
+  SyncEntry<TreeRecordDetailIsar>(
+    endpoint: 'tree-record-details',
+    getCollection: (isar) => isar.treeRecordDetailIsars,
+    idName: 'detailId',
   ),
   SyncEntry<BuildingTypesIsar>(
     endpoint: 'buildingTypes',

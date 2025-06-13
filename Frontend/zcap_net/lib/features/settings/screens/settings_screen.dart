@@ -3,8 +3,9 @@ import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_til
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
 import 'package:zcap_net_app/features/settings/screens/building_types/building_types_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/entity_types/entity_type_screen.dart';
-import 'package:zcap_net_app/features/settings/screens/tree_levels/tree_levels_screen.dart';
-import 'package:zcap_net_app/features/settings/screens/tree_record_detail_types/tree_record_detail_type_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/trees/tree_levels_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/trees/tree_record_detail_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/trees/tree_record_detail_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_data_access/user_data_access_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_profiles_screen.dart';
@@ -59,6 +60,17 @@ class SettingsScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) =>
                               const TreeRecordDetailTypesScreen()),
+                    );
+                  },
+                ),
+                ListTile(
+                  title: const Text("Detalhes"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const TreeRecordDetailsScreen()),
                     );
                   },
                 ),

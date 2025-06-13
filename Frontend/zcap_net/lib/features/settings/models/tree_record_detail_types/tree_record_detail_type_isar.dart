@@ -57,7 +57,6 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType> {
   }
 
   static TreeRecordDetailTypeIsar toRemote(TreeRecordDetailType detailType) {
-    print("To remote! id - ${detailType.remoteId}");
     return TreeRecordDetailTypeIsar()
       ..remoteId = detailType.remoteId
       ..name = detailType.name
