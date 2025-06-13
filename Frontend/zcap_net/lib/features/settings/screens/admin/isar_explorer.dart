@@ -73,7 +73,16 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
     switch (selectedTable) {
       case 'tree':
         return FutureBuilder<List<TreeIsar>>(
-          future: isar.treeIsars.where().findAll(),
+          future: () async {
+            final trees = await isar.treeIsars.where().findAll();
+
+            for (final tree in trees) {
+              await tree.treeLevel.load(); // <- obrigatório
+              await tree.parent.load(); // <- se também usares o parent
+            }
+
+            return trees;
+          }(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return const Center(child: CircularProgressIndicator());
@@ -83,6 +92,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DataColumn(label: Text("ID")),
                 DataColumn(label: Text("RemoteId")),
                 DataColumn(label: Text("Name")),
+                DataColumn(label: Text("TreLevelId")),
                 DataColumn(label: Text("Start Date")),
                 DataColumn(label: Text("End Date")),
                 DataColumn(label: Text("Created at")),
@@ -94,6 +104,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(e.id.toString())),
                         DataCell(Text(e.remoteId.toString())),
                         DataCell(Text(e.name)),
+                        DataCell(Text(e.treeLevel.value?.id.toString() ?? '')),
                         DataCell(Text(smallDate.format(e.startDate))),
                         DataCell(Text(e.endDate != null
                             ? smallDate.format(e.endDate!)

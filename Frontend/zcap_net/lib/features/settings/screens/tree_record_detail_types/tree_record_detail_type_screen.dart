@@ -94,28 +94,6 @@ class _TreeRecordDetailTypesScreenState
                     _searchTerm = value.toLowerCase();
                   }),
               onAddPressed: () => _addOrEditTreerRecordDetailType(null)),
-/*          Row(
-            children: [
-              customSearchBar(
-                  _searchController,
-                  (value) => setState(() {
-                        _searchTerm = value.toLowerCase();
-                      })),
-              // Campo de pesquisa expandido para ocupar o espaço disponível
-              const SizedBox(width: 8.0),
-              // Botão adicionar ao lado
-              ElevatedButton(
-                onPressed: () => _addOrEditTreerRecordDetailType(null),
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(12),
-                  backgroundColor: Colors.grey,
-                  foregroundColor: Colors.white,
-                ),
-                child: const Icon(Icons.add),
-              ),
-            ],
-          ),*/
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
@@ -154,6 +132,7 @@ class _TreeRecordDetailTypesScreenState
 
   void _addOrEditTreerRecordDetailType(
       TreeRecordDetailTypeIsar? detailType) async {
+    final formKey = GlobalKey<FormState>();
     final nameController = TextEditingController(text: detailType?.name ?? '');
     final unitController = TextEditingController(text: detailType?.unit ?? '');
     DateTime? startDate = detailType?.startDate ?? DateTime.now();
@@ -172,7 +151,8 @@ class _TreeRecordDetailTypesScreenState
           return AlertDialog(
             title:
                 Text(detailType == null ? 'Novo Elemento' : 'Editar Estrutura'),
-            content: buildForm2(
+            content: buildForm(
+                formKey,
                 context, textControllersConfig, startDate, endDate, (value) {
               setState(() => startDate = value);
               setModalState(() {}); // Atualiza o dialog
@@ -189,8 +169,7 @@ class _TreeRecordDetailTypesScreenState
               TextButton(
                 child: const Text('Guardar'),
                 onPressed: () async {
-                  if (nameController.text.isNotEmpty &&
-                      unitController.text.isNotEmpty) {
+                  if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
                       final newDetailType =
@@ -238,8 +217,8 @@ class _TreeRecordDetailTypesScreenState
     for (var detailType in filteredList) {
       labelsList.add([
         detailType.name,
-        'Inicio: ${detailType.startDate}',
-        'Fim: ${detailType.endDate}'
+        'Inicio: ${detailType.startDate.toLocal().toString().split(' ')[0]}',
+        'Fim: ${detailType.endDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'
       ]);
     }
     return labelsList;

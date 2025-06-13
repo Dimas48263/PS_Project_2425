@@ -34,8 +34,15 @@ class TreeIsar extends IsarTable<Tree> {
     final tl = await DatabaseService.db.treeLevelIsars
         .filter()
         .remoteIdEqualTo(id)
-        .findFirst(); //.where().findAll();
-    return tl ?? TreeLevelIsar.toRemote(treeLevel);
+        .findFirst();
+
+    if (tl != null) return tl;
+
+    final newTl = TreeLevelIsar.toRemote(treeLevel);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.treeLevelIsars.put(newTl);
+    });
+    return newTl;
   }
 
   static Future<TreeIsar> findOrBuildTree(int? id, Tree tree) async {
@@ -46,7 +53,13 @@ class TreeIsar extends IsarTable<Tree> {
           .remoteIdEqualTo(id)
           .findFirst();
     }
-    return t ?? TreeIsar.toRemote(tree);
+    if (t != null) return t;
+
+    final newT = await TreeIsar.toRemote(tree);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.treeIsars.put(newT);
+    });
+    return newT;
   }
 
   static Future<TreeIsar> toRemote(Tree tree) async {
@@ -69,14 +82,6 @@ class TreeIsar extends IsarTable<Tree> {
       final parentIsar = await findOrBuildTree(tree.parent?.remoteId, tree);
       treeIsar.parent.value = parentIsar;
     }
-
-    await DatabaseService.db.writeTxn(() async {
-      await DatabaseService.db.treeIsars.put(treeIsar);
-      await treeIsar.treeLevel.save();
-      if (tree.parent != null) {
-        await treeIsar.parent.save();
-      }
-    });
 
     return treeIsar;
   }
@@ -134,13 +139,5 @@ class TreeIsar extends IsarTable<Tree> {
     createdAt = entity.createdAt;
     updatedAt = entity.updatedAt;
     isSynced = true;
-
-    await DatabaseService.db.writeTxn(() async {
-      await DatabaseService.db.treeIsars.put(this);
-      await treeLevel.save(); 
-      if (entity.parent != null) {
-        await parent.save(); 
-      }
-    });
   }
 }

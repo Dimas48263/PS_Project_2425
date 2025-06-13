@@ -128,13 +128,17 @@ class _TreesScreenState extends State<TreesScreen> {
   List<List<String>> getLabelsList(List<TreeIsar> filteredList) {
     List<List<String>> labelsList = [];
     for (var tree in filteredList) {
-      labelsList.add(
-          [tree.name, 'Inicio: ${tree.startDate}', 'Fim: ${tree.endDate}']);
+      labelsList.add([
+        tree.name,
+        'Inicio: ${tree.startDate.toLocal().toString().split(' ')[0]}',
+        'Fim: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'
+      ]);
     }
     return labelsList;
   }
 
   void _addOrEditTree(TreeIsar? tree) async {
+    final formKey = GlobalKey<FormState>();
     if (tree != null) {
       if (!tree.treeLevel.isLoaded) await tree.treeLevel.load();
       if (!tree.parent.isLoaded) await tree.parent.load();
@@ -157,8 +161,9 @@ class _TreesScreenState extends State<TreesScreen> {
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title: Text(tree == null ? 'Novo Elemento' : 'Editar Estrutura'),
-            content: buildForm2(
-                context, textControllersConfig, startDate, endDate, (value) {
+            content: buildForm(
+                formKey, context, textControllersConfig, startDate, endDate,
+                (value) {
               setState(() => startDate = value);
               setModalState(() {}); // Atualiza o dialog
             }, (value) {
@@ -205,7 +210,7 @@ class _TreesScreenState extends State<TreesScreen> {
               TextButton(
                 child: const Text('Guardar'),
                 onPressed: () async {
-                  if (treeLevel != null && nameController.text.isNotEmpty) {
+                  if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
                       final newTree = tree ?? TreeIsar();
@@ -218,12 +223,11 @@ class _TreesScreenState extends State<TreesScreen> {
                       newTree.isSynced = false;
                       await DatabaseService.db.treeIsars.put(newTree);
                       await newTree.treeLevel.save();
-                      //await newTree.treeLevel.load();
                       if (newTree.parent.value != null) {
                         await newTree.parent.save();
-                        //await newTree.parent.load();
                       }
                     });
+                    // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   }
                 },
@@ -238,12 +242,17 @@ class _TreesScreenState extends State<TreesScreen> {
   Future<void> _loadTrees() async {
     if (await syncServiceV3.isApiReachable()) {
       await syncServiceV3.updateLocalData<TreeIsar, Tree>(
-          DatabaseService.db.treeIsars,
-          "trees",
-          Tree.fromJson,
-          (tree) async => TreeIsar.toRemote(tree),
-          (collection, remoteId) =>
-              collection.where().remoteIdEqualTo(remoteId).findFirst());
+        DatabaseService.db.treeIsars,
+        "trees",
+        Tree.fromJson,
+        (tree) async => TreeIsar.toRemote(tree),
+        (collection, remoteId) =>
+            collection.where().remoteIdEqualTo(remoteId).findFirst(),
+        saveLinksAfterPut: (tree) async {
+          await tree.treeLevel.save();
+          await tree.parent.save();
+        },
+      );
     }
     setState(() {
       _isLoading = false;

@@ -2,11 +2,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/custom_list_view.dart';
-import 'package:zcap_net_app/widgets/custom_form.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 
 class TreeLevelsScreen extends StatefulWidget {
@@ -93,41 +92,6 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                     _searchTerm = value.toLowerCase();
                   }),
               onAddPressed: () => _addOrEditTreeLevel(null)),
-/*          Row(
-            children: [
-              // Campo de pesquisa expandido para ocupar o espaço disponível
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    labelText: 'Pesquisar',
-                    prefixIcon: Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchTerm = value.toLowerCase();
-                    });
-                  },
-                ),
-              ),
-              const SizedBox(width: 8.0),
-              // Botão adicionar ao lado
-              ElevatedButton(
-                onPressed: () => _addOrEditTreeLevel(null),
-                style: ElevatedButton.styleFrom(
-                  shape: const CircleBorder(),
-                  padding: const EdgeInsets.all(12),
-                  backgroundColor: Colors.grey,
-                  foregroundColor: Colors.white,
-                  minimumSize: Size(50.0, 50.0),
-                ),
-                child: const Icon(Icons.add),
-              ),
-            ],
-          ),*/
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
@@ -148,17 +112,16 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                       context: context,
                       builder: (context) => const ConfirmDialog(
                         title: 'Confirmar eliminação',
-                        content:
-                            'Tem certeza que deseja eliminar este nível?',
+                        content: 'Tem certeza que deseja eliminar este nível?',
                       ),
                     );
                     if (confirm == true) {
                       await DatabaseService.db.writeTxn(() async {
-                        await DatabaseService.db.treeLevelIsars.delete(treeLevel.id);
+                        await DatabaseService.db.treeLevelIsars
+                            .delete(treeLevel.id);
                       });
                     }
-                  }
-                ),
+                  }),
         ],
       ),
     );
@@ -169,14 +132,15 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     for (var treeLevel in filteredList) {
       labelsList.add([
         treeLevel.name,
-        'Inicio: ${treeLevel.startDate}',
-        'Fim: ${treeLevel.endDate}'
+        'Inicio: ${treeLevel.startDate.toLocal().toString().split(' ')[0]}',
+        'Fim: ${treeLevel.endDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'
       ]);
     }
     return labelsList;
   }
 
   void _addOrEditTreeLevel(TreeLevelIsar? treeLevel) {
+    final formKey = GlobalKey<FormState>();
     final levelIdController =
         TextEditingController(text: treeLevel?.levelId.toString() ?? '');
     final nameController = TextEditingController(text: treeLevel?.name ?? '');
@@ -185,6 +149,22 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     DateTime? startDate = treeLevel?.startDate ?? DateTime.now();
     DateTime? endDate = treeLevel?.endDate;
 
+    List<TextControllersInputFormConfig> textControllersConfig = [
+      TextControllersInputFormConfig(
+          controller: levelIdController, label: 'Nível', validator: (value) {
+            if (value == null || value.isEmpty) return 'Por favor, insira um Nível';
+            if (int.tryParse(value) == null) return 'Por favor, insira um Nível valido';
+            return null;
+          }),
+      TextControllersInputFormConfig(controller: nameController, label: 'Nome'),
+      TextControllersInputFormConfig(
+          controller: descriptionController,
+          label: 'Descrição',
+          validator: (value) {
+            return null;
+          }),
+    ];
+
     showDialog(
       context: context,
       builder: (context) {
@@ -192,22 +172,18 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
           return AlertDialog(
             title: Text(treeLevel == null ? 'Novo Nível' : 'Editar Nível'),
             content: buildForm(
-                [levelIdController, nameController, descriptionController],
-                ['Nível', 'Nome', 'Descrição'],
-                startDate,
-                endDate, () async {
-              final picked = await _selectDate(startDate);
-              if (picked != null) {
-                setState(() => startDate = picked);
-                setModalState(() {}); // Atualiza o dialog
-              }
-            }, () async {
-              final picked = await _selectDate(endDate);
-              if (picked != null) {
-                setState(() => endDate = picked);
-                setModalState(() {}); // Atualiza o dialog
-              }
-            }),
+                formKey, context, textControllersConfig, startDate, endDate,
+                (value) {
+              setState(() => startDate = value);
+              setModalState(() {}); // Atualiza o dialog
+            }, (value) {
+              setState(() => endDate = value);
+              setModalState(() {}); // Atualiza o dialog
+            }, () {
+              setModalState(() {
+                endDate = null;
+              });
+            }, []),
             actions: [
               TextButton(
                 child: const Text('Cancelar'),
@@ -216,21 +192,21 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
               TextButton(
                 child: const Text('Guardar'),
                 onPressed: () async {
-                  if (levelIdController.text.isNotEmpty &&
-                      nameController.text.isNotEmpty) {
+                  if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
                       final newTreeLevel = treeLevel ?? TreeLevelIsar();
                       newTreeLevel.remoteId = treeLevel?.remoteId ?? 0;
                       newTreeLevel.levelId = int.parse(levelIdController.text);
                       newTreeLevel.name = nameController.text;
-                      newTreeLevel.description = descriptionController.text;
+                      newTreeLevel.description = descriptionController.text.isEmpty ? null : descriptionController.text;
                       newTreeLevel.startDate = startDate ?? now;
                       newTreeLevel.endDate = endDate;
                       newTreeLevel.isSynced = false;
 
                       await DatabaseService.db.treeLevelIsars.put(newTreeLevel);
                     });
+                    // ignore: use_build_context_synchronously
                     Navigator.pop(context);
                   }
                 },
@@ -242,16 +218,6 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     );
   }
 
-  Future<DateTime?> _selectDate(DateTime? initial) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: initial ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2500),
-    );
-    return picked;
-  }
-
   Future<void> _loadTreeLevels() async {
     if (await syncServiceV3.isApiReachable()) {
       await syncServiceV3.updateLocalData(
@@ -259,10 +225,8 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
           "tree-levels",
           TreeLevel.fromJson,
           (TreeLevel treeLevel) async => TreeLevelIsar.toRemote(treeLevel),
-          (collection, remoteId) => collection
-              .where()
-              .remoteIdEqualTo(remoteId)
-              .findFirst());
+          (collection, remoteId) =>
+              collection.where().remoteIdEqualTo(remoteId).findFirst());
     }
     setState(() {
       _isLoading = false;
