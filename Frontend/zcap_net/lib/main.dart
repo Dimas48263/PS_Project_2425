@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:window_size/window_size.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
@@ -73,6 +74,17 @@ class MyApp extends StatelessWidget {
             ),
             useMaterial3: true,
           ),
+          locale: const Locale('pt',
+              'PT'), // additions to change date format from MM/dd/YYYY to dd/MM/YYYY
+          supportedLocales: const [
+            Locale('en', 'US'),
+            Locale('pt', 'PT'),
+          ],
+          localizationsDelegates: const [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
           home: sessionManager.isLoggedIn
               ? const HomeScreen()
               : const LoginScreen(),

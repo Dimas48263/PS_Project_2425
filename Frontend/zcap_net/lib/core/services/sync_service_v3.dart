@@ -4,6 +4,7 @@ import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/api_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
@@ -205,4 +206,10 @@ final List<SyncEntry> syncEntries = [
     getCollection: (isar) => isar.treeRecordDetailTypeIsars,
     idName: 'treeRecordDetailTypeId',
   ),
+  SyncEntry<BuildingTypesIsar>(
+    endpoint: 'buildingTypes',
+    getCollection: (isar) => isar.buildingTypesIsars,
+    idName: 'buildingTypeId',
+  ),
+
 ];

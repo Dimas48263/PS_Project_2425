@@ -29,6 +29,9 @@ dependencies:
   provider: ^6.1.2
   crypto: ^3.0.6
 
+  flutter_localizations:
+    sdk: flutter
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

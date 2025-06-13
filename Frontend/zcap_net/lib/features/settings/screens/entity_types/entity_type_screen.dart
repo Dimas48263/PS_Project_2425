@@ -5,7 +5,6 @@ import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/custom_unsynced_icon.dart';
 
 class EntityTypesScreen extends StatefulWidget {
   const EntityTypesScreen({super.key});
@@ -18,6 +17,7 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
   List<EntityTypeIsar> entityTypes = [];
   StreamSubscription? entitieTypesStream;
 
+  bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
@@ -30,6 +30,7 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
         .listen((data) {
       setState(() {
         entityTypes = data;
+        _isLoading = false;
       });
     });
 
@@ -72,66 +73,74 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: ListView.builder(
-                  itemCount: filteredEntityTypes.length,
-                  itemBuilder: (context, index) {
-                    final entityType = filteredEntityTypes[index];
-                    return Card(
-                      child: ListTile(
-                        contentPadding: EdgeInsets.only(
-                          left: 10.0,
-                        ),
-                        title: Text(
-                          '${entityType.remoteId != null ? "[${entityType.remoteId}] " : ""}${entityType.name}',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                'Início: ${entityType.startDate.toLocal().toString().split(' ')[0]}'),
-                            Text(
-                              'Fim: ${entityType.endDate != null ? entityType.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
-                            ),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (!entityType.isSynced) CustomUnsyncedIcon(),
-                            IconButton(
-                              onPressed: () {
-                                _addOrEditEntityType(entityType: entityType);
-                              },
-                              icon: const Icon(Icons.edit),
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                final confirm = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) => const ConfirmDialog(
-                                    title: 'Confirmar eliminação',
-                                    content:
-                                        'Tem certeza que deseja eliminar este tipo de entidade?',
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: filteredEntityTypes.length,
+                        itemBuilder: (context, index) {
+                          final entityType = filteredEntityTypes[index];
+                          return Card(
+                            child: ListTile(
+                              contentPadding: EdgeInsets.only(
+                                left: 10.0,
+                              ),
+                              title: Text(
+                                '${entityType.remoteId != null ? "[${entityType.remoteId}] " : ""}${entityType.name}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      'Início: ${entityType.startDate.toLocal().toString().split(' ')[0]}'),
+                                  Text(
+                                    'Fim: ${entityType.endDate != null ? entityType.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
                                   ),
-                                );
-                                if (confirm == true) {
-                                  await DatabaseService.db.writeTxn(() async {
-                                    await DatabaseService.db.entityTypeIsars
-                                        .delete(entityType.id);
-                                  });
-                                }
-                              },
-                              icon: const Icon(Icons.delete, color: Colors.red),
+                                ],
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  if (!entityType.isSynced)
+                                    CustomUnsyncedIcon(),
+                                  IconButton(
+                                    onPressed: () {
+                                      _addOrEditEntityType(
+                                          entityType: entityType);
+                                    },
+                                    icon: const Icon(Icons.edit),
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) =>
+                                            const ConfirmDialog(
+                                          title: 'Confirmar eliminação',
+                                          content:
+                                              'Tem certeza que deseja eliminar este tipo de entidade?',
+                                        ),
+                                      );
+                                      if (confirm == true) {
+                                        await DatabaseService.db
+                                            .writeTxn(() async {
+                                          await DatabaseService
+                                              .db.entityTypeIsars
+                                              .delete(entityType.id);
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               )
             ]),
           ),

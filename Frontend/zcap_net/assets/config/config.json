@@ -1,6 +1,6 @@
 {
   "apiUrl": "http://localhost:8080/api",
-  "apiSyncIntervalSeconds": 120,
+  "apiSyncIntervalSeconds": 1200,
   "appDataPath": "C:/ZCAPNet",
   "logToFile": true,
   "logFileName": "app_log.txt"

@@ -1,14 +1,18 @@
-class BuildingType {
-  int id;
+import 'package:zcap_net_app/core/services/remote_table.dart';
+
+class BuildingType implements ApiTable{
+  @override
+  int remoteId;
   final String name;
   final DateTime startDate;
   final DateTime? endDate;
   final DateTime createdAt;
+  @override
   final DateTime updatedAt;
   bool isSynced;
 
   BuildingType({
-    required this.id,
+    required this.remoteId,
     required this.name,
     required this.startDate,
     this.endDate,
@@ -19,7 +23,7 @@ class BuildingType {
 
 factory BuildingType.fromJson(Map<String, dynamic> json) {
   return BuildingType(
-    id: json['buildingTypeId'],
+    remoteId: json['buildingTypeId'],
     name: json['name'],
     startDate: DateTime.parse(json['startDate']),
     endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
@@ -32,6 +36,7 @@ factory BuildingType.fromJson(Map<String, dynamic> json) {
   );
 }
 
+  @override
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
@@ -49,7 +54,7 @@ factory BuildingType.fromJson(Map<String, dynamic> json) {
     DateTime? updatedAt,
   }) {
     return BuildingType(
-      id: id ?? this.id,
+      remoteId: id ?? remoteId,
       name: name ?? this.name,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,

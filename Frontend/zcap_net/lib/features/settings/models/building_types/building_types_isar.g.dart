@@ -59,6 +59,19 @@ const BuildingTypesIsarSchema = CollectionSchema(
   deserializeProp: _buildingTypesIsarDeserializeProp,
   idName: r'id',
   indexes: {
+    r'isSynced': IndexSchema(
+      id: -39763503327887510,
+      name: r'isSynced',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isSynced',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'name': IndexSchema(
       id: 879695947855722453,
       name: r'name',
@@ -118,7 +131,7 @@ BuildingTypesIsar _buildingTypesIsarDeserialize(
   object.id = id;
   object.isSynced = reader.readBool(offsets[2]);
   object.name = reader.readString(offsets[3]);
-  object.remoteId = reader.readLongOrNull(offsets[4]);
+  object.remoteId = reader.readLong(offsets[4]);
   object.startDate = reader.readDateTime(offsets[5]);
   object.updatedAt = reader.readDateTime(offsets[6]);
   return object;
@@ -140,7 +153,7 @@ P _buildingTypesIsarDeserializeProp<P>(
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 5:
       return (reader.readDateTime(offset)) as P;
     case 6:
@@ -169,6 +182,15 @@ extension BuildingTypesIsarQueryWhereSort
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhere>
+      anyIsSynced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isSynced'),
+      );
     });
   }
 
@@ -248,6 +270,51 @@ extension BuildingTypesIsarQueryWhere
         upper: upperId,
         includeUpper: includeUpper,
       ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhereClause>
+      isSyncedEqualTo(bool isSynced) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isSynced',
+        value: [isSynced],
+      ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhereClause>
+      isSyncedNotEqualTo(bool isSynced) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSynced',
+              lower: [],
+              upper: [isSynced],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSynced',
+              lower: [isSynced],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSynced',
+              lower: [isSynced],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isSynced',
+              lower: [],
+              upper: [isSynced],
+              includeUpper: false,
+            ));
+      }
     });
   }
 
@@ -728,25 +795,7 @@ extension BuildingTypesIsarQueryFilter
   }
 
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
-      remoteIdIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'remoteId',
-      ));
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
-      remoteIdIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'remoteId',
-      ));
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
-      remoteIdEqualTo(int? value) {
+      remoteIdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'remoteId',
@@ -757,7 +806,7 @@ extension BuildingTypesIsarQueryFilter
 
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
       remoteIdGreaterThan(
-    int? value, {
+    int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -771,7 +820,7 @@ extension BuildingTypesIsarQueryFilter
 
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
       remoteIdLessThan(
-    int? value, {
+    int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -785,8 +834,8 @@ extension BuildingTypesIsarQueryFilter
 
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
       remoteIdBetween(
-    int? lower,
-    int? upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1221,7 +1270,7 @@ extension BuildingTypesIsarQueryProperty
     });
   }
 
-  QueryBuilder<BuildingTypesIsar, int?, QQueryOperations> remoteIdProperty() {
+  QueryBuilder<BuildingTypesIsar, int, QQueryOperations> remoteIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'remoteId');
     });

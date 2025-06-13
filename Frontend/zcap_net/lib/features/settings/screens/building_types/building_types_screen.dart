@@ -13,10 +13,10 @@ class BuildingTypesScreen extends StatefulWidget {
 }
 
 class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
-
-    List<BuildingTypesIsar> buildingTypes = [];
+  List<BuildingTypesIsar> buildingTypes = [];
   StreamSubscription? buildingTypesStream;
 
+  bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
@@ -29,6 +29,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
         .listen((data) {
       setState(() {
         buildingTypes = data;
+        _isLoading = false;
       });
     });
 
@@ -48,7 +49,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
 
   @override
   Widget build(BuildContext context) {
-        final filteredBuildingTypes = buildingTypes.where((building) {
+    final filteredBuildingTypes = buildingTypes.where((building) {
       final name = building.name.toLowerCase();
       return name.contains(_searchTerm);
     }).toList();
@@ -71,73 +72,74 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
               ),
               const SizedBox(height: 16),
               Expanded(
-                child: ListView.builder(
-                  itemCount: filteredBuildingTypes.length,
-                  itemBuilder: (context, index) {
-                    final buildingType = filteredBuildingTypes[index];
-                    return Card(
-                      child: ListTile(
-                        contentPadding: EdgeInsets.only(
-                          left: 10.0,
-                        ),
-                        title: Text(
-                          '${buildingType.remoteId != null ? "[${buildingType.remoteId}] " : ""}${buildingType.name}',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                                'Início: ${buildingType.startDate.toLocal().toString().split(' ')[0]}'),
-                            Text(
-                              'Fim: ${buildingType.endDate != null ? buildingType.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
-                            ),
-                          ],
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            if (!buildingType.isSynced)
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(
-                                  Icons.sync_problem,
-                                  color: Colors.amberAccent,
-                                ),
+                child: _isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : ListView.builder(
+                        itemCount: filteredBuildingTypes.length,
+                        itemBuilder: (context, index) {
+                          final buildingType = filteredBuildingTypes[index];
+                          return Card(
+                            child: ListTile(
+                              contentPadding: EdgeInsets.only(
+                                left: 10.0,
                               ),
-                            IconButton(
-                              onPressed: () {
-                                _addOrEditBuildingType(buildingType: buildingType);
-                              },
-                              icon: const Icon(Icons.edit),
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                final confirm = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) => const ConfirmDialog(
-                                    title: 'Confirmar eliminação',
-                                    content:
-                                        'Tem certeza que deseja eliminar este tipo de edificio?',
+                              title: Text(
+                                '${buildingType.remoteId != null ? "[${buildingType.remoteId}] " : ""}${buildingType.name}',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      'Início: ${buildingType.startDate.toLocal().toString().split(' ')[0]}'),
+                                  Text(
+                                    'Fim: ${buildingType.endDate != null ? buildingType.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
                                   ),
-                                );
-                                if (confirm == true) {
-                                  await DatabaseService.db.writeTxn(() async {
-                                    await DatabaseService.db.buildingTypesIsars
-                                        .delete(buildingType.id);
-                                  });
-                                }
-                              },
-                              icon: const Icon(Icons.delete, color: Colors.red),
+                                ],
+                              ),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  if (!buildingType.isSynced)
+                                    CustomUnsyncedIcon(),
+                                  IconButton(
+                                    onPressed: () {
+                                      _addOrEditBuildingType(
+                                          buildingType: buildingType);
+                                    },
+                                    icon: const Icon(Icons.edit),
+                                  ),
+                                  IconButton(
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) =>
+                                            const ConfirmDialog(
+                                          title: 'Confirmar eliminação',
+                                          content:
+                                              'Tem certeza que deseja eliminar este tipo de edificio?',
+                                        ),
+                                      );
+                                      if (confirm == true) {
+                                        await DatabaseService.db
+                                            .writeTxn(() async {
+                                          await DatabaseService
+                                              .db.buildingTypesIsars
+                                              .delete(buildingType.id);
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               )
             ]),
           ),
@@ -146,11 +148,9 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
     );
   }
 
-
-
-
-void _addOrEditBuildingType({BuildingTypesIsar? buildingType}) async {
-    final nameController = TextEditingController(text: buildingType?.name ?? "");
+  void _addOrEditBuildingType({BuildingTypesIsar? buildingType}) async {
+    final nameController =
+        TextEditingController(text: buildingType?.name ?? "");
     DateTime selectedStartDate = buildingType?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = buildingType?.endDate;
 

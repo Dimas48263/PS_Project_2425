@@ -14,6 +14,7 @@ export '../widgets/custom_date_range_picker.dart';
 export '../widgets/custom_dropdown_search.dart';
 export '../widgets/custom_list_view.dart';
 export '../widgets/custom_form.dart';
+export '../widgets/custom_unsynced_icon.dart';
 
 export './shared_dialogs.dart';
 export './date_utils.dart';

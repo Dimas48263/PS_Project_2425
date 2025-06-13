@@ -20,6 +20,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
   List<EntitiesIsar> entities = [];
   StreamSubscription? entitiesStream;
 
+  bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
@@ -32,6 +33,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
         .listen((data) {
       setState(() {
         entities = data;
+        _isLoading = false;
       });
     });
 
@@ -76,97 +78,106 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                   ),
                   const SizedBox(height: 16),
                   Expanded(
-                    child: ListView.builder(
-                      itemCount: filteredEntities.length,
-                      itemBuilder: (context, index) {
-                        final entity = filteredEntities[index];
-                        return Card(
-                          child: ListTile(
-                            contentPadding: EdgeInsets.only(left: 10.0),
-                            title: Text(
-                              '${entity.remoteId != null ? "[${entity.remoteId}] " : ""}${entity.name}',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                FutureBuilder(
-                                  future: entity.entityType.load(),
-                                  builder: (context, snapshot) {
-                                    final entityTypeName =
-                                        snapshot.connectionState ==
-                                                ConnectionState.done
-                                            ? entity.entityType.value?.name ??
-                                                'Tipo desconhecido'
-                                            : 'Carregando tipo...';
-                                    return Text('Tipo: $entityTypeName');
-                                  },
-                                ),
-                                Text('Email: ${entity.email}'),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                        child:
-                                            Text('Contacto: ${entity.phone1}')),
-                                    Expanded(
-                                        child: Text(
-                                            'Contacto alternativo: ${entity.phone2}')),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                          'Início: ${entity.startDate.toLocal().toString().split(' ')[0]}'),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        'Fim: ${entity.endDate != null ? entity.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
+                    child: _isLoading
+                        ? const Center(child: CircularProgressIndicator())
+                        : ListView.builder(
+                            itemCount: filteredEntities.length,
+                            itemBuilder: (context, index) {
+                              final entity = filteredEntities[index];
+                              return Card(
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.only(left: 10.0),
+                                  title: Text(
+                                    '${entity.remoteId != null ? "[${entity.remoteId}] " : ""}${entity.name}',
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      FutureBuilder(
+                                        future: entity.entityType.load(),
+                                        builder: (context, snapshot) {
+                                          final entityTypeName = snapshot
+                                                      .connectionState ==
+                                                  ConnectionState.done
+                                              ? entity.entityType.value?.name ??
+                                                  'Tipo desconhecido'
+                                              : 'Carregando tipo...';
+                                          return Text('Tipo: $entityTypeName');
+                                        },
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                if (!entity.isSynced) CustomUnsyncedIcon(),
-                                IconButton(
-                                  onPressed: () {
-                                    _addOrEditEntity(entity: entity);
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                ),
-                                IconButton(
-                                  onPressed: () async {
-                                    final confirm = await showDialog<bool>(
-                                      context: context,
-                                      builder: (context) => const ConfirmDialog(
-                                        title: 'Confirmar eliminação',
-                                        content:
-                                            'Tem certeza que deseja eliminar esta entidade?',
+                                      Text('Email: ${entity.email}'),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                              child: Text(
+                                                  'Contacto: ${entity.phone1}')),
+                                          Expanded(
+                                              child: Text(
+                                                  'Contacto alternativo: ${entity.phone2}')),
+                                        ],
                                       ),
-                                    );
-                                    if (confirm == true) {
-                                      await DatabaseService.db
-                                          .writeTxn(() async {
-                                        await DatabaseService.db.entitiesIsars
-                                            .delete(entity.id);
-                                      });
-                                    }
-                                  },
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.red),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                                'Início: ${entity.startDate.toLocal().toString().split(' ')[0]}'),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              'Fim: ${entity.endDate != null ? entity.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  trailing: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      if (!entity.isSynced)
+                                        CustomUnsyncedIcon(),
+                                      IconButton(
+                                        onPressed: () {
+                                          _addOrEditEntity(entity: entity);
+                                        },
+                                        icon: const Icon(Icons.edit),
+                                      ),
+                                      IconButton(
+                                        onPressed: () async {
+                                          final confirm =
+                                              await showDialog<bool>(
+                                            context: context,
+                                            builder: (context) =>
+                                                const ConfirmDialog(
+                                              title: 'Confirmar eliminação',
+                                              content:
+                                                  'Tem certeza que deseja eliminar esta entidade?',
+                                            ),
+                                          );
+                                          if (confirm == true) {
+                                            await DatabaseService.db
+                                                .writeTxn(() async {
+                                              await DatabaseService
+                                                  .db.entitiesIsars
+                                                  .delete(entity.id);
+                                            });
+                                          }
+                                        },
+                                        icon: const Icon(Icons.delete,
+                                            color: Colors.red),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
                   ),
                 ],
               )),
