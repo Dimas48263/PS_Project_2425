@@ -72,6 +72,19 @@ const BuildingTypesIsarSchema = CollectionSchema(
         )
       ],
     ),
+    r'remoteId': IndexSchema(
+      id: 6301175856541681032,
+      name: r'remoteId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'remoteId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'name': IndexSchema(
       id: 879695947855722453,
       name: r'name',
@@ -190,6 +203,15 @@ extension BuildingTypesIsarQueryWhereSort
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'isSynced'),
+      );
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhere>
+      anyRemoteId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'remoteId'),
       );
     });
   }
@@ -315,6 +337,99 @@ extension BuildingTypesIsarQueryWhere
               includeUpper: false,
             ));
       }
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhereClause>
+      remoteIdEqualTo(int remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [remoteId],
+      ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhereClause>
+      remoteIdNotEqualTo(int remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhereClause>
+      remoteIdGreaterThan(
+    int remoteId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [remoteId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhereClause>
+      remoteIdLessThan(
+    int remoteId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [],
+        upper: [remoteId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterWhereClause>
+      remoteIdBetween(
+    int lowerRemoteId,
+    int upperRemoteId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [lowerRemoteId],
+        includeLower: includeLower,
+        upper: [upperRemoteId],
+        includeUpper: includeUpper,
+      ));
     });
   }
 

@@ -15,6 +15,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
   bool isSynced = false;
 
   /* Remote variables */
+  @Index()
   @override
   late int remoteId;
 
