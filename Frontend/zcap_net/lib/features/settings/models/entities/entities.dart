@@ -4,7 +4,7 @@ class Entity implements ApiTable {
   @override
   final int remoteId;
   final String name;
-  final int entityTypeId;
+  final int entityTypeId; //TODO: fix to be an full EntityType
   final String? email;
   final String phone1;
   final String? phone2;
@@ -51,7 +51,7 @@ class Entity implements ApiTable {
       'entityTypeId': entityTypeId,
       if (email != null) 'email': email,
       'phone1': phone1,
-      if (email != null) 'phone2': phone2,
+      if (phone2 != null) 'phone2': phone2,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };

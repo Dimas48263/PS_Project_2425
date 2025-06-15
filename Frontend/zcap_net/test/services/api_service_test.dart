@@ -13,22 +13,101 @@ import 'api_service_test.mocks.dart';
 
 @GenerateMocks([http.Client])
 void main() {
-  group('ApiService.getItem with Entity', () {
-    late MockClient mockClient;
-    late ApiService apiService;
+  late MockClient mockClient;
+  late ApiService apiService;
 
-    setUp(() {
-      AppConfig.initFromJson({
-        "appDataPath": "/fake",
-        "apiUrl": "https://fakeapi",
-        "apiSyncIntervalSeconds": 6000,
-        "logToFile": false,
-        "logFileName": "log.txt"
-      });
-      mockClient = MockClient();
-      apiService = ApiService(client: mockClient);
+  setUp(() {
+    AppConfig.initFromJson({
+      "appDataPath": "/fake",
+      "apiUrl": "http://fakeapi",
+      "apiSyncIntervalSeconds": 6000,
+      "logToFile": false,
+      "logFileName": "log.txt"
+    });
+    mockClient = MockClient();
+    apiService = ApiService(client: mockClient);
+  });
+
+  group('apiService.getList', () {
+    test('returns an array of Entities when completes with success', () async {
+      const mockJsonResponse = '''
+  [
+    {
+      "entityId": 666,
+      "name": "Policia Municipal",
+      "entityType": {
+          "entityTypeId": 888,
+            "name": "*TEST* 888",
+            "startDate": "2020-01-01",
+            "endDate": "2025-12-31",
+            "createdAt": "2025-06-02T23:11:25.080",
+            "updatedAt": "2025-06-08T15:51:15.257"
+          },
+      "email": "",
+      "phone1": "351 21 000 000",
+      "phone2": "",
+      "startDate": "2025-01-01T00:00:00Z",
+      "endDate": null,
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    },
+    {
+      "entityId": 777,
+      "name": "Cruz Vermelha",
+      "entityType": {
+        "entityTypeId": 555,
+          "name": "*TEST* 555",
+          "startDate": "2020-01-01",
+          "endDate": "2025-12-31",
+          "createdAt": "2025-06-02T23:11:25.080",
+          "updatedAt": "2025-06-08T15:51:15.257"
+      },
+      "email": "",
+      "phone1": "351 21 000 000",
+      "phone2": "",
+      "startDate": "2025-01-01T00:00:00Z",
+      "endDate": null,
+      "createdAt": "2025-01-01T00:00:00Z",
+      "updatedAt": "2025-01-01T00:00:00Z"
+    }
+  ]
+  ''';
+
+      when(
+        mockClient.get(
+          Uri.parse('http://fakeapi/entities'),
+          headers: anyNamed('headers'),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response.bytes(utf8.encode(mockJsonResponse), 200),
+      );
+
+      final result = await apiService.getList('entities', Entity.fromJson);
+
+      expect(result, isA<List<Entity>>());
+      expect(result.length, 2);
+      expect(result.first.remoteId, 666);
+      expect(result[1].entityTypeId, 555);
     });
 
+    test('returns an empty array', () async {
+      const mockJsonResponse = '''[]''';
+
+      when(
+        mockClient.get(
+          Uri.parse('http://fakeapi/entities'),
+          headers: anyNamed('headers'),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response.bytes(utf8.encode(mockJsonResponse), 200),
+      );
+
+      final result = await apiService.getList('entities', Entity.fromJson);
+
+      expect(result.length, 0);
+    });
+  });
+  group('apiService.getItem', () {
     test('returns an Entity if call completes successfully', () async {
       //Arrange
       const mockJsonResponse = '''
@@ -46,16 +125,16 @@ void main() {
         "email": "test@bvodivelas.pt",
         "phone1": "21 934 82 90",
         "phone2": "",
-        "startDate": "2023-01-01T00:00:00Z",
+        "startDate": "2025-01-01T00:00:00Z",
         "endDate": null,
-        "createdAt": "2023-01-01T00:00:00Z",
-        "updatedAt": "2023-01-01T00:00:00Z"
+        "createdAt": "2025-01-01T00:00:00Z",
+        "updatedAt": "2025-01-01T00:00:00Z"
       }
       ''';
 
       when(
         mockClient.get(
-          Uri.parse('https://fakeapi/entity/1'),
+          Uri.parse('http://fakeapi/entity/1'),
           headers: anyNamed('headers'),
         ),
       ).thenAnswer(
@@ -70,16 +149,16 @@ void main() {
       expect(entity, isA<Entity>());
       expect(entity.remoteId, 1);
       expect(entity.name, '*TEST* Bombeiros Voluntários de Odivelas');
-      //expect(entity.entityType, isA<EntityType>);  //TODO: received a full object but internally Entity has only int
+      expect(entity.entityTypeId,
+          isA<int>()); //TODO: isA<EntityType>() when fix is applied
       expect(entity.entityTypeId, 10);
       expect(entity.email, 'test@bvodivelas.pt');
     });
 
-    test('throws an exception if call completes with an error',
-        () async {
+    test('throws an exception if call completes with an error', () async {
       when(
         mockClient.get(
-          Uri.parse('https://fakeapi/entity/1'),
+          Uri.parse('http://fakeapi/entity/1'),
           headers: anyNamed('headers'),
         ),
       ).thenAnswer(
@@ -92,71 +171,126 @@ void main() {
       );
     });
   });
-}
 
+  group('apiService.post', () {
+    test('post request returns created Entity', () async {
+      const responseJson = '''
+  {
+    "entityId": 999,
+    "name": "TEST New Entity",
+    "entityType": {
+        "entityTypeId": 10,
+          "name": "*TEST* Bombeiros 1113",
+          "startDate": "2020-01-01",
+          "endDate": "2025-12-31",
+          "createdAt": "2025-06-02T23:11:25.080",
+          "updatedAt": "2025-06-08T15:51:15.257"
+        },
+    "email": "test@bvodivelas.pt",
+    "phone1": "999",
+    "phone2": "",
+    "startDate": "2025-01-01T00:00:00Z",
+    "endDate": null,
+    "createdAt": "2025-01-01T00:00:00Z",
+    "updatedAt": "2025-01-01T00:00:00Z"
+  }
+  ''';
 
-/*void main() {
-  setUp(() {
-    AppConfig.initFromJson({
-      "appDataPath": "/fake",
-      "apiUrl": "https://fakeapi.com",
-      "apiSyncIntervalSeconds": 6000,
-      "logToFile": false,
-      "logFileName": "log.txt"
-    });
-  });
+      final entityToCreate = {
+        'name': "TEST New Entity",
+        'entityTypeId': 17,
+        'phone1': "352 11111111",
+        'startDate': "2025-01-01T00:00:00.000Z",
+        'endDate': null,
+      };
 
-  group('fetchAlbum', () {
-    test('returns an Album if the http call completes successfully', () async {
-      final client = MockClient();
-
-      // Use Mockito to return a successful response when it calls the
-      // provided http.Client.
       when(
-        client.get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1')),
+        mockClient.post(
+          Uri.parse('http://fakeapi/entity'),
+          headers: anyNamed('headers'),
+          body: json.encode(entityToCreate),
+        ),
       ).thenAnswer(
-        (_) async =>
-            http.Response('{"userId": 1, "id": 2, "title": "mock"}', 200),
+        (_) async => http.Response.bytes(utf8.encode(responseJson), 201),
       );
 
-      expect(await fetchAlbum(client), isA<Album>());
+      final result = await apiService.post('entity', entityToCreate);
+      final newEntity = Entity.fromJson(result);
+
+      expect(newEntity, isA<Entity>());
+      expect(newEntity.entityTypeId,
+          isA<int>()); //TODO: isA<EntityType>() when fix is applied
+      expect(newEntity.name, 'TEST New Entity');
     });
-  );
+  });
 
-  test('ApiService.getList returns list of objects', () async {
+  group('apiService.put', () {
+    final updatedEntity = {
+      "name": "Updated Entity",
+      "entityTypeId": 444,
+      "email": "test@bvodivelas.pt",
+      "phone1": "123456789",
+      "phone2": "",
+      "startDate": "2025-01-01T00:00:00Z",
+      "endDate": null,
+    };
+    test('using PUT to update a record', () async {
+      const updatedJson = '''
+        {
+          "entityId": 333,
+          "name": "Updated Entity",
+            "entityType": {
+              "entityTypeId": 444,
+                "name": "*TEST* Bombeiros 1113",
+                "startDate": "2020-01-01",
+                "endDate": "2025-12-31",
+                "createdAt": "2025-06-02T23:11:25.080",
+                "updatedAt": "2025-06-08T15:51:15.257"
+              },
+          "email": "test@bvodivelas.pt",
+          "phone1": "123456789",
+          "phone2": "",
+          "startDate": "2025-01-01T00:00:00Z",
+          "endDate": null,
+          "createdAt": "2025-01-01T00:00:00Z",
+          "updatedAt": "2025-06-01T00:00:00Z"
+        }
+      ''';
 
-    final mockClient = MockClient((request) async {
-      expect(request.url.toString(), 'https://fakeapi.com/test-endpoint');
-      return http.Response(
-        jsonEncode([
-          {"id": 1, "name": "Item 1"},
-          {"id": 2, "name": "Item 2"}
-        ]),
-        200,
+      when(
+        mockClient.put(
+          Uri.parse('http://fakeapi/entity/333'),
+          headers: anyNamed('headers'),
+          body: json.encode(updatedEntity),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response.bytes(utf8.encode(updatedJson), 200),
+      );
+
+      final result = await apiService.put('entity/333', updatedEntity);
+      final entity = Entity.fromJson(result);
+
+      expect(entity.name, 'Updated Entity');
+      expect(entity.remoteId, 333);
+      expect(entity.entityTypeId, 444);
+      expect(entity.phone1, '123456789');
+    });
+
+    test('PUT request fails with 400', () async {
+      when(
+        mockClient.put(
+          Uri.parse('http://fakeapi/entity/333'),
+          headers: anyNamed('headers'),
+          body: json.encode(updatedEntity),
+        ),
+      ).thenAnswer(
+        (_) async => http.Response('Bad Request', 400),
+      );
+
+      expect(
+        () async => await apiService.put('entity/333', updatedEntity),
+        throwsA(isA<Exception>()),
       );
     });
-
-  final apiService = ApiService(client: mockClient);
-
-    final result = await apiService.getList(
-      'test-endpoint',
-      (json) => TestItem.fromJson(json),
-    );
-
-    expect(result.length, 2);
-    expect(result[0].name, 'Item 1');
   });
 }
-
-
-//For getList tests
-class TestItem {
-  final int id;
-  final String name;
-
-  TestItem({required this.id, required this.name});
-
-  factory TestItem.fromJson(Map<String, dynamic> json) =>
-      TestItem(id: json['id'], name: json['name']);
-}
-*/

@@ -9,7 +9,6 @@ import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
-import 'package:zcap_net_app/core/services/sync_services/sync_service_manager.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/home/screens/home_screen.dart';
 import 'core/services/session_manager.dart';
