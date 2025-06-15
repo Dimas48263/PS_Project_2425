@@ -6,6 +6,7 @@ class CustomDateRangePicker extends StatelessWidget {
   final DateTime? endDate;
   final ValueChanged<DateTime> onStartDateChanged;
   final ValueChanged<DateTime?> onEndDateChanged;
+  final DateUtilsService dateUtilsService;
 
   const CustomDateRangePicker({
     super.key,
@@ -13,6 +14,7 @@ class CustomDateRangePicker extends StatelessWidget {
     required this.endDate,
     required this.onStartDateChanged,
     required this.onEndDateChanged,
+    this.dateUtilsService = const DateUtilsService(),
   });
 
   Future<void> _selectStartDate(BuildContext context) async {
@@ -23,7 +25,7 @@ class CustomDateRangePicker extends StatelessWidget {
       lastDate: DateTime(2666),
     );
     if (picked != null) {
-      final isValid = DateUtilsService.validateStartEndDate(
+      final isValid = dateUtilsService.validateStartEndDate(
         startDate: picked,
         endDate: endDate,
         context: context,
@@ -43,7 +45,7 @@ class CustomDateRangePicker extends StatelessWidget {
       lastDate: DateTime(2666),
     );
     if (picked != null) {
-      final isValid = DateUtilsService.validateStartEndDate(
+      final isValid = dateUtilsService.validateStartEndDate(
         startDate: startDate,
         endDate: picked,
         context: context,

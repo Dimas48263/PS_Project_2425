@@ -274,12 +274,13 @@ class _UsersScreenState extends State<UsersScreen> {
                 CancelTextButton(),
                 TextButton(
                   onPressed: () async {
-                    final hasValidDates = DateUtilsService.validateStartEndDate(
+                    //already treated at CustomDateRangePicker
+/*                    final hasValidDates = DateUtilsService.validateStartEndDate(
                       startDate: selectedStartDate,
                       endDate: selectedEndDate,
                       context: context,
                     );
-                    if (!hasValidDates) return;
+                    if (!hasValidDates) return;*/
 
                     final isUniqueUserName =
                         await UserService.validateUniqueUserName(

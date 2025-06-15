@@ -84,7 +84,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                                 left: 10.0,
                               ),
                               title: Text(
-                                '${buildingType.remoteId != null ? "[${buildingType.remoteId}] " : ""}${buildingType.name}',
+                                '${buildingType.remoteId > 0 ? "[${buildingType.remoteId}] " : " "}${buildingType.name}',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               subtitle: Column(

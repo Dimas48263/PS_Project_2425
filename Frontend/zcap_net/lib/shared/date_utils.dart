@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
 class DateUtilsService {
-  static bool validateStartEndDate({
+  const DateUtilsService();
+
+  bool validateStartEndDate({
     required DateTime startDate,
     DateTime? endDate,
     required BuildContext context,
