@@ -9,6 +9,8 @@ class AppConfig {
 
   static late AppConfig _instance;
 
+
+
   AppConfig._internal({
     required this.appDataPath,
     required this.apiUrl,

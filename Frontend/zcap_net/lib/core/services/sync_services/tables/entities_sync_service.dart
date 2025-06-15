@@ -1,7 +1,6 @@
-
 import 'dart:async';
 import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/api_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/sync_services/abstract_syncable_service.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
@@ -23,8 +22,9 @@ class EntitySyncService implements SyncableService {
       try {
         final dataToSend = apiEntity.toJsonInput();
         if (apiEntity.remoteId <= 0) {
-          LogService.log('[Entity Sync2] Enviando novo registo: dados $dataToSend');
-          final created = await ApiService.post('entities', dataToSend);
+          LogService.log(
+              '[Entity Sync2] Enviando novo registo: dados $dataToSend');
+          final created = await apiService.post('entities', dataToSend);
           if (created['entityId'] != null) {
             final newRecord = item.copyWith(
               remoteId: created['entityId'],
@@ -41,7 +41,7 @@ class EntitySyncService implements SyncableService {
         } else {
           LogService.log(
               '[Entity Sync2] Atualizando remotamente o registo: (id: ${apiEntity.remoteId}), dados: $dataToSend');
-          await ApiService.put('entities/${apiEntity.remoteId}', dataToSend);
+          await apiService.put('entities/${apiEntity.remoteId}', dataToSend);
 
           final newRecord = item.copyWith(
             isSynced: true,
@@ -50,7 +50,8 @@ class EntitySyncService implements SyncableService {
           await isar.writeTxn(() async {
             await isar.entitiesIsars.put(newRecord);
           });
-          LogService.log('[Entity Sync2] Atualizado e marcado como sincronizado');
+          LogService.log(
+              '[Entity Sync2] Atualizado e marcado como sincronizado');
         }
       } catch (e, stack) {
         LogService.log(
@@ -68,7 +69,7 @@ class EntitySyncService implements SyncableService {
   @override
   Future<void> syncFromServer() async {
     try {
-      final apiData = await ApiService.getList(
+      final apiData = await apiService.getList(
         'entities',
         (json) => Entity.fromJson(json),
       );
@@ -86,7 +87,8 @@ class EntitySyncService implements SyncableService {
           } else if (apiEntity.updatedAt.isAfter(localEntity.updatedAt)) {
             localEntity
               ..name = apiEntity.name
-              ..entityType.value = EntityTypeIsar()..remoteId = apiEntity.entityTypeId
+              ..entityType.value = EntityTypeIsar()
+              ..remoteId = apiEntity.entityTypeId
               ..startDate = apiEntity.startDate
               ..endDate = apiEntity.endDate
               ..createdAt = apiEntity.createdAt
@@ -97,7 +99,8 @@ class EntitySyncService implements SyncableService {
         }
       });
 
-      LogService.log('[Entity Sync2] Dados do servidor sincronizados com sucesso');
+      LogService.log(
+          '[Entity Sync2] Dados do servidor sincronizados com sucesso');
     } catch (e, stack) {
       LogService.log('[Entity Sync2] Falha ao buscar dados do servidor: $e');
       LogService.log('Stack: $stack');

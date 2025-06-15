@@ -7,7 +7,6 @@ import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/custom_unsynced_icon.dart';
 
 class EntitiesScreen extends StatefulWidget {
   const EntitiesScreen({super.key});

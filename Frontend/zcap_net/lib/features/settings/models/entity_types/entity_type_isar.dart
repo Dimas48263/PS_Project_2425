@@ -89,6 +89,17 @@ class EntityTypeIsar implements IsarTable<EntityType> {
     );
   }
 
+  factory EntityTypeIsar.toRemote(EntityType entityType) {
+    return EntityTypeIsar()
+      ..remoteId = entityType.remoteId
+      ..name = entityType.name
+      ..startDate = entityType.startDate
+      ..endDate = entityType.endDate
+      ..createdAt = entityType.createdAt
+      ..updatedAt = entityType.updatedAt
+      ..isSynced = true;
+  }
+
   @override
   EntityTypeIsar setEntityIdAndSync(
       {int? remoteId, bool? isSynced, DateTime? updatedAt}) {

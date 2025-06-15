@@ -11,6 +11,7 @@ class Entity implements ApiTable {
   final DateTime startDate;
   final DateTime? endDate;
   final DateTime createdAt;
+  @override
   final DateTime updatedAt;
   final bool isSynced;
 

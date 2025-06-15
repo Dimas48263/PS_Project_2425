@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
-import 'package:zcap_net_app/core/services/api_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';
@@ -28,7 +28,7 @@ class SyncServiceV3 {
       LogService.log("inside sincService3 isAPIReachable\n");
       LogService.log('SyncService tentando reconectar...');
       final response =
-          await ApiService.ping().timeout(const Duration(seconds: 5));
+          await apiService.ping().timeout(const Duration(seconds: 5));
       LogService.log("ping() response status: ${response.statusCode}");
       return response.statusCode == 200;
     } catch (e) {
@@ -83,7 +83,9 @@ class SyncServiceV3 {
       final remaining = await getAllUnsynced(collection);
       _reportRemaining(remaining.length);
 
-      updateLocalData(collection, entry.endpoint, entry.fromJson, entry.toIsar, entry.findByRemoteId, saveLinksAfterPut: entry.saveLinksAfterPut);
+      updateLocalData(collection, entry.endpoint, entry.fromJson, entry.toIsar,
+          entry.findByRemoteId,
+          saveLinksAfterPut: entry.saveLinksAfterPut);
     }
   }
 
@@ -109,7 +111,7 @@ class SyncServiceV3 {
         LogService.log(
             '[Sync] Criando nova entidade: endpoint $endpoint, dados $dataToSend');
         final created =
-            await ApiService.post(endpoint, apiEntity.toJsonInput());
+            await apiService.post(endpoint, apiEntity.toJsonInput());
         if (created[idName] != null) {
           final newRecord = entity.setEntityIdAndSync(
             remoteId: created[idName],
@@ -125,7 +127,7 @@ class SyncServiceV3 {
       } else {
         LogService.log(
             '[Sync] Atualizando entidade existente: (id: ${apiEntity.remoteId}), dados: $dataToSend');
-        await ApiService.put(
+        await apiService.put(
             '$endpoint/${apiEntity.remoteId}', apiEntity.toJsonInput());
 
         final newRecord = entity.setEntityIdAndSync(isSynced: true) as T;
@@ -164,7 +166,7 @@ class SyncServiceV3 {
       return;
     }
     final apiData =
-        await ApiService.getList(endpoint, (json) => fromJson(json));
+        await apiService.getList(endpoint, (json) => fromJson(json));
 
     final ids = [];
 
@@ -225,60 +227,61 @@ class SyncEntry<TIsar extends IsarTable, TApi extends ApiTable> {
 
 final List<SyncEntry> syncEntries = [
   SyncEntry<EntityTypeIsar, EntityType>(
-    endpoint: 'entityTypes',
-    getCollection: (isar) => isar.entityTypeIsars,
-    idName: 'entityTypeId',
-    fromJson: EntityType.fromJson,
-    toIsar: (entity) async => EntityTypeIsar.fromEntityType(entity),
-    findByRemoteId: (collection, remoteId) async => collection.where().remoteIdEqualTo(remoteId).findFirst()
-  ),
+      endpoint: 'entityTypes',
+      getCollection: (isar) => isar.entityTypeIsars,
+      idName: 'entityTypeId',
+      fromJson: EntityType.fromJson,
+      toIsar: (EntityType entityType) async =>
+          EntityTypeIsar.toRemote(entityType),
+      findByRemoteId: (collection, remoteId) async =>
+          collection.where().remoteIdEqualTo(remoteId).findFirst()),
   SyncEntry<TreeIsar, Tree>(
-    endpoint: 'trees',
-    getCollection: (isar) => isar.treeIsars,
-    idName: 'treeRecordId',
-    fromJson: Tree.fromJson,
-    toIsar: (tree) async => TreeIsar.toRemote(tree),
-    findByRemoteId: (collection, remoteId) async => collection.where().remoteIdEqualTo(remoteId).findFirst(),
-    saveLinksAfterPut: (tree) async {
-      await tree.treeLevel.save();
-      await tree.parent.save();
-    }
-  ),
+      endpoint: 'trees',
+      getCollection: (isar) => isar.treeIsars,
+      idName: 'treeRecordId',
+      fromJson: Tree.fromJson,
+      toIsar: (tree) async => TreeIsar.toRemote(tree),
+      findByRemoteId: (collection, remoteId) async =>
+          collection.where().remoteIdEqualTo(remoteId).findFirst(),
+      saveLinksAfterPut: (tree) async {
+        await tree.treeLevel.save();
+        await tree.parent.save();
+      }),
   SyncEntry<TreeLevelIsar, TreeLevel>(
-    endpoint: 'tree-levels',
-    getCollection: (isar) => isar.treeLevelIsars,
-    idName: 'treeLevelId',
-    fromJson: TreeLevel.fromJson,
-    toIsar: (treeLevel) async => TreeLevelIsar.toRemote(treeLevel),
-    findByRemoteId: (collection, remoteId) async => collection.where().remoteIdEqualTo(remoteId).findFirst()
-  ),
+      endpoint: 'tree-levels',
+      getCollection: (isar) => isar.treeLevelIsars,
+      idName: 'treeLevelId',
+      fromJson: TreeLevel.fromJson,
+      toIsar: (treeLevel) async => TreeLevelIsar.toRemote(treeLevel),
+      findByRemoteId: (collection, remoteId) async =>
+          collection.where().remoteIdEqualTo(remoteId).findFirst()),
   SyncEntry<TreeRecordDetailTypeIsar, TreeRecordDetailType>(
-    endpoint: 'tree-record-detail-types',
-    getCollection: (isar) => isar.treeRecordDetailTypeIsars,
-    idName: 'treeRecordDetailTypeId',
-    fromJson: TreeRecordDetailType.fromJson,
-    toIsar: (detailType) async => TreeRecordDetailTypeIsar.toRemote(detailType),
-    findByRemoteId: (collection, remoteId) async => collection.where().remoteIdEqualTo(remoteId).findFirst()
-  ),
+      endpoint: 'tree-record-detail-types',
+      getCollection: (isar) => isar.treeRecordDetailTypeIsars,
+      idName: 'treeRecordDetailTypeId',
+      fromJson: TreeRecordDetailType.fromJson,
+      toIsar: (detailType) async =>
+          TreeRecordDetailTypeIsar.toRemote(detailType),
+      findByRemoteId: (collection, remoteId) async =>
+          collection.where().remoteIdEqualTo(remoteId).findFirst()),
   SyncEntry<TreeRecordDetailIsar, TreeRecordDetail>(
-    endpoint: 'tree-record-details',
-    getCollection: (isar) => isar.treeRecordDetailIsars,
-    idName: 'detailId',
-    fromJson: TreeRecordDetail.fromJson,
-    toIsar: (detail) async => TreeRecordDetailIsar.toRemote(detail),
-    findByRemoteId: (collection, remoteId) async => collection.where().remoteIdEqualTo(remoteId).findFirst(),
-    saveLinksAfterPut: (detail) async {
-      await detail.detailType.save();
-      await detail.tree.save();
-    }
-  ),
+      endpoint: 'tree-record-details',
+      getCollection: (isar) => isar.treeRecordDetailIsars,
+      idName: 'detailId',
+      fromJson: TreeRecordDetail.fromJson,
+      toIsar: (detail) async => TreeRecordDetailIsar.toRemote(detail),
+      findByRemoteId: (collection, remoteId) async =>
+          collection.where().remoteIdEqualTo(remoteId).findFirst(),
+      saveLinksAfterPut: (detail) async {
+        await detail.detailType.save();
+        await detail.tree.save();
+      }),
   SyncEntry<BuildingTypesIsar, BuildingType>(
-    endpoint: 'buildingTypes',
-    getCollection: (isar) => isar.buildingTypesIsars,
-    idName: 'buildingTypeId',
-    fromJson: BuildingType.fromJson,
-    toIsar: (buildingType) async => BuildingTypesIsar.toRemote(buildingType),
-    findByRemoteId: (collection, remoteId) async => collection.where().remoteIdEqualTo(remoteId).findFirst()
-  ),
-
+      endpoint: 'buildingTypes',
+      getCollection: (isar) => isar.buildingTypesIsars,
+      idName: 'buildingTypeId',
+      fromJson: BuildingType.fromJson,
+      toIsar: (buildingType) async => BuildingTypesIsar.toRemote(buildingType),
+      findByRemoteId: (collection, remoteId) async =>
+          collection.where().remoteIdEqualTo(remoteId).findFirst()),
 ];

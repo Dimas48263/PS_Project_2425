@@ -1,16 +1,19 @@
 import 'package:isar/isar.dart';
+import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 
 part 'entities_isar.g.dart';
 
 @Collection()
-class EntitiesIsar {
+class EntitiesIsar implements IsarTable<Entity> {
   /*Local variables*/
   Id id = Isar.autoIncrement;
+  @override
   bool isSynced = false;
 
   /* Remote variables */
+  @override
   int? remoteId;
 
   @Index(type: IndexType.value)
@@ -19,11 +22,12 @@ class EntitiesIsar {
   String phone1 = "";
   String phone2 = "";
 
-  final entityType = IsarLink<EntityTypeIsar>();
+  var entityType = IsarLink<EntityTypeIsar>();
 
   DateTime startDate = DateTime(DateTime.now().year, 1, 1);
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
+  @override
   DateTime updatedAt = DateTime.now();
 
   EntitiesIsar();
@@ -59,6 +63,21 @@ class EntitiesIsar {
     return copy;
   }
 
+  @override
+  Future<void> updateFromApiEntity(Entity entity) async {
+    remoteId = entity.remoteId;
+    name = entity.name;
+    entityType = entity.entityTypeId as IsarLink<EntityTypeIsar>;
+    email = entity.email!;
+    phone1 = entity.phone1;
+    phone2 = entity.phone2!;
+    startDate = entity.startDate;
+    endDate = entity.endDate;
+    createdAt = entity.createdAt;
+    updatedAt = entity.updatedAt;
+    isSynced = true;
+  }
+
   factory EntitiesIsar.fromEntity(Entity entity) {
     final isarEntity = EntitiesIsar()
       ..remoteId = entity.remoteId
@@ -77,6 +96,7 @@ class EntitiesIsar {
     return isarEntity;
   }
 
+  @override
   Entity toEntity() {
     return Entity(
       remoteId: remoteId ?? -1,
@@ -91,5 +111,23 @@ class EntitiesIsar {
       updatedAt: updatedAt,
       isSynced: isSynced,
     );
+  }
+
+    @override
+  EntitiesIsar setEntityIdAndSync(
+      {int? remoteId, bool? isSynced, DateTime? updatedAt}) {
+    return EntitiesIsar()
+      ..id = id
+      ..remoteId = remoteId ?? this.remoteId
+      ..name = name
+      ..entityType = entityType
+      ..email = email
+      ..phone1 = phone1
+      ..phone2 = phone2
+      ..startDate = startDate
+      ..endDate = endDate
+      ..createdAt = createdAt
+      ..updatedAt = updatedAt ?? this.updatedAt
+      ..isSynced = isSynced ?? this.isSynced;
   }
 }

@@ -42,7 +42,7 @@ Future<void> _setup() async {
   AppConfig.initFromJson(configMap);
 
   await DatabaseService.setup();
-  SyncServiceManager().setup();
+  //SyncServiceManager().setup(); //Sync2 suspendend
 
   await LogService.init(AppConfig.instance);
 

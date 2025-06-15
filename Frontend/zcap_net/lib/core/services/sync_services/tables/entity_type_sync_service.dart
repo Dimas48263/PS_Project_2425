@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/api_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/sync_services/abstract_syncable_service.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
@@ -22,8 +22,9 @@ class EntityTypeSyncService implements SyncableService {
         final dataToSend = apiEntity.toJsonInput();
 
         if (item.remoteId == null || item.remoteId! <= 0) {
-          LogService.log('[EntityType Sync2] Enviando novo registo: dados $dataToSend');
-          final created = await ApiService.post('entityTypes', dataToSend);
+          LogService.log(
+              '[EntityType Sync2] Enviando novo registo: dados $dataToSend');
+          final created = await apiService.post('entityTypes', dataToSend);
 
           if (created['entityTypeId'] != null) {
             final updatedItem = item.setEntityIdAndSync(
@@ -41,7 +42,7 @@ class EntityTypeSyncService implements SyncableService {
         } else {
           LogService.log(
               '[EntityType Sync2] Atualizando remotamente o registo: (remoteId: ${item.remoteId}), dados: $dataToSend');
-          await ApiService.put('entityTypes/${item.remoteId}', dataToSend);
+          await apiService.put('entityTypes/${item.remoteId}', dataToSend);
 
           final updatedItem = item.setEntityIdAndSync(
             isSynced: true,
@@ -50,10 +51,12 @@ class EntityTypeSyncService implements SyncableService {
           await isar.writeTxn(() async {
             await isar.entityTypeIsars.put(updatedItem);
           });
-          LogService.log('[EntityType Sync2] Atualizado e marcado como sincronizado');
+          LogService.log(
+              '[EntityType Sync2] Atualizado e marcado como sincronizado');
         }
       } catch (e, stack) {
-        LogService.log('[EntityType Sync2] Falha ao sincronizar registro local ID ${item.id}: $e');
+        LogService.log(
+            '[EntityType Sync2] Falha ao sincronizar registro local ID ${item.id}: $e');
         LogService.log('Stack: $stack');
 
         final errorItem = item.setEntityIdAndSync(isSynced: false);
@@ -67,7 +70,7 @@ class EntityTypeSyncService implements SyncableService {
   @override
   Future<void> syncFromServer() async {
     try {
-      final apiData = await ApiService.getList(
+      final apiData = await apiService.getList(
         'entityTypes',
         (json) => EntityType.fromJson(json),
       );
@@ -89,16 +92,18 @@ class EntityTypeSyncService implements SyncableService {
         }
       });
 
-      LogService.log('[EntityType Sync2] Dados do servidor sincronizados com sucesso');
+      LogService.log(
+          '[EntityType Sync2] Dados do servidor sincronizados com sucesso');
     } catch (e, stack) {
-      LogService.log('[EntityType Sync2] Falha ao buscar dados do servidor: $e');
+      LogService.log(
+          '[EntityType Sync2] Falha ao buscar dados do servidor: $e');
       LogService.log('Stack: $stack');
     }
   }
 
   @override
   Future<void> syncAll() async {
-     await syncFromServer();
+    await syncFromServer();
     await syncToServer();
   }
 }
