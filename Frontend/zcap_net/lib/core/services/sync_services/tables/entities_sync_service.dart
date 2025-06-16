@@ -87,7 +87,7 @@ class EntitySyncService implements SyncableService {
             localEntity
               ..name = apiEntity.name
               ..entityType.value = EntityTypeIsar()
-              ..remoteId = apiEntity.entityTypeId
+              ..remoteId = apiEntity.entityType.remoteId
               ..startDate = apiEntity.startDate
               ..endDate = apiEntity.endDate
               ..createdAt = apiEntity.createdAt

@@ -8,6 +8,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:zcap_net_app/core/services/api_service.dart';
+import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
 
 import 'api_service_test.mocks.dart';
 
@@ -41,7 +42,7 @@ void main() {
             "startDate": "2020-01-01",
             "endDate": "2025-12-31",
             "createdAt": "2025-06-02T23:11:25.080",
-            "updatedAt": "2025-06-08T15:51:15.257"
+            "lastUpdatedAt": "2025-06-08T15:51:15.257"
           },
       "email": "",
       "phone1": "351 21 000 000",
@@ -49,7 +50,7 @@ void main() {
       "startDate": "2025-01-01T00:00:00Z",
       "endDate": null,
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "lastUpdatedAt": "2025-01-01T00:00:00Z"
     },
     {
       "entityId": 777,
@@ -60,7 +61,7 @@ void main() {
           "startDate": "2020-01-01",
           "endDate": "2025-12-31",
           "createdAt": "2025-06-02T23:11:25.080",
-          "updatedAt": "2025-06-08T15:51:15.257"
+          "lastUpdatedAt": "2025-06-08T15:51:15.257"
       },
       "email": "",
       "phone1": "351 21 000 000",
@@ -68,7 +69,7 @@ void main() {
       "startDate": "2025-01-01T00:00:00Z",
       "endDate": null,
       "createdAt": "2025-01-01T00:00:00Z",
-      "updatedAt": "2025-01-01T00:00:00Z"
+      "lastUpdatedAt": "2025-01-01T00:00:00Z"
     }
   ]
   ''';
@@ -87,7 +88,7 @@ void main() {
       expect(result, isA<List<Entity>>());
       expect(result.length, 2);
       expect(result.first.remoteId, 666);
-      expect(result[1].entityTypeId, 555);
+      expect(result[1].entityType.remoteId, 555);
     });
 
     test('returns an empty array', () async {
@@ -120,7 +121,7 @@ void main() {
             "startDate": "2020-01-01",
             "endDate": "2025-12-31",
             "createdAt": "2025-06-02T23:11:25.080",
-            "updatedAt": "2025-06-08T15:51:15.257"
+            "lastUpdatedAt": "2025-06-08T15:51:15.257"
           },
         "email": "test@bvodivelas.pt",
         "phone1": "21 934 82 90",
@@ -128,7 +129,7 @@ void main() {
         "startDate": "2025-01-01T00:00:00Z",
         "endDate": null,
         "createdAt": "2025-01-01T00:00:00Z",
-        "updatedAt": "2025-01-01T00:00:00Z"
+        "lastUpdatedAt": "2025-01-01T00:00:00Z"
       }
       ''';
 
@@ -149,9 +150,9 @@ void main() {
       expect(entity, isA<Entity>());
       expect(entity.remoteId, 1);
       expect(entity.name, '*TEST* Bombeiros Voluntários de Odivelas');
-      expect(entity.entityTypeId,
-          isA<int>()); //TODO: isA<EntityType>() when fix is applied
-      expect(entity.entityTypeId, 10);
+      expect(entity.entityType,
+          isA<EntityType>());
+      expect(entity.entityType.remoteId, 10);
       expect(entity.email, 'test@bvodivelas.pt');
     });
 
@@ -184,7 +185,7 @@ void main() {
           "startDate": "2020-01-01",
           "endDate": "2025-12-31",
           "createdAt": "2025-06-02T23:11:25.080",
-          "updatedAt": "2025-06-08T15:51:15.257"
+          "lastUpdatedAt": "2025-06-08T15:51:15.257"
         },
     "email": "test@bvodivelas.pt",
     "phone1": "999",
@@ -192,7 +193,7 @@ void main() {
     "startDate": "2025-01-01T00:00:00Z",
     "endDate": null,
     "createdAt": "2025-01-01T00:00:00Z",
-    "updatedAt": "2025-01-01T00:00:00Z"
+    "lastUpdatedAt": "2025-01-01T00:00:00Z"
   }
   ''';
 
@@ -218,8 +219,8 @@ void main() {
       final newEntity = Entity.fromJson(result);
 
       expect(newEntity, isA<Entity>());
-      expect(newEntity.entityTypeId,
-          isA<int>()); //TODO: isA<EntityType>() when fix is applied
+      expect(newEntity.entityType,
+          isA<EntityType>());
       expect(newEntity.name, 'TEST New Entity');
     });
   });
@@ -245,7 +246,7 @@ void main() {
                 "startDate": "2020-01-01",
                 "endDate": "2025-12-31",
                 "createdAt": "2025-06-02T23:11:25.080",
-                "updatedAt": "2025-06-08T15:51:15.257"
+                "lastUpdatedAt": "2025-06-08T15:51:15.257"
               },
           "email": "test@bvodivelas.pt",
           "phone1": "123456789",
@@ -253,7 +254,7 @@ void main() {
           "startDate": "2025-01-01T00:00:00Z",
           "endDate": null,
           "createdAt": "2025-01-01T00:00:00Z",
-          "updatedAt": "2025-06-01T00:00:00Z"
+          "lastUpdatedAt": "2025-06-01T00:00:00Z"
         }
       ''';
 
@@ -272,7 +273,7 @@ void main() {
 
       expect(entity.name, 'Updated Entity');
       expect(entity.remoteId, 333);
-      expect(entity.entityTypeId, 444);
+      expect(entity.entityType.remoteId, 444);
       expect(entity.phone1, '123456789');
     });
 

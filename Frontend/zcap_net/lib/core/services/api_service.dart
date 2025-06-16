@@ -62,6 +62,7 @@ class ApiService {
       return jsonDecode(utf8.decode(response.bodyBytes))
           as Map<String, dynamic>;
     } else {
+      //TODO: change message. translation does not work where like that
       throw Exception(
         'errors.load_item_failed'.tr(namedArgs: {
           'code': response.statusCode.toString(),

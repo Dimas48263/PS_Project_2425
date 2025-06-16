@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
+import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 
 part 'entities_isar.g.dart';
@@ -67,7 +68,6 @@ class EntitiesIsar implements IsarTable<Entity> {
   Future<void> updateFromApiEntity(Entity entity) async {
     remoteId = entity.remoteId;
     name = entity.name;
-    entityType = entity.entityTypeId as IsarLink<EntityTypeIsar>;
     email = entity.email!;
     phone1 = entity.phone1;
     phone2 = entity.phone2!;
@@ -76,6 +76,9 @@ class EntitiesIsar implements IsarTable<Entity> {
     createdAt = entity.createdAt;
     lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
+
+    entityType.value = EntityTypeIsar.fromEntityType(entity.entityType);
+    await entityType.save();
   }
 
   factory EntitiesIsar.fromEntity(Entity entity) {
@@ -91,8 +94,9 @@ class EntitiesIsar implements IsarTable<Entity> {
       ..lastUpdatedAt = entity.lastUpdatedAt
       ..isSynced = true;
 
-    isarEntity.entityType.value = EntityTypeIsar()
-      ..remoteId = entity.entityTypeId;
+    isarEntity.entityType.value =
+        EntityTypeIsar.fromEntityType(entity.entityType);
+
     return isarEntity;
   }
 
@@ -101,10 +105,17 @@ class EntitiesIsar implements IsarTable<Entity> {
     return Entity(
       remoteId: remoteId ?? -1,
       name: name,
-      entityTypeId: entityType.value?.remoteId ?? -1,
-      email: email,
+      entityType: entityType.value?.toEntity() ??
+          EntityType(
+            remoteId: -1,
+            name: '',
+            startDate: DateTime.now(),
+            createdAt: DateTime.now(),
+            lastUpdatedAt: DateTime.now(),
+          ),
+      email: email.isEmpty ? null : email,
       phone1: phone1,
-      phone2: phone2,
+      phone2: phone2.isEmpty ? null : phone2,
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
@@ -113,14 +124,14 @@ class EntitiesIsar implements IsarTable<Entity> {
     );
   }
 
-    @override
+  @override
   EntitiesIsar setEntityIdAndSync(
       {int? remoteId, bool? isSynced, DateTime? lastUpdatedAt}) {
     return EntitiesIsar()
       ..id = id
       ..remoteId = remoteId ?? this.remoteId
       ..name = name
-      ..entityType = entityType
+      ..entityType.value = entityType.value
       ..email = email
       ..phone1 = phone1
       ..phone2 = phone2

@@ -1,10 +1,11 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
 
 class Entity implements ApiTable {
   @override
   final int remoteId;
   final String name;
-  final int entityTypeId; //TODO: fix to be an full EntityType
+  final EntityType entityType;
   final String? email;
   final String phone1;
   final String? phone2;
@@ -18,7 +19,7 @@ class Entity implements ApiTable {
   Entity({
     required this.remoteId,
     required this.name,
-    required this.entityTypeId,
+    required this.entityType,
     this.email,
     required this.phone1,
     this.phone2,
@@ -33,7 +34,7 @@ class Entity implements ApiTable {
     return Entity(
       remoteId: json['entityId'],
       name: json['name'],
-      entityTypeId: json['entityType']?['entityTypeId'],
+      entityType: EntityType.fromJson(json['entityType']),
       email: json['email'],
       phone1: json['phone1'],
       phone2: json['phone2'],
@@ -48,7 +49,7 @@ class Entity implements ApiTable {
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
-      'entityTypeId': entityTypeId,
+      'entityTypeId': entityType.remoteId,
       if (email != null) 'email': email,
       'phone1': phone1,
       if (phone2 != null) 'phone2': phone2,
