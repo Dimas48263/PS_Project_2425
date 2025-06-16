@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/widgets/hero_widget.dart';
 import '../../../shared/shared.dart';
 import '../view_model/login_view_model.dart';
@@ -18,6 +20,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _usernameFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
 
+  List<Language> _supportedLanguages = [];
+  Language? _selectedLanguage;
+
   void _login() async {
     showDialog(
       context: context,
@@ -36,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (success) {
       CustomOkSnackBar.show(
         context,
-        'Credenciais válidas!!',
+        'login_ok'.tr(),
       );
 
       Navigator.pushReplacement(
@@ -44,13 +49,14 @@ class _LoginScreenState extends State<LoginScreen> {
         MaterialPageRoute(builder: (_) => const HomeScreen()),
       );
     } else {
-      CustomNOkSnackBar.show(context, 'Credenciais inválidas');
+      CustomNOkSnackBar.show(context, 'login_nok'.tr());
     }
   }
 
   @override
   void initState() {
     super.initState();
+    _loadLanguages();
     Future.delayed(Duration.zero, () {
       _usernameFocusNode.requestFocus();
     });
@@ -63,10 +69,22 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
+  void _loadLanguages() async {
+    final langs = await Language.loadFromAsset();
+
+    setState(() {
+      _supportedLanguages = langs;
+      _selectedLanguage = langs.firstWhere(
+        (lang) => lang.code == context.locale.languageCode,
+        orElse: () => langs.first,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Login")),
+      appBar: AppBar(title: Text("login".tr())),
       body: Center(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -76,13 +94,13 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  HeroWidget(title: 'ZCAP Net'),
+                  HeroWidget(title: 'app_name'.tr()),
                   SizedBox(
                     height: 20.0,
                   ),
                   CustomTextField(
                     controller: _usernameController,
-                    fieldName: 'Username',
+                    fieldName: 'username'.tr(),
                     prefixIcon: Icons.person_outlined,
                     inputType: TextInputType.text,
                     focusNode: _usernameFocusNode,
@@ -92,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   CustomTextField(
                     controller: _passwordController,
-                    fieldName: 'Password',
+                    fieldName: 'password'.tr(),
                     prefixIcon: Icons.password_outlined,
                     inputType: TextInputType.text,
                     obscureText: true,
@@ -100,11 +118,41 @@ class _LoginScreenState extends State<LoginScreen> {
                     onSubmitted: (_) => _login(),
                   ),
                   const SizedBox(height: 20),
+
+DropdownButton<Language>(
+  value: _selectedLanguage,
+  icon: const Icon(Icons.language),
+  isExpanded: true,
+  underline: Container(height: 1, color: Colors.grey),
+  items: _supportedLanguages.map((lang) {
+    return DropdownMenuItem<Language>(
+      value: lang,
+      child: Row(
+        children: [
+          Image.asset(lang.flag, width: 24, height: 24),
+          const SizedBox(width: 8),
+          Text(lang.name),
+        ],
+      ),
+    );
+  }).toList(),
+  onChanged: (Language? newLang) {
+    if (newLang != null) {
+      setState(() {
+        _selectedLanguage = newLang;
+      });
+      context.setLocale(Locale(newLang.code));
+    }
+  },
+),
+
+
+                  const SizedBox(height: 20),
                   SizedBox(
                     width: 150,
                     child: ElevatedButton(
                       onPressed: _login,
-                      child: const Text("Entrar"),
+                      child: Text('login'.tr()),
                     ),
                   ),
                 ],

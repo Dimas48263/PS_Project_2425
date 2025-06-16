@@ -1,0 +1,21 @@
+{
+  "app_name": "ZCAP Net",
+  "login": "Login",
+  "login_ok": "Success login",
+  "login_nok": "Incorrect username/password",
+  "logout": "Logout",
+  "email": "Email",
+  "password": "Password",
+  "username": "Username",
+  "unsupported_OS": "Operating System not supported",
+  "errors": {
+    "load_item_failed": "Failed to load item: code {{code}}, response: {{body}}",
+    "load_list_failed": "Failed to load list: code {{code}}",
+    "post_failed": "Failed to send data: code {{code}}, response: {{body}}",
+    "put_failed": "Failed to update data: code {{code}}, response: {{body}}",
+    "delete_failed": "Failed to delete data: code {{code}}, response: {{body}}"
+  },
+  "log": {
+    "app_started": "Application started with API: {{api}}"
+  }
+}

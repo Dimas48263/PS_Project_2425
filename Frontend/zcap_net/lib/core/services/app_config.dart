@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
+
 class AppConfig {
   final String appDataPath;
   final String apiUrl;
@@ -42,7 +44,7 @@ class AppConfig {
     } else if (Platform.isLinux || Platform.isMacOS) {
       return '/opt/zcapnet';
     } else {
-      throw UnsupportedError("S.O. não suportado.");
+      throw UnsupportedError('unsupported_OS'.tr());
     }
   }
 }

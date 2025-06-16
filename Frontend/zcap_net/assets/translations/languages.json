@@ -1,0 +1,32 @@
+[
+  {
+    "code": "pt",
+    "name": "Português",
+    "flag": "assets/flags/pt.png"
+  },
+  {
+    "code": "en",
+    "name": "English",
+    "flag": "assets/flags/en.png"
+  },
+  {
+    "code": "fr",
+    "name": "Français",
+    "flag": "assets/flags/fr.png"
+  },
+  {
+    "code": "es",
+    "name": "Español",
+    "flag": "assets/flags/es.png"
+  },
+  {
+    "code": "de",
+    "name": "Deutsch",
+    "flag": "assets/flags/de.png"
+  },
+  {
+    "code": "it",
+    "name": "Italiano",
+    "flag": "assets/flags/it.png"
+  }
+]

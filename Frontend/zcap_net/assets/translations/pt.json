@@ -1,0 +1,21 @@
+{
+  "app_name": "ZCAP Net",
+  "login": "Entrar",
+  "login_ok": "Credenciais válidas",
+  "login_nok": "Credenciais inválidas",
+  "logout": "Sair",
+  "email": "Email",
+  "password": "Senha",
+  "username": "Utilizador",
+  "unsupported_OS": "Sistema Operativo não suportado",
+  "errors": {
+    "load_item_failed": "Erro ao carregar item: código {{code}}, resposta: {{body}}",
+    "load_list_failed": "Erro ao carregar lista: código {{code}}",
+    "post_failed": "Erro ao enviar dados: código {{code}}, resposta: {{body}}",
+    "put_failed": "Erro ao atualizar dados: código {{code}}, resposta: {{body}}",
+    "delete_failed": "Erro ao eliminar dados: código {{code}}, resposta: {{body}}"
+  },
+  "log": {
+    "app_started": "Aplicação iniciada com API: {{api}}"
+  }
+}

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:http/http.dart' as http;
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
@@ -40,7 +41,11 @@ class ApiService {
       final List<dynamic> decoded = jsonDecode(utf8.decode(response.bodyBytes));
       return decoded.map((item) => fromJson(item)).toList();
     } else {
-      throw Exception('Erro ao carregar lista: ${response.statusCode}');
+      throw Exception(
+        'errors.load_list_failed'.tr(namedArgs: {
+          'code': response.statusCode.toString(),
+        }),
+      );
     }
   }
 
@@ -58,7 +63,11 @@ class ApiService {
           as Map<String, dynamic>;
     } else {
       throw Exception(
-          'Erro ao carregar item: ${response.statusCode}: ${response.body}');
+        'errors.load_item_failed'.tr(namedArgs: {
+          'code': response.statusCode.toString(),
+          'body': response.body,
+        }),
+      );
     }
   }
 
@@ -77,7 +86,11 @@ class ApiService {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception(
-          'Erro ao enviar dados: ${response.statusCode}: ${response.body}');
+        'errors.post_failed'.tr(namedArgs: {
+          'code': response.statusCode.toString(),
+          'body': response.body,
+        }),
+      );
     }
   }
 
@@ -96,7 +109,11 @@ class ApiService {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw Exception(
-          'Erro ao atualizar dados: ${response.statusCode}: ${response.body}');
+        'errors.put_failed'.tr(namedArgs: {
+          'code': response.statusCode.toString(),
+          'body': response.body,
+        }),
+      );
     }
   }
 
@@ -111,7 +128,11 @@ class ApiService {
 
     if (response.statusCode != 200) {
       throw Exception(
-          'Erro ao deletar dados: ${response.statusCode}: ${response.body}');
+        'errors.delete_failed'.tr(namedArgs: {
+          'code': response.statusCode.toString(),
+          'body': response.body,
+        }),
+      );
     }
   }
 
@@ -125,7 +146,7 @@ class ApiService {
           "[ApiService.ping] Status: ${response.statusCode} - Body: ${response.body}");
       return response;
     } catch (e, stack) {
-      LogService.log("[ApiService.ping] ERRO: $e\n$stack");
+      LogService.log("[ApiService.ping] Error: $e\n$stack");
       rethrow;
     }
   }

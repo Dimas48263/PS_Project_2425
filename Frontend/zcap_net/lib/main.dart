@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:window_size/window_size.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
@@ -16,10 +16,11 @@ import 'features/login/widgets/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     setWindowMinSize(const Size(800, 600)); //Minimum size window
-    setWindowTitle('ZCAP Net');
+    setWindowTitle('app_name'.tr());
   }
 
   await _setup();
@@ -27,9 +28,15 @@ void main() async {
   final session = SessionManager();
 
   syncServiceV3.startListening();
-  runApp(MyApp(
-    sessionManager: session,
-  ));
+
+  runApp(
+    EasyLocalization(
+      supportedLocales: const [Locale('en'), Locale('pt')],
+      path: 'assets/translations',
+      fallbackLocale: const Locale('pt'),
+      child: MyApp(sessionManager: session),
+    ),
+  );
 }
 
 Future<void> _setup() async {
@@ -73,17 +80,17 @@ class MyApp extends StatelessWidget {
             ),
             useMaterial3: true,
           ),
-          locale: const Locale('pt',
-              'PT'), // additions to change date format from MM/dd/YYYY to dd/MM/YYYY
-          supportedLocales: const [
-            Locale('en', 'US'),
-            Locale('pt', 'PT'),
-          ],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
+          locale: context.locale,
+          supportedLocales: context.supportedLocales,
+          localizationsDelegates: context.localizationDelegates,
+//          locale: const Locale('pt',
+//              'PT'), // additions to change date format from MM/dd/YYYY to dd/MM/YYYY
+//          supportedLocales: const [Locale('en', 'US'), Locale('pt', 'PT'),],
+//          localizationsDelegates: const [
+//            GlobalMaterialLocalizations.delegate,
+//           GlobalWidgetsLocalizations.delegate,
+//            GlobalCupertinoLocalizations.delegate,
+//          ],
           home: sessionManager.isLoggedIn
               ? const HomeScreen()
               : const LoginScreen(),
@@ -92,3 +99,4 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+//TODO: implement all translations

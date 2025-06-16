@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
@@ -15,7 +14,8 @@ class LogService {
 
     if (_config.logToFile) {
       final dir = await getApplicationDocumentsDirectory();
-      final dateStr = DateFormat('yyyyMMdd').format(DateTime.now());
+      final now = DateTime.now();
+      final dateStr = "${now.year}${_pad2(now.month)}${_pad2(now.day)}";
 
       final logPath = p.join(_config.appDataPath, 'logs');
       final logFile = _config.logFileName;
@@ -32,7 +32,9 @@ class LogService {
   }
 
   static void log(String message) async {
-    final timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+    final now = DateTime.now();
+    final timestamp =
+        "${now.year}-${_pad2(now.month)}-${_pad2(now.day)} ${_pad2(now.hour)}:${_pad2(now.minute)}:${_pad2(now.second)}";
     final logMessage = "[$timestamp] $message";
 
     print(logMessage);
@@ -64,4 +66,6 @@ class LogService {
     }
     _writeNext();
   }
+
+  static String _pad2(int value) => value.toString().padLeft(2, '0');
 }
