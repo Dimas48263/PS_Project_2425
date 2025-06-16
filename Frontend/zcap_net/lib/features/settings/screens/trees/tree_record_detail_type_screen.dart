@@ -1,11 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
@@ -35,6 +32,7 @@ class _TreeRecordDetailTypesScreenState
         .listen((data) {
       setState(() {
         treeRecordDetailTypes = data;
+        _isLoading = false;
       });
     });
     _searchController.addListener(() {
@@ -42,8 +40,6 @@ class _TreeRecordDetailTypesScreenState
         _searchTerm = _searchController.text.toLowerCase();
       });
     });
-
-    _loadDetails();
   }
 
   @override
@@ -120,11 +116,11 @@ class _TreeRecordDetailTypesScreenState
                     );
                     if (confirm == true) {
                       await DatabaseService.db.writeTxn(() async {
-                        await DatabaseService.db.treeRecordDetailTypeIsars.delete(detailType.id);
+                        await DatabaseService.db.treeRecordDetailTypeIsars
+                            .delete(detailType.id);
                       });
                     }
-                  }
-                ),
+                  }),
         ],
       ),
     );
@@ -152,8 +148,8 @@ class _TreeRecordDetailTypesScreenState
             title:
                 Text(detailType == null ? 'Novo Elemento' : 'Editar Estrutura'),
             content: buildForm(
-                formKey,
-                context, textControllersConfig, startDate, endDate, (value) {
+                formKey, context, textControllersConfig, startDate, endDate,
+                (value) {
               setState(() => startDate = value);
               setModalState(() {}); // Atualiza o dialog
             }, (value) {
@@ -193,22 +189,6 @@ class _TreeRecordDetailTypesScreenState
         });
       },
     );
-  }
-
-  Future<void> _loadDetails() async {
-    if (await syncServiceV3.isApiReachable()) {
-      await syncServiceV3
-          .updateLocalData<TreeRecordDetailTypeIsar, TreeRecordDetailType>(
-              DatabaseService.db.treeRecordDetailTypeIsars,
-              "tree-record-detail-types",
-              TreeRecordDetailType.fromJson,
-              (tree) async => TreeRecordDetailTypeIsar.toRemote(tree),
-              (collection, remoteId) =>
-                  collection.where().remoteIdEqualTo(remoteId).findFirst());
-    }
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   List<List<String>> getLabelsList(

@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 
@@ -32,6 +30,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
         .listen((data) {
       setState(() {
         treeLevels = data;
+        _isLoading = false;
       });
     });
     _searchController.addListener(() {
@@ -39,8 +38,6 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
         _searchTerm = _searchController.text.toLowerCase();
       });
     });
-
-    _loadTreeLevels();
   }
 
   @override
@@ -216,20 +213,5 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
         });
       },
     );
-  }
-
-  Future<void> _loadTreeLevels() async {
-    if (await syncServiceV3.isApiReachable()) {
-      await syncServiceV3.updateLocalData(
-          DatabaseService.db.treeLevelIsars,
-          "tree-levels",
-          TreeLevel.fromJson,
-          (TreeLevel treeLevel) async => TreeLevelIsar.toRemote(treeLevel),
-          (collection, remoteId) =>
-              collection.where().remoteIdEqualTo(remoteId).findFirst());
-    }
-    setState(() {
-      _isLoading = false;
-    });
   }
 }

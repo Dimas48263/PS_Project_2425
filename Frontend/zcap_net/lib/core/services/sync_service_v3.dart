@@ -74,18 +74,7 @@ class SyncServiceV3 {
 
   Future<void> synchronizeAll() async {
     for (var entry in syncEntries) {
-      final collection = entry.getCollection(isar);
-
-      // Faz a sincronização das entidades pendentes
-      await syncAllPending(collection, entry.endpoint, entry.idName);
-
-      // Verifica se sobrou algum item para sincronizar e reporta
-      final remaining = await getAllUnsynced(collection);
-      _reportRemaining(remaining.length);
-
-      updateLocalData(collection, entry.endpoint, entry.fromJson, entry.toIsar,
-          entry.findByRemoteId,
-          saveLinksAfterPut: entry.saveLinksAfterPut);
+      await synchronizeEntry(entry);
     }
   }
 
@@ -203,6 +192,23 @@ class SyncServiceV3 {
       }
     }
   }
+
+  Future<void> synchronizeEntry<TIsar extends IsarTable, TApi extends ApiTable>(
+    SyncEntry<TIsar, TApi> entry,
+  ) async {
+    final collection = entry.getCollection(isar);
+    await syncAllPending(collection, entry.endpoint, entry.idName);
+    final remaining = await getAllUnsynced(collection);
+    _reportRemaining(remaining.length);
+    await updateLocalData<TIsar, TApi>(
+      collection,
+      entry.endpoint,
+      entry.fromJson,
+      entry.toIsar,
+      entry.findByRemoteId,
+      saveLinksAfterPut: entry.saveLinksAfterPut,
+    );
+  }
 }
 
 class SyncEntry<TIsar extends IsarTable, TApi extends ApiTable> {
@@ -231,57 +237,86 @@ final List<SyncEntry> syncEntries = [
       getCollection: (isar) => isar.entityTypeIsars,
       idName: 'entityTypeId',
       fromJson: EntityType.fromJson,
-      toIsar: (EntityType entityType) async =>
-          EntityTypeIsar.toRemote(entityType),
-      findByRemoteId: (collection, remoteId) async =>
-          collection.where().remoteIdEqualTo(remoteId).findFirst()),
+      toIsar: (ApiTable entityType) async =>
+          EntityTypeIsar.toRemote(entityType as EntityType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<EntityTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
   SyncEntry<TreeIsar, Tree>(
       endpoint: 'trees',
       getCollection: (isar) => isar.treeIsars,
       idName: 'treeRecordId',
       fromJson: Tree.fromJson,
-      toIsar: (tree) async => TreeIsar.toRemote(tree),
-      findByRemoteId: (collection, remoteId) async =>
-          collection.where().remoteIdEqualTo(remoteId).findFirst(),
-      saveLinksAfterPut: (tree) async {
-        await tree.treeLevel.save();
-        await tree.parent.save();
+      toIsar: (ApiTable tree) async => await TreeIsar.toRemote(tree as Tree),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> tree) async {
+        final treeIsar = tree as TreeIsar;
+        await treeIsar.treeLevel.save();
+        await treeIsar.parent.save();
       }),
   SyncEntry<TreeLevelIsar, TreeLevel>(
       endpoint: 'tree-levels',
       getCollection: (isar) => isar.treeLevelIsars,
       idName: 'treeLevelId',
       fromJson: TreeLevel.fromJson,
-      toIsar: (treeLevel) async => TreeLevelIsar.toRemote(treeLevel),
-      findByRemoteId: (collection, remoteId) async =>
-          collection.where().remoteIdEqualTo(remoteId).findFirst()),
+      toIsar: (ApiTable treeLevel) async =>
+          TreeLevelIsar.toRemote(treeLevel as TreeLevel),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeLevelIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
   SyncEntry<TreeRecordDetailTypeIsar, TreeRecordDetailType>(
       endpoint: 'tree-record-detail-types',
       getCollection: (isar) => isar.treeRecordDetailTypeIsars,
       idName: 'treeRecordDetailTypeId',
       fromJson: TreeRecordDetailType.fromJson,
-      toIsar: (detailType) async =>
-          TreeRecordDetailTypeIsar.toRemote(detailType),
-      findByRemoteId: (collection, remoteId) async =>
-          collection.where().remoteIdEqualTo(remoteId).findFirst()),
+      toIsar: (ApiTable detailType) async =>
+          TreeRecordDetailTypeIsar.toRemote(detailType as TreeRecordDetailType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeRecordDetailTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
   SyncEntry<TreeRecordDetailIsar, TreeRecordDetail>(
       endpoint: 'tree-record-details',
       getCollection: (isar) => isar.treeRecordDetailIsars,
       idName: 'detailId',
       fromJson: TreeRecordDetail.fromJson,
-      toIsar: (detail) async => TreeRecordDetailIsar.toRemote(detail),
-      findByRemoteId: (collection, remoteId) async =>
-          collection.where().remoteIdEqualTo(remoteId).findFirst(),
-      saveLinksAfterPut: (detail) async {
-        await detail.detailType.save();
-        await detail.tree.save();
+      toIsar: (ApiTable detail) async =>
+          await TreeRecordDetailIsar.toRemote(detail as TreeRecordDetail),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeRecordDetailIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> detail) async {
+        final detailIsar = detail as TreeRecordDetailIsar;
+        await detailIsar.detailType.save();
+        await detailIsar.tree.save();
       }),
   SyncEntry<BuildingTypesIsar, BuildingType>(
       endpoint: 'buildingTypes',
       getCollection: (isar) => isar.buildingTypesIsars,
       idName: 'buildingTypeId',
       fromJson: BuildingType.fromJson,
-      toIsar: (buildingType) async => BuildingTypesIsar.toRemote(buildingType),
-      findByRemoteId: (collection, remoteId) async =>
-          collection.where().remoteIdEqualTo(remoteId).findFirst()),
+      toIsar: (ApiTable buildingType) async =>
+          BuildingTypesIsar.toRemote(buildingType as BuildingType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<BuildingTypesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
 ];

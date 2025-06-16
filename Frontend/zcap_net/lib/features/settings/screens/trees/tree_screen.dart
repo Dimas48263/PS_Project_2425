@@ -3,7 +3,6 @@ import 'package:isar/isar.dart';
 import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'dart:async';
-import 'package:zcap_net_app/features/settings/models/trees/tree.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
@@ -33,6 +32,7 @@ class _TreesScreenState extends State<TreesScreen> {
         .listen((data) async {
       setState(() {
         trees = data;
+        _isLoading = false;
       });
     });
     _searchController.addListener(() {
@@ -40,8 +40,6 @@ class _TreesScreenState extends State<TreesScreen> {
         _searchTerm = _searchController.text.toLowerCase();
       });
     });
-
-    _loadTrees();
   }
 
   @override
@@ -237,25 +235,5 @@ class _TreesScreenState extends State<TreesScreen> {
         });
       },
     );
-  }
-
-  Future<void> _loadTrees() async {
-    if (await syncServiceV3.isApiReachable()) {
-      await syncServiceV3.updateLocalData<TreeIsar, Tree>(
-        DatabaseService.db.treeIsars,
-        "trees",
-        Tree.fromJson,
-        (tree) async => TreeIsar.toRemote(tree),
-        (collection, remoteId) =>
-            collection.where().remoteIdEqualTo(remoteId).findFirst(),
-        saveLinksAfterPut: (tree) async {
-          await tree.treeLevel.save();
-          await tree.parent.save();
-        },
-      );
-    }
-    setState(() {
-      _isLoading = false;
-    });
   }
 }

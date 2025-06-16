@@ -6,7 +6,6 @@ import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 import 'package:zcap_net_app/widgets/confirm_dialog.dart';
@@ -41,6 +40,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
         .listen((data) async {
       setState(() {
         details = data;
+        _isLoading = false;
       });
     });
     _searchController.addListener(() {
@@ -48,8 +48,6 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
         _searchTerm = _searchController.text.toLowerCase();
       });
     });
-
-    _loadDetails();
   }
 
   @override
@@ -241,26 +239,5 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
         });
       },
     );
-  }
-
-  Future<void> _loadDetails() async {
-    if (await syncServiceV3.isApiReachable()) {
-      await syncServiceV3
-          .updateLocalData<TreeRecordDetailIsar, TreeRecordDetail>(
-        DatabaseService.db.treeRecordDetailIsars,
-        "tree-record-details",
-        TreeRecordDetail.fromJson,
-        (detail) async => TreeRecordDetailIsar.toRemote(detail),
-        (collection, remoteId) =>
-            collection.where().remoteIdEqualTo(remoteId).findFirst(),
-        saveLinksAfterPut: (detail) async {
-          await detail.detailType.save();
-          await detail.tree.save();
-        },
-      );
-    }
-    setState(() {
-      _isLoading = false;
-    });
   }
 }
