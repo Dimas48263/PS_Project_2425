@@ -7,7 +7,9 @@ import '../view_model/login_view_model.dart';
 import '../../home/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final List<Language> supportedLanguages;
+
+  const LoginScreen({super.key, required this.supportedLanguages});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -20,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final FocusNode _usernameFocusNode = FocusNode();
   final FocusNode _passwordFocusNode = FocusNode();
 
-  List<Language> _supportedLanguages = [];
+  late List<Language> _supportedLanguages;
   Language? _selectedLanguage;
 
   void _login() async {
@@ -46,7 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
+        MaterialPageRoute(
+            builder: (_) =>
+                HomeScreen(supportedLanguages: _supportedLanguages)),
       );
     } else {
       CustomNOkSnackBar.show(context, 'login_nok'.tr());
@@ -56,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    _loadLanguages();
+    _supportedLanguages = widget.supportedLanguages;
     Future.delayed(Duration.zero, () {
       _usernameFocusNode.requestFocus();
     });
@@ -69,16 +73,13 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _loadLanguages() async {
-    final langs = await Language.loadFromAsset();
-
-    setState(() {
-      _supportedLanguages = langs;
-      _selectedLanguage = langs.firstWhere(
-        (lang) => lang.code == context.locale.languageCode,
-        orElse: () => langs.first,
-      );
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _selectedLanguage ??= _supportedLanguages.firstWhere(
+      (lang) => lang.code == context.locale.languageCode,
+      orElse: () => _supportedLanguages.first,
+    );
   }
 
   @override
@@ -118,35 +119,38 @@ class _LoginScreenState extends State<LoginScreen> {
                     onSubmitted: (_) => _login(),
                   ),
                   const SizedBox(height: 20),
-
-DropdownButton<Language>(
-  value: _selectedLanguage,
-  icon: const Icon(Icons.language),
-  isExpanded: true,
-  underline: Container(height: 1, color: Colors.grey),
-  items: _supportedLanguages.map((lang) {
-    return DropdownMenuItem<Language>(
-      value: lang,
-      child: Row(
-        children: [
-          Image.asset(lang.flag, width: 24, height: 24),
-          const SizedBox(width: 8),
-          Text(lang.name),
-        ],
-      ),
-    );
-  }).toList(),
-  onChanged: (Language? newLang) {
-    if (newLang != null) {
-      setState(() {
-        _selectedLanguage = newLang;
-      });
-      context.setLocale(Locale(newLang.code));
-    }
-  },
-),
-
-
+                  DropdownButtonFormField<Language>(
+                    value: _selectedLanguage,
+                    icon: const Icon(Icons.language),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 16),
+                    ),
+                    isExpanded: true,
+                    items: _supportedLanguages.map((lang) {
+                      return DropdownMenuItem<Language>(
+                        value: lang,
+                        child: Row(
+                          children: [
+                            Image.asset(lang.flag, width: 24, height: 24),
+                            const SizedBox(width: 8),
+                            Text(lang.name),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: (Language? newLang) {
+                      if (newLang != null) {
+                        setState(() {
+                          _selectedLanguage = newLang;
+                        });
+                        context.setLocale(Locale(newLang.code));
+                      }
+                    },
+                  ),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: 150,

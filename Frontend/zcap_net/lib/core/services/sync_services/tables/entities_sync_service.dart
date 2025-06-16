@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/sync_services/abstract_syncable_service.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';

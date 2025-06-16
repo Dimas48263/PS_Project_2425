@@ -7,6 +7,7 @@
   "email": "Email",
   "password": "Senha",
   "username": "Utilizador",
+  "user": "Utilizador",
   "unsupported_OS": "Sistema Operativo não suportado",
   "errors": {
     "load_item_failed": "Erro ao carregar item: código {{code}}, resposta: {{body}}",
@@ -16,6 +17,7 @@
     "delete_failed": "Erro ao eliminar dados: código {{code}}, resposta: {{body}}"
   },
   "log": {
-    "app_started": "Aplicação iniciada com API: {{api}}"
+    "app_started": "Aplicação iniciada com API: {{api}}",
+    "online_status": "Online: {{status}}"
   }
 }

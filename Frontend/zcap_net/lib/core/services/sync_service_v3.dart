@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
+import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
 import '../../../core/services/session_manager.dart';
 import '../../login/widgets/login_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final List<Language> supportedLanguages;
+  const HomeScreen({super.key, required this.supportedLanguages});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -56,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                  MaterialPageRoute(builder: (context) => HomeScreen(supportedLanguages: widget.supportedLanguages)),
                 );
               },
             ),
@@ -156,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => LoginScreen(supportedLanguages: widget.supportedLanguages)),
       );
     }
   }

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
-import 'package:zcap_net_app/core/services/sync_services/request_sync.dart';
 
 class StatusBar extends StatelessWidget {
   final String? userName;
@@ -21,7 +19,7 @@ class StatusBar extends StatelessWidget {
       child: Row(
         children: [
           Text(
-            'User: ',
+            '${'user'.tr()}: ',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           Text(
@@ -32,7 +30,11 @@ class StatusBar extends StatelessWidget {
           ValueListenableBuilder<bool>(
               valueListenable: isOnlineNotifier,
               builder: (context, isOnline, child) {
-                LogService.log('Online: $isOnline');
+                LogService.log(
+                  'log.online_status'.tr(namedArgs: {
+                    'status': isOnline.toString(),
+                  }),
+                );
                 return isOnline
                     ? InkWell(
                         onTap: () async {

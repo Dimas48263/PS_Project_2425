@@ -1,22 +1,22 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:window_size/window_size.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/home/screens/home_screen.dart';
+import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'core/services/session_manager.dart';
 import 'features/login/widgets/login_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await EasyLocalization.ensureInitialized();
+  final supportedLanguages = await Language.loadFromAsset();
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     setWindowMinSize(const Size(800, 600)); //Minimum size window
@@ -31,10 +31,10 @@ void main() async {
 
   runApp(
     EasyLocalization(
-      supportedLocales: const [Locale('en'), Locale('pt')],
+      supportedLocales: supportedLanguages.map((e) => Locale(e.code)).toList(),
       path: 'assets/translations',
       fallbackLocale: const Locale('pt'),
-      child: MyApp(sessionManager: session),
+      child: MyApp(sessionManager: session, supportedLanguages: supportedLanguages),
     ),
   );
 }
@@ -52,15 +52,21 @@ Future<void> _setup() async {
 
   await LogService.init(AppConfig.instance);
 
-  LogService.log("Aplicação iniciada com API: ${AppConfig.instance.apiUrl}");
+  LogService.log(
+    'log.app_started'.tr(namedArgs: {
+      'api': AppConfig.instance.apiUrl,
+    }),
+  );
 }
 
 class MyApp extends StatelessWidget {
   final SessionManager sessionManager;
+  final List<Language> supportedLanguages;
 
   const MyApp({
     super.key,
     required this.sessionManager,
+    required this.supportedLanguages,
   });
 
   @override
@@ -72,7 +78,7 @@ class MyApp extends StatelessWidget {
       builder: (context, isDarkMode, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'Zcap Net',
+          title: 'app_name'.tr(),
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.teal,
@@ -83,17 +89,9 @@ class MyApp extends StatelessWidget {
           locale: context.locale,
           supportedLocales: context.supportedLocales,
           localizationsDelegates: context.localizationDelegates,
-//          locale: const Locale('pt',
-//              'PT'), // additions to change date format from MM/dd/YYYY to dd/MM/YYYY
-//          supportedLocales: const [Locale('en', 'US'), Locale('pt', 'PT'),],
-//          localizationsDelegates: const [
-//            GlobalMaterialLocalizations.delegate,
-//           GlobalWidgetsLocalizations.delegate,
-//            GlobalCupertinoLocalizations.delegate,
-//          ],
           home: sessionManager.isLoggedIn
-              ? const HomeScreen()
-              : const LoginScreen(),
+              ? HomeScreen(supportedLanguages: supportedLanguages)
+              : LoginScreen(supportedLanguages: supportedLanguages),
         );
       },
     );
