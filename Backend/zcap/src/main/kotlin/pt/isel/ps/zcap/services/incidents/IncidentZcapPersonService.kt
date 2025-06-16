@@ -72,7 +72,7 @@ class IncidentZcapPersonService(
             person = person,
             startDate = input.startDate,
             endDate = input.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repo.save(newIncidentZcapPerson).toOutputModel())

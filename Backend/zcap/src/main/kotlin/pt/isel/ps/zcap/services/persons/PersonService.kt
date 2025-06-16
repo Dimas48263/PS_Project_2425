@@ -13,7 +13,6 @@ import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.failure
 import pt.isel.ps.zcap.services.success
-import java.sql.Timestamp
 import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
 
@@ -106,7 +105,7 @@ class PersonService(
             niss = personInput.niss,
             departureDestination = departureDestination,
             destinationContact = personInput.destinationContact,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(personRepository.save(newPerson).toOutputModel())

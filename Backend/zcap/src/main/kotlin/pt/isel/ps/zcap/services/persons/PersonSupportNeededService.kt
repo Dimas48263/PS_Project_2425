@@ -78,7 +78,7 @@ class PersonSupportNeededService(
             description = personSupportNeededInput.description,
             startDate = personSupportNeededInput.startDate,
             endDate = personSupportNeededInput.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {
@@ -114,7 +114,7 @@ class PersonSupportNeededService(
             description,
             startDate,
             endDate,
-            updatedAt,
+            lastUpdatedAt,
             createdAt
         )
 }

@@ -233,7 +233,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                           editedUserProfile.name = nameController.text.trim();
                           editedUserProfile.startDate = selectedStartDate;
                           editedUserProfile.endDate = selectedEndDate;
-                          editedUserProfile.updatedAt = now;
+                          editedUserProfile.lastUpdatedAt = now;
                           editedUserProfile.isSynced = false;
                           if (userProfile == null) {
                             editedUserProfile.createdAt = now;

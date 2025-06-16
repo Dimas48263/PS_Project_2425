@@ -8,7 +8,7 @@ class BuildingType implements ApiTable{
   final DateTime? endDate;
   final DateTime createdAt;
   @override
-  final DateTime updatedAt;
+  final DateTime lastUpdatedAt;
   bool isSynced;
 
   BuildingType({
@@ -17,7 +17,7 @@ class BuildingType implements ApiTable{
     required this.startDate,
     this.endDate,
     required this.createdAt,
-    required this.updatedAt,
+    required this.lastUpdatedAt,
     this.isSynced = true,
   });
 
@@ -30,8 +30,8 @@ factory BuildingType.fromJson(Map<String, dynamic> json) {
     createdAt: json['createdAt'] != null
         ? DateTime.parse(json['createdAt'])
         : DateTime.now(),
-    updatedAt: json['updatedAt'] != null
-        ? DateTime.parse(json['updatedAt'])
+    lastUpdatedAt: json['lastUpdatedAt'] != null
+        ? DateTime.parse(json['lastUpdatedAt'])
         : DateTime.now(),
   );
 }
@@ -51,7 +51,7 @@ factory BuildingType.fromJson(Map<String, dynamic> json) {
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? lastUpdatedAt,
   }) {
     return BuildingType(
       remoteId: id ?? remoteId,
@@ -59,7 +59,7 @@ factory BuildingType.fromJson(Map<String, dynamic> json) {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
     );
   }
 }

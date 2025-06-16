@@ -29,7 +29,7 @@ class TreeRecordDetailIsar implements IsarTable<TreeRecordDetail> {
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override
-  DateTime updatedAt = DateTime.now(); 
+  DateTime lastUpdatedAt = DateTime.now(); 
   
   @override
   TreeRecordDetailIsar setEntityIdAndSync({int? remoteId, bool? isSynced}) {
@@ -42,7 +42,7 @@ class TreeRecordDetailIsar implements IsarTable<TreeRecordDetail> {
       ..startDate = startDate 
       ..endDate = endDate 
       ..createdAt = createdAt 
-      ..updatedAt = updatedAt
+      ..lastUpdatedAt = lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
   
@@ -55,7 +55,7 @@ class TreeRecordDetailIsar implements IsarTable<TreeRecordDetail> {
       valueCol: valueCol, 
       startDate: startDate, 
       createdAt: createdAt, 
-      updatedAt: updatedAt
+      lastUpdatedAt: lastUpdatedAt
       );
   }
   
@@ -71,7 +71,7 @@ class TreeRecordDetailIsar implements IsarTable<TreeRecordDetail> {
       ..startDate = trd.startDate
       ..endDate = trd.endDate
       ..createdAt = trd.createdAt
-      ..updatedAt = trd.updatedAt
+      ..lastUpdatedAt = trd.lastUpdatedAt
       ..isSynced = true;
 
     remote.tree.value = await getOrBuildTree(trd.tree);
@@ -87,7 +87,7 @@ class TreeRecordDetailIsar implements IsarTable<TreeRecordDetail> {
     startDate = entity.startDate;
     endDate = entity.endDate;
     createdAt = entity.createdAt;
-    updatedAt = entity.updatedAt;
+    lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
   }
 

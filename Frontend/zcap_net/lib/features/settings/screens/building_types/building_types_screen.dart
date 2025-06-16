@@ -208,7 +208,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                           editedBuildingType.name = nameController.text.trim();
                           editedBuildingType.startDate = selectedStartDate;
                           editedBuildingType.endDate = selectedEndDate;
-                          editedBuildingType.updatedAt = now;
+                          editedBuildingType.lastUpdatedAt = now;
                           editedBuildingType.isSynced = false;
                           if (buildingType == null) {
                             editedBuildingType.createdAt = now;

@@ -163,8 +163,8 @@ class SyncServiceV3 {
       final oldLocal = await findByRemoteId(collection, item.remoteId);
       ids.add(item.remoteId);
       if (oldLocal != null) {
-        if (item.updatedAt == oldLocal.updatedAt) continue;
-        if (item.updatedAt.isAfter(oldLocal.updatedAt)) {
+        if (item.lastUpdatedAt == oldLocal.lastUpdatedAt) continue;
+        if (item.lastUpdatedAt.isAfter(oldLocal.lastUpdatedAt)) {
           await oldLocal.updateFromApiEntity(item);
           await isar.writeTxn(() async {
             await collection.put(oldLocal);

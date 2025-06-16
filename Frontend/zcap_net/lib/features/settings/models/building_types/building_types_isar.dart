@@ -26,7 +26,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override
-  DateTime updatedAt = DateTime.now();
+  DateTime lastUpdatedAt = DateTime.now();
 
   // Construtor sem nome (necessário para o Isar)
   BuildingTypesIsar();
@@ -38,7 +38,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
       ..startDate = buildingType.startDate
       ..endDate = buildingType.endDate
       ..createdAt = buildingType.createdAt
-      ..updatedAt = buildingType.updatedAt
+      ..lastUpdatedAt = buildingType.lastUpdatedAt
       ..isSynced = true;
   }
 
@@ -50,7 +50,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
-      updatedAt: updatedAt
+      lastUpdatedAt: lastUpdatedAt
     );
   }
 
@@ -61,7 +61,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? lastUpdatedAt,
     bool? isSynced,
   }) {
     final copy = BuildingTypesIsar()
@@ -71,7 +71,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
       ..startDate = startDate ?? this.startDate
       ..endDate = endDate ?? this.endDate
       ..createdAt = createdAt ?? this.createdAt
-      ..updatedAt = updatedAt ?? this.updatedAt
+      ..lastUpdatedAt = lastUpdatedAt ?? this.lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
 
     return copy;
@@ -86,7 +86,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
       ..startDate = startDate 
       ..endDate = endDate 
       ..createdAt = createdAt 
-      ..updatedAt = updatedAt
+      ..lastUpdatedAt = lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
 
@@ -97,7 +97,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
     startDate = entity.startDate;
     endDate = entity.endDate;
     createdAt = entity.createdAt;
-    updatedAt = entity.updatedAt;
+    lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
   }
 
@@ -109,7 +109,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
       ..startDate = building.startDate
       ..endDate = building.endDate
       ..createdAt = building.createdAt
-      ..updatedAt = building.updatedAt
+      ..lastUpdatedAt = building.lastUpdatedAt
       ..isSynced = building.isSynced;
   }
 
@@ -121,7 +121,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
-      updatedAt: updatedAt,
+      lastUpdatedAt: lastUpdatedAt,
       isSynced: isSynced,
     );
   }

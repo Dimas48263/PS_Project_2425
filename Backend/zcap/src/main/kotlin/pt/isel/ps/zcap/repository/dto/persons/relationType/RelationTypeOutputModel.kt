@@ -9,5 +9,5 @@ data class RelationTypeOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val lastUpdatedAt: LocalDateTime
 )

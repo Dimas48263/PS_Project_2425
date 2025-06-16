@@ -66,7 +66,7 @@ class TreeService(
             parent = parent ?: tree.parent,
             startDate = treeUpdate.startDate,
             endDate = treeUpdate.endDate ?: tree.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repo.save(newTree).toOutputModel())

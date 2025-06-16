@@ -12,5 +12,5 @@ data class UserOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val lastUpdatedAt: LocalDateTime
 )

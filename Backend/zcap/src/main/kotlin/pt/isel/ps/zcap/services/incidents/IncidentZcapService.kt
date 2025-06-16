@@ -2,11 +2,9 @@ package pt.isel.ps.zcap.services.incidents
 
 import org.springframework.stereotype.Component
 import pt.isel.ps.zcap.domain.incidents.IncidentZcap
-import pt.isel.ps.zcap.repository.dto.incidents.incident.toOutputModel
 import pt.isel.ps.zcap.repository.dto.incidents.incidentZcap.IncidentZcapInputModel
 import pt.isel.ps.zcap.repository.dto.incidents.incidentZcap.IncidentZcapOutputModel
 import pt.isel.ps.zcap.repository.dto.incidents.incidentZcap.toOutputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.toOutputModel
 import pt.isel.ps.zcap.repository.models.incidents.IncidentRepository
 import pt.isel.ps.zcap.repository.models.incidents.IncidentZcapRepository
 import pt.isel.ps.zcap.repository.models.supportTables.EntitiesRepository
@@ -78,7 +76,7 @@ class IncidentZcapService(
             entity = entity,
             startDate = input.startDate,
             endDate = input.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {

@@ -18,7 +18,7 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType> {
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override
-  DateTime updatedAt = DateTime.now();
+  DateTime lastUpdatedAt = DateTime.now();
 
   @override
   bool isSynced = false;
@@ -35,7 +35,7 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType> {
       ..startDate = startDate
       ..endDate = endDate
       ..createdAt = createdAt
-      ..updatedAt = updatedAt
+      ..lastUpdatedAt = lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
 
@@ -48,7 +48,7 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType> {
         startDate: startDate,
         endDate: endDate,
         createdAt: createdAt,
-        updatedAt: updatedAt);
+        lastUpdatedAt: lastUpdatedAt);
   }
 
   @override
@@ -64,7 +64,7 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType> {
       ..startDate = detailType.startDate
       ..endDate = detailType.endDate
       ..createdAt = detailType.createdAt
-      ..updatedAt = detailType.updatedAt
+      ..lastUpdatedAt = detailType.lastUpdatedAt
       ..isSynced = true;
   }
 
@@ -76,7 +76,7 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType> {
     startDate = entity.startDate;
     endDate = entity.endDate;
     createdAt = entity.createdAt;
-    updatedAt = entity.updatedAt;
+    lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
   }
 }

@@ -114,7 +114,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                             ? smallDate.format(e.endDate!)
                             : '')),
                         DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -149,7 +149,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                             ? smallDate.format(e.endDate!)
                             : '')),
                         DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -184,7 +184,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                             ? smallDate.format(e.endDate!)
                             : '')),
                         DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -232,7 +232,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                             ? smallDate.format(e.endDate!)
                             : '')),
                         DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -268,7 +268,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                             ? smallDate.format(e.endDate!)
                             : '')),
                         DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -303,7 +303,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                             ? smallDate.format(e.endDate!)
                             : '')),
                         DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -338,7 +338,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                             ? smallDate.format(e.endDate!)
                             : '')),
                         DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),
@@ -382,7 +382,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                   DataCell(Text(
                       e.endDate != null ? smallDate.format(e.endDate!) : '')),
                   DataCell(Text(smallDate.format(e.createdAt))),
-                  DataCell(Text(fullDate.format(e.updatedAt))),
+                  DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                   DataCell(Text(e.isSynced.toString())),
                 ]);
               }).toList(),
@@ -418,7 +418,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                             ? smallDate.format(e.endDate!)
                             : '')),
                         DataCell(Text(smallDate.format(e.createdAt))),
-                        DataCell(Text(fullDate.format(e.updatedAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
                       ]))
                   .toList(),

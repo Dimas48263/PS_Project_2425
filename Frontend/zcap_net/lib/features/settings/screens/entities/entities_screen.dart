@@ -324,7 +324,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                         editedEntity.phone2 = phone2Controller.text.trim();
                         editedEntity.startDate = selectedStartDate;
                         editedEntity.endDate = selectedEndDate;
-                        editedEntity.updatedAt = now;
+                        editedEntity.lastUpdatedAt = now;
                         editedEntity.isSynced = false;
                         if (entity == null) {
                           editedEntity.createdAt = now;

@@ -11,7 +11,7 @@ data class EntityTypeOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime,
 )
 
 // Conversion from domain Model to OutputModel
@@ -22,6 +22,6 @@ fun EntityType.toOutputModel(): EntityTypeOutputModel {
         startDate = startDate,
         endDate = endDate,
         createdAt = createdAt,
-        updatedAt = updatedAt,
+        lastUpdatedAt = lastUpdatedAt,
     )
 }

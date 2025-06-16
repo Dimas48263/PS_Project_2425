@@ -303,7 +303,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         editedUser.name = nameController.text.trim();
                         editedUser.startDate = selectedStartDate;
                         editedUser.endDate = selectedEndDate;
-                        editedUser.updatedAt = now;
+                        editedUser.lastUpdatedAt = now;
                         editedUser.isSynced = false;
                         if (user == null) {
                           editedUser.password =

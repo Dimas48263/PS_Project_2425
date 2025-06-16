@@ -15,7 +15,7 @@ fun TreeLevel.toOutputModel() = TreeLevelOutputModel(
     startDate = startDate,
     endDate = endDate,
     createAt = createdAt,
-    updatedAt = updatedAt,
+    lastUpdatedAt = lastUpdatedAt,
 )
 
 fun TreeRecordDetail.toOutputModel(): TreeRecordDetailOutputModel =
@@ -27,7 +27,7 @@ fun TreeRecordDetail.toOutputModel(): TreeRecordDetailOutputModel =
         startDate,
         endDate,
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )
 
 fun Tree.toOutputModel(visited: Set<Long> = emptySet()): TreeOutputModel {
@@ -43,6 +43,6 @@ fun Tree.toOutputModel(visited: Set<Long> = emptySet()): TreeOutputModel {
         startDate = startDate,
         endDate = endDate,
         createAt = createdAt,
-        updatedAt = updatedAt,
+        lastUpdatedAt = lastUpdatedAt,
     )
 }

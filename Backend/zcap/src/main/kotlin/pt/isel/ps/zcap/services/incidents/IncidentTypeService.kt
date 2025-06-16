@@ -56,7 +56,7 @@ class IncidentTypeService(
             name = input.name,
             startDate = input.startDate,
             endDate = input.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repo.save(newIncidentType).toOutputModel())

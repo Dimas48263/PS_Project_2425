@@ -1,8 +1,6 @@
 package pt.isel.ps.zcap.domain.users
 
 import jakarta.persistence.*
-import org.springframework.security.core.userdetails.UserDetails
-import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -27,5 +25,5 @@ data class User (
     val endDate: LocalDate? = null,
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now(),
+    val lastUpdatedAt: LocalDateTime = LocalDateTime.now(),
 )

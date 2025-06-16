@@ -11,5 +11,5 @@ class TreeLevelOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime,
 )

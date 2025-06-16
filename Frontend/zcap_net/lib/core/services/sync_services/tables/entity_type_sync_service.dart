@@ -30,7 +30,7 @@ class EntityTypeSyncService implements SyncableService {
             final updatedItem = item.setEntityIdAndSync(
               remoteId: created['entityTypeId'],
               isSynced: true,
-              updatedAt: DateTime.parse(created['updatedAt']),
+              lastUpdatedAt: DateTime.parse(created['updatedAt']),
             );
             await isar.writeTxn(() async {
               await isar.entityTypeIsars.put(updatedItem);
@@ -46,7 +46,7 @@ class EntityTypeSyncService implements SyncableService {
 
           final updatedItem = item.setEntityIdAndSync(
             isSynced: true,
-            updatedAt: item.updatedAt,
+            lastUpdatedAt: item.lastUpdatedAt,
           );
           await isar.writeTxn(() async {
             await isar.entityTypeIsars.put(updatedItem);
@@ -85,7 +85,7 @@ class EntityTypeSyncService implements SyncableService {
           if (localEntity == null) {
             final newLocal = EntityTypeIsar.fromEntityType(apiEntity);
             await isar.entityTypeIsars.put(newLocal);
-          } else if (apiEntity.updatedAt.isAfter(localEntity.updatedAt)) {
+          } else if (apiEntity.lastUpdatedAt.isAfter(localEntity.lastUpdatedAt)) {
             localEntity.updateFromApiEntity(apiEntity);
             await isar.entityTypeIsars.put(localEntity);
           }

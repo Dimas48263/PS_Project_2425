@@ -26,5 +26,5 @@ data class PersonOutputModel(
     val specialNeeds: List<PersonSpecialNeedWithoutPersonOutputModel>,
     val supportNeeded: List<PersonSupportNeededWithoutPersonOutputModel>,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val lastUpdatedAt: LocalDateTime
 )

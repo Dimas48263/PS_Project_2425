@@ -76,7 +76,7 @@ class TreeRecordDetailService(
             valueCol = treeRecordDetailUpdate.valueCol,
             startDate = treeRecordDetailUpdate.startDate,
             endDate = treeRecordDetailUpdate.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repo.save(newTreeRecordDetail).toOutputModel())

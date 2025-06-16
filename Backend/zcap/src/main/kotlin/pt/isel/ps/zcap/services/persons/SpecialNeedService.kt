@@ -57,7 +57,7 @@ class SpecialNeedService(
             name = specialNeedInput.name,
             startDate = specialNeedInput.startDate,
             endDate = specialNeedInput.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repository.save(newSpecialNeed).toOutputModel())

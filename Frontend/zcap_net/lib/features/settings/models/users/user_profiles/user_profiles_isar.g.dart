@@ -32,24 +32,24 @@ const UserProfilesIsarSchema = CollectionSchema(
       name: r'isSynced',
       type: IsarType.bool,
     ),
-    r'name': PropertySchema(
+    r'lastUpdatedAt': PropertySchema(
       id: 3,
+      name: r'lastUpdatedAt',
+      type: IsarType.dateTime,
+    ),
+    r'name': PropertySchema(
+      id: 4,
       name: r'name',
       type: IsarType.string,
     ),
     r'remoteId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'remoteId',
       type: IsarType.long,
     ),
     r'startDate': PropertySchema(
-      id: 5,
-      name: r'startDate',
-      type: IsarType.dateTime,
-    ),
-    r'updatedAt': PropertySchema(
       id: 6,
-      name: r'updatedAt',
+      name: r'startDate',
       type: IsarType.dateTime,
     )
   },
@@ -100,10 +100,10 @@ void _userProfilesIsarSerialize(
   writer.writeDateTime(offsets[0], object.createdAt);
   writer.writeDateTime(offsets[1], object.endDate);
   writer.writeBool(offsets[2], object.isSynced);
-  writer.writeString(offsets[3], object.name);
-  writer.writeLong(offsets[4], object.remoteId);
-  writer.writeDateTime(offsets[5], object.startDate);
-  writer.writeDateTime(offsets[6], object.updatedAt);
+  writer.writeDateTime(offsets[3], object.lastUpdatedAt);
+  writer.writeString(offsets[4], object.name);
+  writer.writeLong(offsets[5], object.remoteId);
+  writer.writeDateTime(offsets[6], object.startDate);
 }
 
 UserProfilesIsar _userProfilesIsarDeserialize(
@@ -117,10 +117,10 @@ UserProfilesIsar _userProfilesIsarDeserialize(
   object.endDate = reader.readDateTimeOrNull(offsets[1]);
   object.id = id;
   object.isSynced = reader.readBool(offsets[2]);
-  object.name = reader.readString(offsets[3]);
-  object.remoteId = reader.readLongOrNull(offsets[4]);
-  object.startDate = reader.readDateTime(offsets[5]);
-  object.updatedAt = reader.readDateTime(offsets[6]);
+  object.lastUpdatedAt = reader.readDateTime(offsets[3]);
+  object.name = reader.readString(offsets[4]);
+  object.remoteId = reader.readLongOrNull(offsets[5]);
+  object.startDate = reader.readDateTime(offsets[6]);
   return object;
 }
 
@@ -138,11 +138,11 @@ P _userProfilesIsarDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
-    case 4:
-      return (reader.readLongOrNull(offset)) as P;
-    case 5:
       return (reader.readDateTime(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readLongOrNull(offset)) as P;
     case 6:
       return (reader.readDateTime(offset)) as P;
     default:
@@ -590,6 +590,62 @@ extension UserProfilesIsarQueryFilter
   }
 
   QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      lastUpdatedAtEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      lastUpdatedAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      lastUpdatedAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      lastUpdatedAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastUpdatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
       nameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -854,62 +910,6 @@ extension UserProfilesIsarQueryFilter
       ));
     });
   }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      updatedAtEqualTo(DateTime value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      updatedAtGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      updatedAtLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      updatedAtBetween(
-    DateTime lower,
-    DateTime upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
 extension UserProfilesIsarQueryObject
@@ -962,6 +962,20 @@ extension UserProfilesIsarQuerySortBy
     });
   }
 
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy>
+      sortByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy>
+      sortByLastUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy> sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1000,20 +1014,6 @@ extension UserProfilesIsarQuerySortBy
       sortByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy>
-      sortByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy>
-      sortByUpdatedAtDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
@@ -1075,6 +1075,20 @@ extension UserProfilesIsarQuerySortThenBy
     });
   }
 
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy>
+      thenByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy>
+      thenByLastUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy> thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1115,20 +1129,6 @@ extension UserProfilesIsarQuerySortThenBy
       return query.addSortBy(r'startDate', Sort.desc);
     });
   }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy>
-      thenByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterSortBy>
-      thenByUpdatedAtDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
-    });
-  }
 }
 
 extension UserProfilesIsarQueryWhereDistinct
@@ -1154,6 +1154,13 @@ extension UserProfilesIsarQueryWhereDistinct
     });
   }
 
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QDistinct>
+      distinctByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastUpdatedAt');
+    });
+  }
+
   QueryBuilder<UserProfilesIsar, UserProfilesIsar, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1172,13 +1179,6 @@ extension UserProfilesIsarQueryWhereDistinct
       distinctByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'startDate');
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QDistinct>
-      distinctByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'updatedAt');
     });
   }
 }
@@ -1211,6 +1211,13 @@ extension UserProfilesIsarQueryProperty
     });
   }
 
+  QueryBuilder<UserProfilesIsar, DateTime, QQueryOperations>
+      lastUpdatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastUpdatedAt');
+    });
+  }
+
   QueryBuilder<UserProfilesIsar, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
@@ -1227,13 +1234,6 @@ extension UserProfilesIsarQueryProperty
       startDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'startDate');
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, DateTime, QQueryOperations>
-      updatedAtProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'updatedAt');
     });
   }
 }

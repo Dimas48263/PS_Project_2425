@@ -24,7 +24,7 @@ fun EntitiesInputModel.toEntity(entityType: EntityType): Entities = Entities(
     phone2 = phone2,
     startDate = startDate,
     endDate = endDate,
-    updatedAt = LocalDateTime.now()
+    lastUpdatedAt = LocalDateTime.now()
 )
 
 

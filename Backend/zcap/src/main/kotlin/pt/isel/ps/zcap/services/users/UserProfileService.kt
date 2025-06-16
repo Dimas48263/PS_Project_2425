@@ -64,7 +64,7 @@ class UserProfileService(private val userProfileRepository: UserProfileRepositor
             name = updatedProfile.name,
             startDate = updatedProfile.startDate,
             endDate = updatedProfile.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {
@@ -82,7 +82,7 @@ class UserProfileService(private val userProfileRepository: UserProfileRepositor
         name = inputData.name,
         startDate = inputData.startDate,
         endDate = inputData.endDate,
-        updatedAt = LocalDateTime.now()
+        lastUpdatedAt = LocalDateTime.now()
     )
 
     // Conversion from domain Model to OutputModel
@@ -94,7 +94,7 @@ class UserProfileService(private val userProfileRepository: UserProfileRepositor
             startDate = profile.startDate,
             endDate = profile.endDate,
             createdAt = profile.createdAt,
-            updatedAt = profile.updatedAt,
+            lastUpdatedAt = profile.lastUpdatedAt,
         )
     }
 }

@@ -2,9 +2,7 @@ package pt.isel.ps.zcap.services.supportTables
 
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Component
-import pt.isel.ps.zcap.domain.supportTables.BuildingType
 import pt.isel.ps.zcap.domain.supportTables.Zcap
-import pt.isel.ps.zcap.repository.dto.supportTables.BuildingTypeOutputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.toOutputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.ZcapInputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.ZcapOutputModel
@@ -16,7 +14,6 @@ import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.failure
 import pt.isel.ps.zcap.services.success
-import pt.isel.ps.zcap.services.tree.toOutputModel
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -97,7 +94,7 @@ class ZcapService(
             entity = entity,
             startDate = input.startDate,
             endDate = input.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {

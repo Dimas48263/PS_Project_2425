@@ -75,7 +75,7 @@ class PersonSpecialNeedService(
             description = personSpecialNeedInput.description,
             startDate = personSpecialNeedInput.startDate,
             endDate = personSpecialNeedInput.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repository.save(newPersonSpecialNeed).toOutputModel())

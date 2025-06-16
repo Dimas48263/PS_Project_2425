@@ -12,7 +12,7 @@ class Entity implements ApiTable {
   final DateTime? endDate;
   final DateTime createdAt;
   @override
-  final DateTime updatedAt;
+  final DateTime lastUpdatedAt;
   final bool isSynced;
 
   Entity({
@@ -25,7 +25,7 @@ class Entity implements ApiTable {
     required this.startDate,
     this.endDate,
     required this.createdAt,
-    required this.updatedAt,
+    required this.lastUpdatedAt,
     this.isSynced = true,
   });
 
@@ -40,7 +40,7 @@ class Entity implements ApiTable {
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      lastUpdatedAt: DateTime.parse(json['lastUpdatedAt']),
     );
   }
 

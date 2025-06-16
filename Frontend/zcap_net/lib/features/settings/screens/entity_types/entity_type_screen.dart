@@ -208,7 +208,7 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                           editedEntityType.name = nameController.text.trim();
                           editedEntityType.startDate = selectedStartDate;
                           editedEntityType.endDate = selectedEndDate;
-                          editedEntityType.updatedAt = now;
+                          editedEntityType.lastUpdatedAt = now;
                           editedEntityType.isSynced = false;
                           if (entityType == null) {
                             editedEntityType.createdAt = now;

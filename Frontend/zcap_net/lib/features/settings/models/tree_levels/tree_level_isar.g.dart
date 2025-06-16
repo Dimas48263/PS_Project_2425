@@ -37,29 +37,29 @@ const TreeLevelIsarSchema = CollectionSchema(
       name: r'isSynced',
       type: IsarType.bool,
     ),
-    r'levelId': PropertySchema(
+    r'lastUpdatedAt': PropertySchema(
       id: 4,
+      name: r'lastUpdatedAt',
+      type: IsarType.dateTime,
+    ),
+    r'levelId': PropertySchema(
+      id: 5,
       name: r'levelId',
       type: IsarType.long,
     ),
     r'name': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'name',
       type: IsarType.string,
     ),
     r'remoteId': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'remoteId',
       type: IsarType.long,
     ),
     r'startDate': PropertySchema(
-      id: 7,
-      name: r'startDate',
-      type: IsarType.dateTime,
-    ),
-    r'updatedAt': PropertySchema(
       id: 8,
-      name: r'updatedAt',
+      name: r'startDate',
       type: IsarType.dateTime,
     )
   },
@@ -130,11 +130,11 @@ void _treeLevelIsarSerialize(
   writer.writeString(offsets[1], object.description);
   writer.writeDateTime(offsets[2], object.endDate);
   writer.writeBool(offsets[3], object.isSynced);
-  writer.writeLong(offsets[4], object.levelId);
-  writer.writeString(offsets[5], object.name);
-  writer.writeLong(offsets[6], object.remoteId);
-  writer.writeDateTime(offsets[7], object.startDate);
-  writer.writeDateTime(offsets[8], object.updatedAt);
+  writer.writeDateTime(offsets[4], object.lastUpdatedAt);
+  writer.writeLong(offsets[5], object.levelId);
+  writer.writeString(offsets[6], object.name);
+  writer.writeLong(offsets[7], object.remoteId);
+  writer.writeDateTime(offsets[8], object.startDate);
 }
 
 TreeLevelIsar _treeLevelIsarDeserialize(
@@ -149,11 +149,11 @@ TreeLevelIsar _treeLevelIsarDeserialize(
   object.endDate = reader.readDateTimeOrNull(offsets[2]);
   object.id = id;
   object.isSynced = reader.readBool(offsets[3]);
-  object.levelId = reader.readLong(offsets[4]);
-  object.name = reader.readString(offsets[5]);
-  object.remoteId = reader.readLong(offsets[6]);
-  object.startDate = reader.readDateTime(offsets[7]);
-  object.updatedAt = reader.readDateTime(offsets[8]);
+  object.lastUpdatedAt = reader.readDateTime(offsets[4]);
+  object.levelId = reader.readLong(offsets[5]);
+  object.name = reader.readString(offsets[6]);
+  object.remoteId = reader.readLong(offsets[7]);
+  object.startDate = reader.readDateTime(offsets[8]);
   return object;
 }
 
@@ -173,13 +173,13 @@ P _treeLevelIsarDeserializeProp<P>(
     case 3:
       return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readLong(offset)) as P;
-    case 5:
-      return (reader.readString(offset)) as P;
-    case 6:
-      return (reader.readLong(offset)) as P;
-    case 7:
       return (reader.readDateTime(offset)) as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
+      return (reader.readLong(offset)) as P;
     case 8:
       return (reader.readDateTime(offset)) as P;
     default:
@@ -785,6 +785,62 @@ extension TreeLevelIsarQueryFilter
   }
 
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
+      lastUpdatedAtEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
+      lastUpdatedAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
+      lastUpdatedAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
+      lastUpdatedAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastUpdatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
       levelIdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1086,62 +1142,6 @@ extension TreeLevelIsarQueryFilter
       ));
     });
   }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
-      updatedAtEqualTo(DateTime value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
-      updatedAtGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
-      updatedAtLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterFilterCondition>
-      updatedAtBetween(
-    DateTime lower,
-    DateTime upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
 extension TreeLevelIsarQueryObject
@@ -1203,6 +1203,20 @@ extension TreeLevelIsarQuerySortBy
     });
   }
 
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
+      sortByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
+      sortByLastUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> sortByLevelId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'levelId', Sort.asc);
@@ -1250,19 +1264,6 @@ extension TreeLevelIsarQuerySortBy
       sortByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> sortByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
-      sortByUpdatedAtDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
@@ -1332,6 +1333,20 @@ extension TreeLevelIsarQuerySortThenBy
     });
   }
 
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
+      thenByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
+      thenByLastUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.desc);
+    });
+  }
+
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> thenByLevelId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'levelId', Sort.asc);
@@ -1381,19 +1396,6 @@ extension TreeLevelIsarQuerySortThenBy
       return query.addSortBy(r'startDate', Sort.desc);
     });
   }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy> thenByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QAfterSortBy>
-      thenByUpdatedAtDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
-    });
-  }
 }
 
 extension TreeLevelIsarQueryWhereDistinct
@@ -1423,6 +1425,13 @@ extension TreeLevelIsarQueryWhereDistinct
     });
   }
 
+  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QDistinct>
+      distinctByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastUpdatedAt');
+    });
+  }
+
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QDistinct> distinctByLevelId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'levelId');
@@ -1445,12 +1454,6 @@ extension TreeLevelIsarQueryWhereDistinct
   QueryBuilder<TreeLevelIsar, TreeLevelIsar, QDistinct> distinctByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'startDate');
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, TreeLevelIsar, QDistinct> distinctByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'updatedAt');
     });
   }
 }
@@ -1487,6 +1490,13 @@ extension TreeLevelIsarQueryProperty
     });
   }
 
+  QueryBuilder<TreeLevelIsar, DateTime, QQueryOperations>
+      lastUpdatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastUpdatedAt');
+    });
+  }
+
   QueryBuilder<TreeLevelIsar, int, QQueryOperations> levelIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'levelId');
@@ -1508,12 +1518,6 @@ extension TreeLevelIsarQueryProperty
   QueryBuilder<TreeLevelIsar, DateTime, QQueryOperations> startDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'startDate');
-    });
-  }
-
-  QueryBuilder<TreeLevelIsar, DateTime, QQueryOperations> updatedAtProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'updatedAt');
     });
   }
 }

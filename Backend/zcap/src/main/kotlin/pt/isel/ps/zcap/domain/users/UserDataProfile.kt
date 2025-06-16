@@ -14,7 +14,7 @@ data class UserDataProfile(
     val endDate: LocalDate? = null,
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now(),
+    val lastUpdatedAt: LocalDateTime = LocalDateTime.now(),
 
     @OneToMany(mappedBy = "userDataProfile", fetch = FetchType.LAZY)
     val details: List<UserDataProfileDetail> = emptyList()

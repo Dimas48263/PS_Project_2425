@@ -16,5 +16,5 @@ data class TreeRecordDetailType(
     val startDate: LocalDate = LocalDate.now(),
     val endDate: LocalDate? = null,
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val lastUpdatedAt: LocalDateTime = LocalDateTime.now()
 )

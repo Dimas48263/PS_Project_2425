@@ -14,7 +14,7 @@ class TreeRecordDetail implements ApiTable {
   final DateTime? endDate;
   final DateTime createdAt;
   @override
-  final DateTime updatedAt;
+  final DateTime lastUpdatedAt;
 
   TreeRecordDetail({
     required this.remoteId,
@@ -24,7 +24,7 @@ class TreeRecordDetail implements ApiTable {
     required this.startDate,
     this.endDate,
     required this.createdAt,
-    required this.updatedAt,
+    required this.lastUpdatedAt,
   });
   
   factory TreeRecordDetail.fromJson(Map<String, dynamic> json) {
@@ -38,8 +38,8 @@ class TreeRecordDetail implements ApiTable {
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
+      lastUpdatedAt: json['lastUpdatedAt'] != null
+          ? DateTime.parse(json['lastUpdatedAt'])
           : DateTime.now(),
     );
   }

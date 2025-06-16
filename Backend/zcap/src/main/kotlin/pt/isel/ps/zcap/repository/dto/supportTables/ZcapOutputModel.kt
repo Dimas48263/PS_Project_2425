@@ -1,8 +1,6 @@
 package pt.isel.ps.zcap.repository.dto.supportTables
 
 import pt.isel.ps.zcap.domain.supportTables.Zcap
-import pt.isel.ps.zcap.repository.dto.supportTables.BuildingTypeOutputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.EntitiesOutputModel
 import pt.isel.ps.zcap.repository.dto.trees.tree.TreeOutputModel
 import pt.isel.ps.zcap.services.tree.toOutputModel
 import java.time.LocalDate
@@ -20,7 +18,7 @@ data class ZcapOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val lastUpdatedAt: LocalDateTime
 )
 
 fun Zcap.toOutputModel(): ZcapOutputModel =
@@ -36,5 +34,5 @@ fun Zcap.toOutputModel(): ZcapOutputModel =
         startDate,
         endDate,
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )

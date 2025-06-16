@@ -10,7 +10,7 @@ data class IncidentTypeOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime,
 )
 
 fun IncidentType.toOutputModel() : IncidentTypeOutputModel =
@@ -20,5 +20,5 @@ fun IncidentType.toOutputModel() : IncidentTypeOutputModel =
         startDate,
         endDate,
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )

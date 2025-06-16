@@ -10,7 +10,6 @@ import pt.isel.ps.zcap.repository.dto.persons.relationType.RelationTypeOutputMod
 import pt.isel.ps.zcap.repository.dto.persons.specialNeed.SpecialNeedOutputModel
 import pt.isel.ps.zcap.repository.dto.persons.supportNeeded.SupportNeededOutputModel
 import pt.isel.ps.zcap.services.tree.toOutputModel
-import java.util.*
 
 fun DepartureDestination.toOutputModel(): DepartureDestinationOutputModel =
     DepartureDestinationOutputModel(
@@ -19,7 +18,7 @@ fun DepartureDestination.toOutputModel(): DepartureDestinationOutputModel =
         startDate,
         endDate,
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )
 
 fun Person.toOutputModel(): PersonOutputModel =
@@ -41,7 +40,7 @@ fun Person.toOutputModel(): PersonOutputModel =
         specialNeeds.map { it.toOutputModelWithoutPerson() },
         supportNeeded.map { it.toOutputModelWithoutPerson() },
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )
 
 
@@ -51,7 +50,7 @@ fun SpecialNeed.toOutputModel(): SpecialNeedOutputModel =
         name,
         startDate,
         endDate,
-        updatedAt,
+        lastUpdatedAt,
         createdAt
     )
 
@@ -63,7 +62,7 @@ fun PersonSpecialNeed.toOutputModel(): PersonSpecialNeedOutputModel =
         description,
         startDate,
         endDate,
-        updatedAt,
+        lastUpdatedAt,
         createdAt
     )
 
@@ -76,7 +75,7 @@ fun PersonSpecialNeed.toOutputModelWithoutPerson(): PersonSpecialNeedWithoutPers
         startDate,
         endDate,
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )
 
 fun SupportNeeded.toOutputModel(): SupportNeededOutputModel =
@@ -85,7 +84,7 @@ fun SupportNeeded.toOutputModel(): SupportNeededOutputModel =
         name,
         startDate,
         endDate,
-        updatedAt,
+        lastUpdatedAt,
         createdAt
     )
 
@@ -97,7 +96,7 @@ fun PersonSupportNeeded.toOutputModelWithoutPerson(): PersonSupportNeededWithout
         startDate,
         endDate,
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )
 
 fun RelationType.toOutputModel(): RelationTypeOutputModel =
@@ -107,5 +106,5 @@ fun RelationType.toOutputModel(): RelationTypeOutputModel =
         startDate,
         endDate,
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )

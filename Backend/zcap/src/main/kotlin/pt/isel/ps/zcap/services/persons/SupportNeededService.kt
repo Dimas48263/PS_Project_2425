@@ -57,7 +57,7 @@ class SupportNeededService(
             name = supportNeededInput.name,
             startDate = supportNeededInput.startDate,
             endDate = supportNeededInput.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repository.save(newSupportNeeded).toOutputModel())

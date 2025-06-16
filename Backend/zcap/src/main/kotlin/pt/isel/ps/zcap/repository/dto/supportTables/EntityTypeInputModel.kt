@@ -15,7 +15,7 @@ fun EntityTypeInputModel.toEntityType(): EntityType = EntityType(
     name = name,
     startDate = startDate,
     endDate = endDate,
-    updatedAt = LocalDateTime.now()
+    lastUpdatedAt = LocalDateTime.now()
 )
 
 

@@ -13,7 +13,7 @@ data class PersonSpecialNeedOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val lastUpdatedAt: LocalDateTime
 )
 
 data class PersonSpecialNeedWithoutPersonOutputModel(
@@ -23,5 +23,5 @@ data class PersonSpecialNeedWithoutPersonOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val lastUpdatedAt: LocalDateTime
 )

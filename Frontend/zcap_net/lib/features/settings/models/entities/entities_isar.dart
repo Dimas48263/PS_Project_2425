@@ -28,7 +28,7 @@ class EntitiesIsar implements IsarTable<Entity> {
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override
-  DateTime updatedAt = DateTime.now();
+  DateTime lastUpdatedAt = DateTime.now();
 
   EntitiesIsar();
 
@@ -43,7 +43,7 @@ class EntitiesIsar implements IsarTable<Entity> {
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? lastUpdatedAt,
     bool? isSynced,
   }) {
     final copy = EntitiesIsar()
@@ -57,7 +57,7 @@ class EntitiesIsar implements IsarTable<Entity> {
       ..startDate = startDate ?? this.startDate
       ..endDate = endDate ?? this.endDate
       ..createdAt = createdAt ?? this.createdAt
-      ..updatedAt = updatedAt ?? DateTime.now()
+      ..lastUpdatedAt = lastUpdatedAt ?? DateTime.now()
       ..isSynced = isSynced ?? this.isSynced;
 
     return copy;
@@ -74,7 +74,7 @@ class EntitiesIsar implements IsarTable<Entity> {
     startDate = entity.startDate;
     endDate = entity.endDate;
     createdAt = entity.createdAt;
-    updatedAt = entity.updatedAt;
+    lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
   }
 
@@ -88,7 +88,7 @@ class EntitiesIsar implements IsarTable<Entity> {
       ..startDate = entity.startDate
       ..endDate = entity.endDate
       ..createdAt = entity.createdAt
-      ..updatedAt = entity.updatedAt
+      ..lastUpdatedAt = entity.lastUpdatedAt
       ..isSynced = true;
 
     isarEntity.entityType.value = EntityTypeIsar()
@@ -108,14 +108,14 @@ class EntitiesIsar implements IsarTable<Entity> {
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
-      updatedAt: updatedAt,
+      lastUpdatedAt: lastUpdatedAt,
       isSynced: isSynced,
     );
   }
 
     @override
   EntitiesIsar setEntityIdAndSync(
-      {int? remoteId, bool? isSynced, DateTime? updatedAt}) {
+      {int? remoteId, bool? isSynced, DateTime? lastUpdatedAt}) {
     return EntitiesIsar()
       ..id = id
       ..remoteId = remoteId ?? this.remoteId
@@ -127,7 +127,7 @@ class EntitiesIsar implements IsarTable<Entity> {
       ..startDate = startDate
       ..endDate = endDate
       ..createdAt = createdAt
-      ..updatedAt = updatedAt ?? this.updatedAt
+      ..lastUpdatedAt = lastUpdatedAt ?? this.lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
 }

@@ -57,7 +57,7 @@ class RelationTypeService(
             name = relationTypeInput.name,
             startDate = relationTypeInput.startDate,
             endDate = relationTypeInput.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repository.save(newRelationType).toOutputModel())

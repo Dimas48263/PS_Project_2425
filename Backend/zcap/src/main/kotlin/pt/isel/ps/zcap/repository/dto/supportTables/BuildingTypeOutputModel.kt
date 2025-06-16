@@ -11,7 +11,7 @@ class BuildingTypeOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime,
 )
 
 fun BuildingType.toOutputModel(): BuildingTypeOutputModel {
@@ -21,6 +21,6 @@ fun BuildingType.toOutputModel(): BuildingTypeOutputModel {
         startDate = startDate,
         endDate = endDate,
         createdAt = createdAt,
-        updatedAt = updatedAt,
+        lastUpdatedAt = lastUpdatedAt,
     )
 }

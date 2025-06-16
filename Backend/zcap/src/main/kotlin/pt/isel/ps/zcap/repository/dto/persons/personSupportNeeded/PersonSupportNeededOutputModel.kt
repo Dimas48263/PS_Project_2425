@@ -12,7 +12,7 @@ data class PersonSupportNeededOutputModel(
     val description: String?,
     val startDate: LocalDate,
     val endDate: LocalDate?,
-    val updatedAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime,
     val createdAt: LocalDateTime
 )
 
@@ -22,6 +22,6 @@ data class PersonSupportNeededWithoutPersonOutputModel(
     val description: String?,
     val startDate: LocalDate,
     val endDate: LocalDate?,
-    val updatedAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime,
     val createdAt: LocalDateTime
 )

@@ -75,7 +75,7 @@ class EntitiesService(
 
             startDate = updatedEntity.startDate,
             endDate = updatedEntity.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {

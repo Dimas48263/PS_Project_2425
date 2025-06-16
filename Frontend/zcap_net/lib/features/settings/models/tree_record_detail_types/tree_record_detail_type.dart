@@ -9,7 +9,7 @@ class TreeRecordDetailType implements ApiTable {
   final DateTime? endDate;
   final DateTime createdAt;
   @override
-  final DateTime updatedAt;
+  final DateTime lastUpdatedAt;
 
   TreeRecordDetailType(
       {required this.remoteId,
@@ -18,7 +18,7 @@ class TreeRecordDetailType implements ApiTable {
       required this.startDate,
       this.endDate,
       required this.createdAt,
-      required this.updatedAt});
+      required this.lastUpdatedAt});
 
   @override
   Map<String, dynamic> toJsonInput() {
@@ -40,8 +40,8 @@ class TreeRecordDetailType implements ApiTable {
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
+      lastUpdatedAt: json['lastUpdatedAt'] != null
+          ? DateTime.parse(json['lastUpdatedAt'])
           : DateTime.now(),
     );
   }
@@ -53,7 +53,7 @@ class TreeRecordDetailType implements ApiTable {
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? lastUpdatedAt,
   }) {
     return TreeRecordDetailType(
       remoteId: id ?? this.remoteId,
@@ -62,7 +62,7 @@ class TreeRecordDetailType implements ApiTable {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
     );
   }
 }

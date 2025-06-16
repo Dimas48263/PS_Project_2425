@@ -199,7 +199,7 @@ class _TreesScreenState extends State<TreesScreen> {
                   });
                 },
                 validator: (value) {
-                  //TODO() ??
+                  return value == null && treeLevel != null && treeLevel!.levelId > 1 ? 'Campo obrigatório' : null;
                 },
               )
             ]),

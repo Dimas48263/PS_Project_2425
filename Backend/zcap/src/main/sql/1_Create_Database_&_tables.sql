@@ -184,7 +184,7 @@ CREATE TABLE treeLevels (
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
     [createdAt]      DATETIME NOT NULL,
-    [updatedAt]		DATETIME NOT NULL
+    [lastUpdatedAt]		DATETIME NOT NULL
 )
 	END
 GO
@@ -200,7 +200,7 @@ CREATE TABLE tree (
     startDate		DATE NOT NULL,
     endDate			DATE NULL,
     [createdAt]      DATETIME NOT NULL,
-    [updatedAt]		DATETIME NOT NULL
+    [lastUpdatedAt]		DATETIME NOT NULL
 )
 	END
 GO
@@ -215,7 +215,7 @@ CREATE TABLE treeRecordDetailTypes (
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
     [createdAt]      DATETIME NOT NULL,
-    [updatedAt]		DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    [lastUpdatedAt]		DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 	END
 GO
@@ -231,7 +231,7 @@ CREATE TABLE treeRecordDetails (
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
     [createdAt]      DATETIME NOT NULL,
-    [updatedAt]		DATETIME NOT NULL
+    [lastUpdatedAt]		DATETIME NOT NULL
 )
 	END
 GO
@@ -245,7 +245,7 @@ CREATE TABLE buildingTypes (
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,
-    [updatedAt]			DATETIME NOT NULL
+    [lastUpdatedAt]			DATETIME NOT NULL
 )
 	END
 GO
@@ -260,7 +260,7 @@ CREATE TABLE entityTypes (
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,
-    [updatedAt]			DATETIME NOT NULL
+    [lastUpdatedAt]			DATETIME NOT NULL
 )
 	END
 GO
@@ -279,7 +279,7 @@ CREATE TABLE entities (
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,
-    [updatedAt]			DATETIME NOT NULL
+    [lastUpdatedAt]			DATETIME NOT NULL
 )
 	END
 GO
@@ -300,7 +300,7 @@ CREATE TABLE zcaps (
     [startDate]			DATE			NOT NULL,
     [endDate]			DATE			NULL,
     [createdAt]			DATETIME		NOT NULL,
-    [updatedAt]			DATETIME		NOT NULL
+    [lastUpdatedAt]			DATETIME		NOT NULL
 )
 	END
 GO
@@ -326,7 +326,7 @@ CREATE TABLE detailTypeCategories (
     [startDate]				DATE NOT NULL,
     [endDate]				DATE NULL,
     [createdAt]				DATETIME NOT NULL,
-    [updatedAt]				DATETIME NOT NULL
+    [lastUpdatedAt]				DATETIME NOT NULL
 )
 	END
 GO
@@ -344,7 +344,7 @@ CREATE TABLE zcapDetailTypes (
     [startDate]				DATE NOT NULL,
     [endDate]				DATE NULL,
     [createdAt]				DATETIME NOT NULL,
-    [updatedAt]				DATETIME NOT NULL
+    [lastUpdatedAt]				DATETIME NOT NULL
 )
 	END
 GO
@@ -362,7 +362,7 @@ CREATE TABLE zcapDetails (
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,
-    [updatedAt]			DATETIME NOT NULL)
+    [lastUpdatedAt]			DATETIME NOT NULL)
 	END
 GO
 --/*** END: ZCAPDETAILS ***/
@@ -375,7 +375,7 @@ CREATE TABLE departureDestination(	-- outra ZCAP, casa de familiares, residencia
 	[startDate]					DATE			NOT NULL,
 	[endDate]					DATE			NULL,
 	[createdAt]					DATETIME		NOT NULL,
-    [updatedAt]					DATETIME		NOT NULL
+    [lastUpdatedAt]					DATETIME		NOT NULL
 )
 	END
 GO
@@ -401,7 +401,7 @@ CREATE TABLE persons (
 	[departureDestinationId] 	BIGINT 			NULL REFERENCES departureDestination(departureDestinationId),
 	[destinationContact]		INT 			NULL,
 	[createdAt]					DATETIME NOT NULL,
-    [updatedAt]					DATETIME NOT NULL
+    [lastUpdatedAt]					DATETIME NOT NULL
 )
 	END
 GO
@@ -417,7 +417,7 @@ CREATE TABLE specialNeeds(  -- gravidez, medicamentos, doença...
 	[startDate]		DATE			NOT NULL,
 	[endDate]		DATE			NULL,
 	[createdAt]     DATETIME		NOT NULL,
-    [updatedAt]		DATETIME		NOT NULL
+    [lastUpdatedAt]		DATETIME		NOT NULL
 )
 	END
 GO
@@ -432,7 +432,7 @@ CREATE TABLE personSpecialNeeds(
 	[startDate]				DATE			NOT NULL,
 	[endDate]				DATE			NULL,
 	[createdAt]				DATETIME		NOT NULL,
-    [updatedAt]				DATETIME		NOT NULL
+    [lastUpdatedAt]				DATETIME		NOT NULL
 )
 	END
 GO
@@ -445,7 +445,7 @@ CREATE TABLE supportNeeded( -- alojamento, comida, vestuario
 	[startDate]			DATE			NOT NULL,
 	[endDate]			DATE			NULL,
 	[createdAt]			DATETIME		NOT NULL,
-    [updatedAt]			DATETIME		NOT NULL
+    [lastUpdatedAt]			DATETIME		NOT NULL
 )
 	END
 GO
@@ -460,7 +460,7 @@ CREATE TABLE personSupportNeeded(
 	[startDate]					DATE			NOT NULL,
 	[endDate]					DATE			NULL,
 	[createdAt]					DATETIME NOT NULL,
-    [updatedAt]					DATETIME NOT NULL
+    [lastUpdatedAt]					DATETIME NOT NULL
 )
 	END
 GO
@@ -477,7 +477,7 @@ CREATE TABLE relationType (		-- mae, pai, filho, irmao, conjuge...
 	[startDate]			DATE			NOT NULL,
 	[endDate]			DATE			NULL,
 	[createdAt]			DATETIME		NOT NULL,
-    [updatedAt]			DATETIME		NOT NULL
+    [lastUpdatedAt]			DATETIME		NOT NULL
 )
 	END
 GO
@@ -504,7 +504,7 @@ CREATE TABLE incidentTypes (
 	[startDate]				DATE			NOT NULL,
     [endDate]				DATE			NULL,
     [createdAt]				DATETIME		NOT NULL,
-    [updatedAt]				DATETIME		NOT NULL
+    [lastUpdatedAt]				DATETIME		NOT NULL
 )
 
 --/*** END: INCIDENTTYPES ***/
@@ -517,7 +517,7 @@ CREATE TABLE incidents (
 	[startDate]				DATE		NOT NULL,
     [endDate]				DATE		NULL,
     [createdAt]				DATETIME	NOT NULL,
-    [updatedAt]				DATETIME	NOT NULL
+    [lastUpdatedAt]				DATETIME	NOT NULL
 )
 
 --/*** END: INCIDENTS ***/
@@ -532,7 +532,7 @@ CREATE TABLE incidentZcaps(
 	[startDate]				DATE				NOT NULL,
     [endDate]				DATE				NULL,
     [createdAt]				DATETIME			NOT NULL,
-    [updatedAt]				DATETIME			NOT NULL
+    [lastUpdatedAt]				DATETIME			NOT NULL
 )
 --/*** END: INCIDENTZCAPS ***/
 
@@ -545,7 +545,7 @@ CREATE TABLE incidentZcapPersons (
 	[startDate]				DATE		NOT NULL,
     [endDate]				DATE		NULL,
     [createdAt]				DATETIME	NOT NULL,
-    [updatedAt]				DATETIME	NOT NULL
+    [lastUpdatedAt]				DATETIME	NOT NULL
 )
 
 --/*** END: INCIDENTPERSONS ***/
@@ -557,7 +557,7 @@ CREATE TABLE userDataProfiles (
 	[startDate]				DATE			NOT NULL,
 	[endDate]				DATE			NULL,
 	[createdAt]				DATETIME		NOT NULL,
-	[updatedAt]				DATETIME		NOT NULL
+	[lastUpdatedAt]				DATETIME		NOT NULL
 )
 
 --/*** END: USERDATAPROFILES ***/
@@ -580,7 +580,7 @@ CREATE TABLE userProfiles (
 	[startDate]				DATE			NOT NULL,
 	[endDate]				DATE			NULL,
 	[createdAt]				DATETIME		NOT NULL,
-	[updatedAt]				DATETIME		NOT NULL
+	[lastUpdatedAt]				DATETIME		NOT NULL
 )
 
 --/*** END: USERPROFILES ***/
@@ -609,7 +609,7 @@ CREATE TABLE users (
 	[startDate]				DATE			NOT NULL,
 	[endDate]				DATE			NULL,
 	[createdAt]				DATETIME		NOT NULL,
-	[updatedAt]				DATETIME		NOT NULL
+	[lastUpdatedAt]				DATETIME		NOT NULL
 )
 
 --/*** END: USERS ***/

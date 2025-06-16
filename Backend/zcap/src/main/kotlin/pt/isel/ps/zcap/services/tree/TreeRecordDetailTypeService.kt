@@ -59,7 +59,7 @@ class TreeRecordDetailTypeService(
             unit = treeRecordDetailTypeInput.unit,
             startDate = treeRecordDetailTypeInput.startDate,
             endDate = treeRecordDetailTypeInput.endDate ?: trdt.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repo.save(newTrdt).toOutputModel())
@@ -97,6 +97,6 @@ class TreeRecordDetailTypeService(
             this.startDate,
             this.endDate,
             this.createdAt,
-            this.updatedAt
+            this.lastUpdatedAt
         )
 }

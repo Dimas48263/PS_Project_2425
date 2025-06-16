@@ -17,7 +17,7 @@ data class  IncidentZcapOutputModel(
     val startDate: LocalDate,
     val endDate: LocalDate?,
     val createdAt: LocalDateTime,
-    val updatedAt: LocalDateTime
+    val lastUpdatedAt: LocalDateTime
 )
 
 fun IncidentZcap.toOutputModel(): IncidentZcapOutputModel =
@@ -29,5 +29,5 @@ fun IncidentZcap.toOutputModel(): IncidentZcapOutputModel =
         startDate,
         endDate,
         createdAt,
-        updatedAt
+        lastUpdatedAt
     )

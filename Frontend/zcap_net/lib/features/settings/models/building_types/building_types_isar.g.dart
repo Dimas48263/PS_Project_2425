@@ -32,24 +32,24 @@ const BuildingTypesIsarSchema = CollectionSchema(
       name: r'isSynced',
       type: IsarType.bool,
     ),
-    r'name': PropertySchema(
+    r'lastUpdatedAt': PropertySchema(
       id: 3,
+      name: r'lastUpdatedAt',
+      type: IsarType.dateTime,
+    ),
+    r'name': PropertySchema(
+      id: 4,
       name: r'name',
       type: IsarType.string,
     ),
     r'remoteId': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'remoteId',
       type: IsarType.long,
     ),
     r'startDate': PropertySchema(
-      id: 5,
-      name: r'startDate',
-      type: IsarType.dateTime,
-    ),
-    r'updatedAt': PropertySchema(
       id: 6,
-      name: r'updatedAt',
+      name: r'startDate',
       type: IsarType.dateTime,
     )
   },
@@ -126,10 +126,10 @@ void _buildingTypesIsarSerialize(
   writer.writeDateTime(offsets[0], object.createdAt);
   writer.writeDateTime(offsets[1], object.endDate);
   writer.writeBool(offsets[2], object.isSynced);
-  writer.writeString(offsets[3], object.name);
-  writer.writeLong(offsets[4], object.remoteId);
-  writer.writeDateTime(offsets[5], object.startDate);
-  writer.writeDateTime(offsets[6], object.updatedAt);
+  writer.writeDateTime(offsets[3], object.lastUpdatedAt);
+  writer.writeString(offsets[4], object.name);
+  writer.writeLong(offsets[5], object.remoteId);
+  writer.writeDateTime(offsets[6], object.startDate);
 }
 
 BuildingTypesIsar _buildingTypesIsarDeserialize(
@@ -143,10 +143,10 @@ BuildingTypesIsar _buildingTypesIsarDeserialize(
   object.endDate = reader.readDateTimeOrNull(offsets[1]);
   object.id = id;
   object.isSynced = reader.readBool(offsets[2]);
-  object.name = reader.readString(offsets[3]);
-  object.remoteId = reader.readLong(offsets[4]);
-  object.startDate = reader.readDateTime(offsets[5]);
-  object.updatedAt = reader.readDateTime(offsets[6]);
+  object.lastUpdatedAt = reader.readDateTime(offsets[3]);
+  object.name = reader.readString(offsets[4]);
+  object.remoteId = reader.readLong(offsets[5]);
+  object.startDate = reader.readDateTime(offsets[6]);
   return object;
 }
 
@@ -164,11 +164,11 @@ P _buildingTypesIsarDeserializeProp<P>(
     case 2:
       return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
-    case 4:
-      return (reader.readLong(offset)) as P;
-    case 5:
       return (reader.readDateTime(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readLong(offset)) as P;
     case 6:
       return (reader.readDateTime(offset)) as P;
     default:
@@ -774,6 +774,62 @@ extension BuildingTypesIsarQueryFilter
   }
 
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
+      lastUpdatedAtEqualTo(DateTime value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
+      lastUpdatedAtGreaterThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
+      lastUpdatedAtLessThan(
+    DateTime value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastUpdatedAt',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
+      lastUpdatedAtBetween(
+    DateTime lower,
+    DateTime upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastUpdatedAt',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
       nameEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1020,62 +1076,6 @@ extension BuildingTypesIsarQueryFilter
       ));
     });
   }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
-      updatedAtEqualTo(DateTime value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
-      updatedAtGreaterThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
-      updatedAtLessThan(
-    DateTime value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'updatedAt',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterFilterCondition>
-      updatedAtBetween(
-    DateTime lower,
-    DateTime upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'updatedAt',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
 extension BuildingTypesIsarQueryObject
@@ -1129,6 +1129,20 @@ extension BuildingTypesIsarQuerySortBy
   }
 
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
+      sortByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
+      sortByLastUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
       sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1167,20 +1181,6 @@ extension BuildingTypesIsarQuerySortBy
       sortByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
-      sortByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
-      sortByUpdatedAtDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
     });
   }
 }
@@ -1243,6 +1243,20 @@ extension BuildingTypesIsarQuerySortThenBy
   }
 
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
+      thenByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.asc);
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
+      thenByLastUpdatedAtDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastUpdatedAt', Sort.desc);
+    });
+  }
+
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
       thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
@@ -1283,20 +1297,6 @@ extension BuildingTypesIsarQuerySortThenBy
       return query.addSortBy(r'startDate', Sort.desc);
     });
   }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
-      thenByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.asc);
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QAfterSortBy>
-      thenByUpdatedAtDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'updatedAt', Sort.desc);
-    });
-  }
 }
 
 extension BuildingTypesIsarQueryWhereDistinct
@@ -1322,6 +1322,13 @@ extension BuildingTypesIsarQueryWhereDistinct
     });
   }
 
+  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QDistinct>
+      distinctByLastUpdatedAt() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastUpdatedAt');
+    });
+  }
+
   QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QDistinct> distinctByName(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -1340,13 +1347,6 @@ extension BuildingTypesIsarQueryWhereDistinct
       distinctByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'startDate');
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, BuildingTypesIsar, QDistinct>
-      distinctByUpdatedAt() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'updatedAt');
     });
   }
 }
@@ -1379,6 +1379,13 @@ extension BuildingTypesIsarQueryProperty
     });
   }
 
+  QueryBuilder<BuildingTypesIsar, DateTime, QQueryOperations>
+      lastUpdatedAtProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastUpdatedAt');
+    });
+  }
+
   QueryBuilder<BuildingTypesIsar, String, QQueryOperations> nameProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'name');
@@ -1395,13 +1402,6 @@ extension BuildingTypesIsarQueryProperty
       startDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'startDate');
-    });
-  }
-
-  QueryBuilder<BuildingTypesIsar, DateTime, QQueryOperations>
-      updatedAtProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'updatedAt');
     });
   }
 }

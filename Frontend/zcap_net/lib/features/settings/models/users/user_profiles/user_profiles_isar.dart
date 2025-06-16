@@ -17,7 +17,7 @@ class UserProfilesIsar {
   DateTime startDate = DateTime(DateTime.now().year, 1, 1);
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
+  DateTime lastUpdatedAt = DateTime.now();
 
   UserProfilesIsar();
 
@@ -28,7 +28,7 @@ class UserProfilesIsar {
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? lastUpdatedAt,
     bool? isSynced,
   }) {
     final copy = UserProfilesIsar()
@@ -38,7 +38,7 @@ class UserProfilesIsar {
       ..startDate = startDate ?? this.startDate
       ..endDate = endDate ?? this.endDate
       ..createdAt = createdAt ?? this.createdAt
-      ..updatedAt = updatedAt ?? DateTime.now()
+      ..lastUpdatedAt = lastUpdatedAt ?? DateTime.now()
       ..isSynced = isSynced ?? this.isSynced;
 
     return copy;

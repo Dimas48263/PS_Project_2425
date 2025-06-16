@@ -70,7 +70,7 @@ class EntityTypesService(
             name = updatedEntityType.name,
             startDate = updatedEntityType.startDate,
             endDate = updatedEntityType.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {

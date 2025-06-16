@@ -10,7 +10,6 @@ import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.failure
 import pt.isel.ps.zcap.services.success
-import java.sql.Timestamp
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
@@ -54,7 +53,7 @@ class TreeLevelService(
             description = treeLevelUpdate.description,
             startDate = treeLevelUpdate.startDate,
             endDate = treeLevelUpdate.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repo.save(newTreeLevel).toOutputModel())

@@ -130,7 +130,7 @@ class UserService(
             userDataProfile = userDataProfile,
             startDate = user.startDate,
             endDate = user.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {
@@ -160,7 +160,7 @@ class UserService(
 
         val newUser = user.copy(
             password = passwordEncoder.encrypt(newPassword),
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {
@@ -191,7 +191,7 @@ class UserService(
             userDataProfile = userDataProfile,
             startDate = inputData.startDate,
             endDate = inputData.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
     // Conversion from domain Model to OutputModel
@@ -206,7 +206,7 @@ class UserService(
             startDate = user.startDate,
             endDate = user.endDate,
             createdAt = user.createdAt,
-            updatedAt = user.updatedAt
+            lastUpdatedAt = user.lastUpdatedAt
         )
     }
 

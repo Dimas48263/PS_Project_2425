@@ -1,8 +1,6 @@
 package pt.isel.ps.zcap.domain.supportTables
 
 import jakarta.persistence.*
-import pt.isel.ps.zcap.domain.supportTables.BuildingType
-import pt.isel.ps.zcap.domain.supportTables.Entities
 import pt.isel.ps.zcap.domain.tree.Tree
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -35,5 +33,5 @@ data class Zcap (
     val startDate: LocalDate = LocalDate.now(),
     val endDate: LocalDate? = null,
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val lastUpdatedAt: LocalDateTime = LocalDateTime.now()
 )

@@ -65,7 +65,7 @@ class BuildingTypesService(
             name = updatedBuildingType.name,
             startDate = updatedBuildingType.startDate,
             endDate = updatedBuildingType.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
 
         return try {
@@ -80,7 +80,7 @@ class BuildingTypesService(
         name = inputData.name,
         startDate = inputData.startDate,
         endDate = inputData.endDate,
-        updatedAt = LocalDateTime.now()
+        lastUpdatedAt = LocalDateTime.now()
     )
 
     // Conversion from domain Model to OutputModel
@@ -91,7 +91,7 @@ class BuildingTypesService(
             startDate = buildingType.startDate,
             endDate = buildingType.endDate,
             createdAt = buildingType.createdAt,
-            updatedAt = buildingType.updatedAt,
+            lastUpdatedAt = buildingType.lastUpdatedAt,
         )
     }
 }

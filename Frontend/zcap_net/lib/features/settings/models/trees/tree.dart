@@ -11,7 +11,7 @@ class Tree implements ApiTable {
   final DateTime? endDate;
   final DateTime createdAt;
   @override
-  final DateTime updatedAt;
+  final DateTime lastUpdatedAt;
 
   Tree({
     required this.remoteId,
@@ -21,7 +21,7 @@ class Tree implements ApiTable {
     required this.startDate,
     this.endDate,
     required this.createdAt,
-    required this.updatedAt,
+    required this.lastUpdatedAt,
   });
 
   factory Tree.fromJson(Map<String, dynamic> json) {
@@ -35,8 +35,8 @@ class Tree implements ApiTable {
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
+      lastUpdatedAt: json['lastUpdatedAt'] != null
+          ? DateTime.parse(json['lastUpdatedAt'])
           : DateTime.now(),
     );
   }
@@ -60,7 +60,7 @@ class Tree implements ApiTable {
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,
-    DateTime? updatedAt,
+    DateTime? lastUpdatedAt,
   }) {
     return Tree(
       remoteId: id ?? this.remoteId,
@@ -70,7 +70,7 @@ class Tree implements ApiTable {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
+      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
     );
   }
 }

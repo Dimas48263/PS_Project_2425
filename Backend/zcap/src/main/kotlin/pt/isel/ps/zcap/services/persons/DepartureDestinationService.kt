@@ -62,7 +62,7 @@ class DepartureDestinationService(
             name = departureDestinationInput.name,
             startDate = departureDestinationInput.startDate,
             endDate = departureDestinationInput.endDate,
-            updatedAt = LocalDateTime.now()
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repository.save(newDepartureDestination).toOutputModel())

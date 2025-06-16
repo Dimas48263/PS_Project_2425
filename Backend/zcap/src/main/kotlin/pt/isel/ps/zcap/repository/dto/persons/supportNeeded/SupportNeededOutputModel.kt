@@ -8,6 +8,6 @@ class SupportNeededOutputModel(
     val name: String,
     val startDate: LocalDate,
     val endDate: LocalDate?,
-    val updatedAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime,
     val createdAt: LocalDateTime
 )

@@ -19,7 +19,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override
-  DateTime updatedAt = DateTime.now(); 
+  DateTime lastUpdatedAt = DateTime.now(); 
 
   @Index()
   @override
@@ -36,7 +36,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
       ..startDate = treeLevel.startDate
       ..endDate = treeLevel.endDate
       ..createdAt = treeLevel.createdAt
-      ..updatedAt = treeLevel.updatedAt
+      ..lastUpdatedAt = treeLevel.lastUpdatedAt
       ..isSynced = true;
   }
   
@@ -50,7 +50,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
-      updatedAt: updatedAt
+      lastUpdatedAt: lastUpdatedAt
     );
   }
 
@@ -62,7 +62,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
     DateTime? startDate, 
     DateTime? endDate, 
     DateTime? createdAt, 
-    DateTime? updatedAt, 
+    DateTime? lastUpdatedAt, 
     bool? isSynced
   }) {
     return TreeLevelIsar()
@@ -74,7 +74,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
       ..startDate = startDate ?? this.startDate
       ..endDate = endDate ?? this.endDate
       ..createdAt = createdAt ?? this.createdAt
-      ..updatedAt = updatedAt ?? this.updatedAt
+      ..lastUpdatedAt = lastUpdatedAt ?? this.lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
   
@@ -89,7 +89,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
       ..startDate = startDate 
       ..endDate = endDate 
       ..createdAt = createdAt 
-      ..updatedAt = updatedAt
+      ..lastUpdatedAt = lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
   
@@ -107,7 +107,7 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
     startDate = entity.startDate;
     endDate = entity.endDate;
     createdAt = entity.createdAt;
-    updatedAt = entity.updatedAt;
+    lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
   }
 }

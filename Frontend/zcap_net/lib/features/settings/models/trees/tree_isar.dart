@@ -22,7 +22,7 @@ class TreeIsar extends IsarTable<Tree> {
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override
-  DateTime updatedAt = DateTime.now();
+  DateTime lastUpdatedAt = DateTime.now();
 
   @override
   bool isSynced = false;
@@ -69,7 +69,7 @@ class TreeIsar extends IsarTable<Tree> {
       ..startDate = tree.startDate
       ..endDate = tree.endDate
       ..createdAt = tree.createdAt
-      ..updatedAt = tree.updatedAt
+      ..lastUpdatedAt = tree.lastUpdatedAt
       ..isSynced = true;
 
     // Usar o objeto já existente ou criar novo (TreeLevel)
@@ -97,7 +97,7 @@ class TreeIsar extends IsarTable<Tree> {
       ..startDate = startDate
       ..endDate = endDate
       ..createdAt = createdAt
-      ..updatedAt = updatedAt
+      ..lastUpdatedAt = lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
 
@@ -111,7 +111,7 @@ class TreeIsar extends IsarTable<Tree> {
         startDate: startDate,
         endDate: endDate,
         createdAt: createdAt,
-        updatedAt: updatedAt);
+        lastUpdatedAt: lastUpdatedAt);
   }
 
   @override
@@ -137,7 +137,7 @@ class TreeIsar extends IsarTable<Tree> {
     startDate = entity.startDate;
     endDate = entity.endDate;
     createdAt = entity.createdAt;
-    updatedAt = entity.updatedAt;
+    lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
   }
 }

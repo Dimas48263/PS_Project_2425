@@ -48,5 +48,5 @@ data class Person(
     val supportNeeded: List<PersonSupportNeeded> = emptyList(),
 
     val createdAt: LocalDateTime = LocalDateTime.now(),
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val lastUpdatedAt: LocalDateTime = LocalDateTime.now()
 )
