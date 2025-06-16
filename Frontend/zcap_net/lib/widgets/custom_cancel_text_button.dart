@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 
 class CancelTextButton extends StatelessWidget {
   const CancelTextButton({
@@ -8,8 +9,8 @@ class CancelTextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-    onPressed: () => Navigator.pop(context),
-    child: const Text('Cancelar'),
-                    );
+      onPressed: () => Navigator.pop(context),
+      child: Text('cancel'.tr()),
+    );
   }
 }

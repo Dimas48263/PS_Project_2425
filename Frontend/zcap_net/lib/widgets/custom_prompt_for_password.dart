@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 
-Future<String?> customPromptForPassword(BuildContext context, String userName) async {
+Future<String?> customPromptForPassword(
+    BuildContext context, String userName) async {
   final controller = TextEditingController();
 
   return showDialog<String>(
@@ -11,15 +13,15 @@ Future<String?> customPromptForPassword(BuildContext context, String userName) a
       }
 
       return AlertDialog(
-        title: const Text("Autenticação necessária"),
+        title: Text('required_login'.tr()),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Text(
-                  "User: ",
+                Text(
+                  '${'user'.tr()}: ',
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 Text(userName, style: const TextStyle(fontSize: 16)),
@@ -30,7 +32,7 @@ Future<String?> customPromptForPassword(BuildContext context, String userName) a
               controller: controller,
               autofocus: true,
               obscureText: true,
-              decoration: const InputDecoration(labelText: "Password"),
+              decoration: InputDecoration(labelText: 'password'.tr()),
               onSubmitted: (_) => confirm(),
             ),
           ],
@@ -38,11 +40,11 @@ Future<String?> customPromptForPassword(BuildContext context, String userName) a
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(null),
-            child: const Text("Cancelar"),
+            child: Text('cancel'.tr()),
           ),
           ElevatedButton(
             onPressed: confirm,
-            child: const Text("Confirmar"),
+            child: Text('confirm'.tr()),
           ),
         ],
       );

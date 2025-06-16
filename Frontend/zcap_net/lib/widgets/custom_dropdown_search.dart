@@ -1,4 +1,5 @@
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 Widget customDropdownSearch<T>(
@@ -16,7 +17,7 @@ Widget customDropdownSearch<T>(
       showSearchBox: true,
       searchFieldProps: TextFieldProps(
         decoration: InputDecoration(
-          labelText: 'Pesquisar',
+          labelText: 'search'.tr(),
         ),
       ),
     ),
@@ -25,7 +26,7 @@ Widget customDropdownSearch<T>(
     validator: (value) => validator(value),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
-        labelText: label == null ? 'Selecione uma opção' : 'Selecionar $label',
+        labelText: label == null ? 'select_an_option'.tr() : 'select_label'.tr(namedArgs: {'label': label}),
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       ),
     ),

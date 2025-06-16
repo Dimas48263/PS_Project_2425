@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import '../shared/date_utils.dart';
 
 class CustomDateRangePicker extends StatelessWidget {
@@ -61,14 +62,14 @@ class CustomDateRangePicker extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          title:
-              Text("Início: ${startDate.toLocal().toString().split(' ')[0]}"),
+          title: Text(
+              '${"start".tr()}: ${startDate.toLocal().toString().split(' ')[0]}'),
           trailing: const Icon(Icons.calendar_today),
           onTap: () => _selectStartDate(context),
         ),
         ListTile(
           title: Text(
-              "Fim: ${endDate != null ? endDate!.toLocal().toString().split(' ')[0] : 'Sem data'}"),
+              '${"end".tr()}: ${endDate != null ? endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}'),
           trailing: const Icon(Icons.calendar_today),
           onTap: () => _selectEndDate(context),
           onLongPress: () => onEndDateChanged(null),

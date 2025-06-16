@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 
 class CustomPasswordConfirmation extends StatefulWidget {
   final TextEditingController passwordController;
@@ -55,7 +56,7 @@ class _CustomPasswordConfirmationState
         TextFormField(
           controller: widget.passwordController,
           obscureText: true,
-          decoration: const InputDecoration(labelText: 'Password'),
+          decoration: InputDecoration(labelText: 'password'.tr()),
           inputFormatters: [
             FilteringTextInputFormatter.deny(RegExp(r'\s')),
           ],
@@ -65,7 +66,7 @@ class _CustomPasswordConfirmationState
           controller: widget.passwordConfirmationController,
           obscureText: true,
           decoration: InputDecoration(
-            labelText: 'Confirme a Password',
+            labelText: 'password_confirmation'.tr(),
             labelStyle: TextStyle(
               color: _passwordsMatch ? null : Colors.red,
             ),
@@ -78,7 +79,7 @@ class _CustomPasswordConfirmationState
           Padding(
             padding: const EdgeInsets.only(top: 8),
             child: Text(
-              'As passwords não coincidem.',
+              'no_matching_password'.tr(),
               style: TextStyle(color: Colors.red, fontSize: 12),
             ),
           ),

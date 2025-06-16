@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   final String title;
@@ -18,17 +19,21 @@ class CustomAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Row(
-            children: [
-              Icon(icon, color: iconColor, size: 50.0,),
-              const SizedBox(width: 12),
-              Expanded(child: Text(title)),
-            ],
+        children: [
+          Icon(
+            icon,
+            color: iconColor,
+            size: 50.0,
           ),
+          const SizedBox(width: 12),
+          Expanded(child: Text(title)),
+        ],
+      ),
       content: Text(content),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Fechar'),
+          child: Text('close'.tr()),
         ),
       ],
     );
