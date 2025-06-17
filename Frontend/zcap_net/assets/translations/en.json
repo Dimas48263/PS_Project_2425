@@ -1,16 +1,24 @@
 {
-  "app_name": "ZCAP Net",
   "login": "Login",
   "login_ok": "Success login",
   "login_nok": "Incorrect username/password",
   "logout": "Logout",
   "email": "Email",
   "password": "Password",
+  "admin": "Admin",
+  "admin_password": "Administrator password",
   "username": "Username",
   "user": "User",
   "search": "Search",
   "cancel": "Cancel",
   "confirm": "Confirm",
+  "confirm_delete": "Confirm delete",
+  "confirm_delete_message": "Do you want to delete this record?",
+  "loading": "Loading...",
+  "unknown": "Unknown",
+  "type": "Type",
+  "contact": "Contact",
+  "alternative_contact": "Alternative contact",
   "start": "Start",
   "end": "End",
   "close": "Close",
@@ -22,7 +30,18 @@
   "no_matching_password": "Passwords don't match",
   "required_login": "Required login",
   "unsupported_OS": "Operating System not supported",
+  "error": "Error",
+  "warning": "Warning",
+  "ok": "OK",
+  "new": "New",
+  "edit": "Edit",
+  "save": "Save",
+  "invalid_description": "Invalid description",
+  "invalid_email": "Invalid Email",
+  "required_field": "Required field",
+  "not_implemented": "Not implemented.",
   "errors": {
+    "enddate_less_than_startdate": "End date can not be after Start date.",
     "load_item_failed": "Failed to load item: code {{code}}, response: {{body}}",
     "load_list_failed": "Failed to load list: code {{code}}",
     "post_failed": "Failed to send data: code {{code}}, response: {{body}}",
@@ -32,5 +51,18 @@
   "log": {
     "app_started": "Application started with API: {{api}}",
     "online_status": "Online: {{status}}"
+  },
+  "screen": {
+    "entity": "Entity",
+    "entity_name": "Entity Name",
+    "entities": "Entities",
+    "entity_type": "Entity Type",
+    "entity_types": "Entity Types"
+  },
+    "service": {
+    "sync_cancel": "Canceled Synchronization.",
+    "sync_auth_failed": "Remote login failed.",
+    "sync_ok": "Sucessfull Synchronization.",
+    "sync_error": "Synchronization error: {{error}}"
   }
 }

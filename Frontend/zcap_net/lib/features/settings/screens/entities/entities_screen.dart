@@ -4,6 +4,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
@@ -59,7 +60,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Entidades"),
+        title: Text('screen.entities'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -102,31 +103,32 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                                                       .connectionState ==
                                                   ConnectionState.done
                                               ? entity.entityType.value?.name ??
-                                                  'Tipo desconhecido'
-                                              : 'Carregando tipo...';
-                                          return Text('Tipo: $entityTypeName');
+                                                  'unknown'.tr()
+                                              : 'loading'.tr();
+                                          return Text(
+                                              '${'type'.tr()}: $entityTypeName');
                                         },
                                       ),
-                                      Text('Email: ${entity.email}'),
+                                      Text('${'email'.tr()}: ${entity.email}'),
                                       Row(
                                         children: [
                                           Expanded(
                                               child: Text(
-                                                  'Contacto: ${entity.phone1}')),
+                                                  '${'contact'.tr()}: ${entity.phone1}')),
                                           Expanded(
                                               child: Text(
-                                                  'Contacto alternativo: ${entity.phone2}')),
+                                                  '${'alternative_contact'.tr()}: ${entity.phone2}')),
                                         ],
                                       ),
                                       Row(
                                         children: [
                                           Expanded(
                                             child: Text(
-                                                'Início: ${entity.startDate.toLocal().toString().split(' ')[0]}'),
+                                                '${'start'.tr()}: ${entity.startDate.toLocal().toString().split(' ')[0]}'),
                                           ),
                                           Expanded(
                                             child: Text(
-                                              'Fim: ${entity.endDate != null ? entity.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
+                                              '${'end'.tr()}: ${entity.endDate != null ? entity.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
                                             ),
                                           ),
                                         ],
@@ -152,11 +154,10 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                                           final confirm =
                                               await showDialog<bool>(
                                             context: context,
-                                            builder: (context) =>
-                                                const ConfirmDialog(
-                                              title: 'Confirmar eliminação',
+                                            builder: (context) => ConfirmDialog(
+                                              title: 'confirm_delete'.tr(),
                                               content:
-                                                  'Tem certeza que deseja eliminar esta entidade?',
+                                                  'confirm_delete_message'.tr(),
                                             ),
                                           );
                                           if (confirm == true) {
@@ -205,7 +206,9 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return AlertDialog(
-              title: Text(entity != null ? 'Editar Entidade' : 'Nova Entidade'),
+              title: Text(entity != null
+                  ? '${'edit'.tr()} ${'screen.entity'.tr()}'
+                  : '${'new'.tr()} ${'screen.entity'.tr()}'),
               content: Form(
                 key: formKey,
                 child: SingleChildScrollView(
@@ -214,11 +217,11 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                     children: [
                       TextFormField(
                         controller: nameController,
-                        decoration: const InputDecoration(
-                            labelText: 'Nome da entidade'),
+                        decoration: InputDecoration(
+                            labelText: 'screen.entity_name'.tr()),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'Nome inválido';
+                            return 'required_field'.tr();
                           }
                           return null;
                         },
@@ -230,7 +233,8 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                           showSearchBox: true,
                           searchFieldProps: TextFieldProps(
                             decoration: InputDecoration(
-                              labelText: 'Pesquisar tipo de entidade',
+                              labelText:
+                                  '${'search'.tr()} ${'screen.entity_type'.tr()}',
                             ),
                           ),
                         ),
@@ -243,13 +247,13 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                         },
                         validator: (EntityTypeIsar? value) {
                           if (value == null) {
-                            return 'Seleção obrigatória';
+                            return 'required_field'.tr();
                           }
                           return null;
                         },
                         dropdownDecoratorProps: DropDownDecoratorProps(
                           dropdownSearchDecoration: InputDecoration(
-                            labelText: 'Tipo de entidade',
+                            labelText: 'screen.entity_type'.tr(),
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 4),
                           ),
@@ -258,13 +262,13 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: emailController,
-                        decoration: const InputDecoration(labelText: 'Email'),
+                        decoration: InputDecoration(labelText: 'email'.tr()),
                         validator: (value) {
                           if (value != null && value.trim().isNotEmpty) {
                             final emailRegex =
                                 RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                             if (!emailRegex.hasMatch(value.trim())) {
-                              return 'Email inválido';
+                              return 'invalid_email'.tr();
                             }
                           }
                           return null;
@@ -273,11 +277,10 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       const SizedBox(height: 12),
                       TextFormField(
                         controller: phone1Controller,
-                        decoration: const InputDecoration(
-                            labelText: 'Contacto principal'),
+                        decoration: InputDecoration(labelText: 'contact'.tr()),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
-                            return 'O contacto principal é obrigatório';
+                            return 'required_field'.tr();
                           }
                           return null;
                         },
@@ -285,8 +288,8 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       const SizedBox(height: 12),
                       TextField(
                         controller: phone2Controller,
-                        decoration: const InputDecoration(
-                            labelText: 'Contacto secundário'),
+                        decoration: InputDecoration(
+                            labelText: 'alternative_contact'.tr()),
                       ),
                       const SizedBox(height: 12),
                       CustomDateRangePicker(
@@ -340,7 +343,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       Navigator.pop(context);
                     }
                   },
-                  child: const Text('Guardar'),
+                  child: Text('save'.tr()),
                 ),
               ],
             );

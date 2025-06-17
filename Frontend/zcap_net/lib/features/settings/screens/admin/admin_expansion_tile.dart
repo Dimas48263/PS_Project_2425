@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/constants/api_constants.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
 class AdminExpansionTile extends StatefulWidget {
@@ -24,12 +25,12 @@ class _AdminExpansionTileState extends State<AdminExpansionTile> {
           if (controller.text == ApiConstants.specialAdminPassword) {
             Navigator.pop(context, true);
           } else {
-            CustomNOkSnackBar.show(context, 'Credenciais inválidas');
+            CustomNOkSnackBar.show(context, 'login_nok'.tr());
           }
         }
 
         return AlertDialog(
-          title: Text("Senha de Administrador"),
+          title: Text('admin_password'.tr()),
           content: TextField(
             controller: controller,
             obscureText: true,
@@ -39,11 +40,11 @@ class _AdminExpansionTileState extends State<AdminExpansionTile> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text("Cancelar"),
+              child: Text('cancel'.tr()),
             ),
             ElevatedButton(
               onPressed: tryConfirm,
-              child: Text("Confirmar"),
+              child: Text('confirm'.tr()),
             ),
           ],
         );
@@ -61,7 +62,7 @@ class _AdminExpansionTileState extends State<AdminExpansionTile> {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
-      title: const Text("Admin"),
+      title: Text('admin'.tr()),
       leading: const Icon(Icons.maps_home_work_outlined),
       childrenPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       initiallyExpanded: _isExpanded,

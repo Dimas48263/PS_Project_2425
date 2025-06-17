@@ -5,6 +5,8 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
@@ -244,6 +246,23 @@ final List<SyncEntry> syncEntries = [
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
+  SyncEntry<EntitiesIsar, Entity>(
+      endpoint: 'entities',
+      getCollection: (isar) => isar.entitiesIsars,
+      idName: 'entityId',
+      fromJson: Entity.fromJson,
+      toIsar: (ApiTable entity) async =>
+          EntitiesIsar.fromEntity(entity as Entity),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<EntitiesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> entity) async {
+        final entityIsar = entity as EntitiesIsar;
+        await entityIsar.entityType.save();
+      }),
   SyncEntry<TreeIsar, Tree>(
       endpoint: 'trees',
       getCollection: (isar) => isar.treeIsars,

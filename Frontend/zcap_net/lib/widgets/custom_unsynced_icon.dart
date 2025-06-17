@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:zcap_net_app/core/services/sync_services/request_sync.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 
 class CustomUnsyncedIcon extends StatelessWidget {
   const CustomUnsyncedIcon({super.key});
@@ -8,7 +8,7 @@ class CustomUnsyncedIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () async {
-        await requestSync(context);
+        await syncServiceV3.synchronizeAll();
       },
       icon: const Icon(
         Icons.sync_problem,

@@ -1,4 +1,4 @@
-import 'dart:async';
+/*import 'dart:async';
 
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
@@ -22,7 +22,7 @@ class SyncServiceManager {
   void setup() {
     _syncManager = SyncManager([
       EntityTypeSyncService(DatabaseService.db),
-      EntitySyncService(DatabaseService.db),
+//      EntitySyncService(DatabaseService.db),
       // TreeSyncService(DatabaseService.db),
       // TreeLevelSyncService(DatabaseService.db),
     ]);
@@ -54,3 +54,4 @@ class SyncServiceManager {
     _timer?.cancel();
   }
 }
+*/

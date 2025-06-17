@@ -20,7 +20,7 @@ void main() async {
 
   if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     setWindowMinSize(const Size(800, 600)); //Minimum size window
-    setWindowTitle('app_name'.tr());
+    setWindowTitle('ZCAP Net');
   }
 
   await _setup();
@@ -78,7 +78,7 @@ class MyApp extends StatelessWidget {
       builder: (context, isDarkMode, child) {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
-          title: 'app_name'.tr(),
+          title: 'ZCAP Net',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: Colors.teal,

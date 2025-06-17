@@ -74,6 +74,19 @@ const EntitiesIsarSchema = CollectionSchema(
   deserializeProp: _entitiesIsarDeserializeProp,
   idName: r'id',
   indexes: {
+    r'remoteId': IndexSchema(
+      id: 6301175856541681032,
+      name: r'remoteId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'remoteId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'name': IndexSchema(
       id: 879695947855722453,
       name: r'name',
@@ -109,10 +122,20 @@ int _entitiesIsarEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.email.length * 3;
+  {
+    final value = object.email;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
   bytesCount += 3 + object.phone1.length * 3;
-  bytesCount += 3 + object.phone2.length * 3;
+  {
+    final value = object.phone2;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -142,14 +165,14 @@ EntitiesIsar _entitiesIsarDeserialize(
 ) {
   final object = EntitiesIsar();
   object.createdAt = reader.readDateTime(offsets[0]);
-  object.email = reader.readString(offsets[1]);
+  object.email = reader.readStringOrNull(offsets[1]);
   object.endDate = reader.readDateTimeOrNull(offsets[2]);
   object.id = id;
   object.isSynced = reader.readBool(offsets[3]);
   object.lastUpdatedAt = reader.readDateTime(offsets[4]);
   object.name = reader.readString(offsets[5]);
   object.phone1 = reader.readString(offsets[6]);
-  object.phone2 = reader.readString(offsets[7]);
+  object.phone2 = reader.readStringOrNull(offsets[7]);
   object.remoteId = reader.readLongOrNull(offsets[8]);
   object.startDate = reader.readDateTime(offsets[9]);
   return object;
@@ -165,7 +188,7 @@ P _entitiesIsarDeserializeProp<P>(
     case 0:
       return (reader.readDateTime(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 2:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 3:
@@ -177,7 +200,7 @@ P _entitiesIsarDeserializeProp<P>(
     case 6:
       return (reader.readString(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
       return (reader.readLongOrNull(offset)) as P;
     case 9:
@@ -207,6 +230,14 @@ extension EntitiesIsarQueryWhereSort
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhere> anyRemoteId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'remoteId'),
+      );
     });
   }
 
@@ -283,6 +314,118 @@ extension EntitiesIsarQueryWhere
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhereClause> remoteIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhereClause>
+      remoteIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhereClause> remoteIdEqualTo(
+      int? remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [remoteId],
+      ));
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhereClause>
+      remoteIdNotEqualTo(int? remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhereClause>
+      remoteIdGreaterThan(
+    int? remoteId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [remoteId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhereClause> remoteIdLessThan(
+    int? remoteId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [],
+        upper: [remoteId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterWhereClause> remoteIdBetween(
+    int? lowerRemoteId,
+    int? upperRemoteId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [lowerRemoteId],
+        includeLower: includeLower,
+        upper: [upperRemoteId],
         includeUpper: includeUpper,
       ));
     });
@@ -483,8 +626,26 @@ extension EntitiesIsarQueryFilter
     });
   }
 
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition>
+      emailIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'email',
+      ));
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition>
+      emailIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'email',
+      ));
+    });
+  }
+
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition> emailEqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -498,7 +659,7 @@ extension EntitiesIsarQueryFilter
 
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition>
       emailGreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -513,7 +674,7 @@ extension EntitiesIsarQueryFilter
   }
 
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition> emailLessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -528,8 +689,8 @@ extension EntitiesIsarQueryFilter
   }
 
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition> emailBetween(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1079,8 +1240,26 @@ extension EntitiesIsarQueryFilter
     });
   }
 
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition>
+      phone2IsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'phone2',
+      ));
+    });
+  }
+
+  QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition>
+      phone2IsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'phone2',
+      ));
+    });
+  }
+
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition> phone2EqualTo(
-    String value, {
+    String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1094,7 +1273,7 @@ extension EntitiesIsarQueryFilter
 
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition>
       phone2GreaterThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1110,7 +1289,7 @@ extension EntitiesIsarQueryFilter
 
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition>
       phone2LessThan(
-    String value, {
+    String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
@@ -1125,8 +1304,8 @@ extension EntitiesIsarQueryFilter
   }
 
   QueryBuilder<EntitiesIsar, EntitiesIsar, QAfterFilterCondition> phone2Between(
-    String lower,
-    String upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
     bool caseSensitive = true,
@@ -1707,7 +1886,7 @@ extension EntitiesIsarQueryProperty
     });
   }
 
-  QueryBuilder<EntitiesIsar, String, QQueryOperations> emailProperty() {
+  QueryBuilder<EntitiesIsar, String?, QQueryOperations> emailProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'email');
     });
@@ -1744,7 +1923,7 @@ extension EntitiesIsarQueryProperty
     });
   }
 
-  QueryBuilder<EntitiesIsar, String, QQueryOperations> phone2Property() {
+  QueryBuilder<EntitiesIsar, String?, QQueryOperations> phone2Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'phone2');
     });

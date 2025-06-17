@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
 class DateUtilsService {
@@ -13,8 +14,8 @@ class DateUtilsService {
       showDialog(
         context: context,
         builder: (context) => CustomAlertDialog(
-          title: 'Erro',
-          content: 'A data de fim não pode ser anterior à data de início.',
+          title: 'error'.tr(),
+          content: 'errors.enddate_less_than_startdate'.tr(),
         ),
       );
       return false;

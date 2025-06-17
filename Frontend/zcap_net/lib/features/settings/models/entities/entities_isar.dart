@@ -1,4 +1,5 @@
 import 'package:isar/isar.dart';
+import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
@@ -15,13 +16,14 @@ class EntitiesIsar implements IsarTable<Entity> {
 
   /* Remote variables */
   @override
+  @Index()
   int? remoteId;
 
   @Index(type: IndexType.value)
   String name = "";
-  String email = "";
+  String? email;
   String phone1 = "";
-  String phone2 = "";
+  String? phone2;
 
   var entityType = IsarLink<EntityTypeIsar>();
 
@@ -68,34 +70,55 @@ class EntitiesIsar implements IsarTable<Entity> {
   Future<void> updateFromApiEntity(Entity entity) async {
     remoteId = entity.remoteId;
     name = entity.name;
-    email = entity.email!;
+    email = entity.email;
     phone1 = entity.phone1;
-    phone2 = entity.phone2!;
+    phone2 = entity.phone2;
     startDate = entity.startDate;
     endDate = entity.endDate;
     createdAt = entity.createdAt;
     lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
 
-    entityType.value = EntityTypeIsar.fromEntityType(entity.entityType);
-    await entityType.save();
+    final entType = await findOrBuildEntityType(entity.entityType);
+    DatabaseService.db.writeTxn(() async {
+      entityType.value = entType;
+      await entityType.save();
+    });
   }
 
-  factory EntitiesIsar.fromEntity(Entity entity) {
+  static Future<EntityTypeIsar> findOrBuildEntityType(
+      EntityType entityType) async {
+    EntityTypeIsar? i;
+
+    i = await DatabaseService.db.entityTypeIsars
+        .filter()
+        .remoteIdEqualTo(entityType.remoteId)
+        .findFirst();
+
+    if (i != null) return i;
+
+    final newI = EntityTypeIsar.fromEntityType(entityType);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.entityTypeIsars.put(newI);
+    });
+    return newI;
+  }
+
+  static Future<EntitiesIsar> fromEntity(Entity entity) async {
     final isarEntity = EntitiesIsar()
       ..remoteId = entity.remoteId
       ..name = entity.name
-      ..email = entity.email!
+      ..email = entity.email
       ..phone1 = entity.phone1
-      ..phone2 = entity.phone2!
+      ..phone2 = entity.phone2
       ..startDate = entity.startDate
       ..endDate = entity.endDate
       ..createdAt = entity.createdAt
       ..lastUpdatedAt = entity.lastUpdatedAt
       ..isSynced = true;
 
-    isarEntity.entityType.value =
-        EntityTypeIsar.fromEntityType(entity.entityType);
+    final entityTypeIsar = await findOrBuildEntityType(entity.entityType);
+    isarEntity.entityType.value = entityTypeIsar;
 
     return isarEntity;
   }
@@ -113,9 +136,9 @@ class EntitiesIsar implements IsarTable<Entity> {
             createdAt: DateTime.now(),
             lastUpdatedAt: DateTime.now(),
           ),
-      email: email.isEmpty ? null : email,
+      email: email,
       phone1: phone1,
-      phone2: phone2.isEmpty ? null : phone2,
+      phone2: phone2,
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
