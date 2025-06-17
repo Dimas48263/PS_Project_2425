@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 
 class UserDataAccessScreen extends StatefulWidget {
   const UserDataAccessScreen({super.key});
@@ -12,7 +13,7 @@ class _UserDataAccessScreenState extends State<UserDataAccessScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Acesso a dados"),
+        title: Text('screen_settings_user_access_data'.tr()),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
@@ -56,7 +57,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tipos de Edificio"),
+        title: Text('screen_settings_building_types'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -91,9 +92,9 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                      'Início: ${buildingType.startDate.toLocal().toString().split(' ')[0]}'),
+                                      '${'start'.tr()}: ${buildingType.startDate.toLocal().toString().split(' ')[0]}'),
                                   Text(
-                                    'Fim: ${buildingType.endDate != null ? buildingType.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
+                                    '${'end'.tr()}: ${buildingType.endDate != null ? buildingType.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
                                   ),
                                 ],
                               ),
@@ -116,10 +117,10 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                                       final confirm = await showDialog<bool>(
                                         context: context,
                                         builder: (context) =>
-                                            const ConfirmDialog(
-                                          title: 'Confirmar eliminação',
+                                          ConfirmDialog(
+                                          title: 'confirm_delete'.tr(),
                                           content:
-                                              'Tem certeza que deseja eliminar este tipo de edificio?',
+                                              'confirm_delete_message'.tr(),
                                         ),
                                       );
                                       if (confirm == true) {
@@ -161,8 +162,8 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
             builder: (context, setModalState) {
               return AlertDialog(
                 title: Text(buildingType != null
-                    ? 'Editar Tipo de Edificio'
-                    : 'Novo Tipo de Edificio'),
+                    ? '${'edit'.tr()} ${'screen_building_type'.tr()}'
+                    : '${'new'.tr()} ${'screen_building_type'.tr()}'),
                 content: Form(
                   child: SingleChildScrollView(
                     child: Column(
@@ -171,7 +172,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                         TextField(
                           controller: nameController,
                           decoration: InputDecoration(
-                              labelText: 'Nome do tipo de edificio'),
+                              labelText: 'screen_building_type_name'.tr()),
                         ),
                         const SizedBox(
                           height: 12.0,
@@ -221,7 +222,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    child: const Text('Guardar'),
+                    child: Text('save'.tr()),
                   ),
                 ],
               );

@@ -61,7 +61,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Árvores"),
+        title: Text('trees'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.sync),
@@ -72,8 +72,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                   'detailId');
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Sincronização manual completa')),
+                  SnackBar(content: Text('service_sync_ok'.tr())),
                 );
               }
             },
@@ -112,16 +111,14 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                         DatabaseService.db.treeRecordDetailIsars,
                         'tree-record-details',
                         'detailId');
-                    print('update pressed');
                   },
                   (detail) => _addOrEditDetail(detail),
                   (detail) async {
                     final confirm = await showDialog<bool>(
                       context: context,
-                      builder: (context) => const ConfirmDialog(
-                        title: 'Confirmar eliminação',
-                        content:
-                            'Tem certeza que deseja eliminar este detalhe?',
+                      builder: (context) => ConfirmDialog(
+                        title: 'confirm_delete'.tr(),
+                        content: 'confirm_delete_message'.tr(),
                       ),
                     );
                     if (confirm == true) {
@@ -141,9 +138,9 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     List<List<String>> labelsList = [];
     for (var tree in filteredList) {
       labelsList.add([
-        'Valor: ${tree.valueCol}',
-        'Inicio: ${tree.startDate.toLocal().toString().split(' ')[0]}',
-        'Fim: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'
+        '${'value'.tr()}: ${tree.valueCol}',
+        '${'start'.tr()}: ${tree.startDate.toLocal().toString().split(' ')[0]}',
+        '${'end'.tr()}: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
     }
     return labelsList;
@@ -157,7 +154,8 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     }
     final availableTrees = await DatabaseService.db.treeIsars.where().findAll();
 
-    final availableDetailTypes = await DatabaseService.db.treeRecordDetailTypeIsars.where().findAll();
+    final availableDetailTypes =
+        await DatabaseService.db.treeRecordDetailTypeIsars.where().findAll();
 
     final valueController = TextEditingController(text: detail?.valueCol ?? '');
     TreeIsar? tree = detail?.tree.value;
@@ -166,7 +164,8 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     DateTime? endDate = detail?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
-      TextControllersInputFormConfig(controller: valueController, label: 'Valor'),
+      TextControllersInputFormConfig(
+          controller: valueController, label: 'value'.tr()),
     ];
 
     showDialog(
@@ -174,7 +173,9 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
-            title: Text(detail == null ? 'Novo Detalhe' : 'Editar Detalhe'),
+            title: Text(detail == null
+                ? '${'new'.tr()} ${'detail'.tr()}'
+                : '${'edit'.tr()} ${'detail'.tr()}'),
             content: buildForm(
                 formKey, context, textControllersConfig, startDate, endDate,
                 (value) {
@@ -197,22 +198,22 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                     });
                   },
                   validator: (value) =>
-                      value == null ? 'Campo obrigatório' : null),
+                      value == null ? 'required_field'.tr() : null),
               customDropdownSearch<TreeIsar>(
-                items: availableTrees,
-                selectedItem: tree,
-                onSelected: (TreeIsar? value) {
-                  setModalState(() {
-                    tree = value;
-                  });
-                },
-                validator: (value) =>
-                      value == null ? 'Campo obrigatório' : null),
+                  items: availableTrees,
+                  selectedItem: tree,
+                  onSelected: (TreeIsar? value) {
+                    setModalState(() {
+                      tree = value;
+                    });
+                  },
+                  validator: (value) =>
+                      value == null ? 'required_field'.tr() : null),
             ]),
             actions: [
               CancelTextButton(),
               TextButton(
-                child: const Text('Guardar'),
+                child: Text('save'.tr()),
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
@@ -225,7 +226,8 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                       newDetail.startDate = startDate ?? now;
                       newDetail.endDate = endDate;
                       newDetail.isSynced = false;
-                      await DatabaseService.db.treeRecordDetailIsars.put(newDetail);
+                      await DatabaseService.db.treeRecordDetailIsars
+                          .put(newDetail);
                       await newDetail.detailType.save();
                       await newDetail.tree.save();
                     });

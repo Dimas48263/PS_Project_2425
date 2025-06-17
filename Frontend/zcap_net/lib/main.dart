@@ -53,7 +53,7 @@ Future<void> _setup() async {
   await LogService.init(AppConfig.instance);
 
   LogService.log(
-    'log.app_started'.tr(namedArgs: {
+    'log_app_started'.tr(namedArgs: {
       'api': AppConfig.instance.apiUrl,
     }),
   );

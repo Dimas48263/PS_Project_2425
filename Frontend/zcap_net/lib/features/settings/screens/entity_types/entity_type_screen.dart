@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
@@ -57,7 +58,7 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tipo de Entidades"),
+        title: Text('screen_settings_entity_types'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -92,9 +93,9 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                      'Início: ${entityType.startDate.toLocal().toString().split(' ')[0]}'),
+                                      '${'start'.tr()}: ${entityType.startDate.toLocal().toString().split(' ')[0]}'),
                                   Text(
-                                    'Fim: ${entityType.endDate != null ? entityType.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
+                                    '${'end'.tr()}: ${entityType.endDate != null ? entityType.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
                                   ),
                                 ],
                               ),
@@ -116,11 +117,10 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                                     onPressed: () async {
                                       final confirm = await showDialog<bool>(
                                         context: context,
-                                        builder: (context) =>
-                                            const ConfirmDialog(
-                                          title: 'Confirmar eliminação',
+                                        builder: (context) => ConfirmDialog(
+                                          title: 'confirm_delete'.tr(),
                                           content:
-                                              'Tem certeza que deseja eliminar este tipo de entidade?',
+                                              'confirm_delete_message'.tr(),
                                         ),
                                       );
                                       if (confirm == true) {
@@ -161,8 +161,8 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
             builder: (context, setModalState) {
               return AlertDialog(
                 title: Text(entityType != null
-                    ? 'Editar Tipo de Entidade'
-                    : 'Novo Tipo de Entidade'),
+                    ? '${'edit'.tr()} ${'screen_entity_type'.tr()}'
+                    : '${'new'.tr()} ${'screen_entity_type'.tr()}'),
                 content: Form(
                   child: SingleChildScrollView(
                     child: Column(
@@ -171,7 +171,7 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                         TextField(
                           controller: nameController,
                           decoration: InputDecoration(
-                              labelText: 'Nome do tipo de entidade'),
+                              labelText: 'screen_entitie_types_name'.tr()),
                         ),
                         const SizedBox(
                           height: 12.0,
@@ -221,7 +221,7 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    child: const Text('Guardar'),
+                    child: Text('save'.tr()),
                   ),
                 ],
               );

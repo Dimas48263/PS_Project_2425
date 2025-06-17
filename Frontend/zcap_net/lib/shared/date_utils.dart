@@ -15,7 +15,7 @@ class DateUtilsService {
         context: context,
         builder: (context) => CustomAlertDialog(
           title: 'error'.tr(),
-          content: 'errors.enddate_less_than_startdate'.tr(),
+          content: 'error_enddate_less_than_startdate'.tr(),
         ),
       );
       return false;

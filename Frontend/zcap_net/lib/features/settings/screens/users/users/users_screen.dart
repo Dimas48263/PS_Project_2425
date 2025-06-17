@@ -4,6 +4,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 import 'package:zcap_net_app/features/settings/screens/users/users/user_service.dart';
@@ -60,7 +61,7 @@ class _UsersScreenState extends State<UsersScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Utilizadores"),
+        title: Text('users'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -99,15 +100,15 @@ class _UsersScreenState extends State<UsersScreen> {
                                         snapshot.connectionState ==
                                                 ConnectionState.done
                                             ? user.userProfile.value?.name ??
-                                                'Perfil desconhecido'
-                                            : 'Carregando perfil...';
-                                    return Text('Perfil: $userProfileName');
+                                                'unknown_profile'.tr()
+                                            : 'loading'.tr();
+                                    return Text('${'profile'.tr()}: $userProfileName');
                                   },
                                 ),
                                 Text(
-                                    'Início: ${user.startDate.toLocal().toString().split(' ')[0]}'),
+                                    '${'start'.tr()}: ${user.startDate.toLocal().toString().split(' ')[0]}'),
                                 Text(
-                                  'Fim: ${user.endDate != null ? user.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
+                                  '${'end'.tr()}: ${user.endDate != null ? user.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
                                 ),
                               ],
                             ),
@@ -134,10 +135,10 @@ class _UsersScreenState extends State<UsersScreen> {
                                   onPressed: () async {
                                     final confirm = await showDialog<bool>(
                                       context: context,
-                                      builder: (context) => const ConfirmDialog(
-                                        title: 'Confirmar eliminação',
+                                      builder: (context) => ConfirmDialog(
+                                        title: 'confirm_delete'.tr(),
                                         content:
-                                            'Tem certeza que deseja eliminar este utilizador?',
+                                            'confirm_delete_message'.tr(),
                                       ),
                                     );
                                     if (confirm == true) {
@@ -188,7 +189,7 @@ class _UsersScreenState extends State<UsersScreen> {
           builder: (context, setModalState) {
             return AlertDialog(
               title:
-                  Text(user != null ? 'Editar Utilizador' : 'Novo Utilizador'),
+                  Text(user != null ? '${'edit'.tr()} ${'user'.tr()}' : '${'new'.tr()} ${'user'.tr()}'),
               content: Form(
                 key: formKey,
                 child: SingleChildScrollView(
@@ -197,13 +198,13 @@ class _UsersScreenState extends State<UsersScreen> {
                     children: [
                       TextField(
                         controller: userNameController,
-                        decoration: const InputDecoration(
-                            labelText: 'Nome de utilizador'),
+                        decoration: InputDecoration(
+                            labelText: 'screen_user_username'.tr()),
                       ),
                       const SizedBox(height: 12),
                       TextField(
                         controller: nameController,
-                        decoration: const InputDecoration(labelText: 'Nome'),
+                        decoration: InputDecoration(labelText: 'name'.tr()),
                       ),
                       const SizedBox(height: 12),
                       if (user == null)
@@ -226,7 +227,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           showSearchBox: true,
                           searchFieldProps: TextFieldProps(
                             decoration: InputDecoration(
-                              labelText: 'Pesquisar Perfil de utilizador',
+                              labelText: 'search'.tr(),
                             ),
                           ),
                         ),
@@ -239,13 +240,13 @@ class _UsersScreenState extends State<UsersScreen> {
                         },
                         validator: (UserProfilesIsar? value) {
                           if (value == null) {
-                            return 'Por favor, selecione o perfil de utilizador';
+                            return 'required_field'.tr();
                           }
                           return null;
                         },
                         dropdownDecoratorProps: DropDownDecoratorProps(
                           dropdownSearchDecoration: InputDecoration(
-                            labelText: 'Perfil de Utilizador',
+                            labelText: 'user_profile'.tr(),
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 4),
                           ),
@@ -274,14 +275,6 @@ class _UsersScreenState extends State<UsersScreen> {
                 CancelTextButton(),
                 TextButton(
                   onPressed: () async {
-                    //already treated at CustomDateRangePicker
-/*                    final hasValidDates = DateUtilsService.validateStartEndDate(
-                      startDate: selectedStartDate,
-                      endDate: selectedEndDate,
-                      context: context,
-                    );
-                    if (!hasValidDates) return;*/
-
                     final isUniqueUserName =
                         await UserService.validateUniqueUserName(
                       userName: userNameController.text,
@@ -323,14 +316,14 @@ class _UsersScreenState extends State<UsersScreen> {
                         context: context,
                         builder: (context) {
                           return CustomAlertDialog(
-                            title: 'Dados inválidos',
-                            content: 'Não é possível gravar',
+                            title: 'invalid_data'.tr(),
+                            content: 'save_error'.tr(),
                           );
                         },
                       );
                     }
                   },
-                  child: const Text('Guardar'),
+                  child: Text('save'.tr()),
                 ),
               ],
             );

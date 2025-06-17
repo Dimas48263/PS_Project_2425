@@ -31,7 +31,7 @@ class StatusBar extends StatelessWidget {
               valueListenable: isOnlineNotifier,
               builder: (context, isOnline, child) {
                 LogService.log(
-                  'log.online_status'.tr(namedArgs: {
+                  'log_online_status'.tr(namedArgs: {
                     'status': isOnline.toString(),
                   }),
                 );

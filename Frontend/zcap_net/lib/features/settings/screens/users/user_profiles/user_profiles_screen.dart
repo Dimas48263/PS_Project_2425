@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
@@ -55,7 +56,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Perfis de Utilizador"),
+      title: Text('screen_settings_user_profiles'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -72,9 +73,9 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                     await showDialog(
                         context: context,
                         builder: (context) => CustomAlertDialog(
-                              title: 'Aviso',
+                              title: 'warning'.tr(),
                               content:
-                                  'A funcionalidade não está implementada.',
+                                  'not_implemented'.tr(),
                             ));
                     _addOrEditUserProfile();
                   },
@@ -122,9 +123,9 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                   await showDialog(
                                       context: context,
                                       builder: (context) => CustomAlertDialog(
-                                            title: 'Aviso',
+                                            title: 'warning'.tr(),
                                             content:
-                                                'A funcionalidade não está implementada',
+                                                'not_implemented'.tr(),
                                           ));
                                   _addOrEditUserProfile(
                                       userProfile: userProfile);
@@ -136,16 +137,16 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                   await showDialog(
                                       context: context,
                                       builder: (context) => CustomAlertDialog(
-                                            title: 'Aviso',
+                                            title: 'warning'.tr(),
                                             content:
-                                                'A funcionalidade não está implementada.',
+                                                'not_implemented'.tr(),
                                           ));
                                   final confirm = await showDialog<bool>(
                                     context: context,
-                                    builder: (context) => const ConfirmDialog(
-                                      title: 'Confirmar eliminação',
+                                    builder: (context) => ConfirmDialog(
+                                      title: 'confirm_delete'.tr(),
                                       content:
-                                          'Tem certeza que deseja eliminar este perfil de utilizador?',
+                                          'confirm_delete_message'.tr(),
                                     ),
                                   );
 
@@ -186,8 +187,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
             builder: (context, setModalState) {
               return AlertDialog(
                 title: Text(userProfile != null
-                    ? 'Editar Perfil de Utilizador'
-                    : 'Novo Perfil de utilizador'),
+                    ? '${'edit'.tr()} ${'user_profile'.tr()}'
+                    : '${'new'.tr()} ${'user_profile'.tr()}'),
                 content: Form(
                   child: SingleChildScrollView(
                     child: Column(
@@ -196,7 +197,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                         TextField(
                           controller: nameController,
                           decoration:
-                              InputDecoration(labelText: 'Nome do Perfil'),
+                              InputDecoration(labelText: 'scren_profiles_profilename'.tr()),
                         ),
                         const SizedBox(
                           height: 12.0,
@@ -246,7 +247,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                         Navigator.pop(context);
                       }
                     },
-                    child: const Text('Guardar'),
+                    child: Text('save'.tr()),
                   ),
                 ],
               );

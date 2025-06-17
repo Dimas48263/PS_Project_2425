@@ -52,7 +52,7 @@ class _TreeRecordDetailTypesScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tipos de Detalhe"),
+        title: Text('screen_settings_detail_types'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.sync),
@@ -63,8 +63,8 @@ class _TreeRecordDetailTypesScreenState
                   'detailTypeId');
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Sincronização manual completa')),
+                  SnackBar(
+                      content: Text('service_sync_ok'.tr())),
                 );
               }
             },
@@ -102,16 +102,15 @@ class _TreeRecordDetailTypesScreenState
                         DatabaseService.db.treeRecordDetailTypeIsars,
                         'tree-record-detail-types',
                         'detailTypeId');
-                    print('update pressed');
                   },
                   (detailType) => _addOrEditTreerRecordDetailType(detailType),
                   (detailType) async {
                     final confirm = await showDialog<bool>(
                       context: context,
-                      builder: (context) => const ConfirmDialog(
-                        title: 'Confirmar eliminação',
+                      builder: (context) => ConfirmDialog(
+                        title: 'confirm_delete'.tr(),
                         content:
-                            'Tem certeza que deseja eliminar este tipo de detalhe?',
+                            'confirm_delete_message'.tr(),
                       ),
                     );
                     if (confirm == true) {
@@ -135,9 +134,9 @@ class _TreeRecordDetailTypesScreenState
     DateTime? endDate = detailType?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
-      TextControllersInputFormConfig(controller: nameController, label: 'Nome'),
+      TextControllersInputFormConfig(controller: nameController, label: 'name'.tr()),
       TextControllersInputFormConfig(
-          controller: unitController, label: 'Unidade'),
+          controller: unitController, label: 'unit'.tr()),
     ];
 
     showDialog(
@@ -146,7 +145,7 @@ class _TreeRecordDetailTypesScreenState
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title:
-                Text(detailType == null ? 'Novo Elemento' : 'Editar Estrutura'),
+                Text(detailType == null ? '${'new'.tr()} ${'tree_element'.tr()}' : '${'edit'.tr()} ${'screen_settings_structure'.tr()}'),
             content: buildForm(
                 formKey, context, textControllersConfig, startDate, endDate,
                 (value) {
@@ -163,7 +162,7 @@ class _TreeRecordDetailTypesScreenState
             actions: [
               CancelTextButton(),
               TextButton(
-                child: const Text('Guardar'),
+                child: Text('save'.tr()),
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
@@ -197,8 +196,8 @@ class _TreeRecordDetailTypesScreenState
     for (var detailType in filteredList) {
       labelsList.add([
         detailType.name,
-        'Inicio: ${detailType.startDate.toLocal().toString().split(' ')[0]}',
-        'Fim: ${detailType.endDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'
+        '${'start'.tr()}: ${detailType.startDate.toLocal().toString().split(' ')[0]}',
+        '${'end'.tr()}: ${detailType.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
     }
     return labelsList;

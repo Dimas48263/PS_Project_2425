@@ -51,7 +51,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Nível de Arvore"),
+        title: Text('screen_settings_tree_levels'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.sync),
@@ -62,8 +62,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                   'treeLevelId');
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Sincronização manual completa')),
+                  SnackBar(content: Text('service_sync_ok'.tr())),
                 );
               }
             },
@@ -101,15 +100,14 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                         DatabaseService.db.treeLevelIsars,
                         'tree-levels',
                         'treeLevelId');
-                    print('update pressed');
                   },
                   (treeLevel) => _addOrEditTreeLevel(treeLevel),
                   (treeLevel) async {
                     final confirm = await showDialog<bool>(
                       context: context,
-                      builder: (context) => const ConfirmDialog(
-                        title: 'Confirmar eliminação',
-                        content: 'Tem certeza que deseja eliminar este nível?',
+                      builder: (context) => ConfirmDialog(
+                        title: 'confirm_delete'.tr(),
+                        content: 'confirm_delete_message'.tr(),
                       ),
                     );
                     if (confirm == true) {
@@ -129,8 +127,8 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     for (var treeLevel in filteredList) {
       labelsList.add([
         treeLevel.name,
-        'Inicio: ${treeLevel.startDate.toLocal().toString().split(' ')[0]}',
-        'Fim: ${treeLevel.endDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'
+        '${'start'.tr()}: ${treeLevel.startDate.toLocal().toString().split(' ')[0]}',
+        '${'end'.tr()}: ${treeLevel.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
     }
     return labelsList;
@@ -148,15 +146,18 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
-          controller: levelIdController, label: 'Nível', validator: (value) {
-            if (value == null || value.isEmpty) return 'Por favor, insira um Nível';
-            if (int.tryParse(value) == null) return 'Por favor, insira um Nível valido';
+          controller: levelIdController,
+          label: 'level'.tr(),
+          validator: (value) {
+            if (value == null || value.isEmpty) return 'required_field'.tr();
+            if (int.tryParse(value) == null) return 'invalid_data'.tr();
             return null;
           }),
-      TextControllersInputFormConfig(controller: nameController, label: 'Nome'),
+      TextControllersInputFormConfig(
+          controller: nameController, label: 'name'.tr()),
       TextControllersInputFormConfig(
           controller: descriptionController,
-          label: 'Descrição',
+          label: 'description'.tr(),
           validator: (value) {
             return null;
           }),
@@ -167,7 +168,9 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
-            title: Text(treeLevel == null ? 'Novo Nível' : 'Editar Nível'),
+            title: Text(treeLevel == null
+                ? '${'new'.tr()} ${'level'.tr()}'
+                : '${'edit'.tr()} ${'level'.tr()}'),
             content: buildForm(
                 formKey, context, textControllersConfig, startDate, endDate,
                 (value) {
@@ -183,11 +186,11 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
             }, []),
             actions: [
               TextButton(
-                child: const Text('Cancelar'),
+                child: Text('cancel'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
               TextButton(
-                child: const Text('Guardar'),
+                child: Text('save'.tr()),
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
@@ -196,7 +199,10 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                       newTreeLevel.remoteId = treeLevel?.remoteId ?? 0;
                       newTreeLevel.levelId = int.parse(levelIdController.text);
                       newTreeLevel.name = nameController.text;
-                      newTreeLevel.description = descriptionController.text.isEmpty ? null : descriptionController.text;
+                      newTreeLevel.description =
+                          descriptionController.text.isEmpty
+                              ? null
+                              : descriptionController.text;
                       newTreeLevel.startDate = startDate ?? now;
                       newTreeLevel.endDate = endDate;
                       newTreeLevel.isSynced = false;

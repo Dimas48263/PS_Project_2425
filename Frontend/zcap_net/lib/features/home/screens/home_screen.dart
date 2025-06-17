@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Menu Principal"),
+        title: Text('screen_main_menu'.tr()),
         actions: [
           IconButton(
             onPressed: () {
@@ -41,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             UserAccountsDrawerHeader(
-              accountName: Text(userName ?? "Utilizador"),
+              accountName: Text(userName ?? 'user'.tr()),
               accountEmail: Text(""), //no email info
               currentAccountPicture: CircleAvatar(
                 backgroundColor: Colors.white,
@@ -54,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.maps_home_work_outlined),
-              title: const Text('Menu principal'),
+              title: Text('screen_main_menu'.tr()),
               onTap: () {
                 Navigator.pushReplacement(
                   context,
@@ -64,21 +65,21 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.maps_home_work_outlined),
-              title: const Text('ZCAPS'),
+              title: Text('screen_zcaps'.tr()),
               onTap: () {
                 // TODO: Navegar para o ecrã de ZCAPS
               },
             ),
             ListTile(
               leading: const Icon(Icons.report_problem_outlined),
-              title: const Text('Incidentes'),
+              title: Text('screen_incidents'.tr()),
               onTap: () {
                 // TODO: Navegar para o ecrã de Incidentes
               },
             ),
             ListTile(
               leading: const Icon(Icons.settings),
-              title: const Text('Configurações'),
+              title: Text('screen_settings_configs'.tr()),
               onTap: () {
                 Navigator.push(
                   context,
@@ -88,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.help),
-              title: const Text('Ajuda'),
+              title: Text('help'.tr()),
               onTap: () {
                 // TODO: Navegar para o ecrã de ajuda
               },
@@ -96,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(),
             ListTile(
               leading: const Icon(Icons.exit_to_app),
-              title: const Text('Sair'),
+              title: Text('logout'.tr()),
               onTap: _confirmLogout,
             ),
           ],
@@ -109,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Bem-vindo!", style: TextStyle(fontSize: 24)),
+                  Text('welcome_message'.tr(), style: TextStyle(fontSize: 24)),
                   SizedBox(height: 10.0),
 /*                  IconButton(
                     onPressed: () async =>
@@ -138,16 +139,16 @@ class _HomeScreenState extends State<HomeScreen> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirmar Logout"),
-        content: const Text("Tens a certeza que queres terminar sessão?"),
+        title: Text('confirm_logout'.tr()),
+        content: Text('confirm_logout_message'.tr()),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text("Cancelar"),
+            child: Text('cancel'.tr()),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text("Sair"),
+            child: Text('logout'.tr()),
           ),
         ],
       ),

@@ -13,7 +13,7 @@ Widget customDatesForm(
   String title = isStartDate ? 'start'.tr() : 'end'.tr();
   return ListTile(
     title: Text(
-        "$title: ${date != null ? date.toLocal().toString().split(' ')[0] : 'no_end_date'}"),
+        "$title: ${date != null ? date.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}"),
     trailing: const Icon(Icons.calendar_today),
     onTap: () async {
       final picked = await showDatePicker(
@@ -56,7 +56,7 @@ Widget buildForm(
                   return config.validator!(value);
                 }
                 if (value == null || value.isEmpty) {
-                  return 'please_enter'.tr(namedArgs: {
+                  return 'fill_data'.tr(namedArgs: {
                     'field': config.label,
                   });
                 }

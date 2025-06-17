@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
 import 'package:zcap_net_app/features/settings/screens/building_types/building_types_screen.dart';
@@ -19,7 +20,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Configurações"),
+        title: Text('screen_settings_configs'.tr()),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -27,13 +28,13 @@ class SettingsScreen extends StatelessWidget {
           children: [
             /* Hierarchical Tree tables */
             ExpansionTile(
-              title: const Text("Estrutura"),
+              title: Text('screen_settings_structure'.tr()),
               leading: const Icon(Icons.account_tree),
               childrenPadding:
                   EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               children: [
                 ListTile(
-                  title: const Text("Níveis de Arvore"),
+                  title: Text('screen_settings_tree_levels'.tr()),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -43,7 +44,7 @@ class SettingsScreen extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  title: const Text("Elementos da Árvore"),
+                  title: Text('screen_settings_tree_elements'.tr()),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -53,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  title: const Text("Tipos de detalhes"),
+                  title: Text('screen_settings_detail_types'.tr()),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -64,7 +65,7 @@ class SettingsScreen extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  title: const Text("Detalhes"),
+                  title: Text('screen_settings_details'.tr()),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -80,7 +81,7 @@ class SettingsScreen extends StatelessWidget {
 
             /* User tables */
             ExpansionTile(
-              title: const Text("Utilizadores"),
+              title: Text('screen_settings_users'.tr()),
               leading: const Icon(Icons.manage_accounts),
               childrenPadding:
                   EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -88,7 +89,7 @@ class SettingsScreen extends StatelessWidget {
                 Column(
                   children: [
                     ListTile(
-                      title: const Text("Utilizadores"),
+                      title: Text('screen_settings_users'.tr()),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -98,7 +99,7 @@ class SettingsScreen extends StatelessWidget {
                       },
                     ),
                     ListTile(
-                      title: const Text("Perfis de utilizador"),
+                      title: Text('screen_settings_user_profiles'.tr()),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -108,7 +109,7 @@ class SettingsScreen extends StatelessWidget {
                       },
                     ),
                     ListTile(
-                      title: const Text("TODO: Acesso a dados"),
+                      title: Text('screen_settings_user_access_data'.tr()),
                       onTap: () {
                         Navigator.push(
                           context,
@@ -126,13 +127,13 @@ class SettingsScreen extends StatelessWidget {
 
             /* Support tables */
             ExpansionTile(
-              title: const Text("Tabelas Suporte"),
+              title: Text('screen_settings_support_tables'.tr()),
               leading: const Icon(Icons.settings),
               childrenPadding:
                   EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               children: [
                 ExpansionTile(
-                    title: const Text("Entidades"),
+                    title: Text('screen_settings_entities'.tr()),
                     leading: const Icon(Icons.account_balance),
                     childrenPadding:
                         EdgeInsets.symmetric(horizontal: 20, vertical: 8),
@@ -140,7 +141,7 @@ class SettingsScreen extends StatelessWidget {
                       Column(
                         children: [
                           ListTile(
-                            title: const Text("Tipos Entidade"),
+                            title: Text('screen_settings_entity_types'.tr()),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -151,7 +152,7 @@ class SettingsScreen extends StatelessWidget {
                             },
                           ),
                           ListTile(
-                            title: const Text("Entidades"),
+                            title: Text('screen_settings_entities'.tr()),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -161,7 +162,7 @@ class SettingsScreen extends StatelessWidget {
                               );
                             },
                           ),
-                          ListTile(
+/*                          ListTile(
                             title: const Text("Tipos Entidade OLD"),
                             onTap: () {
                               Navigator.push(
@@ -171,18 +172,18 @@ class SettingsScreen extends StatelessWidget {
                                         const EntityTypesScreen()),
                               );
                             },
-                          ),
+                          ),*/
                         ],
                       ),
                     ]),
                 ExpansionTile(
-                    title: const Text("Edificios / ZCAP"),
+                    title: Text('screen_settings_zcap_buildings'.tr()),
                     leading: const Icon(Icons.maps_home_work_outlined),
                     childrenPadding:
                         EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     children: [
                       ListTile(
-                        title: const Text("Tipos de Edificio"),
+                        title: Text('screen_settings_building_types'.tr()),
                         onTap: () {
                           Navigator.push(
                             context,
@@ -194,7 +195,7 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       ListTile(
                         title:
-                            const Text("TODO: Tipos de Categoria de detalhe"),
+                            Text('screen_settings_detail_category'.tr()),
 //                            onTap: () {
 //                              Navigator.push(
 //                                context,
@@ -205,7 +206,7 @@ class SettingsScreen extends StatelessWidget {
 //                            },
                       ),
                       ListTile(
-                        title: const Text("TODO: Tipos de detalhe"),
+                        title: Text('TODO: ${'screen_settings_detail_types'.tr()}'),
 //                            onTap: () {
 //                              Navigator.push(
 //                                context,
@@ -216,7 +217,7 @@ class SettingsScreen extends StatelessWidget {
 //                            },
                       ),
                       ListTile(
-                        title: const Text("TODO: Detalhe por Edificio / ZCAP"),
+                        title: Text('screen_settings_zcap_building_details'.tr()),
 //                            onTap: () {
 //                              Navigator.push(
 //                                context,
@@ -228,13 +229,13 @@ class SettingsScreen extends StatelessWidget {
                       ),
                     ]),
                 ExpansionTile(
-                    title: const Text("Pessoas"),
+                    title: Text('screen_settings_people'.tr()),
                     leading: const Icon(Icons.people),
                     childrenPadding:
                         EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     children: [
                       ListTile(
-                        title: const Text("TODO: Graus de parentesco"),
+                        title: Text('screen_settings_relation_types'.tr()),
 //                            onTap: () {
 //                              Navigator.push(
 //                                context,
@@ -245,7 +246,7 @@ class SettingsScreen extends StatelessWidget {
 //                            },
                       ),
                       ListTile(
-                        title: const Text("TODO: Tipos de necessidade"),
+                        title: Text('screen_settings_need_types'.tr()),
 //                            onTap: () {
 //                              Navigator.push(
 //                                context,
@@ -256,7 +257,7 @@ class SettingsScreen extends StatelessWidget {
 //                            },
                       ),
                       ListTile(
-                        title: const Text("TODO: Tipos de apoio"),
+                        title: Text('screen_settings_support_types'.tr()),
 //                            onTap: () {
 //                              Navigator.push(
 //                                context,
@@ -271,7 +272,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             AdminExpansionTile(
               child: ListTile(
-                title: const Text("ISAR Explorer"),
+                title: Text('screen_settings_isar_db_explorer'.tr()),
                 onTap: () {
                   Navigator.push(
                     context,

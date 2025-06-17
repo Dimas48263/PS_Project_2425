@@ -53,7 +53,7 @@ class _TreesScreenState extends State<TreesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Árvores"),
+        title: Text('tree'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.sync),
@@ -62,8 +62,7 @@ class _TreesScreenState extends State<TreesScreen> {
                   DatabaseService.db.treeIsars, 'trees', 'treeRecordId');
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text('Sincronização manual completa')),
+                  SnackBar(content: Text('service_sync_ok'.tr())),
                 );
               }
             },
@@ -99,16 +98,15 @@ class _TreesScreenState extends State<TreesScreen> {
                   (tree) {
                     syncServiceV3.synchronize(tree,
                         DatabaseService.db.treeIsars, 'trees', 'treeRecordId');
-                    print('update pressed');
                   },
                   (tree) => _addOrEditTree(tree),
                   (tree) async {
                     final confirm = await showDialog<bool>(
                       context: context,
-                      builder: (context) => const ConfirmDialog(
-                        title: 'Confirmar eliminação',
+                      builder: (context) => ConfirmDialog(
+                        title: 'confirm_delete'.tr(),
                         content:
-                            'Tem certeza que deseja eliminar este elemento?',
+                            'confirm_delete_message'.tr(),
                       ),
                     );
                     if (confirm == true) {
@@ -128,8 +126,8 @@ class _TreesScreenState extends State<TreesScreen> {
     for (var tree in filteredList) {
       labelsList.add([
         tree.name,
-        'Inicio: ${tree.startDate.toLocal().toString().split(' ')[0]}',
-        'Fim: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'N/A'}'
+        '${'start'.tr()}: ${tree.startDate.toLocal().toString().split(' ')[0]}',
+        '${'end'.tr()}: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
     }
     return labelsList;
@@ -150,7 +148,7 @@ class _TreesScreenState extends State<TreesScreen> {
     DateTime? endDate = tree?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
-      TextControllersInputFormConfig(controller: nameController, label: 'Nome'),
+      TextControllersInputFormConfig(controller: nameController, label: 'name'.tr()),
     ];
 
     showDialog(
@@ -158,7 +156,7 @@ class _TreesScreenState extends State<TreesScreen> {
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
-            title: Text(tree == null ? 'Novo Elemento' : 'Editar Estrutura'),
+            title: Text(tree == null ? '${'new'.tr()} ${'tree_element'.tr()}' : '${'edit'.tr()} ${'screen_settings_structure'.tr()}'),
             content: buildForm(
                 formKey, context, textControllersConfig, startDate, endDate,
                 (value) {
@@ -182,7 +180,7 @@ class _TreesScreenState extends State<TreesScreen> {
                     });
                   },
                   validator: (value) =>
-                      value == null ? 'Campo obrigatório' : null),
+                      value == null ? 'required_field'.tr() : null),
               customDropdownSearch<TreeIsar>(
                 enabled: treeLevel != null && treeLevel!.levelId > 1,
                 items: treeLevel == null
@@ -199,14 +197,18 @@ class _TreesScreenState extends State<TreesScreen> {
                   });
                 },
                 validator: (value) {
-                  return value == null && treeLevel != null && treeLevel!.levelId > 1 ? 'Campo obrigatório' : null;
+                  return value == null &&
+                          treeLevel != null &&
+                          treeLevel!.levelId > 1
+                      ? 'required_field'.tr()
+                      : null;
                 },
               )
             ]),
             actions: [
               CancelTextButton(),
               TextButton(
-                child: const Text('Guardar'),
+                child: Text('save'.tr()),
                 onPressed: () async {
                   if (formKey.currentState!.validate()) {
                     final now = DateTime.now();

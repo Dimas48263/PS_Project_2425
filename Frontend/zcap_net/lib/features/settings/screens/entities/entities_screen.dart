@@ -60,7 +60,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('screen.entities'.tr()),
+        title: Text('screen_entities'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -109,7 +109,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                                               '${'type'.tr()}: $entityTypeName');
                                         },
                                       ),
-                                      Text('${'email'.tr()}: ${entity.email}'),
+                                      Text('${'email'.tr()}: ${entity.email ?? ' --- '}'),
                                       Row(
                                         children: [
                                           Expanded(
@@ -117,7 +117,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                                                   '${'contact'.tr()}: ${entity.phone1}')),
                                           Expanded(
                                               child: Text(
-                                                  '${'alternative_contact'.tr()}: ${entity.phone2}')),
+                                                  '${'alternative_contact'.tr()}: ${entity.phone2 ?? ' --- '}')),
                                         ],
                                       ),
                                       Row(
@@ -207,8 +207,8 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
           builder: (context, setModalState) {
             return AlertDialog(
               title: Text(entity != null
-                  ? '${'edit'.tr()} ${'screen.entity'.tr()}'
-                  : '${'new'.tr()} ${'screen.entity'.tr()}'),
+                  ? '${'edit'.tr()} ${'screen_entity'.tr()}'
+                  : '${'new'.tr()} ${'screen_entity'.tr()}'),
               content: Form(
                 key: formKey,
                 child: SingleChildScrollView(
@@ -218,7 +218,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       TextFormField(
                         controller: nameController,
                         decoration: InputDecoration(
-                            labelText: 'screen.entity_name'.tr()),
+                            labelText: 'screen_entity_name'.tr()),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return 'required_field'.tr();
@@ -234,7 +234,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                           searchFieldProps: TextFieldProps(
                             decoration: InputDecoration(
                               labelText:
-                                  '${'search'.tr()} ${'screen.entity_type'.tr()}',
+                                  '${'search'.tr()} ${'screen_entity_type'.tr()}',
                             ),
                           ),
                         ),
@@ -253,7 +253,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                         },
                         dropdownDecoratorProps: DropDownDecoratorProps(
                           dropdownSearchDecoration: InputDecoration(
-                            labelText: 'screen.entity_type'.tr(),
+                            labelText: 'screen_entity_type'.tr(),
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 4),
                           ),
