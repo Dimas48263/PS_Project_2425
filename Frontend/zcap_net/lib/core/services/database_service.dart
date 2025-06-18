@@ -6,6 +6,7 @@ import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/treeLevelDetailType/tree_level_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail_isar.dart';
@@ -47,7 +48,9 @@ class DatabaseService {
         'tree-record-detail-types',
         'treeRecordDetailTypeId'),
     CollectionSchemaEntry(TreeRecordDetailIsarSchema,
-        (db) => db.treeRecordDetailIsars, 'tree-record-details', 'detailId')
+        (db) => db.treeRecordDetailIsars, 'tree-record-details', 'detailId'),
+    CollectionSchemaEntry(TreeLevelDetailTypeIsarSchema,
+        (db) => db.treeLevelDetailTypeIsars, 'tree-level-detail-type', 'treeLevelDetailTypeId')
   ];
 
   static Future<void> setup() async {

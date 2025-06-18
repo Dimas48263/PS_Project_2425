@@ -1,31 +1,27 @@
+
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
+import 'package:zcap_net_app/features/settings/models/treeLevelDetailType/tree_level_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
-import 'package:zcap_net_app/widgets/confirm_dialog.dart';
-import 'package:zcap_net_app/widgets/custom_cancel_text_button.dart';
-import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
-import 'package:zcap_net_app/widgets/custom_form.dart';
-import 'package:zcap_net_app/widgets/custom_list_view.dart';
-import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree.dart';
+import 'package:zcap_net_app/shared/shared.dart';
 
-class TreeRecordDetailsScreen extends StatefulWidget {
-  const TreeRecordDetailsScreen({super.key});
+class TreeLevelDetailTypeScreen extends StatefulWidget{
+  const TreeLevelDetailTypeScreen({super.key});
 
   @override
-  State<TreeRecordDetailsScreen> createState() =>
-      _TreeRecordDetailsScreenState();
+  State<TreeLevelDetailTypeScreen> createState() => _TreeLevelDetailTypeScreenState();
 }
 
-class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
-  List<TreeRecordDetailIsar> details = [];
-  StreamSubscription? detailsStream;
+class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
+  List<TreeLevelDetailTypeIsar> tldt = [];
+  StreamSubscription? tldtStream;
 
   bool _isLoading = true;
   final _searchController = TextEditingController();
@@ -34,12 +30,16 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    detailsStream = DatabaseService.db.treeRecordDetailIsars
-        .buildQuery<TreeRecordDetailIsar>()
+    tldtStream = DatabaseService.db.treeLevelDetailTypeIsars
+        .buildQuery<TreeLevelDetailTypeIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
+          for (var element in data) {
+            await element.treeLevel.load();
+            await element.detailType.load();
+          }
       setState(() {
-        details = data;
+        tldt = data;
         _isLoading = false;
       });
     });
@@ -52,7 +52,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
 
   @override
   void dispose() {
-    detailsStream?.cancel();
+    tldtStream?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -61,15 +61,13 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('screen_settings_details'.tr()),
+        title: Text('screen_settings_tree_level_detail_type'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
               await syncServiceV3.syncAllPending(
-                  DatabaseService.db.treeRecordDetailIsars,
-                  'tree-record-details',
-                  'detailId');
+                  DatabaseService.db.treeLevelDetailTypeIsars, 'tree-level-detail-type', 'treeLevelDetailTypeId');
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
@@ -84,9 +82,9 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
   }
 
   Widget _buildUI() {
-    final filteredList = details.where((e) {
-      return e.valueCol.toLowerCase().contains(_searchTerm);
-    }).toList();
+    final filteredList = tldt;//.where((e) {
+      //return e.name.toLowerCase().contains(_searchTerm);
+    //}).toList();
 
     return Padding(
       padding: const EdgeInsets.all(10.0),
@@ -97,7 +95,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
             onSearchChanged: (value) => setState(() {
               _searchTerm = value.toLowerCase();
             }),
-            onAddPressed: () => _addOrEditDetail(null),
+            onAddPressed: () => _addOrEditTreeLevelDetailType(null),
           ),
           const SizedBox(height: 10.0),
           _isLoading
@@ -108,11 +106,11 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                   (detail) {
                     syncServiceV3.synchronize(
                         detail,
-                        DatabaseService.db.treeRecordDetailIsars,
-                        'tree-record-details',
-                        'detailId');
+                        DatabaseService.db.treeLevelDetailTypeIsars,
+                        'tree-level-detail-type',
+                        'treeLevelDetailTypeId');
                   },
-                  (detail) => _addOrEditDetail(detail),
+                  (detail) => _addOrEditTreeLevelDetailType(detail),
                   (detail) async {
                     final confirm = await showDialog<bool>(
                       context: context,
@@ -123,7 +121,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                     );
                     if (confirm == true) {
                       await DatabaseService.db.writeTxn(() async {
-                        await DatabaseService.db.treeRecordDetailIsars
+                        await DatabaseService.db.treeLevelDetailTypeIsars
                             .delete(detail.id);
                       });
                     }
@@ -134,50 +132,42 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     );
   }
 
-  List<List<String>> getLabelsList(List<TreeRecordDetailIsar> filteredList) {
+  List<List<String>> getLabelsList(List<TreeLevelDetailTypeIsar> filteredList) {
     List<List<String>> labelsList = [];
-    for (var tree in filteredList) {
+    for (var t in filteredList) {
       labelsList.add([
-        '${'value'.tr()}: ${tree.valueCol}',
-        '${'start'.tr()}: ${tree.startDate.toLocal().toString().split(' ')[0]}',
-        '${'end'.tr()}: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
+        '${'level'.tr()}: ${t.treeLevel.value!.name}',
+        '${'screen_detail_type'.tr()}: ${t.detailType.value!.name}',
+        '${'start'.tr()}: ${t.startDate.toLocal().toString().split(' ')[0]}',
+        '${'end'.tr()}: ${t.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
     }
     return labelsList;
   }
 
-  void _addOrEditDetail(TreeRecordDetailIsar? detail) async {
+  void _addOrEditTreeLevelDetailType(TreeLevelDetailTypeIsar? t) async {
     final formKey = GlobalKey<FormState>();
-    if (detail != null) {
-      if (!detail.detailType.isLoaded) await detail.detailType.load();
-      if (!detail.tree.isLoaded) await detail.tree.load();
-    }
-    final availableTrees = await DatabaseService.db.treeIsars.where().findAll();
+
+    final availableTreeLevels = await DatabaseService.db.treeLevelIsars.where().findAll();
 
     final availableDetailTypes =
         await DatabaseService.db.treeRecordDetailTypeIsars.where().findAll();
 
-    final valueController = TextEditingController(text: detail?.valueCol ?? '');
-    TreeIsar? tree = detail?.tree.value;
-    TreeRecordDetailTypeIsar? detailType = detail?.detailType.value;
-    DateTime? startDate = detail?.startDate ?? DateTime.now();
-    DateTime? endDate = detail?.endDate;
-
-    List<TextControllersInputFormConfig> textControllersConfig = [
-      TextControllersInputFormConfig(
-          controller: valueController, label: 'value'.tr()),
-    ];
+    TreeLevelIsar? treeLevel = t?.treeLevel.value;
+    TreeRecordDetailTypeIsar? detailType = t?.detailType.value;
+    DateTime? startDate = t?.startDate ?? DateTime.now();
+    DateTime? endDate = t?.endDate;
 
     showDialog(
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
-            title: Text(detail == null
+            title: Text(t == null
                 ? '${'new'.tr()} ${'detail'.tr()}'
                 : '${'edit'.tr()} ${'detail'.tr()}'),
             content: buildForm(
-                formKey, context, textControllersConfig, startDate, endDate,
+                formKey, context, [], startDate, endDate,
                 (value) {
               setState(() => startDate = value);
               setModalState(() {}); // Atualiza o dialog
@@ -199,12 +189,12 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                   },
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null),
-              customDropdownSearch<TreeIsar>(
-                  items: availableTrees,
-                  selectedItem: tree,
-                  onSelected: (TreeIsar? value) {
+              customDropdownSearch<TreeLevelIsar>(
+                  items: availableTreeLevels,
+                  selectedItem: treeLevel,
+                  onSelected: (TreeLevelIsar? value) {
                     setModalState(() {
-                      tree = value;
+                      treeLevel = value;
                     });
                   },
                   validator: (value) =>
@@ -218,18 +208,17 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                   if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
-                      final newDetail = detail ?? TreeRecordDetailIsar();
-                      newDetail.remoteId = detail?.remoteId ?? 0;
-                      newDetail.valueCol = valueController.text;
-                      newDetail.detailType.value = detailType;
-                      newDetail.tree.value = tree;
-                      newDetail.startDate = startDate ?? now;
-                      newDetail.endDate = endDate;
-                      newDetail.isSynced = false;
-                      await DatabaseService.db.treeRecordDetailIsars
-                          .put(newDetail);
-                      await newDetail.detailType.save();
-                      await newDetail.tree.save();
+                      final newTreeLevelDetailType = t ?? TreeLevelDetailTypeIsar();
+                      newTreeLevelDetailType.remoteId = t?.remoteId ?? 0;
+                      newTreeLevelDetailType.detailType.value = detailType;
+                      newTreeLevelDetailType.treeLevel.value = treeLevel;
+                      newTreeLevelDetailType.startDate = startDate ?? now;
+                      newTreeLevelDetailType.endDate = endDate;
+                      newTreeLevelDetailType.isSynced = false;
+                      await DatabaseService.db.treeLevelDetailTypeIsars
+                          .put(newTreeLevelDetailType);
+                      await newTreeLevelDetailType.detailType.save();
+                      await newTreeLevelDetailType.treeLevel.save();
                     });
                     // ignore: use_build_context_synchronously
                     Navigator.pop(context);
