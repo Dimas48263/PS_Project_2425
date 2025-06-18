@@ -89,7 +89,7 @@ class TreeRecordDetailTypeService(
             startDate = startDate,
             endDate = endDate
         )
-    private fun TreeRecordDetailType.toOutputModel(): TreeRecordDetailTypeOutputModel =
+    fun TreeRecordDetailType.toOutputModel(): TreeRecordDetailTypeOutputModel =
         TreeRecordDetailTypeOutputModel(
             this.detailTypeId,
             this.name,

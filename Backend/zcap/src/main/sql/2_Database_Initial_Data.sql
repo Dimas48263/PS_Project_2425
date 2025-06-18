@@ -110,6 +110,12 @@ BEGIN
 	INSERT treeRecordDetails ([treeRecordId], [detailTypeId], [valueCol],  [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 2, 'portuguesa', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
+IF (SELECT COUNT(*) FROM treeLevelDetailType ) = 0
+BEGIN
+	INSERT treeLevelDetailType([treeLevelId], [detailTypeId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT treeLevelDetailType([treeLevelId], [detailTypeId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 2, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+END
+
 /* 1 - Address Tables initial data END */
 
 /* 2 - Zcap Tables initial data Start */

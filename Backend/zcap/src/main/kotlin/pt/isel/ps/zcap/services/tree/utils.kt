@@ -3,9 +3,11 @@ package pt.isel.ps.zcap.services.tree
 import pt.isel.ps.zcap.domain.tree.Tree
 import pt.isel.ps.zcap.domain.tree.TreeLevel
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetail
+import pt.isel.ps.zcap.domain.tree.TreeRecordDetailType
 import pt.isel.ps.zcap.repository.dto.trees.tree.TreeOutputModel
 import pt.isel.ps.zcap.repository.dto.trees.treeLevel.TreeLevelOutputModel
 import pt.isel.ps.zcap.repository.dto.trees.treeRecordDetail.TreeRecordDetailOutputModel
+import pt.isel.ps.zcap.repository.dto.trees.treeRecordDetailType.TreeRecordDetailTypeOutputModel
 
 fun TreeLevel.toOutputModel() = TreeLevelOutputModel(
     treeLevelId = treeLevelId,
@@ -46,3 +48,14 @@ fun Tree.toOutputModel(visited: Set<Long> = emptySet()): TreeOutputModel {
         lastUpdatedAt = lastUpdatedAt,
     )
 }
+
+fun TreeRecordDetailType.toOutputModel(): TreeRecordDetailTypeOutputModel =
+    TreeRecordDetailTypeOutputModel(
+        this.detailTypeId,
+        this.name,
+        this.unit,
+        this.startDate,
+        this.endDate,
+        this.createdAt,
+        this.lastUpdatedAt
+    )

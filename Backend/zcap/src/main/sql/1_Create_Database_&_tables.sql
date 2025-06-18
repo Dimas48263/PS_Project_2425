@@ -150,6 +150,12 @@ IF EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'buil
 	END
 GO
 
+IF EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'treeLevelDetailType' and [TABLE_TYPE] = 'BASE TABLE')
+	BEGIN
+		DROP TABLE treeLevelDetailType
+	END
+GO
+
 IF EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'treeRecordDetails' and [TABLE_TYPE] = 'BASE TABLE')
 	BEGIN
 		DROP TABLE treeRecordDetails
@@ -228,6 +234,21 @@ CREATE TABLE treeRecordDetails (
     [treeRecordId]	BIGINT NOT NULL REFERENCES tree(treeRecordId),					-- Qual região este detalhe pertence
     [detailTypeId]	BIGINT NOT NULL REFERENCES treeRecordDetailTypes(detailTypeId),	-- Tipo de detalhe
     [valueCol]			NVARCHAR(255) NOT NULL,											-- O valor do detalhe (pode ser número, texto, etc.)
+    [startDate]		DATE NOT NULL,
+    [endDate]		DATE NULL,
+    [createdAt]      DATETIME NOT NULL,
+    [lastUpdatedAt]		DATETIME NOT NULL
+)
+	END
+GO
+
+IF NOT EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'treeLevelDetailType' and [TABLE_TYPE] = 'BASE TABLE')
+	BEGIN
+-- NOVO: Tabela para armazenar os tipos de detalhes necessarios para cada nivel hierárquico
+CREATE TABLE treeLevelDetailType (
+    [treeLevelDetailTypeId]		BIGINT IDENTITY(1,1) PRIMARY KEY,
+    [treeLevelId]	BIGINT NOT NULL REFERENCES treeLevels(treeLevelId),
+    [detailTypeId]	BIGINT NOT NULL REFERENCES treeRecordDetailTypes(detailTypeId),	-- Tipo de detalhe
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
     [createdAt]      DATETIME NOT NULL,
