@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/features/about/about_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/widgets/hero_widget.dart';
 import '../../../shared/shared.dart';
@@ -85,7 +86,21 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("login".tr())),
+      appBar: AppBar(
+        title: Text("login".tr()),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            tooltip: 'about'.tr(),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AboutScreen()),
+              );
+            },
+          ),
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
           child: ConstrainedBox(

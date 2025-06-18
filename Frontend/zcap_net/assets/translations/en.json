@@ -1,8 +1,11 @@
 {
+  "about": "About",
   "admin": "Admin",
   "admin_password": "Administrator password",
   "alternative_contact": "Alternative contact",
+  "app_description": "Civil Protection Support System",
   "app_name": "ZCAP Net",
+  "authors": "Autores",
   "cancel": "Cancel",
   "close": "Close",
   "confirm": "Confirm",
@@ -28,6 +31,8 @@
   "invalid_data": "Invalid data",
   "invalid_description": "Invalid description",
   "invalid_email": "Invalid Email",
+  "isel_course": "Computer Science and Computer Engineering BSc",
+  "isel_module": "Project and Seminar – Summer Semester 2024/25",
   "level": "Level",
   "loading": "Loading...",
   "log_app_started": "Application started with API: {{api}}",
@@ -105,6 +110,7 @@
   "user_exists": "Username already exists.",
   "user_profile": "User profile",
   "value": "Value",
+  "version": "Version",
   "warning": "Warning",
   "welcome_message": "Welcome!!"
 }

@@ -1,8 +1,11 @@
 {
+  "about":"Sobre",
   "admin": "Admin",
   "admin_password": "Senha de Administrador",
   "alternative_contact": "Contacto alternativo",
+  "app_description": "Sistema de apoio à Proteção Civil",
   "app_name": "ZCAP Net",
+  "authors": "Autores",
   "cancel": "Cancelar",
   "close": "Fechar",
   "confirm": "Confirmar",
@@ -28,6 +31,8 @@
   "invalid_data": "Dados inválidos",
   "invalid_description": "Descrição inválida",
   "invalid_email": "Email inválido",
+  "isel_course": "Licenciatura em Engenharia Informática e de Computadores",
+  "isel_module": "Projeto e Seminário - Semestre de Verão 2024/25",
   "level": "Nível",
   "loading": "A carregar...",
   "log_app_started": "Aplicação iniciada com API: {{api}}",
@@ -105,6 +110,7 @@
   "user_exists": "Já existe um utilizador com o mesmo nome.",
   "user_profile": "Perfil de utilizador",
   "value": "Valor",
+  "version":"Versão",
   "warning": "Aviso",
   "welcome_message": "Bem vindo!!"
 }
