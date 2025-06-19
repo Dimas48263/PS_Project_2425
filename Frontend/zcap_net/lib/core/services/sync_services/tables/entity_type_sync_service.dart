@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/sync_services/abstract_syncable_service.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
 
 class EntityTypeSyncService implements SyncableService {
   final Isar isar;

@@ -1,9 +1,9 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
 
 part 'entities_isar.g.dart';
 

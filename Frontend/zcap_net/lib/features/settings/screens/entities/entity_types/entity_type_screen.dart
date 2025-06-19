@@ -3,19 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/building_types/building_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
+
 import 'package:zcap_net_app/shared/shared.dart';
 
-class BuildingTypesScreen extends StatefulWidget {
-  const BuildingTypesScreen({super.key});
+class EntityTypesScreen extends StatefulWidget {
+  const EntityTypesScreen({super.key});
 
   @override
-  State<BuildingTypesScreen> createState() => _BuildingTypesScreenState();
+  State<EntityTypesScreen> createState() => _EntityTypesScreenState();
 }
 
-class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
-  List<BuildingTypesIsar> buildingTypes = [];
-  StreamSubscription? buildingTypesStream;
+class _EntityTypesScreenState extends State<EntityTypesScreen> {
+  List<EntityTypeIsar> entityTypes = [];
+  StreamSubscription? entitieTypesStream;
 
   bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
@@ -24,12 +25,12 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
   @override
   void initState() {
     super.initState();
-    buildingTypesStream = DatabaseService.db.buildingTypesIsars
-        .buildQuery<BuildingTypesIsar>()
+    entitieTypesStream = DatabaseService.db.entityTypeIsars
+        .buildQuery<EntityTypeIsar>()
         .watch(fireImmediately: true)
         .listen((data) {
       setState(() {
-        buildingTypes = data;
+        entityTypes = data;
         _isLoading = false;
       });
     });
@@ -43,21 +44,21 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
 
   @override
   void dispose() {
-    buildingTypesStream?.cancel();
+    entitieTypesStream?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredBuildingTypes = buildingTypes.where((building) {
-      final name = building.name.toLowerCase();
+    final filteredEntityTypes = entityTypes.where((entity) {
+      final name = entity.name.toLowerCase();
       return name.contains(_searchTerm);
     }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('screen_settings_building_types'.tr()),
+        title: Text('screen_settings_entity_types'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -69,32 +70,32 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: _addOrEditBuildingType,
+                onAddPressed: _addOrEditEntityType,
               ),
               const SizedBox(height: 16),
               Expanded(
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
-                        itemCount: filteredBuildingTypes.length,
+                        itemCount: filteredEntityTypes.length,
                         itemBuilder: (context, index) {
-                          final buildingType = filteredBuildingTypes[index];
+                          final entityType = filteredEntityTypes[index];
                           return Card(
                             child: ListTile(
                               contentPadding: EdgeInsets.only(
                                 left: 10.0,
                               ),
                               title: Text(
-                                '${buildingType.remoteId > 0 ? "[${buildingType.remoteId}] " : " "}${buildingType.name}',
+                                '${entityType.remoteId != null ? "[${entityType.remoteId}] " : ""}${entityType.name}',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                      '${'start'.tr()}: ${buildingType.startDate.toLocal().toString().split(' ')[0]}'),
+                                      '${'start'.tr()}: ${entityType.startDate.toLocal().toString().split(' ')[0]}'),
                                   Text(
-                                    '${'end'.tr()}: ${buildingType.endDate != null ? buildingType.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                    '${'end'.tr()}: ${entityType.endDate != null ? entityType.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
                                   ),
                                 ],
                               ),
@@ -103,12 +104,12 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  if (!buildingType.isSynced)
+                                  if (!entityType.isSynced)
                                     CustomUnsyncedIcon(),
                                   IconButton(
                                     onPressed: () {
-                                      _addOrEditBuildingType(
-                                          buildingType: buildingType);
+                                      _addOrEditEntityType(
+                                          entityType: entityType);
                                     },
                                     icon: const Icon(Icons.edit),
                                   ),
@@ -126,8 +127,8 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                                         await DatabaseService.db
                                             .writeTxn(() async {
                                           await DatabaseService
-                                              .db.buildingTypesIsars
-                                              .delete(buildingType.id);
+                                              .db.entityTypeIsars
+                                              .delete(entityType.id);
                                         });
                                       }
                                     },
@@ -148,11 +149,10 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
     );
   }
 
-  void _addOrEditBuildingType({BuildingTypesIsar? buildingType}) async {
-    final nameController =
-        TextEditingController(text: buildingType?.name ?? "");
-    DateTime selectedStartDate = buildingType?.startDate ?? DateTime.now();
-    DateTime? selectedEndDate = buildingType?.endDate;
+  void _addOrEditEntityType({EntityTypeIsar? entityType}) async {
+    final nameController = TextEditingController(text: entityType?.name ?? "");
+    DateTime selectedStartDate = entityType?.startDate ?? DateTime.now();
+    DateTime? selectedEndDate = entityType?.endDate;
 
     final formKey = GlobalKey<FormState>();
 
@@ -162,9 +162,9 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
           return StatefulBuilder(
             builder: (context, setModalState) {
               return AlertDialog(
-                title: Text(buildingType != null
-                    ? '${'edit'.tr()} ${'screen_building_type'.tr()}'
-                    : '${'new'.tr()} ${'screen_building_type'.tr()}'),
+                title: Text(entityType != null
+                    ? '${'edit'.tr()} ${'screen_entity_type'.tr()}'
+                    : '${'new'.tr()} ${'screen_entity_type'.tr()}'),
                 content: Form(
                   key: formKey,
                   child: SingleChildScrollView(
@@ -174,7 +174,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                         TextFormField(
                           controller: nameController,
                           decoration: InputDecoration(
-                              labelText: 'screen_building_type_name'.tr()),
+                              labelText: 'screen_entity_types_name'.tr()),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'required_field'.tr();
@@ -207,25 +207,25 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                   CancelTextButton(),
                   TextButton(
                     onPressed: () async {
-                      if (formKey.currentState!.validate() &&
-                          nameController.text.isNotEmpty) {
+                      if ( formKey.currentState!.validate() &&
+                        nameController.text.isNotEmpty) {
                         final now = DateTime.now();
 
                         await DatabaseService.db.writeTxn(() async {
-                          final editedBuildingType =
-                              buildingType ?? BuildingTypesIsar();
+                          final editedEntityType =
+                              entityType ?? EntityTypeIsar();
 
-                          editedBuildingType.name = nameController.text.trim();
-                          editedBuildingType.startDate = selectedStartDate;
-                          editedBuildingType.endDate = selectedEndDate;
-                          editedBuildingType.lastUpdatedAt = now;
-                          editedBuildingType.isSynced = false;
-                          if (buildingType == null) {
-                            editedBuildingType.createdAt = now;
+                          editedEntityType.name = nameController.text.trim();
+                          editedEntityType.startDate = selectedStartDate;
+                          editedEntityType.endDate = selectedEndDate;
+                          editedEntityType.lastUpdatedAt = now;
+                          editedEntityType.isSynced = false;
+                          if (entityType == null) {
+                            editedEntityType.createdAt = now;
                           }
 
-                          await DatabaseService.db.buildingTypesIsars
-                              .put(editedBuildingType);
+                          await DatabaseService.db.entityTypeIsars
+                              .put(editedEntityType);
                         });
 
                         Navigator.pop(context);

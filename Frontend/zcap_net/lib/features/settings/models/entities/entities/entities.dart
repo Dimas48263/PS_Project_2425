@@ -1,5 +1,5 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type.dart';
 
 class Entity implements ApiTable {
   @override

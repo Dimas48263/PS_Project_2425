@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/entities/entities_isar.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
 class EntitiesScreen extends StatefulWidget {

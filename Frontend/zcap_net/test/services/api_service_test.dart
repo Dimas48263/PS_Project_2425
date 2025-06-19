@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:zcap_net_app/core/services/app_config.dart';
-import 'package:zcap_net_app/features/settings/models/entities/entities.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:zcap_net_app/core/services/api_service.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type.dart';
 
 import 'api_service_test.mocks.dart';
 

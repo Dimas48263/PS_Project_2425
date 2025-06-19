@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
-import 'package:zcap_net_app/features/settings/screens/building_types/building_types_screen.dart';
-import 'package:zcap_net_app/features/settings/screens/entity_types/entity_type_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/zcaps/building_types/building_types_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/entities/entity_types/entity_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_level_detail_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_levels_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_record_detail_screen.dart';
@@ -12,7 +12,7 @@ import 'package:zcap_net_app/features/settings/screens/trees/tree_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_data_access/user_data_access_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_profiles_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/users/users_screen.dart';
-import 'entities/entities_screen.dart';
+import 'entities/entities/entities_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});

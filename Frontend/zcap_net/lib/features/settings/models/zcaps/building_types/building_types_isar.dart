@@ -1,6 +1,6 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/building_types/building_type.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
 
 part 'building_types_isar.g.dart';
 
