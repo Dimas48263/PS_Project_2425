@@ -154,6 +154,8 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
     DateTime selectedStartDate = entityType?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = entityType?.endDate;
 
+    final formKey = GlobalKey<FormState>();
+
     showDialog(
         context: context,
         builder: (context) {
@@ -164,14 +166,21 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                     ? '${'edit'.tr()} ${'screen_entity_type'.tr()}'
                     : '${'new'.tr()} ${'screen_entity_type'.tr()}'),
                 content: Form(
+                  key: formKey,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextField(
+                        TextFormField(
                           controller: nameController,
                           decoration: InputDecoration(
-                              labelText: 'screen_entitie_types_name'.tr()),
+                              labelText: 'screen_entity_types_name'.tr()),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'required_field'.tr();
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(
                           height: 12.0,
@@ -198,7 +207,8 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                   CancelTextButton(),
                   TextButton(
                     onPressed: () async {
-                      if (nameController.text.isNotEmpty) {
+                      if ( formKey.currentState!.validate() &&
+                        nameController.text.isNotEmpty) {
                         final now = DateTime.now();
 
                         await DatabaseService.db.writeTxn(() async {

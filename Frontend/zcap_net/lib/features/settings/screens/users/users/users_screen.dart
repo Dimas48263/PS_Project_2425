@@ -102,7 +102,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                             ? user.userProfile.value?.name ??
                                                 'unknown_profile'.tr()
                                             : 'loading'.tr();
-                                    return Text('${'profile'.tr()}: $userProfileName');
+                                    return Text(
+                                        '${'profile'.tr()}: $userProfileName');
                                   },
                                 ),
                                 Text(
@@ -137,8 +138,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                       context: context,
                                       builder: (context) => ConfirmDialog(
                                         title: 'confirm_delete'.tr(),
-                                        content:
-                                            'confirm_delete_message'.tr(),
+                                        content: 'confirm_delete_message'.tr(),
                                       ),
                                     );
                                     if (confirm == true) {
@@ -188,18 +188,25 @@ class _UsersScreenState extends State<UsersScreen> {
         return StatefulBuilder(
           builder: (context, setModalState) {
             return AlertDialog(
-              title:
-                  Text(user != null ? '${'edit'.tr()} ${'user'.tr()}' : '${'new'.tr()} ${'user'.tr()}'),
+              title: Text(user != null
+                  ? '${'edit'.tr()} ${'user'.tr()}'
+                  : '${'new'.tr()} ${'user'.tr()}'),
               content: Form(
                 key: formKey,
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      TextField(
+                      TextFormField(
                         controller: userNameController,
                         decoration: InputDecoration(
                             labelText: 'screen_user_username'.tr()),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return 'required_field'.tr();
+                          }
+                          return null;
+                        },
                       ),
                       const SizedBox(height: 12),
                       TextField(

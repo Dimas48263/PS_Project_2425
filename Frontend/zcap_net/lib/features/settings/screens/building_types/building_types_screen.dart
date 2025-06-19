@@ -116,8 +116,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                                     onPressed: () async {
                                       final confirm = await showDialog<bool>(
                                         context: context,
-                                        builder: (context) =>
-                                          ConfirmDialog(
+                                        builder: (context) => ConfirmDialog(
                                           title: 'confirm_delete'.tr(),
                                           content:
                                               'confirm_delete_message'.tr(),
@@ -155,6 +154,8 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
     DateTime selectedStartDate = buildingType?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = buildingType?.endDate;
 
+    final formKey = GlobalKey<FormState>();
+
     showDialog(
         context: context,
         builder: (context) {
@@ -165,14 +166,21 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                     ? '${'edit'.tr()} ${'screen_building_type'.tr()}'
                     : '${'new'.tr()} ${'screen_building_type'.tr()}'),
                 content: Form(
+                  key: formKey,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextField(
+                        TextFormField(
                           controller: nameController,
                           decoration: InputDecoration(
                               labelText: 'screen_building_type_name'.tr()),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'required_field'.tr();
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(
                           height: 12.0,
@@ -199,7 +207,8 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                   CancelTextButton(),
                   TextButton(
                     onPressed: () async {
-                      if (nameController.text.isNotEmpty) {
+                      if (formKey.currentState!.validate() &&
+                          nameController.text.isNotEmpty) {
                         final now = DateTime.now();
 
                         await DatabaseService.db.writeTxn(() async {

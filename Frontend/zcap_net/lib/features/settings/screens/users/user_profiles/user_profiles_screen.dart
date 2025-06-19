@@ -56,7 +56,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
 
     return Scaffold(
       appBar: AppBar(
-      title: Text('screen_settings_user_profiles'.tr()),
+        title: Text('screen_settings_user_profiles'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -74,8 +74,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                         context: context,
                         builder: (context) => CustomAlertDialog(
                               title: 'warning'.tr(),
-                              content:
-                                  'not_implemented'.tr(),
+                              content: 'not_implemented'.tr(),
                             ));
                     _addOrEditUserProfile();
                   },
@@ -124,8 +123,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                       context: context,
                                       builder: (context) => CustomAlertDialog(
                                             title: 'warning'.tr(),
-                                            content:
-                                                'not_implemented'.tr(),
+                                            content: 'not_implemented'.tr(),
                                           ));
                                   _addOrEditUserProfile(
                                       userProfile: userProfile);
@@ -138,15 +136,13 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                       context: context,
                                       builder: (context) => CustomAlertDialog(
                                             title: 'warning'.tr(),
-                                            content:
-                                                'not_implemented'.tr(),
+                                            content: 'not_implemented'.tr(),
                                           ));
                                   final confirm = await showDialog<bool>(
                                     context: context,
                                     builder: (context) => ConfirmDialog(
                                       title: 'confirm_delete'.tr(),
-                                      content:
-                                          'confirm_delete_message'.tr(),
+                                      content: 'confirm_delete_message'.tr(),
                                     ),
                                   );
 
@@ -180,6 +176,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
     DateTime selectedStartDate = userProfile?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = userProfile?.endDate;
 
+    final formKey = GlobalKey<FormState>();
+
     showDialog(
         context: context,
         builder: (context) {
@@ -190,14 +188,21 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                     ? '${'edit'.tr()} ${'user_profile'.tr()}'
                     : '${'new'.tr()} ${'user_profile'.tr()}'),
                 content: Form(
+                  key: formKey,
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextField(
+                        TextFormField(
                           controller: nameController,
-                          decoration:
-                              InputDecoration(labelText: 'scren_profiles_profilename'.tr()),
+                          decoration: InputDecoration(
+                              labelText: 'scren_profiles_profilename'.tr()),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'required_field'.tr();
+                            }
+                            return null;
+                          },
                         ),
                         const SizedBox(
                           height: 12.0,
@@ -224,7 +229,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                   CancelTextButton(),
                   TextButton(
                     onPressed: () async {
-                      if (nameController.text.isNotEmpty) {
+                      if (formKey.currentState!.validate() &&
+                          nameController.text.isNotEmpty) {
                         final now = DateTime.now();
 
                         await DatabaseService.db.writeTxn(() async {

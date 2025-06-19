@@ -109,7 +109,8 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                                               '${'type'.tr()}: $entityTypeName');
                                         },
                                       ),
-                                      Text('${'email'.tr()}: ${entity.email ?? ' --- '}'),
+                                      Text(
+                                          '${'email'.tr()}: ${entity.email ?? ' --- '}'),
                                       Row(
                                         children: [
                                           Expanded(
@@ -187,8 +188,17 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
   }
 
   void _addOrEditEntity({EntitiesIsar? entity}) async {
-    final availableEntityTypes =
-        await DatabaseService.db.entityTypeIsars.where().findAll();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final availableEntityTypes = await DatabaseService.db.entityTypeIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
 
     final nameController = TextEditingController(text: entity?.name ?? "");
     final emailController = TextEditingController(text: entity?.email ?? "");
