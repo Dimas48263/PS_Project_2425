@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
@@ -37,6 +38,8 @@ class DatabaseService {
         'entity-types', 'entityTypeId'),
     CollectionSchemaEntry(RelationTypeIsarSchema, (db) => db.relationTypeIsars,
         'relation-type', 'relationTypeId'),
+    CollectionSchemaEntry(SpecialNeedIsarSchema, (db) => db.specialNeedIsars,
+        'special-needs', 'specialNeedId'),
     CollectionSchemaEntry(
         UsersIsarSchema, (db) => db.usersIsars, 'users', 'userId'),
     CollectionSchemaEntry(UserProfilesIsarSchema, (db) => db.userProfilesIsars,

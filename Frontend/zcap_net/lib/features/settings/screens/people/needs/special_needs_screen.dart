@@ -3,20 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
 
-class RelationTypeScreen extends StatefulWidget {
-  const RelationTypeScreen({super.key});
+class SpecialNeedsScreen extends StatefulWidget {
+  const SpecialNeedsScreen({super.key});
 
   @override
-  State<RelationTypeScreen> createState() => _RelationTypesScreenState();
+  State<SpecialNeedsScreen> createState() => _SpecialNeedsScreenState();
 }
 
-class _RelationTypesScreenState extends State<RelationTypeScreen> {
-  List<RelationTypeIsar> relationTypes = [];
-  StreamSubscription? relationTypesStream;
+class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
+  List<SpecialNeedIsar> specialNeeds = [];
+  StreamSubscription? specialNeedsStream;
 
   bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
@@ -25,12 +25,12 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
   @override
   void initState() {
     super.initState();
-    relationTypesStream = DatabaseService.db.relationTypeIsars
-        .buildQuery<RelationTypeIsar>()
+    specialNeedsStream = DatabaseService.db.specialNeedIsars
+        .buildQuery<SpecialNeedIsar>()
         .watch(fireImmediately: true)
         .listen((data) {
       setState(() {
-        relationTypes = data;
+        specialNeeds = data;
         _isLoading = false;
       });
     });
@@ -44,21 +44,21 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
 
   @override
   void dispose() {
-    relationTypesStream?.cancel();
+    specialNeedsStream?.cancel();
     _searchController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final filteredRelationTypes = relationTypes.where((relation) {
-      final name = relation.name.toLowerCase();
+    final filteredSpecialNeeds = specialNeeds.where((specialNeed) {
+      final name = specialNeed.name.toLowerCase();
       return name.contains(_searchTerm);
     }).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('screen_settings_relation_types'.tr()),
+        title: Text('screen_settings_special_need_types'.tr()),
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -70,32 +70,32 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: _addOrEditRelationType,
+                onAddPressed: _addOrEditSpecialNeed,
               ),
               const SizedBox(height: 16),
               Expanded(
                 child: _isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : ListView.builder(
-                        itemCount: filteredRelationTypes.length,
+                        itemCount: filteredSpecialNeeds.length,
                         itemBuilder: (context, index) {
-                          final relationType = filteredRelationTypes[index];
+                          final specialNeed = filteredSpecialNeeds[index];
                           return Card(
                             child: ListTile(
                               contentPadding: EdgeInsets.only(
                                 left: 10.0,
                               ),
                               title: Text(
-                                '${relationType.remoteId != null ? "[${relationType.remoteId}] " : ""}${relationType.name}',
+                                '${specialNeed.remoteId != null ? "[${specialNeed.remoteId}] " : ""}${specialNeed.name}',
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                      '${'start'.tr()}: ${relationType.startDate.toLocal().toString().split(' ')[0]}'),
+                                      '${'start'.tr()}: ${specialNeed.startDate.toLocal().toString().split(' ')[0]}'),
                                   Text(
-                                    '${'end'.tr()}: ${relationType.endDate != null ? relationType.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                    '${'end'.tr()}: ${specialNeed.endDate != null ? specialNeed.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
                                   ),
                                 ],
                               ),
@@ -104,12 +104,12 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  if (!relationType.isSynced)
+                                  if (!specialNeed.isSynced)
                                     CustomUnsyncedIcon(),
                                   IconButton(
                                     onPressed: () {
-                                      _addOrEditRelationType(
-                                          relationType: relationType);
+                                      _addOrEditSpecialNeed(
+                                          specialNeed: specialNeed);
                                     },
                                     icon: const Icon(Icons.edit),
                                   ),
@@ -127,8 +127,8 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                                         await DatabaseService.db
                                             .writeTxn(() async {
                                           await DatabaseService
-                                              .db.relationTypeIsars
-                                              .delete(relationType.id);
+                                              .db.specialNeedIsars
+                                              .delete(specialNeed.id);
                                         });
                                       }
                                     },
@@ -149,10 +149,10 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
     );
   }
 
-  void _addOrEditRelationType({RelationTypeIsar? relationType}) async {
-    final nameController = TextEditingController(text: relationType?.name ?? "");
-    DateTime selectedStartDate = relationType?.startDate ?? DateTime.now();
-    DateTime? selectedEndDate = relationType?.endDate;
+  void _addOrEditSpecialNeed({SpecialNeedIsar? specialNeed}) async {
+    final nameController = TextEditingController(text: specialNeed?.name ?? "");
+    DateTime selectedStartDate = specialNeed?.startDate ?? DateTime.now();
+    DateTime? selectedEndDate = specialNeed?.endDate;
 
     final formKey = GlobalKey<FormState>();
 
@@ -162,9 +162,9 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
           return StatefulBuilder(
             builder: (context, setModalState) {
               return AlertDialog(
-                title: Text(relationType != null
-                    ? '${'edit'.tr()} ${'screen_relation_type'.tr()}'
-                    : '${'new'.tr()} ${'screen_relation_type'.tr()}'),
+                title: Text(specialNeed != null
+                    ? '${'edit'.tr()} ${'screen_special_need_type'.tr()}'
+                    : '${'new'.tr()} ${'screen_special_need_type'.tr()}'),
                 content: Form(
                   key: formKey,
                   child: SingleChildScrollView(
@@ -174,7 +174,7 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                         TextFormField(
                           controller: nameController,
                           decoration: InputDecoration(
-                              labelText: 'screen_relation_types_name'.tr()),
+                              labelText: 'screen_special_need_name'.tr()),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'required_field'.tr();
@@ -207,25 +207,25 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                   CancelTextButton(),
                   TextButton(
                     onPressed: () async {
-                      if ( formKey.currentState!.validate() &&
-                        nameController.text.isNotEmpty) {
+                      if (formKey.currentState!.validate() &&
+                          nameController.text.isNotEmpty) {
                         final now = DateTime.now();
 
                         await DatabaseService.db.writeTxn(() async {
-                          final editedRelationType =
-                              relationType ?? RelationTypeIsar();
+                          final editedSpecialNeed =
+                              specialNeed ?? SpecialNeedIsar();
 
-                          editedRelationType.name = nameController.text.trim();
-                          editedRelationType.startDate = selectedStartDate;
-                          editedRelationType.endDate = selectedEndDate;
-                          editedRelationType.lastUpdatedAt = now;
-                          editedRelationType.isSynced = false;
-                          if (relationType == null) {
-                            editedRelationType.createdAt = now;
+                          editedSpecialNeed.name = nameController.text.trim();
+                          editedSpecialNeed.startDate = selectedStartDate;
+                          editedSpecialNeed.endDate = selectedEndDate;
+                          editedSpecialNeed.lastUpdatedAt = now;
+                          editedSpecialNeed.isSynced = false;
+                          if (specialNeed == null) {
+                            editedSpecialNeed.createdAt = now;
                           }
 
-                          await DatabaseService.db.relationTypeIsars
-                              .put(editedRelationType);
+                          await DatabaseService.db.specialNeedIsars
+                              .put(editedSpecialNeed);
                         });
 
                         Navigator.pop(context);

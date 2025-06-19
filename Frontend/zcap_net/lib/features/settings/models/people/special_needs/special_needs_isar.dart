@@ -1,11 +1,11 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'relation_type.dart';
+import 'special_needs.dart';
 
-part 'relation_type_isar.g.dart';
+part 'special_needs_isar.g.dart';
 
 @collection
-class RelationTypeIsar implements IsarTable<RelationType> {
+class SpecialNeedIsar implements IsarTable<SpecialNeed> {
   /*Local variables*/
   @override
   Id id = Isar.autoIncrement;
@@ -27,9 +27,9 @@ class RelationTypeIsar implements IsarTable<RelationType> {
   DateTime lastUpdatedAt = DateTime.now();
 
   // Construtor sem nome (necessário para o Isar)
-  RelationTypeIsar();
+  SpecialNeedIsar();
 
-  RelationTypeIsar copyWith({
+  SpecialNeedIsar copyWith({
     int? id,
     int? remoteId,
     String? name,
@@ -39,7 +39,7 @@ class RelationTypeIsar implements IsarTable<RelationType> {
     DateTime? lastUpdatedAt,
     bool? isSynced,
   }) {
-    final copy = RelationTypeIsar()
+    final copy = SpecialNeedIsar()
       ..id = id ?? this.id
       ..remoteId = remoteId ?? this.remoteId
       ..name = name ?? this.name
@@ -53,32 +53,32 @@ class RelationTypeIsar implements IsarTable<RelationType> {
   }
 
   @override
-  Future<void> updateFromApiEntity(RelationType relationType) async {
-    remoteId = relationType.remoteId;
-    name = relationType.name;
-    startDate = relationType.startDate;
-    endDate = relationType.endDate;
-    createdAt = relationType.createdAt;
-    lastUpdatedAt = relationType.lastUpdatedAt;
+  Future<void> updateFromApiEntity(SpecialNeed specialNeed) async {
+    remoteId = specialNeed.remoteId;
+    name = specialNeed.name;
+    startDate = specialNeed.startDate;
+    endDate = specialNeed.endDate;
+    createdAt = specialNeed.createdAt;
+    lastUpdatedAt = specialNeed.lastUpdatedAt;
     isSynced = true;
   }
 
-  // Método para converter a partir do modelo EntityType
-  factory RelationTypeIsar.fromEntityType(RelationType relationType) {
-    return RelationTypeIsar()
-      ..remoteId = relationType.remoteId
-      ..name = relationType.name
-      ..startDate = relationType.startDate
-      ..endDate = relationType.endDate
-      ..createdAt = relationType.createdAt
-      ..lastUpdatedAt = relationType.lastUpdatedAt
-      ..isSynced = relationType.isSynced;
+  // Método para converter a partir do modelo SpecialNeed
+  factory SpecialNeedIsar.fromEntityType(SpecialNeed specialNeed) {
+    return SpecialNeedIsar()
+      ..remoteId = specialNeed.remoteId
+      ..name = specialNeed.name
+      ..startDate = specialNeed.startDate
+      ..endDate = specialNeed.endDate
+      ..createdAt = specialNeed.createdAt
+      ..lastUpdatedAt = specialNeed.lastUpdatedAt
+      ..isSynced = specialNeed.isSynced;
   }
 
-  // Método para converter para o modelo RelationType
+  // Método para converter para o modelo SpecialNeed
   @override
-  RelationType toEntity() {
-    return RelationType(
+  SpecialNeed toEntity() {
+    return SpecialNeed(
       remoteId: remoteId ?? -1,
       name: name,
       startDate: startDate,
@@ -89,21 +89,21 @@ class RelationTypeIsar implements IsarTable<RelationType> {
     );
   }
 
-  factory RelationTypeIsar.toRemote(RelationType relationType) {
-    return RelationTypeIsar()
-      ..remoteId = relationType.remoteId
-      ..name = relationType.name
-      ..startDate = relationType.startDate
-      ..endDate = relationType.endDate
-      ..createdAt = relationType.createdAt
-      ..lastUpdatedAt = relationType.lastUpdatedAt
+  factory SpecialNeedIsar.toRemote(SpecialNeed specialNeed) {
+    return SpecialNeedIsar()
+      ..remoteId = specialNeed.remoteId
+      ..name = specialNeed.name
+      ..startDate = specialNeed.startDate
+      ..endDate = specialNeed.endDate
+      ..createdAt = specialNeed.createdAt
+      ..lastUpdatedAt = specialNeed.lastUpdatedAt
       ..isSynced = true;
   }
 
   @override
-  RelationTypeIsar setEntityIdAndSync(
+  SpecialNeedIsar setEntityIdAndSync(
       {int? remoteId, bool? isSynced, DateTime? lastUpdatedAt}) {
-    return RelationTypeIsar()
+    return SpecialNeedIsar()
       ..id = id
       ..remoteId = remoteId ?? this.remoteId
       ..name = name

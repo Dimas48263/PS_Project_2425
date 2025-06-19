@@ -5,6 +5,8 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs.dart';
+import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
@@ -356,6 +358,19 @@ final List<SyncEntry> syncEntries = [
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<RelationTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<SpecialNeedIsar, SpecialNeed>(
+      endpoint: 'special-needs',
+      getCollection: (isar) => isar.specialNeedIsars,
+      idName: 'specialNeedId',
+      fromJson: SpecialNeed.fromJson,
+      toIsar: (ApiTable specialNeed) async =>
+          SpecialNeedIsar.toRemote(specialNeed as SpecialNeed),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<SpecialNeedIsar>)
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),

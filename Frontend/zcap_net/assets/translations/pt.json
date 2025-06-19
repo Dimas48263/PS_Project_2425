@@ -1,5 +1,5 @@
 {
-  "about":"Sobre",
+  "about": "Sobre",
   "admin": "Admin",
   "admin_password": "Senha de Administrador",
   "alternative_contact": "Contacto alternativo",
@@ -76,7 +76,7 @@
   "screen_settings_entities": "Entidades",
   "screen_settings_entity_types": "Tipos de Entidade",
   "screen_settings_isar_db_explorer": "ISAR Explorer",
-  "screen_settings_need_types": "TODO: Tipos de necessidade",
+  "screen_settings_special_need_types": "Tipos de Necessidades Speciais",
   "screen_settings_people": "Pessoas",
   "screen_settings_relation_types": "Graus de parentesco",
   "screen_settings_structure": "Estrutura",
@@ -90,6 +90,8 @@
   "screen_settings_users": "Utilizadores",
   "screen_settings_zcap_building_details": "TODO: Detalhe por Edificio / ZCAP",
   "screen_settings_zcap_buildings": "Edificios / ZCAP",
+  "screen_special_need_type": "Necessidade",
+  "screen_special_need_name": "Descrição da necessidade",
   "screen_user_username": "Nome de utilizador",
   "screen_zcaps": "ZCAPS",
   "search": "Pesquisar",
@@ -114,7 +116,7 @@
   "user_exists": "Já existe um utilizador com o mesmo nome.",
   "user_profile": "Perfil de utilizador",
   "value": "Valor",
-  "version":"Versão",
+  "version": "Versão",
   "warning": "Aviso",
   "welcome_message": "Bem vindo!!"
 }

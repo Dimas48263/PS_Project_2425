@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
-import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
@@ -16,7 +16,6 @@ import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_r
 import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
-import 'package:zcap_net_app/features/settings/screens/people/relation_type/relation_type_screen.dart';
 
 class IsarExplorerScreen extends StatefulWidget {
   const IsarExplorerScreen({super.key});
@@ -62,6 +61,8 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                     value: 'BuildingTypes', child: Text("Building Types")),
                 DropdownMenuItem(
                     value: 'RelationTypes', child: Text("Relation Types")),
+                DropdownMenuItem(
+                    value: 'SpecialNeeds', child: Text("Special Need Types")),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -203,7 +204,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
 
             for (final detail in details) {
               await detail.tree.load();
-              await detail.detailType.load(); 
+              await detail.detailType.load();
             }
 
             return details;
@@ -431,7 +432,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
           },
         );
 
-case 'RelationTypes':
+      case 'RelationTypes':
         return FutureBuilder<List<RelationTypeIsar>>(
           future: isar.relationTypeIsars.where().findAll(),
           builder: (context, snapshot) {
@@ -466,7 +467,41 @@ case 'RelationTypes':
             );
           },
         );
-
+      case 'SpecialNeeds':
+        return FutureBuilder<List<SpecialNeedIsar>>(
+          future: isar.specialNeedIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("RemoteId")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(smallDate.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? smallDate.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
       default:
         return const Center(child: Text("Tabela não suportada."));
     }
