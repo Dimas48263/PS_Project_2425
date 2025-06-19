@@ -196,7 +196,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                         TextFormField(
                           controller: nameController,
                           decoration: InputDecoration(
-                              labelText: 'scren_profiles_profilename'.tr()),
+                              labelText: 'screen_profiles_profilename'.tr()),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'required_field'.tr();

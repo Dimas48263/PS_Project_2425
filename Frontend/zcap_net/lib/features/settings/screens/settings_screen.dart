@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
+import 'package:zcap_net_app/features/settings/screens/people/relation_type/relation_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/building_types/building_types_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/entities/entity_types/entity_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_level_detail_type_screen.dart';
@@ -174,17 +175,6 @@ class SettingsScreen extends StatelessWidget {
                               );
                             },
                           ),
-/*                          ListTile(
-                            title: const Text("Tipos Entidade OLD"),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const EntityTypesScreen()),
-                              );
-                            },
-                          ),*/
                         ],
                       ),
                     ]),
@@ -248,14 +238,14 @@ class SettingsScreen extends StatelessWidget {
                     children: [
                       ListTile(
                         title: Text('screen_settings_relation_types'.tr()),
-//                            onTap: () {
-//                              Navigator.push(
-//                                context,
-//                                MaterialPageRoute(
-//                                    builder: (context) =>
-//                                        const EntityTypesScreenOld()),
-//                              );
-//                            },
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const RelationTypeScreen()),
+                              );
+                            },
                       ),
                       ListTile(
                         title: Text('screen_settings_need_types'.tr()),

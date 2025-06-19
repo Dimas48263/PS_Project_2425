@@ -3,6 +3,8 @@ import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
+import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
@@ -344,6 +346,19 @@ final List<SyncEntry> syncEntries = [
         final entityIsar = entity as EntitiesIsar;
         await entityIsar.entityType.save();
       }),
+  SyncEntry<RelationTypeIsar, RelationType>(
+      endpoint: 'relation-type',
+      getCollection: (isar) => isar.relationTypeIsars,
+      idName: 'relationTypeId',
+      fromJson: RelationType.fromJson,
+      toIsar: (ApiTable relationType) async =>
+          RelationTypeIsar.toRemote(relationType as RelationType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<RelationTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
   SyncEntry<BuildingTypesIsar, BuildingType>(
       endpoint: 'buildingTypes',
       getCollection: (isar) => isar.buildingTypesIsars,
