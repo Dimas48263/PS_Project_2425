@@ -1,22 +1,20 @@
-
 import 'dart:async';
 
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/treeLevelDetailType/tree_level_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree.dart';
+import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
-class TreeLevelDetailTypeScreen extends StatefulWidget{
+class TreeLevelDetailTypeScreen extends StatefulWidget {
   const TreeLevelDetailTypeScreen({super.key});
 
   @override
-  State<TreeLevelDetailTypeScreen> createState() => _TreeLevelDetailTypeScreenState();
+  State<TreeLevelDetailTypeScreen> createState() =>
+      _TreeLevelDetailTypeScreenState();
 }
 
 class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
@@ -27,6 +25,8 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
   final _searchController = TextEditingController();
   String _searchTerm = '';
 
+  bool _isSearchingBylevel = true;
+
   @override
   void initState() {
     super.initState();
@@ -34,10 +34,10 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
         .buildQuery<TreeLevelDetailTypeIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
-          for (var element in data) {
-            await element.treeLevel.load();
-            await element.detailType.load();
-          }
+      for (var element in data) {
+        await element.treeLevel.load();
+        await element.detailType.load();
+      }
       setState(() {
         tldt = data;
         _isLoading = false;
@@ -67,7 +67,9 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
             icon: const Icon(Icons.sync),
             onPressed: () async {
               await syncServiceV3.syncAllPending(
-                  DatabaseService.db.treeLevelDetailTypeIsars, 'tree-level-detail-type', 'treeLevelDetailTypeId');
+                  DatabaseService.db.treeLevelDetailTypeIsars,
+                  'tree-level-detail-type',
+                  'treeLevelDetailTypeId');
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
@@ -82,9 +84,13 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
   }
 
   Widget _buildUI() {
-    final filteredList = tldt;//.where((e) {
-      //return e.name.toLowerCase().contains(_searchTerm);
-    //}).toList();
+    final filteredList = tldt.where((e) {
+      if (_isSearchingBylevel) {
+        return e.treeLevel.value!.name.toLowerCase().contains(_searchTerm);
+      } else {
+        return e.detailType.value!.name.toLowerCase().contains(_searchTerm);
+      }
+    }).toList();
 
     return Padding(
       padding: const EdgeInsets.all(10.0),
@@ -96,6 +102,15 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
               _searchTerm = value.toLowerCase();
             }),
             onAddPressed: () => _addOrEditTreeLevelDetailType(null),
+            dropDownFilter: customDropdownSearch(
+                items: ['level'.tr(), 'screen_detail_type'.tr()],
+                selectedItem: _isSearchingBylevel
+                    ? 'level'.tr()
+                    : 'screen_detail_type'.tr(),
+                onSelected: (value) =>
+                    setState(() => _isSearchingBylevel = value == 'level'.tr()),
+                validator: (value) => null,
+                label: 'search_by'.tr()),
           ),
           const SizedBox(height: 10.0),
           _isLoading
@@ -148,7 +163,8 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
   void _addOrEditTreeLevelDetailType(TreeLevelDetailTypeIsar? t) async {
     final formKey = GlobalKey<FormState>();
 
-    final availableTreeLevels = await DatabaseService.db.treeLevelIsars.where().findAll();
+    final availableTreeLevels =
+        await DatabaseService.db.treeLevelIsars.where().findAll();
 
     final availableDetailTypes =
         await DatabaseService.db.treeRecordDetailTypeIsars.where().findAll();
@@ -166,9 +182,8 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
             title: Text(t == null
                 ? '${'new'.tr()} ${'detail'.tr()}'
                 : '${'edit'.tr()} ${'detail'.tr()}'),
-            content: buildForm(
-                formKey, context, [], startDate, endDate,
-                (value) {
+            content:
+                buildForm(formKey, context, [], startDate, endDate, (value) {
               setState(() => startDate = value);
               setModalState(() {}); // Atualiza o dialog
             }, (value) {
@@ -208,7 +223,8 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
                   if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
-                      final newTreeLevelDetailType = t ?? TreeLevelDetailTypeIsar();
+                      final newTreeLevelDetailType =
+                          t ?? TreeLevelDetailTypeIsar();
                       newTreeLevelDetailType.remoteId = t?.remoteId ?? 0;
                       newTreeLevelDetailType.detailType.value = detailType;
                       newTreeLevelDetailType.treeLevel.value = treeLevel;

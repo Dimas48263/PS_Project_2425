@@ -5,12 +5,14 @@ class CustomSearchAndAddBar extends StatelessWidget {
   final TextEditingController controller;
   final void Function(String) onSearchChanged;
   final VoidCallback onAddPressed;
+  final Widget? dropDownFilter;
 
   const CustomSearchAndAddBar({
     super.key,
     required this.controller,
     required this.onSearchChanged,
     required this.onAddPressed,
+    this.dropDownFilter,
   });
 
   @override
@@ -20,6 +22,11 @@ class CustomSearchAndAddBar extends StatelessWidget {
         Expanded(
           child: customSearchBar(controller, onSearchChanged),
         ),
+        if (dropDownFilter != null)
+          SizedBox(
+            width: 150, 
+            child: dropDownFilter!,
+          ),
         const SizedBox(width: 8.0),
         ElevatedButton(
           onPressed: onAddPressed,

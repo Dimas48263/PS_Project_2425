@@ -1,8 +1,8 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
-import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'tree.dart';
 
 part 'tree_isar.g.dart';

@@ -26,7 +26,7 @@ Widget customDropdownSearch<T>(
     validator: (value) => validator(value),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
-        labelText: label == null ? 'select_an_option'.tr() : 'select_label'.tr(namedArgs: {'label': label}),
+        labelText: label ?? 'select_an_option'.tr(),//'select_label'.tr(namedArgs: {'label': label}),
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       ),
     ),

@@ -1,11 +1,11 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/treeLevelDetailType/tree_level_detail_type.dart';
-import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
-import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 
 part 'tree_level_detail_type_isar.g.dart';
 
