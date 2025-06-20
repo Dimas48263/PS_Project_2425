@@ -18,6 +18,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
   List<UserProfilesIsar> userProfiles = [];
   StreamSubscription? userProfilesStream;
 
+  bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
@@ -30,6 +31,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
         .listen((data) {
       setState(() {
         userProfiles = data;
+        _isLoading = false;
       });
     });
 
@@ -81,87 +83,90 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                 ),
                 const SizedBox(height: 16),
                 Expanded(
-                  child: ListView.builder(
-                    itemCount: userProfiles.length,
-                    itemBuilder: (context, index) {
-                      final userProfile = filteredUserProfiles[index];
-                      return Card(
-                        child: ListTile(
-                          contentPadding: EdgeInsets.only(
-                            left: 10.0,
-                          ),
-                          title: Text(
-                            '${userProfile.remoteId != null ? "[${userProfile.remoteId}] " : ""}${userProfile.name}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                  'Início: ${userProfile.startDate.toLocal().toString().split(' ')[0]}'),
-                              Text(
-                                'Fim: ${userProfile.endDate != null ? userProfile.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
-                              ),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              if (!userProfile.isSynced)
-                                IconButton(
-                                  onPressed: () {},
-                                  icon: const Icon(
-                                    Icons.sync_problem,
-                                    color: Colors.amberAccent,
-                                  ),
+                  child: _isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : ListView.builder(
+                          itemCount: filteredUserProfiles.length,
+                          itemBuilder: (context, index) {
+                            final userProfile = filteredUserProfiles[index];
+                            return Card(
+                              child: ListTile(
+                                contentPadding: EdgeInsets.only(
+                                  left: 10.0,
                                 ),
-                              IconButton(
-                                onPressed: () async {
-                                  await showDialog(
-                                      context: context,
-                                      builder: (context) => CustomAlertDialog(
-                                            title: 'warning'.tr(),
-                                            content: 'not_implemented'.tr(),
-                                          ));
-                                  _addOrEditUserProfile(
-                                      userProfile: userProfile);
-                                },
-                                icon: const Icon(Icons.edit),
-                              ),
-                              IconButton(
-                                onPressed: () async {
-                                  await showDialog(
-                                      context: context,
-                                      builder: (context) => CustomAlertDialog(
-                                            title: 'warning'.tr(),
-                                            content: 'not_implemented'.tr(),
-                                          ));
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) => ConfirmDialog(
-                                      title: 'confirm_delete'.tr(),
-                                      content: 'confirm_delete_message'.tr(),
+                                title: Text(
+                                  '${userProfile.remoteId != null ? "[${userProfile.remoteId}] " : ""}${userProfile.name}',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        'Início: ${userProfile.startDate.toLocal().toString().split(' ')[0]}'),
+                                    Text(
+                                      'Fim: ${userProfile.endDate != null ? userProfile.endDate!.toLocal().toString().split(' ')[0] : "Sem data"}',
                                     ),
-                                  );
+                                  ],
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    if (!userProfile.isSynced)
+                                      CustomUnsyncedIcon(),
+                                    IconButton(
+                                      onPressed: () async {
+                                        await showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                CustomAlertDialog(
+                                                  title: 'warning'.tr(),
+                                                  content:
+                                                      'not_implemented'.tr(),
+                                                ));
+                                        _addOrEditUserProfile(
+                                            userProfile: userProfile);
+                                      },
+                                      icon: const Icon(Icons.edit),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        await showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                CustomAlertDialog(
+                                                  title: 'warning'.tr(),
+                                                  content:
+                                                      'not_implemented'.tr(),
+                                                ));
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => ConfirmDialog(
+                                            title: 'confirm_delete'.tr(),
+                                            content:
+                                                'confirm_delete_message'.tr(),
+                                          ),
+                                        );
 
-                                  if (confirm == true) {
-                                    await DatabaseService.db.writeTxn(() async {
-                                      await DatabaseService.db.userProfilesIsars
-                                          .delete(userProfile.id);
-                                    });
-                                  }
-                                },
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
+                                        if (confirm == true) {
+                                          await DatabaseService.db
+                                              .writeTxn(() async {
+                                            await DatabaseService
+                                                .db.userProfilesIsars
+                                                .delete(userProfile.id);
+                                          });
+                                        }
+                                      },
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ],
-                          ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 )
               ],
             ),

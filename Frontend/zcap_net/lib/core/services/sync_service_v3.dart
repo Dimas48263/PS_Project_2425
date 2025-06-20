@@ -9,6 +9,8 @@ import 'package:zcap_net_app/features/settings/models/people/special_needs/speci
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
@@ -241,6 +243,9 @@ class SyncEntry<TIsar extends IsarTable, TApi extends ApiTable> {
 }
 
 final List<SyncEntry> syncEntries = [
+/**
+ * Tree 
+ */
   SyncEntry<TreeLevelIsar, TreeLevel>(
       endpoint: 'tree-levels',
       getCollection: (isar) => isar.treeLevelIsars,
@@ -320,6 +325,9 @@ final List<SyncEntry> syncEntries = [
         await tldtIsar.detailType.save();
         await tldtIsar.treeLevel.save();
       }),
+  /**
+       * Support Tables
+       */
   SyncEntry<EntityTypeIsar, EntityType>(
       endpoint: 'entityTypes',
       getCollection: (isar) => isar.entityTypeIsars,
@@ -399,6 +407,22 @@ final List<SyncEntry> syncEntries = [
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<BuildingTypesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+/**
+ * User tables
+ */
+  SyncEntry<UserProfilesIsar, UserProfile>(
+      endpoint: 'users/profiles',
+      getCollection: (isar) => isar.userProfilesIsars,
+      idName: 'userProfileId',
+      fromJson: UserProfile.fromJson,
+      toIsar: (ApiTable userProfile) async =>
+          UserProfilesIsar.toRemote(userProfile as UserProfile),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<UserProfilesIsar>)
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),

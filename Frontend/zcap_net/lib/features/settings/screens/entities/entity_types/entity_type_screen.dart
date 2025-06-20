@@ -207,8 +207,8 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                   CancelTextButton(),
                   TextButton(
                     onPressed: () async {
-                      if ( formKey.currentState!.validate() &&
-                        nameController.text.isNotEmpty) {
+                      if (formKey.currentState!.validate() &&
+                          nameController.text.isNotEmpty) {
                         final now = DateTime.now();
                         final navigator = Navigator.of(context);
 

@@ -11,7 +11,7 @@ import pt.isel.ps.zcap.services.users.UserProfileService
 import java.time.LocalDate
 
 @RestController
-@RequestMapping("api/users")
+@RequestMapping("api/users/profiles")
 class UserProfilesController(
     private val userProfileService: UserProfileService,
 ) {
@@ -25,7 +25,7 @@ class UserProfilesController(
      * GET all user profiles
      * Returns all existing profiles
      **/
-    @GetMapping("profiles")
+    @GetMapping
     fun getAllUserProfiles(): ResponseEntity<List<UserProfileOutputModel>> {
         val result = userProfileService.getAllUserProfiles()
         return ResponseEntity.ok(result)
@@ -35,7 +35,7 @@ class UserProfilesController(
      * GET all user profiles valid in a given date (filter)
      * Returns all profiles within criteria
      **/
-    @GetMapping("profiles/valid")
+    @GetMapping("valid")
     fun getValidProfilesOn(@RequestParam date: LocalDate): ResponseEntity<List<UserProfileOutputModel>> {
         val result = userProfileService.getUserProfilesValidOn(date)
         return ResponseEntity.ok(result)
@@ -44,7 +44,7 @@ class UserProfilesController(
     /**
      * GET specific profile by id
      **/
-    @GetMapping("profile/{userProfileId}")
+    @GetMapping("{userProfileId}")
     fun getUserProfilesById(@PathVariable userProfileId: Long): ResponseEntity<out Any> =
         when (val result = userProfileService.getUserProfileById(userProfileId = userProfileId)) {
             is Success -> ResponseEntity
@@ -59,7 +59,7 @@ class UserProfilesController(
     /**
      * POST adding a new profile to the system table
      */
-    @PostMapping("profile")
+    @PostMapping
     fun addUserProfile(@RequestBody userProfile: UserProfileInputModel): ResponseEntity<Any> =
         when (val result = userProfileService.addUserProfile(userProfile)) {
             is Success -> ResponseEntity
@@ -74,7 +74,7 @@ class UserProfilesController(
     /**
      * PUT updating an existing user profile
      */
-    @PutMapping("profile/{userProfileId}")
+    @PutMapping("{userProfileId}")
     fun updateUserProfile(
         @PathVariable userProfileId: Long,
         @RequestBody userProfile: UserProfileInputModel
