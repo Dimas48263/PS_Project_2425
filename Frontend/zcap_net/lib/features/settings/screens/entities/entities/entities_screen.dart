@@ -327,6 +327,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                     if (formKey.currentState!.validate() &&
                         nameController.text.isNotEmpty) {
                       final now = DateTime.now();
+                      final navigator = Navigator.of(context);
 
                       await DatabaseService.db.writeTxn(() async {
                         final editedEntity = entity ?? EntitiesIsar();
@@ -350,7 +351,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                         await editedEntity.entityType.save();
                       });
 
-                      Navigator.pop(context);
+                      navigator.pop();
                     }
                   },
                   child: Text('save'.tr()),

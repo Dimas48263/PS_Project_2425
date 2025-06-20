@@ -210,6 +210,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                       if (formKey.currentState!.validate() &&
                           nameController.text.isNotEmpty) {
                         final now = DateTime.now();
+                        final navigator = Navigator.of(context);
 
                         await DatabaseService.db.writeTxn(() async {
                           final editedBuildingType =
@@ -228,7 +229,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                               .put(editedBuildingType);
                         });
 
-                        Navigator.pop(context);
+                        navigator.pop();
                       }
                     },
                     child: Text('save'.tr()),

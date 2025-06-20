@@ -210,6 +210,7 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                       if (formKey.currentState!.validate() &&
                           nameController.text.isNotEmpty) {
                         final now = DateTime.now();
+                        final navigator = Navigator.of(context);
 
                         await DatabaseService.db.writeTxn(() async {
                           final editedSpecialNeed =
@@ -228,7 +229,7 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                               .put(editedSpecialNeed);
                         });
 
-                        Navigator.pop(context);
+                        navigator.pop();
                       }
                     },
                     child: Text('save'.tr()),

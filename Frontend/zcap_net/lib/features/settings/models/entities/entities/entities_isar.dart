@@ -10,6 +10,7 @@ part 'entities_isar.g.dart';
 @Collection()
 class EntitiesIsar implements IsarTable<Entity> {
   /*Local variables*/
+  @override
   Id id = Isar.autoIncrement;
   @override
   bool isSynced = false;

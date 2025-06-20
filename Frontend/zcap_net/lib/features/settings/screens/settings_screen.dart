@@ -4,6 +4,7 @@ import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_til
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
 import 'package:zcap_net_app/features/settings/screens/people/needs/special_needs_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/relation_type/relation_type_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/people/support/special_needs_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/building_types/building_types_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/entities/entity_types/entity_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_level_detail_type_screen.dart';
@@ -197,30 +198,31 @@ class SettingsScreen extends StatelessWidget {
                         },
                       ),
                       ListTile(
+                        title: Text('screen_settings_detail_category'.tr()),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                      ListTile(
+                        title: Text(
+                            'TODO: ${'screen_settings_detail_types'.tr()}'),
+//                            onTap: () {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(
+//                                    builder: (context) =>
+//                                        const EntityTypesScreenOld()),
+//                              );
+//                            },
+                      ),
+                      ListTile(
                         title:
-                            Text('screen_settings_detail_category'.tr()),
-//                            onTap: () {
-//                              Navigator.push(
-//                                context,
-//                                MaterialPageRoute(
-//                                    builder: (context) =>
-//                                        const EntityTypesScreenOld()),
-//                              );
-//                            },
-                      ),
-                      ListTile(
-                        title: Text('TODO: ${'screen_settings_detail_types'.tr()}'),
-//                            onTap: () {
-//                              Navigator.push(
-//                                context,
-//                                MaterialPageRoute(
-//                                    builder: (context) =>
-//                                        const EntityTypesScreenOld()),
-//                              );
-//                            },
-                      ),
-                      ListTile(
-                        title: Text('screen_settings_zcap_building_details'.tr()),
+                            Text('screen_settings_zcap_building_details'.tr()),
 //                            onTap: () {
 //                              Navigator.push(
 //                                context,
@@ -239,36 +241,36 @@ class SettingsScreen extends StatelessWidget {
                     children: [
                       ListTile(
                         title: Text('screen_settings_relation_types'.tr()),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const RelationTypeScreen()),
-                              );
-                            },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const RelationTypeScreen()),
+                          );
+                        },
                       ),
                       ListTile(
                         title: Text('screen_settings_special_need_types'.tr()),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SpecialNeedsScreen()),
-                              );
-                            },
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const SpecialNeedsScreen()),
+                          );
+                        },
                       ),
                       ListTile(
-                        title: Text('screen_settings_support_types'.tr()),
-//                            onTap: () {
-//                              Navigator.push(
-//                                context,
-//                                MaterialPageRoute(
-//                                    builder: (context) =>
-//                                        const EntityTypesScreenOld()),
-//                              );
-//                            },
+                        title: Text('screen_settings_support_need_types'.tr()),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const SupportNeededScreen()),
+                          );
+                        },
                       ),
                     ]),
               ],

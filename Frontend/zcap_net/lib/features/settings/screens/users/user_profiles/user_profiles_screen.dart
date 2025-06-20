@@ -232,6 +232,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                       if (formKey.currentState!.validate() &&
                           nameController.text.isNotEmpty) {
                         final now = DateTime.now();
+                        final navigator = Navigator.of(context);
 
                         await DatabaseService.db.writeTxn(() async {
                           final editedUserProfile =
@@ -250,7 +251,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                               .put(editedUserProfile);
                         });
 
-                        Navigator.pop(context);
+                        navigator.pop();
                       }
                     },
                     child: Text('save'.tr()),

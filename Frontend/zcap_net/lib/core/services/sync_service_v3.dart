@@ -7,6 +7,8 @@ import 'package:zcap_net_app/features/settings/models/people/relation_type/relat
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/support/support_needed.dart';
+import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
@@ -371,6 +373,19 @@ final List<SyncEntry> syncEntries = [
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<SpecialNeedIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<SupportNeededIsar, SupportNeeded>(
+      endpoint: 'support-needed',
+      getCollection: (isar) => isar.supportNeededIsars,
+      idName: 'supportNeededId',
+      fromJson: SupportNeeded.fromJson,
+      toIsar: (ApiTable supportNeeded) async =>
+          SupportNeededIsar.toRemote(supportNeeded as SupportNeeded),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<SupportNeededIsar>)
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
