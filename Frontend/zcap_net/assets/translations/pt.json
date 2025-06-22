@@ -100,6 +100,7 @@
   "screen_user_username": "Nome de utilizador",
   "screen_zcaps": "ZCAPS",
   "search": "Pesquisar",
+  "search_by": "Procurar por",
   "select_an_option": "Selecione uma opção",
   "select_label": "Seleccionar {label}",
   "service_sync_auth_failed": "Falha no login remoto.",

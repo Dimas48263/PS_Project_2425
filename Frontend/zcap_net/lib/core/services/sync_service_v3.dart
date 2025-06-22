@@ -19,16 +19,16 @@ import 'package:zcap_net_app/features/settings/models/entities/entities/entities
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/treeLevelDetailType/tree_level_detail_type.dart';
-import 'package:zcap_net_app/features/settings/models/treeLevelDetailType/tree_level_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level.dart';
-import 'package:zcap_net_app/features/settings/models/tree_levels/tree_level_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 
 class SyncServiceV3 {
   final Isar isar;

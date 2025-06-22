@@ -5,9 +5,10 @@ import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_detail_types/tree_record_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/tree_record_details/tree_record_detail_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/widgets/confirm_dialog.dart';
 import 'package:zcap_net_app/widgets/custom_cancel_text_button.dart';
 import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
@@ -153,7 +154,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       if (!detail.tree.isLoaded) await detail.tree.load();
     }
     final availableTrees = await DatabaseService.db.treeIsars.where().findAll();
-
+    final treeLevelDetailTypes = await DatabaseService.db.treeLevelDetailTypeIsars.where().findAll();
     final availableDetailTypes =
         await DatabaseService.db.treeRecordDetailTypeIsars.where().findAll();
 
@@ -162,6 +163,9 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     TreeRecordDetailTypeIsar? detailType = detail?.detailType.value;
     DateTime? startDate = detail?.startDate ?? DateTime.now();
     DateTime? endDate = detail?.endDate;
+
+    List<int> availableTreeLevelIds = detailType != null ? 
+      treeLevelDetailTypes.where((e) => e.detailType.value!.id == detailType!.id).map((element) => element.treeLevel.value!.id).toList() : [];
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
@@ -195,12 +199,18 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                   onSelected: (TreeRecordDetailTypeIsar? value) {
                     setModalState(() {
                       detailType = value;
+                      tree = null;
+                      availableTreeLevelIds = treeLevelDetailTypes.where((e) => e.detailType.value!.id == detailType!.id).map((element) => element.treeLevel.value!.id).toList();
                     });
                   },
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null),
               customDropdownSearch<TreeIsar>(
-                  items: availableTrees,
+                  enabled: detailType != null,
+                  items: detailType != null ? 
+                    availableTrees.where( 
+                      (t) => availableTreeLevelIds.contains(t.treeLevel.value!.id)
+                    ).toList() : [],
                   selectedItem: tree,
                   onSelected: (TreeIsar? value) {
                     setModalState(() {
