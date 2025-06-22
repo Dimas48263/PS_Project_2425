@@ -1,5 +1,8 @@
 {
   "about": "About",
+  "access_type_none": "No access",
+  "access_type_read": "Read",
+  "access_type_write": "Write",
   "admin": "Admin",
   "admin_password": "Administrator password",
   "alternative_contact": "Alternative contact",
@@ -117,6 +120,7 @@
   "users": "Users",
   "user_exists": "Username already exists.",
   "user_profile": "User profile",
+  "user_access_definitions": "Access list",
   "value": "Value",
   "version": "Version",
   "warning": "Warning",

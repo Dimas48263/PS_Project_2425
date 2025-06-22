@@ -320,6 +320,12 @@ BEGIN
 	('tecnico','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('diretor', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
+IF (SELECT COUNT(*) FROM userProfileAccessKeys ) = 0
+BEGIN
+	INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_screen_settings', N'Manages access to the menu option to access the Settings menu', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_users_screen', N'Manages access to the menu option to access Users options in the Settings screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+END
+
 IF (SELECT COUNT(*) FROM users ) = 0
 BEGIN
 	INSERT [dbo].[users] ([userName], [name], [password], [userProfileId], [userDataProfileId], [startDate], [endDate], [createdAt], [lastUpdatedAt])

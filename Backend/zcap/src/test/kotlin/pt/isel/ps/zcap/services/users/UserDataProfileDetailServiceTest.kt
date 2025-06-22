@@ -1,29 +1,15 @@
 package pt.isel.ps.zcap.services.users
 
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.mockito.kotlin.any
-import org.mockito.kotlin.whenever
 import org.springframework.test.context.ActiveProfiles
-import pt.isel.ps.zcap.domain.tree.Tree
-import pt.isel.ps.zcap.domain.tree.TreeLevel
-import pt.isel.ps.zcap.domain.users.UserDataProfile
-import pt.isel.ps.zcap.domain.users.UserDataProfileDetail
-import pt.isel.ps.zcap.domain.users.UserDataProfileDetailId
-import pt.isel.ps.zcap.repository.dto.users.UserDataProfileDetailInputModel
 import pt.isel.ps.zcap.repository.models.trees.TreeLevelRepository
 import pt.isel.ps.zcap.repository.models.trees.TreeRepository
-import pt.isel.ps.zcap.repository.models.users.UserDataProfileDetailRepository
-import pt.isel.ps.zcap.repository.models.users.UserDataProfileRepository
-import pt.isel.ps.zcap.services.Success
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.*
+import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileDetailRepository
+import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileRepository
+import pt.isel.ps.zcap.services.users.userDataProfile.UserDataProfileDetailService
 
 @ExtendWith(MockitoExtension::class)
 @ActiveProfiles("test")

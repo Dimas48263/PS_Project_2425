@@ -113,7 +113,7 @@ class SettingsScreen extends StatelessWidget {
                         );
                       },
                     ),
-                    ListTile(
+/*                    ListTile(
                       title: Text('screen_settings_user_profiles'.tr()),
                       onTap: () {
                         Navigator.push(
@@ -122,7 +122,7 @@ class SettingsScreen extends StatelessWidget {
                               builder: (context) => const UserProfilesScreen()),
                         );
                       },
-                    ),
+                    ),*/
                     ListTile(
                       title: Text('screen_settings_user_access_data'.tr()),
                       onTap: () {

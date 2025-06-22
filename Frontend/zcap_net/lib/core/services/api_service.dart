@@ -36,7 +36,6 @@ class ApiService {
       url,
       headers: _headers(),
     );
-
     if (response.statusCode == 200) {
       final List<dynamic> decoded = jsonDecode(utf8.decode(response.bodyBytes));
       return decoded.map((item) => fromJson(item)).toList();

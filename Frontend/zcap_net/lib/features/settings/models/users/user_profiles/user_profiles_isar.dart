@@ -1,5 +1,9 @@
 import 'package:isar/isar.dart';
+import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
 
 part 'user_profiles_isar.g.dart';
@@ -19,6 +23,7 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
 
   @Index(type: IndexType.value)
   String name = "";
+  final accessAllowances = IsarLinks<UserProfileAccessAllowanceIsar>();
 
   DateTime startDate = DateTime(DateTime.now().year, 1, 1);
   DateTime? endDate;
@@ -77,10 +82,13 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
 
   // Método para converter para o modelo EntityType
   @override
-  UserProfile toEntity() {
+  UserProfile toEntity({
+    List<UserProfileAccessAllowanceIsar> allowances = const [],
+  }) {
     return UserProfile(
       remoteId: remoteId ?? -1,
       name: name,
+      accessAllowances: allowances.map((e) => e.toEntity()).toList(),
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
@@ -103,6 +111,8 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
   @override
   UserProfilesIsar setEntityIdAndSync(
       {int? remoteId, bool? isSynced, DateTime? lastUpdatedAt}) {
+    LogService.log(
+        'setEntityIdAndSync chamado com remoteId=$remoteId, isSynced=$isSynced');
     return UserProfilesIsar()
       ..id = id
       ..remoteId = remoteId ?? this.remoteId
@@ -112,5 +122,25 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
       ..createdAt = createdAt
       ..lastUpdatedAt = lastUpdatedAt ?? this.lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
+  }
+
+  static Future<void> saveAccessAllowances({
+    required UserProfilesIsar profile,
+    required List<UserProfileAccessAllowance> allowances,
+  }) async {
+      await profile.accessAllowances.reset();
+
+      for (final entity in allowances) {
+        LogService.log('Inside saveAccessAllowances');
+        final isarAllowance = UserProfileAccessAllowanceIsar.fromEntity(entity);
+        LogService.log(isarAllowance.toString());
+
+        isarAllowance.userProfile.value = profile;
+
+        await DatabaseService.db.userProfileAccessAllowanceIsars.put(isarAllowance);
+        profile.accessAllowances.add(isarAllowance);
+      }
+
+      await profile.accessAllowances.save();
   }
 }

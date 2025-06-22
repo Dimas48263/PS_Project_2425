@@ -21,6 +21,16 @@ IF EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'user
 		DROP TABLE users
 	END
 GO
+IF EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'userProfileAccessAllowance' and [TABLE_TYPE] = 'BASE TABLE')
+	BEGIN
+		DROP TABLE userProfileAccessAllowance
+	END
+GO
+IF EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'userProfileAccessKeys' and [TABLE_TYPE] = 'BASE TABLE')
+	BEGIN
+		DROP TABLE userProfileAccessKeys
+	END
+GO
 IF EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'userProfileDetails' and [TABLE_TYPE] = 'BASE TABLE')
 	BEGIN
 		DROP TABLE userProfileDetails
@@ -189,8 +199,8 @@ CREATE TABLE treeLevels (
     [description]	NVARCHAR(255) NULL,												-- Descrição opcional
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
-    [createdAt]      DATETIME NOT NULL,
-    [lastUpdatedAt]		DATETIME NOT NULL
+    [createdAt]     DATETIME NOT NULL,
+    [lastUpdatedAt]	DATETIME NOT NULL
 )
 	END
 GO
@@ -205,8 +215,8 @@ CREATE TABLE tree (
     parentId		BIGINT NULL REFERENCES tree(treeRecordId),						-- Região superior (NULL para País)
     startDate		DATE NOT NULL,
     endDate			DATE NULL,
-    [createdAt]      DATETIME NOT NULL,
-    [lastUpdatedAt]		DATETIME NOT NULL
+    [createdAt]     DATETIME NOT NULL,
+    [lastUpdatedAt]	DATETIME NOT NULL
 )
 	END
 GO
@@ -220,8 +230,8 @@ CREATE TABLE treeRecordDetailTypes (
     [unit]			NVARCHAR(50)  NULL,												-- Unidade de medida (ex: km², habitantes, €)
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
-    [createdAt]      DATETIME NOT NULL,
-    [lastUpdatedAt]		DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    [createdAt]     DATETIME NOT NULL,
+    [lastUpdatedAt]	DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 )
 	END
 GO
@@ -233,11 +243,11 @@ CREATE TABLE treeRecordDetails (
     [detailId]		BIGINT IDENTITY(1,1) PRIMARY KEY,
     [treeRecordId]	BIGINT NOT NULL REFERENCES tree(treeRecordId),					-- Qual região este detalhe pertence
     [detailTypeId]	BIGINT NOT NULL REFERENCES treeRecordDetailTypes(detailTypeId),	-- Tipo de detalhe
-    [valueCol]			NVARCHAR(255) NOT NULL,											-- O valor do detalhe (pode ser número, texto, etc.)
+    [valueCol]		NVARCHAR(255) NOT NULL,											-- O valor do detalhe (pode ser número, texto, etc.)
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
-    [createdAt]      DATETIME NOT NULL,
-    [lastUpdatedAt]		DATETIME NOT NULL
+    [createdAt]     DATETIME NOT NULL,
+    [lastUpdatedAt]	DATETIME NOT NULL
 )
 	END
 GO
@@ -251,8 +261,8 @@ CREATE TABLE treeLevelDetailType (
     [detailTypeId]	BIGINT NOT NULL REFERENCES treeRecordDetailTypes(detailTypeId),	-- Tipo de detalhe
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
-    [createdAt]      DATETIME NOT NULL,
-    [lastUpdatedAt]		DATETIME NOT NULL
+    [createdAt]     DATETIME NOT NULL,
+    [lastUpdatedAt]	DATETIME NOT NULL
 )
 	END
 GO
@@ -266,7 +276,7 @@ CREATE TABLE buildingTypes (
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,
-    [lastUpdatedAt]			DATETIME NOT NULL
+    [lastUpdatedAt]		DATETIME NOT NULL
 )
 	END
 GO
@@ -281,7 +291,7 @@ CREATE TABLE entityTypes (
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,
-    [lastUpdatedAt]			DATETIME NOT NULL
+    [lastUpdatedAt]		DATETIME NOT NULL
 )
 	END
 GO
@@ -300,7 +310,7 @@ CREATE TABLE entities (
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,
-    [lastUpdatedAt]			DATETIME NOT NULL
+    [lastUpdatedAt]		DATETIME NOT NULL
 )
 	END
 GO
@@ -321,7 +331,7 @@ CREATE TABLE zcaps (
     [startDate]			DATE			NOT NULL,
     [endDate]			DATE			NULL,
     [createdAt]			DATETIME		NOT NULL,
-    [lastUpdatedAt]			DATETIME		NOT NULL
+    [lastUpdatedAt]		DATETIME		NOT NULL
 )
 	END
 GO
@@ -347,7 +357,7 @@ CREATE TABLE detailTypeCategories (
     [startDate]				DATE NOT NULL,
     [endDate]				DATE NULL,
     [createdAt]				DATETIME NOT NULL,
-    [lastUpdatedAt]				DATETIME NOT NULL
+    [lastUpdatedAt]			DATETIME NOT NULL
 )
 	END
 GO
@@ -365,7 +375,7 @@ CREATE TABLE zcapDetailTypes (
     [startDate]				DATE NOT NULL,
     [endDate]				DATE NULL,
     [createdAt]				DATETIME NOT NULL,
-    [lastUpdatedAt]				DATETIME NOT NULL
+    [lastUpdatedAt]			DATETIME NOT NULL
 )
 	END
 GO
@@ -383,7 +393,7 @@ CREATE TABLE zcapDetails (
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,
-    [lastUpdatedAt]			DATETIME NOT NULL)
+    [lastUpdatedAt]		DATETIME NOT NULL)
 	END
 GO
 --/*** END: ZCAPDETAILS ***/
@@ -396,7 +406,7 @@ CREATE TABLE departureDestination(	-- outra ZCAP, casa de familiares, residencia
 	[startDate]					DATE			NOT NULL,
 	[endDate]					DATE			NULL,
 	[createdAt]					DATETIME		NOT NULL,
-    [lastUpdatedAt]					DATETIME		NOT NULL
+    [lastUpdatedAt]				DATETIME		NOT NULL
 )
 	END
 GO
@@ -422,7 +432,7 @@ CREATE TABLE persons (
 	[departureDestinationId] 	BIGINT 			NULL REFERENCES departureDestination(departureDestinationId),
 	[destinationContact]		INT 			NULL,
 	[createdAt]					DATETIME NOT NULL,
-    [lastUpdatedAt]					DATETIME NOT NULL
+    [lastUpdatedAt]				DATETIME NOT NULL
 )
 	END
 GO
@@ -438,7 +448,7 @@ CREATE TABLE specialNeeds(  -- gravidez, medicamentos, doença...
 	[startDate]		DATE			NOT NULL,
 	[endDate]		DATE			NULL,
 	[createdAt]     DATETIME		NOT NULL,
-    [lastUpdatedAt]		DATETIME		NOT NULL
+    [lastUpdatedAt]	DATETIME		NOT NULL
 )
 	END
 GO
@@ -453,7 +463,7 @@ CREATE TABLE personSpecialNeeds(
 	[startDate]				DATE			NOT NULL,
 	[endDate]				DATE			NULL,
 	[createdAt]				DATETIME		NOT NULL,
-    [lastUpdatedAt]				DATETIME		NOT NULL
+    [lastUpdatedAt]			DATETIME		NOT NULL
 )
 	END
 GO
@@ -466,7 +476,7 @@ CREATE TABLE supportNeeded( -- alojamento, comida, vestuario
 	[startDate]			DATE			NOT NULL,
 	[endDate]			DATE			NULL,
 	[createdAt]			DATETIME		NOT NULL,
-    [lastUpdatedAt]			DATETIME		NOT NULL
+    [lastUpdatedAt]		DATETIME		NOT NULL
 )
 	END
 GO
@@ -475,13 +485,13 @@ IF NOT EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '
 	BEGIN
 CREATE TABLE personSupportNeeded(
 	[personSupportNeededId]		BIGINT IDENTITY(1,1) PRIMARY KEY,
-	[personId]					BIGINT NOT NULL REFERENCES persons(personId),
-	[supportNeededId]			BIGINT NOT NULL REFERENCES supportNeeded(supportNeededId),
-	[description]				NVARCHAR(255) NULL, -- caso de outro? descriçao:
+	[personId]					BIGINT			NOT NULL REFERENCES persons(personId),
+	[supportNeededId]			BIGINT			NOT NULL REFERENCES supportNeeded(supportNeededId),
+	[description]				NVARCHAR(255)	NULL, -- caso de outro? descriçao:
 	[startDate]					DATE			NOT NULL,
 	[endDate]					DATE			NULL,
-	[createdAt]					DATETIME NOT NULL,
-    [lastUpdatedAt]					DATETIME NOT NULL
+	[createdAt]					DATETIME		NOT NULL,
+    [lastUpdatedAt]				DATETIME		NOT NULL
 )
 	END
 GO
@@ -494,11 +504,11 @@ IF NOT EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '
 	BEGIN
 CREATE TABLE relationType (		-- mae, pai, filho, irmao, conjuge...
     [relationTypeId] 	BIGINT IDENTITY(1,1) PRIMARY KEY,
-    [name] NVARCHAR(50)					NOT NULL ,
+    [name]				NVARCHAR(50)	NOT NULL ,
 	[startDate]			DATE			NOT NULL,
 	[endDate]			DATE			NULL,
 	[createdAt]			DATETIME		NOT NULL,
-    [lastUpdatedAt]			DATETIME		NOT NULL
+    [lastUpdatedAt]		DATETIME		NOT NULL
 )
 	END
 GO
@@ -525,7 +535,7 @@ CREATE TABLE incidentTypes (
 	[startDate]				DATE			NOT NULL,
     [endDate]				DATE			NULL,
     [createdAt]				DATETIME		NOT NULL,
-    [lastUpdatedAt]				DATETIME		NOT NULL
+    [lastUpdatedAt]			DATETIME		NOT NULL
 )
 
 --/*** END: INCIDENTTYPES ***/
@@ -538,7 +548,7 @@ CREATE TABLE incidents (
 	[startDate]				DATE		NOT NULL,
     [endDate]				DATE		NULL,
     [createdAt]				DATETIME	NOT NULL,
-    [lastUpdatedAt]				DATETIME	NOT NULL
+    [lastUpdatedAt]			DATETIME	NOT NULL
 )
 
 --/*** END: INCIDENTS ***/
@@ -553,7 +563,7 @@ CREATE TABLE incidentZcaps(
 	[startDate]				DATE				NOT NULL,
     [endDate]				DATE				NULL,
     [createdAt]				DATETIME			NOT NULL,
-    [lastUpdatedAt]				DATETIME			NOT NULL
+    [lastUpdatedAt]			DATETIME			NOT NULL
 )
 --/*** END: INCIDENTZCAPS ***/
 
@@ -566,7 +576,7 @@ CREATE TABLE incidentZcapPersons (
 	[startDate]				DATE		NOT NULL,
     [endDate]				DATE		NULL,
     [createdAt]				DATETIME	NOT NULL,
-    [lastUpdatedAt]				DATETIME	NOT NULL
+    [lastUpdatedAt]			DATETIME	NOT NULL
 )
 
 --/*** END: INCIDENTPERSONS ***/
@@ -578,7 +588,7 @@ CREATE TABLE userDataProfiles (
 	[startDate]				DATE			NOT NULL,
 	[endDate]				DATE			NULL,
 	[createdAt]				DATETIME		NOT NULL,
-	[lastUpdatedAt]				DATETIME		NOT NULL
+	[lastUpdatedAt]			DATETIME		NOT NULL
 )
 
 --/*** END: USERDATAPROFILES ***/
@@ -601,20 +611,41 @@ CREATE TABLE userProfiles (
 	[startDate]				DATE			NOT NULL,
 	[endDate]				DATE			NULL,
 	[createdAt]				DATETIME		NOT NULL,
-	[lastUpdatedAt]				DATETIME		NOT NULL
+	[lastUpdatedAt]			DATETIME		NOT NULL
 )
 
 --/*** END: USERPROFILES ***/
 
 --/*** START: USERPROFILEDETAILS ***/
 /* NOT TO BE IMPLEMENTED YET, SHOULD REPRESENT ACCESS TO APP OPTIONS*/
+/*
+* Replaced whith new tables: userProfileAccessKeys and userProfileAccessAllowance
 CREATE TABLE userProfileDetails (
 	[userProfileDetailId]	BIGINT		IDENTITY(1,1) PRIMARY KEY,
 	[name]					NVARCHAR(255)	NOT NULL,
 	[accessValue]			INT	NOT NULL,	-- represents a code inside app that gives access to that option
 	[accessType]			INT	NOT NULL	-- different value to represent CRUD permissions
 )
+*/
+CREATE TABLE [userProfileAccessKeys](
+	[userProfileAccessKeyId]	[bigint] IDENTITY(1,1) PRIMARY KEY,
+	[accessKey]					[nvarchar](255) NOT NULL,
+	[description]				[nvarchar](2000) NOT NULL,
+	[createdAt]					DATETIME		NOT NULL,
+	[lastUpdatedAt]				DATETIME		NOT NULL
 
+	)
+
+
+CREATE TABLE [userProfileAccessAllowance](
+	[userProfileAccessAllowanceId]	[bigint]	IDENTITY(1,1) PRIMARY KEY,
+	[userProfileId]					[bigint]	NOT NULL REFERENCES userProfiles(userProfileId),
+	[userProfileAccessKeyId]		[bigint]	NOT NULL REFERENCES userProfileAccessKeys(userProfileAccessKeyId),
+	[accessType]					[int]		NOT NULL,
+	[createdAt]						DATETIME	NOT NULL,
+	[lastUpdatedAt]					DATETIME	NOT NULL
+
+	)
 --/*** END: USERPROFILEDETAILS ***/
 
 
@@ -630,7 +661,7 @@ CREATE TABLE users (
 	[startDate]				DATE			NOT NULL,
 	[endDate]				DATE			NULL,
 	[createdAt]				DATETIME		NOT NULL,
-	[lastUpdatedAt]				DATETIME		NOT NULL
+	[lastUpdatedAt]			DATETIME		NOT NULL
 )
 
 --/*** END: USERS ***/

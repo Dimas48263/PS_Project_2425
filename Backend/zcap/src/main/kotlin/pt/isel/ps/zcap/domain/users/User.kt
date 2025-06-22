@@ -1,6 +1,8 @@
 package pt.isel.ps.zcap.domain.users
 
 import jakarta.persistence.*
+import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfile
+import pt.isel.ps.zcap.domain.users.userProfile.UserProfile
 import java.time.LocalDate
 import java.time.LocalDateTime
 

@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
-import pt.isel.ps.zcap.domain.users.UserDataProfile
-import pt.isel.ps.zcap.repository.models.users.UserDataProfileRepository
+import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfile
+import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileRepository
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

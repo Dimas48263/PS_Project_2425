@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
@@ -54,6 +56,11 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DropdownMenuItem(value: 'Users', child: Text("Users")),
                 DropdownMenuItem(
                     value: 'UserProfiles', child: Text("User Profiles")),
+                DropdownMenuItem(
+                    value: 'UserAccessKeys', child: Text("User Access Keys")),
+                DropdownMenuItem(
+                    value: 'UserAccessAllowances',
+                    child: Text("User Access Allowances")),
                 DropdownMenuItem(
                     value: 'EntityTypes', child: Text("Entity Types")),
                 DropdownMenuItem(value: 'Entities', child: Text("Entities")),
@@ -311,6 +318,73 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                         DataCell(Text(smallDate.format(e.createdAt))),
                         DataCell(Text(fullDate.format(e.lastUpdatedAt))),
                         DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+
+      case 'UserAccessKeys':
+        return FutureBuilder<List<UserAccessKeysIsar>>(
+          future: isar.userAccessKeysIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("Local ID")),
+                DataColumn(label: Text("Remote Id")),
+                DataColumn(label: Text("Key name")),
+                DataColumn(label: Text("Descriprion")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.accessKey)),
+                        DataCell(Text(e.description)),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+
+      case 'UserAccessAllowances':
+        return FutureBuilder<List<UserProfileAccessAllowanceIsar>>(
+          future: () async {
+            final profiles = await isar.userProfilesIsars.where().findAll();
+            final List<UserProfileAccessAllowanceIsar> allAllowances = [];
+            for (final profile in profiles) {
+              await profile.accessAllowances.load();
+              allAllowances.addAll(profile.accessAllowances);
+            }
+            return allAllowances;
+          }(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("UserProfileId")),
+                DataColumn(label: Text("AccessKeyId")),
+                DataColumn(label: Text("Access Type")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(
+                            Text(e.userProfile.value?.id.toString() ?? '')),
+                        DataCell(Text(e.userProfileAccessKeyId.toString())),
+                        DataCell(Text(e.accessType.toString())),
                       ]))
                   .toList(),
             );

@@ -15,11 +15,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pt.isel.ps.zcap.domain.persons.DepartureDestination
 import pt.isel.ps.zcap.domain.users.User
-import pt.isel.ps.zcap.domain.users.UserDataProfile
-import pt.isel.ps.zcap.domain.users.UserProfile
+import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfile
+import pt.isel.ps.zcap.domain.users.userProfile.UserProfile
 import pt.isel.ps.zcap.repository.models.persons.DepartureDestinationRepository
-import pt.isel.ps.zcap.repository.models.users.UserDataProfileRepository
-import pt.isel.ps.zcap.repository.models.users.UserProfileRepository
+import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileRepository
+import pt.isel.ps.zcap.repository.models.users.userProfile.UserProfileRepository
 import pt.isel.ps.zcap.repository.models.users.UserRepository
 import pt.isel.ps.zcap.utils.PasswordEncoder
 import java.time.LocalDate

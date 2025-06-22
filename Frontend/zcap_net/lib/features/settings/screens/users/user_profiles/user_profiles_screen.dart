@@ -1,9 +1,15 @@
+/*
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/acess_type.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
+import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_access_screen.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
 
@@ -176,10 +182,26 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
     );
   }
 
-  void _addOrEditUserProfile({UserProfilesIsar? userProfile}) {
+  Future<void> _addOrEditUserProfile({UserProfilesIsar? userProfile}) async {
     final nameController = TextEditingController(text: userProfile?.name ?? "");
     DateTime selectedStartDate = userProfile?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = userProfile?.endDate;
+    List<UserProfileDetail> profileDetails = [];
+
+    if (userProfile != null) {
+      profileDetails = await DatabaseService.db.userProfileDetails
+          .filter()
+          .userProfile((q) => q.idEqualTo(userProfile.id))
+          .findAll();
+    } else {
+      // Default "none" for all access
+      profileDetails = UserAcccess.values.map((access) {
+        final detail = UserProfileDetail()
+          ..permissionKey = access
+          ..accessType = AccessType.none;
+        return detail;
+      }).toList();
+    }
 
     final formKey = GlobalKey<FormState>();
 
@@ -208,6 +230,39 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                             }
                             return null;
                           },
+                        ),
+                        const SizedBox(height: 12.0),
+                        TextButton(
+                          onPressed: () async {
+                            await showDialog(
+                              context: context,
+                              builder: (context) {
+                                return AlertDialog(
+                                  title: Text('user_access_definitions'.tr()),
+                                  content: SizedBox(
+                                    height: 400, // ou outro valor adequado
+                                    width:
+                                        500, // opcional, para evitar overflow horizontal
+                                    child: UserAccessEditor(
+                                      details: profileDetails,
+                                      onChanged: (detail, newType) {
+                                        detail.accessType = newType;
+                                      },
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () =>
+                                          Navigator.of(context).pop(),
+                                      child: Text('close'.tr()),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            setModalState(() {});
+                          },
+                          child: Text('user_access_definitions'.tr()),
                         ),
                         const SizedBox(
                           height: 12.0,
@@ -254,6 +309,27 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
 
                           await DatabaseService.db.userProfilesIsars
                               .put(editedUserProfile);
+
+                          if (userProfile != null) {
+                            final oldDetails = await DatabaseService
+                                .db.userProfileDetails
+                                .filter()
+                                .userProfile(
+                                    (q) => q.idEqualTo(userProfile.id))
+                                .findAll();
+
+                            for (final d in oldDetails) {
+                              await DatabaseService.db.userProfileDetails
+                                  .delete(d.id);
+                            }
+                          }
+
+                          for (var detail in profileDetails) {
+                            detail.userProfile.value = editedUserProfile;
+                            await DatabaseService.db.userProfileDetails
+                                .put(detail);
+                            await detail.userProfile.save();
+                          }
                         });
 
                         navigator.pop();
@@ -268,3 +344,4 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
         });
   }
 }
+*/

@@ -3,14 +3,16 @@ package pt.isel.ps.zcap.services.users
 import io.jsonwebtoken.Jwts
 import org.springframework.stereotype.Service
 import pt.isel.ps.zcap.domain.users.User
-import pt.isel.ps.zcap.domain.users.UserDataProfile
-import pt.isel.ps.zcap.domain.users.UserProfile
+import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfile
+import pt.isel.ps.zcap.domain.users.userProfile.UserProfile
 import pt.isel.ps.zcap.repository.dto.users.*
 import pt.isel.ps.zcap.repository.models.users.UserRepository
 import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.failure
 import pt.isel.ps.zcap.services.success
+import pt.isel.ps.zcap.services.users.userDataProfile.UserDataProfileService
+import pt.isel.ps.zcap.services.users.userProfile.UserProfileServiceV1
 import pt.isel.ps.zcap.utils.JwtConfig
 import pt.isel.ps.zcap.utils.PasswordEncoder
 import java.time.LocalDate
@@ -21,7 +23,7 @@ import kotlin.jvm.optionals.getOrNull
 @Service
 class UserService(
     private val userRepository: UserRepository,
-    private val userProfileService: UserProfileService,
+    private val userProfileService: UserProfileServiceV1,
     private val userDataProfileService: UserDataProfileService,
     private val passwordEncoder: PasswordEncoder,
     private val jwtConfig: JwtConfig

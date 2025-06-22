@@ -86,7 +86,14 @@ const UserProfilesIsarSchema = CollectionSchema(
       ],
     )
   },
-  links: {},
+  links: {
+    r'accessAllowances': LinkSchema(
+      id: -3359955356963587862,
+      name: r'accessAllowances',
+      target: r'UserProfileAccessAllowanceIsar',
+      single: false,
+    )
+  },
   embeddedSchemas: {},
   getId: _userProfilesIsarGetId,
   getLinks: _userProfilesIsarGetLinks,
@@ -168,12 +175,17 @@ Id _userProfilesIsarGetId(UserProfilesIsar object) {
 }
 
 List<IsarLinkBase<dynamic>> _userProfilesIsarGetLinks(UserProfilesIsar object) {
-  return [];
+  return [object.accessAllowances];
 }
 
 void _userProfilesIsarAttach(
     IsarCollection<dynamic> col, Id id, UserProfilesIsar object) {
   object.id = id;
+  object.accessAllowances.attach(
+      col,
+      col.isar.collection<UserProfileAccessAllowanceIsar>(),
+      r'accessAllowances',
+      id);
 }
 
 extension UserProfilesIsarQueryWhereSort
@@ -1052,7 +1064,69 @@ extension UserProfilesIsarQueryObject
     on QueryBuilder<UserProfilesIsar, UserProfilesIsar, QFilterCondition> {}
 
 extension UserProfilesIsarQueryLinks
-    on QueryBuilder<UserProfilesIsar, UserProfilesIsar, QFilterCondition> {}
+    on QueryBuilder<UserProfilesIsar, UserProfilesIsar, QFilterCondition> {
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      accessAllowances(FilterQuery<UserProfileAccessAllowanceIsar> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'accessAllowances');
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      accessAllowancesLengthEqualTo(int length) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'accessAllowances', length, true, length, true);
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      accessAllowancesIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'accessAllowances', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      accessAllowancesIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'accessAllowances', 0, false, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      accessAllowancesLengthLessThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'accessAllowances', 0, true, length, include);
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      accessAllowancesLengthGreaterThan(
+    int length, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'accessAllowances', length, include, 999999, true);
+    });
+  }
+
+  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
+      accessAllowancesLengthBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(
+          r'accessAllowances', lower, includeLower, upper, includeUpper);
+    });
+  }
+}
 
 extension UserProfilesIsarQuerySortBy
     on QueryBuilder<UserProfilesIsar, UserProfilesIsar, QSortBy> {

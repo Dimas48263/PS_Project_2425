@@ -8,13 +8,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 import pt.isel.ps.zcap.domain.tree.Tree
 import pt.isel.ps.zcap.domain.tree.TreeLevel
-import pt.isel.ps.zcap.domain.users.UserDataProfile
-import pt.isel.ps.zcap.domain.users.UserDataProfileDetail
-import pt.isel.ps.zcap.domain.users.UserDataProfileDetailId
+import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfile
+import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfileDetail
+import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfileDetailId
 import pt.isel.ps.zcap.repository.models.trees.TreeLevelRepository
 import pt.isel.ps.zcap.repository.models.trees.TreeRepository
-import pt.isel.ps.zcap.repository.models.users.UserDataProfileDetailRepository
-import pt.isel.ps.zcap.repository.models.users.UserDataProfileRepository
+import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileDetailRepository
+import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

@@ -1,5 +1,7 @@
 package pt.isel.ps.zcap.repository.dto.users
 
+import pt.isel.ps.zcap.repository.dto.users.userDataProfile.UserDataProfileOutputModel
+import pt.isel.ps.zcap.repository.dto.users.userProfile.UserProfileOutputModel
 import java.time.LocalDate
 import java.time.LocalDateTime
 
