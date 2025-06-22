@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:zcap_net_app/core/services/app_config.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
@@ -17,7 +18,6 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_lev
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 
 class CollectionSchemaEntry {
@@ -34,18 +34,31 @@ class DatabaseService {
   static late final Isar db;
 
   static final List<CollectionSchemaEntry> collectionSchemas = [
+
+/* ZCAPS */
     CollectionSchemaEntry(BuildingTypesIsarSchema,
         (db) => db.buildingTypesIsars, 'buildingTypes', 'buildingTypeId'),
+
+/* Incidents */
+    CollectionSchemaEntry(IncidentTypeIsarSchema,
+        (db) => db.incidentTypeIsars, 'incident-types', 'incidentTypeId'),
+
+/* Support Tables */
     CollectionSchemaEntry(
         EntitiesIsarSchema, (db) => db.entitiesIsars, 'entities', 'entityId'),
     CollectionSchemaEntry(EntityTypeIsarSchema, (db) => db.entityTypeIsars,
         'entity-types', 'entityTypeId'),
+
+/* Persons */
     CollectionSchemaEntry(RelationTypeIsarSchema, (db) => db.relationTypeIsars,
         'relation-type', 'relationTypeId'),
     CollectionSchemaEntry(SpecialNeedIsarSchema, (db) => db.specialNeedIsars,
         'special-needs', 'specialNeedId'),
     CollectionSchemaEntry(SupportNeededIsarSchema,
         (db) => db.supportNeededIsars, 'support-needed', 'supportNeededId'),
+
+
+/* Users */
     CollectionSchemaEntry(
         UsersIsarSchema, (db) => db.usersIsars, 'users', 'userId'),
     CollectionSchemaEntry(UserProfilesIsarSchema, (db) => db.userProfilesIsars,
@@ -60,6 +73,8 @@ class DatabaseService {
         (db) => db.userAccessKeysIsars,
         'users/access-keys',
         'userProfileAccessKeyId'),
+
+/* TREE */
     CollectionSchemaEntry(
         TreeIsarSchema, (db) => db.treeIsars, 'trees', 'treeId'),
     CollectionSchemaEntry(TreeLevelIsarSchema, (db) => db.treeLevelIsars,

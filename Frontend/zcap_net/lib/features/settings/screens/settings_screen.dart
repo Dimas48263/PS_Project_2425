@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
+import 'package:zcap_net_app/features/settings/screens/incidents/incident_types/incident_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/needs/special_needs_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/relation_type/relation_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/support/special_needs_screen.dart';
@@ -87,6 +88,27 @@ class SettingsScreen extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) =>
                               const TreeLevelDetailTypeScreen()),
+                    );
+                  },
+                ),
+              ],
+            ),
+            const Divider(),
+
+            /* Incident tables */
+            ExpansionTile(
+              title: Text('screen_settings_incidents'.tr()),
+              leading: const Icon(Icons.report_problem_outlined),
+              childrenPadding:
+                  EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              children: [
+                ListTile(
+                  title: Text('screen_settings_incident_types'.tr()),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const IncidentTypesScreen()),
                     );
                   },
                 ),

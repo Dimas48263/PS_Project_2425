@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/text_controllers_input_form.dart';
+import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:intl/intl.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys_isar.dart';
@@ -66,6 +67,8 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                 DropdownMenuItem(value: 'Entities', child: Text("Entities")),
                 DropdownMenuItem(
                     value: 'BuildingTypes', child: Text("Building Types")),
+                 DropdownMenuItem(
+                    value: 'IncidentTypes', child: Text("Incident Types")),
                 DropdownMenuItem(
                     value: 'RelationTypes', child: Text("Relation Types")),
                 DropdownMenuItem(
@@ -473,6 +476,42 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
       case 'BuildingTypes':
         return FutureBuilder<List<BuildingTypesIsar>>(
           future: isar.buildingTypesIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("RemoteId")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(smallDate.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? smallDate.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+
+      case 'IncidentTypes':
+        return FutureBuilder<List<IncidentTypesIsar>>(
+          future: isar.incidentTypeIsars.where().findAll(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return const Center(child: CircularProgressIndicator());

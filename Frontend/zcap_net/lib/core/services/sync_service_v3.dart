@@ -3,6 +3,8 @@ import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs.dart';
@@ -327,6 +329,23 @@ final List<SyncEntry> syncEntries = [
         await tldtIsar.detailType.save();
         await tldtIsar.treeLevel.save();
       }),
+/**
+ * Incidents
+ */
+  SyncEntry<IncidentTypesIsar, IncidentTypes>(
+      endpoint: 'incident-types',
+      getCollection: (isar) => isar.incidentTypeIsars,
+      idName: 'incidentTypeId',
+      fromJson: IncidentTypes.fromJson,
+      toIsar: (ApiTable incidentType) async =>
+          IncidentTypesIsar.toRemote(incidentType as IncidentTypes),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<IncidentTypesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+
   /**
        * Support Tables
        */
