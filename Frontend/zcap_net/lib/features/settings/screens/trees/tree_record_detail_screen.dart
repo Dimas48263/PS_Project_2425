@@ -153,10 +153,26 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       if (!detail.detailType.isLoaded) await detail.detailType.load();
       if (!detail.tree.isLoaded) await detail.tree.load();
     }
-    final availableTrees = await DatabaseService.db.treeIsars.where().findAll();
-    final treeLevelDetailTypes = await DatabaseService.db.treeLevelDetailTypeIsars.where().findAll();
-    final availableDetailTypes =
-        await DatabaseService.db.treeRecordDetailTypeIsars.where().findAll();
+    final availableTrees = await DatabaseService.db.treeIsars
+        .filter()
+        .startDateLessThan(DateTime.now())
+        .and()
+        .group((q) => q.endDateIsNull().or().endDateGreaterThan(DateTime.now()))
+        .findAll();
+    final treeLevelDetailTypes = await DatabaseService
+        .db.treeLevelDetailTypeIsars
+        .filter()
+        .startDateLessThan(DateTime.now())
+        .and()
+        .group((q) => q.endDateIsNull().or().endDateGreaterThan(DateTime.now()))
+        .findAll();
+    final availableDetailTypes = await DatabaseService
+        .db.treeRecordDetailTypeIsars
+        .filter()
+        .startDateLessThan(DateTime.now())
+        .and()
+        .group((q) => q.endDateIsNull().or().endDateGreaterThan(DateTime.now()))
+        .findAll();
 
     final valueController = TextEditingController(text: detail?.valueCol ?? '');
     TreeIsar? tree = detail?.tree.value;
@@ -164,8 +180,12 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     DateTime? startDate = detail?.startDate ?? DateTime.now();
     DateTime? endDate = detail?.endDate;
 
-    List<int> availableTreeLevelIds = detailType != null ? 
-      treeLevelDetailTypes.where((e) => e.detailType.value!.id == detailType!.id).map((element) => element.treeLevel.value!.id).toList() : [];
+    List<int> availableTreeLevelIds = detailType != null
+        ? treeLevelDetailTypes
+            .where((e) => e.detailType.value!.id == detailType!.id)
+            .map((element) => element.treeLevel.value!.id)
+            .toList()
+        : [];
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
@@ -200,17 +220,23 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                     setModalState(() {
                       detailType = value;
                       tree = null;
-                      availableTreeLevelIds = treeLevelDetailTypes.where((e) => e.detailType.value!.id == detailType!.id).map((element) => element.treeLevel.value!.id).toList();
+                      availableTreeLevelIds = treeLevelDetailTypes
+                          .where(
+                              (e) => e.detailType.value!.id == detailType!.id)
+                          .map((element) => element.treeLevel.value!.id)
+                          .toList();
                     });
                   },
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null),
               customDropdownSearch<TreeIsar>(
                   enabled: detailType != null,
-                  items: detailType != null ? 
-                    availableTrees.where( 
-                      (t) => availableTreeLevelIds.contains(t.treeLevel.value!.id)
-                    ).toList() : [],
+                  items: detailType != null
+                      ? availableTrees
+                          .where((t) => availableTreeLevelIds
+                              .contains(t.treeLevel.value!.id))
+                          .toList()
+                      : [],
                   selectedItem: tree,
                   onSelected: (TreeIsar? value) {
                     setModalState(() {

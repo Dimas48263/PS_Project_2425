@@ -77,6 +77,32 @@ const TreeRecordDetailTypeIsarSchema = CollectionSchema(
           caseSensitive: false,
         )
       ],
+    ),
+    r'startDate': IndexSchema(
+      id: 7723980484494730382,
+      name: r'startDate',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'startDate',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
+    r'endDate': IndexSchema(
+      id: 422088669960424970,
+      name: r'endDate',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'endDate',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
     )
   },
   links: {},
@@ -189,6 +215,24 @@ extension TreeRecordDetailTypeIsarQueryWhereSort on QueryBuilder<
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'remoteId'),
+      );
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar, QAfterWhere>
+      anyStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'startDate'),
+      );
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar, QAfterWhere>
+      anyEndDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'endDate'),
       );
     });
   }
@@ -374,6 +418,214 @@ extension TreeRecordDetailTypeIsarQueryWhere on QueryBuilder<
         lower: [lowerRemoteId],
         includeLower: includeLower,
         upper: [upperRemoteId],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> startDateEqualTo(DateTime startDate) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'startDate',
+        value: [startDate],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> startDateNotEqualTo(DateTime startDate) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'startDate',
+              lower: [],
+              upper: [startDate],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'startDate',
+              lower: [startDate],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'startDate',
+              lower: [startDate],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'startDate',
+              lower: [],
+              upper: [startDate],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> startDateGreaterThan(
+    DateTime startDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'startDate',
+        lower: [startDate],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> startDateLessThan(
+    DateTime startDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'startDate',
+        lower: [],
+        upper: [startDate],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> startDateBetween(
+    DateTime lowerStartDate,
+    DateTime upperStartDate, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'startDate',
+        lower: [lowerStartDate],
+        includeLower: includeLower,
+        upper: [upperStartDate],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> endDateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'endDate',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> endDateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'endDate',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> endDateEqualTo(DateTime? endDate) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'endDate',
+        value: [endDate],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> endDateNotEqualTo(DateTime? endDate) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'endDate',
+              lower: [],
+              upper: [endDate],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'endDate',
+              lower: [endDate],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'endDate',
+              lower: [endDate],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'endDate',
+              lower: [],
+              upper: [endDate],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> endDateGreaterThan(
+    DateTime? endDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'endDate',
+        lower: [endDate],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> endDateLessThan(
+    DateTime? endDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'endDate',
+        lower: [],
+        upper: [endDate],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
+      QAfterWhereClause> endDateBetween(
+    DateTime? lowerEndDate,
+    DateTime? upperEndDate, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'endDate',
+        lower: [lowerEndDate],
+        includeLower: includeLower,
+        upper: [upperEndDate],
         includeUpper: includeUpper,
       ));
     });

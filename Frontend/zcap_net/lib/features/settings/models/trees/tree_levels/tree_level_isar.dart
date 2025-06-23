@@ -15,7 +15,9 @@ class TreeLevelIsar implements IsarTable<TreeLevel> {
   late int levelId;
   late String name;
   String? description;
+  @Index()
   late DateTime startDate;
+  @Index()
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override

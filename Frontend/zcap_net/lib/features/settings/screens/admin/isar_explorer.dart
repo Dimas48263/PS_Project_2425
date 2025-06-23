@@ -511,7 +511,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
 
       case 'IncidentTypes':
         return FutureBuilder<List<IncidentTypesIsar>>(
-          future: isar.incidentTypeIsars.where().findAll(),
+          future: isar.incidentTypesIsars.where().findAll(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return const Center(child: CircularProgressIndicator());

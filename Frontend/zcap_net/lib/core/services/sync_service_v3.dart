@@ -31,6 +31,8 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 
 class SyncServiceV3 {
   final Isar isar;
@@ -334,7 +336,7 @@ final List<SyncEntry> syncEntries = [
  */
   SyncEntry<IncidentTypesIsar, IncidentTypes>(
       endpoint: 'incident-types',
-      getCollection: (isar) => isar.incidentTypeIsars,
+      getCollection: (isar) => isar.incidentTypesIsars,
       idName: 'incidentTypeId',
       fromJson: IncidentTypes.fromJson,
       toIsar: (ApiTable incidentType) async =>
@@ -428,6 +430,19 @@ final List<SyncEntry> syncEntries = [
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<BuildingTypesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<DetailTypeCategoriesIsar, DetailTypeCategories>(
+      endpoint: 'detail-type-categories',
+      getCollection: (isar) => isar.detailTypeCategoriesIsars,
+      idName: 'detailTypeCategoryId',
+      fromJson: DetailTypeCategories.fromJson,
+      toIsar: (ApiTable category) async =>
+          DetailTypeCategoriesIsar.fromEntity(category as DetailTypeCategories),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<DetailTypeCategoriesIsar>)
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),

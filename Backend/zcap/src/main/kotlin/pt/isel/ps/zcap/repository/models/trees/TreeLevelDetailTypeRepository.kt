@@ -1,5 +1,6 @@
 package pt.isel.ps.zcap.repository.models.trees
 
+import jakarta.transaction.Transactional
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
@@ -8,6 +9,7 @@ import pt.isel.ps.zcap.domain.tree.TreeLevelDetailType
 import java.time.LocalDate
 
 @Repository
+@Transactional
 interface TreeLevelDetailTypeRepository: JpaRepository<TreeLevelDetailType, Long> {
     @Query(
         """

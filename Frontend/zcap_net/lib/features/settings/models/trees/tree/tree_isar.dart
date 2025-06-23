@@ -18,7 +18,9 @@ class TreeIsar extends IsarTable<Tree> {
   late String name;
   IsarLink<TreeLevelIsar> treeLevel = IsarLink<TreeLevelIsar>();
   IsarLink<TreeIsar> parent = IsarLink<TreeIsar>();
+  @Index()
   late DateTime startDate;
+  @Index()
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override
