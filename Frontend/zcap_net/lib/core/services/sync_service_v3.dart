@@ -31,6 +31,8 @@ import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 
 class SyncServiceV3 {
   final Isar isar;
@@ -457,6 +459,22 @@ final List<SyncEntry> syncEntries = [
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<UserAccessKeysIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+
+  /**
+ * ZCAPS
+ */
+  SyncEntry<ZcapIsar, Zcap>(
+      endpoint: 'zcaps',
+      getCollection: (isar) => isar.zcapIsars,
+      idName: 'zcapId',
+      fromJson: Zcap.fromJson,
+      toIsar: (ApiTable zcap) async => ZcapIsar.toRemote(zcap as Zcap),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<ZcapIsar>)
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),

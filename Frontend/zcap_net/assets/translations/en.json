@@ -103,6 +103,8 @@
   "screen_support_needed_type": "Support needed",
   "screen_support_needed_name": "Support needed description",
   "screen_user_username": "Username",
+  "screen_zcap": "ZCAP",
+  "screen_zcap_name": "ZCAP Name",
   "screen_zcaps": "ZCAPS",
   "search": "Search",
   "search_by": "Search by",

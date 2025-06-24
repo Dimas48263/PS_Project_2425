@@ -68,19 +68,19 @@ class EntitiesIsar implements IsarTable<Entity> {
   }
 
   @override
-  Future<void> updateFromApiEntity(Entity entity) async {
-    remoteId = entity.remoteId;
-    name = entity.name;
-    email = entity.email;
-    phone1 = entity.phone1;
-    phone2 = entity.phone2;
-    startDate = entity.startDate;
-    endDate = entity.endDate;
-    createdAt = entity.createdAt;
-    lastUpdatedAt = entity.lastUpdatedAt;
+  Future<void> updateFromApiEntity(Entity e) async {
+    remoteId = e.remoteId;
+    name = e.name;
+    email = e.email;
+    phone1 = e.phone1;
+    phone2 = e.phone2;
+    startDate = e.startDate;
+    endDate = e.endDate;
+    createdAt = e.createdAt;
+    lastUpdatedAt = e.lastUpdatedAt;
     isSynced = true;
 
-    final entType = await findOrBuildEntityType(entity.entityType);
+    final entType = await findOrBuildEntityType(e.entityType);
     DatabaseService.db.writeTxn(() async {
       entityType.value = entType;
       await entityType.save();
@@ -105,20 +105,20 @@ class EntitiesIsar implements IsarTable<Entity> {
     return newI;
   }
 
-  static Future<EntitiesIsar> fromEntity(Entity entity) async {
+  static Future<EntitiesIsar> fromEntity(Entity e) async {
     final isarEntity = EntitiesIsar()
-      ..remoteId = entity.remoteId
-      ..name = entity.name
-      ..email = entity.email
-      ..phone1 = entity.phone1
-      ..phone2 = entity.phone2
-      ..startDate = entity.startDate
-      ..endDate = entity.endDate
-      ..createdAt = entity.createdAt
-      ..lastUpdatedAt = entity.lastUpdatedAt
+      ..remoteId = e.remoteId
+      ..name = e.name
+      ..email = e.email
+      ..phone1 = e.phone1
+      ..phone2 = e.phone2
+      ..startDate = e.startDate
+      ..endDate = e.endDate
+      ..createdAt = e.createdAt
+      ..lastUpdatedAt = e.lastUpdatedAt
       ..isSynced = true;
 
-    final entityTypeIsar = await findOrBuildEntityType(entity.entityType);
+    final entityTypeIsar = await findOrBuildEntityType(e.entityType);
     isarEntity.entityType.value = entityTypeIsar;
 
     return isarEntity;

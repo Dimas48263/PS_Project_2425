@@ -20,6 +20,8 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
+import 'package:zcap_net_app/features/settings/screens/zcaps/zcaps/zcaps_screen.dart';
 
 class CollectionSchemaEntry {
   final CollectionSchema schema;
@@ -96,6 +98,13 @@ class DatabaseService {
         (db) => db.treeLevelDetailTypeIsars,
         'tree-level-detail-type',
         'treeLevelDetailTypeId'),
+
+/*
+ * ZCAPS
+*/
+    CollectionSchemaEntry( ZcapIsarSchema,
+        (db) => db.zcapIsars, 'zcaps', 'zcapId'),
+
   ];
 
   static Future<void> setup() async {

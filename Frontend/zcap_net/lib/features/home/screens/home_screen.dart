@@ -3,6 +3,7 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/about/about_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
+import 'package:zcap_net_app/features/settings/screens/zcaps/zcaps/zcaps_screen.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
 import '../../../core/services/session_manager.dart';
 import '../../login/widgets/login_screen.dart';
@@ -70,14 +71,18 @@ class _HomeScreenState extends State<HomeScreen> {
               leading: const Icon(Icons.maps_home_work_outlined),
               title: Text('screen_zcaps'.tr()),
               onTap: () {
-                // TODO: Navegar para o ecrã de ZCAPS
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ZcapsScreen(userName: userName)),
+                );
               },
             ),
             ListTile(
               leading: const Icon(Icons.report_problem_outlined),
               title: Text('screen_incidents'.tr()),
               onTap: () {
-                // TODO: Navegar para o ecrã de Incidentes
+                // TODO: Navegar para o ecrã de Incidents
+
               },
             ),
             ListTile(

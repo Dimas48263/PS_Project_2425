@@ -25,6 +25,7 @@ dependencies:
   dropdown_search: ^5.0.3
   data_table_2: ^2.5.8
   easy_localization: ^3.0.1
+  flutter_treeview: ^1.0.6
 
   cupertino_icons: ^1.0.2
   

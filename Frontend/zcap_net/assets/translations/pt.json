@@ -104,6 +104,8 @@
   "screen_support_needed_type": "Tipo de apoio",
   "screen_support_needed_name": "Descrição do tipo de apoio",
   "screen_user_username": "Nome de utilizador",
+  "screen_zcap": "ZCAP",
+  "screen_zcap_name": "Nome da ZCAP",
   "screen_zcaps": "ZCAPS",
   "search": "Pesquisar",
   "search_by": "Procurar por",
