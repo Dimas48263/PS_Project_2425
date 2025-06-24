@@ -57,7 +57,6 @@ factory UserProfile.fromJson(Map<String, dynamic> json) {
     };
   }
 
-/*
   UserProfile copyWith({
     int? id,
     String? name,
@@ -78,5 +77,5 @@ factory UserProfile.fromJson(Map<String, dynamic> json) {
       lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
       isSynced: isSynced ?? this.isSynced,
     );
-  }*/
+  }
 }

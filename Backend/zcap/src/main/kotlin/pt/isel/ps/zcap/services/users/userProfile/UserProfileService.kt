@@ -107,24 +107,21 @@ class UserProfileService(
         return try {
             val savedProfile = userProfileRepository.save(newProfile)
 
-            //Delete -> rewrite instead of update
-            userProfileAccessAllowanceRepository.deleteByUserProfile(savedProfile)
+            val existingAllowances = userProfileAccessAllowanceRepository.findByUserProfile(savedProfile)
 
-            val newAllowances = updatedProfile.accessAllowances.mapNotNull {
-                if (it.accessType !in 0 until AccessType.entries.size) return@mapNotNull null
-                val accessKey = userProfileAccessKeysRepository.findById(it.userProfileAccessKeyId).getOrNull()
-                    ?: return@mapNotNull null
+            for (existing in existingAllowances) {
+                val updated = updatedProfile.accessAllowances
+                    .find { it.userProfileAccessKeyId == existing.userProfileAccessKey.userProfileAccessKeyId }
 
-                UserProfileAccessAllowance(
-                    userProfile = savedProfile,
-                    userProfileAccessKey = accessKey,
-                    accessType = it.accessType
-                )
+                if (updated != null) {
+                    existing.accessType = updated.accessType
+                    existing.lastUpdatedAt = LocalDateTime.now()
+                }
             }
 
-            userProfileAccessAllowanceRepository.saveAll(newAllowances)
+            userProfileAccessAllowanceRepository.saveAll(existingAllowances)
 
-            success(toOutputModel(savedProfile, newAllowances))
+            success(toOutputModel(savedProfile, existingAllowances))
         } catch (ex: Exception) {
             failure(ServiceErrors.UpdateFailed)
         }

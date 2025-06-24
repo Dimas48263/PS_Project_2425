@@ -40,8 +40,8 @@ class DatabaseService {
         (db) => db.buildingTypesIsars, 'buildingTypes', 'buildingTypeId'),
 
 /* Incidents */
-    CollectionSchemaEntry(IncidentTypeIsarSchema,
-        (db) => db.incidentTypeIsars, 'incident-types', 'incidentTypeId'),
+    CollectionSchemaEntry(IncidentTypesIsarSchema,
+        (db) => db.incidentTypesIsars, 'incident-types', 'incidentTypeId'),
 
 /* Support Tables */
     CollectionSchemaEntry(
@@ -61,17 +61,17 @@ class DatabaseService {
 /* Users */
     CollectionSchemaEntry(
         UsersIsarSchema, (db) => db.usersIsars, 'users', 'userId'),
+    CollectionSchemaEntry(
+        UserAccessKeysIsarSchema,
+        (db) => db.userAccessKeysIsars,
+        'users/access-keys',
+        'userProfileAccessKeyId'),
     CollectionSchemaEntry(UserProfilesIsarSchema, (db) => db.userProfilesIsars,
         'user/profiles', 'userProfileId'),
     CollectionSchemaEntry(
         UserProfileAccessAllowanceIsarSchema,
         (db) => db.userProfileAccessAllowanceIsars,
         '',
-        'userProfileAccessKeyId'),
-    CollectionSchemaEntry(
-        UserAccessKeysIsarSchema,
-        (db) => db.userAccessKeysIsars,
-        'users/access-keys',
         'userProfileAccessKeyId'),
 
 /* TREE */

@@ -113,6 +113,7 @@
   "service_sync_error": "Synchronization error: {{error}}",
   "service_sync_ok": "Successful Synchronization.",
   "start": "Start",
+  "tooltip_edit_user_allowances": "Edit Allowances",
   "tree": "Tree",
   "trees": "Trees",
   "tree_element": "Element",

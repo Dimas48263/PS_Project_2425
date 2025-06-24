@@ -359,40 +359,46 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
           },
         );
 
-      case 'UserAccessAllowances':
-        return FutureBuilder<List<UserProfileAccessAllowanceIsar>>(
-          future: () async {
-            final profiles = await isar.userProfilesIsars.where().findAll();
-            final List<UserProfileAccessAllowanceIsar> allAllowances = [];
-            for (final profile in profiles) {
-              await profile.accessAllowances.load();
-              allAllowances.addAll(profile.accessAllowances);
-            }
-            return allAllowances;
-          }(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData)
-              return const Center(child: CircularProgressIndicator());
-            final items = snapshot.data!;
-            return _buildDataTable(
-              columns: const [
-                DataColumn(label: Text("ID")),
-                DataColumn(label: Text("UserProfileId")),
-                DataColumn(label: Text("AccessKeyId")),
-                DataColumn(label: Text("Access Type")),
-              ],
-              rows: items
-                  .map((e) => DataRow(cells: [
-                        DataCell(Text(e.id.toString())),
-                        DataCell(
-                            Text(e.userProfile.value?.id.toString() ?? '')),
-                        DataCell(Text(e.userProfileAccessKeyId.toString())),
-                        DataCell(Text(e.accessType.toString())),
-                      ]))
-                  .toList(),
-            );
-          },
-        );
+case 'UserAccessAllowances':
+  return FutureBuilder<List<UserProfileAccessAllowanceIsar>>(
+    future: () async {
+      final profiles = await isar.userProfilesIsars.where().findAll();
+      final List<UserProfileAccessAllowanceIsar> allAllowances = [];
+
+      for (final profile in profiles) {
+        await profile.accessAllowances.load();
+        allAllowances.addAll(profile.accessAllowances.toList());
+      }
+
+      // Carrega os links dos allowances
+      for (final allowance in allAllowances) {
+        await allowance.userProfile.load();
+      }
+
+      return allAllowances;
+    }(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      final items = snapshot.data!;
+      return _buildDataTable(
+        columns: const [
+          DataColumn(label: Text("ID")),
+          DataColumn(label: Text("UserProfileId")),
+          DataColumn(label: Text("AccessKeyId")),
+          DataColumn(label: Text("Access Type")),
+        ],
+        rows: items.map((e) => DataRow(cells: [
+          DataCell(Text(e.id.toString())),
+          DataCell(Text(e.userProfile.value?.id.toString() ?? '')),
+          DataCell(Text(e.key)),
+          DataCell(Text(e.accessTypeIndex.toString())),
+        ])).toList(),
+      );
+    },
+  );
       case 'EntityTypes':
         return FutureBuilder<List<EntityTypeIsar>>(
           future: isar.entityTypeIsars.where().findAll(),
@@ -511,7 +517,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
 
       case 'IncidentTypes':
         return FutureBuilder<List<IncidentTypesIsar>>(
-          future: isar.incidentTypeIsars.where().findAll(),
+          future: isar.incidentTypesIsars.where().findAll(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return const Center(child: CircularProgressIndicator());

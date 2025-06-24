@@ -57,27 +57,3 @@ class UserAccessKeys implements ApiTable {
     );
   }
 }
-
-
-
-/*
-// Enum with list of access screens/funcionalities
-enum UserAcccess {
-  zcapsScreen,
-  incidentsScreen,
-  settingsScreen,
-}
-
-extension UserAccessLabels on UserAcccess {
-  String get label {
-    switch (this) {
-      case UserAcccess.zcapsScreen:
-        return 'screen_zcaps'.tr();
-      case UserAcccess.incidentsScreen:
-        return 'screen_incidents'.tr();
-      case UserAcccess.settingsScreen:
-        return 'screen_settings_configs'.tr();
-    }
-  }
-}
-*/

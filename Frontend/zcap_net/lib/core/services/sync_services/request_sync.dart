@@ -1,4 +1,4 @@
-/*import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/auth_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/session_manager.dart';
@@ -35,4 +35,3 @@ Future<void> requestSync(BuildContext context) async {
     CustomNOkSnackBar.show(context, 'sync_error'.tr(namedArgs: {'error': e.toString()}));
   }
 }
-*/

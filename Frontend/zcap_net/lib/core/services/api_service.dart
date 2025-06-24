@@ -40,11 +40,9 @@ class ApiService {
       final List<dynamic> decoded = jsonDecode(utf8.decode(response.bodyBytes));
       return decoded.map((item) => fromJson(item)).toList();
     } else {
-      throw Exception(
-        'errors.load_list_failed'.tr(namedArgs: {
-          'code': response.statusCode.toString(),
-        }),
-      );
+      final errorMsg = 'Erro GET list: ${response.statusCode} - ${response.body}';
+      LogService.log(errorMsg);
+      throw Exception(errorMsg);
     }
   }
 
@@ -61,13 +59,9 @@ class ApiService {
       return jsonDecode(utf8.decode(response.bodyBytes))
           as Map<String, dynamic>;
     } else {
-      //TODO: change message. translation does not work where like that
-      throw Exception(
-        'errors.load_item_failed'.tr(namedArgs: {
-          'code': response.statusCode.toString(),
-          'body': response.body,
-        }),
-      );
+      final errorMsg = 'Erro GET Item: ${response.statusCode} - ${response.body}';
+      LogService.log(errorMsg);
+      throw Exception(errorMsg);
     }
   }
 
@@ -75,6 +69,8 @@ class ApiService {
   Future<Map<String, dynamic>> post(
       String endpoint, Map<String, dynamic> body) async {
     final url = Uri.parse('$baseUrl/$endpoint');
+
+    LogService.log(' POST URL: $url\nBODY:${json.encode(body)}');
 
     final response = await client.post(
       url,
@@ -85,12 +81,9 @@ class ApiService {
     if (response.statusCode == 201) {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception(
-        'errors.post_failed'.tr(namedArgs: {
-          'code': response.statusCode.toString(),
-          'body': response.body,
-        }),
-      );
+      final errorMsg = 'Erro POST: ${response.statusCode} - ${response.body}';
+      LogService.log(errorMsg);
+      throw Exception(errorMsg);
     }
   }
 
@@ -98,6 +91,8 @@ class ApiService {
   Future<Map<String, dynamic>> put(
       String endpoint, Map<String, dynamic> body) async {
     final url = Uri.parse('$baseUrl/$endpoint');
+
+    LogService.log(' PUT URL: $url\nBODY:${json.encode(body)}');
 
     final response = await client.put(
       url,
@@ -108,12 +103,9 @@ class ApiService {
     if (response.statusCode == 200) {
       return jsonDecode(utf8.decode(response.bodyBytes));
     } else {
-      throw Exception(
-        'errors.put_failed'.tr(namedArgs: {
-          'code': response.statusCode.toString(),
-          'body': response.body,
-        }),
-      );
+      final errorMsg = 'Erro PUT: ${response.statusCode} - ${response.body}';
+      LogService.log(errorMsg);
+      throw Exception(errorMsg);
     }
   }
 
@@ -127,12 +119,9 @@ class ApiService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception(
-        'errors.delete_failed'.tr(namedArgs: {
-          'code': response.statusCode.toString(),
-          'body': response.body,
-        }),
-      );
+      final errorMsg = 'Erro DELETE: ${response.statusCode} - ${response.body}';
+      LogService.log(errorMsg);
+      throw Exception(errorMsg);
     }
   }
 

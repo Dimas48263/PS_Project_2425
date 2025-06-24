@@ -162,7 +162,7 @@ class IncidentTypeController(
         @RequestBody input: IncidentTypeInputModel
     ): ResponseEntity<*> =
         when(val incidentType = service.updateIncidentTypeById(id, input)) {
-            is Success -> ResponseEntity.status(HttpStatus.CREATED).body(incidentType.value)
+            is Success -> ResponseEntity.status(HttpStatus.OK).body(incidentType.value)
             is Failure -> when (incidentType.value) {
                 is ServiceErrors.RecordNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Incident Type", id))

@@ -25,7 +25,7 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
   @override
   void initState() {
     super.initState();
-    incidentTypesStream = DatabaseService.db.incidentTypeIsars
+    incidentTypesStream = DatabaseService.db.incidentTypesIsars
         .buildQuery<IncidentTypesIsar>()
         .watch(fireImmediately: true)
         .listen((data) {
@@ -127,7 +127,7 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
                                         await DatabaseService.db
                                             .writeTxn(() async {
                                           await DatabaseService
-                                              .db.incidentTypeIsars
+                                              .db.incidentTypesIsars
                                               .delete(incidentType.id);
                                         });
                                       }
@@ -225,7 +225,7 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
                             editedIncidentType.createdAt = now;
                           }
 
-                          await DatabaseService.db.incidentTypeIsars
+                          await DatabaseService.db.incidentTypesIsars
                               .put(editedIncidentType);
                         });
 

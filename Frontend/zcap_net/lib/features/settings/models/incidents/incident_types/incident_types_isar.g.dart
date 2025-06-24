@@ -9,13 +9,13 @@ part of 'incident_types_isar.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetIncidentTypeIsarCollection on Isar {
-  IsarCollection<IncidentTypesIsar> get incidentTypeIsars => this.collection();
+extension GetIncidentTypesIsarCollection on Isar {
+  IsarCollection<IncidentTypesIsar> get incidentTypesIsars => this.collection();
 }
 
-const IncidentTypeIsarSchema = CollectionSchema(
-  name: r'IncidentTypeIsar',
-  id: -1430360431620485304,
+const IncidentTypesIsarSchema = CollectionSchema(
+  name: r'IncidentTypesIsar',
+  id: 7737960784893427869,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,
@@ -53,10 +53,10 @@ const IncidentTypeIsarSchema = CollectionSchema(
       type: IsarType.dateTime,
     )
   },
-  estimateSize: _incidentTypeIsarEstimateSize,
-  serialize: _incidentTypeIsarSerialize,
-  deserialize: _incidentTypeIsarDeserialize,
-  deserializeProp: _incidentTypeIsarDeserializeProp,
+  estimateSize: _incidentTypesIsarEstimateSize,
+  serialize: _incidentTypesIsarSerialize,
+  deserialize: _incidentTypesIsarDeserialize,
+  deserializeProp: _incidentTypesIsarDeserializeProp,
   idName: r'id',
   indexes: {
     r'remoteId': IndexSchema(
@@ -88,13 +88,13 @@ const IncidentTypeIsarSchema = CollectionSchema(
   },
   links: {},
   embeddedSchemas: {},
-  getId: _incidentTypeIsarGetId,
-  getLinks: _incidentTypeIsarGetLinks,
-  attach: _incidentTypeIsarAttach,
+  getId: _incidentTypesIsarGetId,
+  getLinks: _incidentTypesIsarGetLinks,
+  attach: _incidentTypesIsarAttach,
   version: '3.1.0+1',
 );
 
-int _incidentTypeIsarEstimateSize(
+int _incidentTypesIsarEstimateSize(
   IncidentTypesIsar object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -104,7 +104,7 @@ int _incidentTypeIsarEstimateSize(
   return bytesCount;
 }
 
-void _incidentTypeIsarSerialize(
+void _incidentTypesIsarSerialize(
   IncidentTypesIsar object,
   IsarWriter writer,
   List<int> offsets,
@@ -119,7 +119,7 @@ void _incidentTypeIsarSerialize(
   writer.writeDateTime(offsets[6], object.startDate);
 }
 
-IncidentTypesIsar _incidentTypeIsarDeserialize(
+IncidentTypesIsar _incidentTypesIsarDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
@@ -137,7 +137,7 @@ IncidentTypesIsar _incidentTypeIsarDeserialize(
   return object;
 }
 
-P _incidentTypeIsarDeserializeProp<P>(
+P _incidentTypesIsarDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -163,20 +163,21 @@ P _incidentTypeIsarDeserializeProp<P>(
   }
 }
 
-Id _incidentTypeIsarGetId(IncidentTypesIsar object) {
+Id _incidentTypesIsarGetId(IncidentTypesIsar object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _incidentTypeIsarGetLinks(IncidentTypesIsar object) {
+List<IsarLinkBase<dynamic>> _incidentTypesIsarGetLinks(
+    IncidentTypesIsar object) {
   return [];
 }
 
-void _incidentTypeIsarAttach(
+void _incidentTypesIsarAttach(
     IsarCollection<dynamic> col, Id id, IncidentTypesIsar object) {
   object.id = id;
 }
 
-extension IncidentTypeIsarQueryWhereSort
+extension IncidentTypesIsarQueryWhereSort
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QWhere> {
   QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
@@ -184,7 +185,8 @@ extension IncidentTypeIsarQueryWhereSort
     });
   }
 
-  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterWhere> anyRemoteId() {
+  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterWhere>
+      anyRemoteId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'remoteId'),
@@ -201,10 +203,10 @@ extension IncidentTypeIsarQueryWhereSort
   }
 }
 
-extension IncidentTypeIsarQueryWhere
+extension IncidentTypesIsarQueryWhere
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QWhereClause> {
-  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterWhereClause> idEqualTo(
-      Id id) {
+  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterWhereClause>
+      idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
         lower: id,
@@ -254,7 +256,8 @@ extension IncidentTypeIsarQueryWhere
     });
   }
 
-  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterWhereClause> idBetween(
+  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterWhereClause>
+      idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
@@ -527,7 +530,7 @@ extension IncidentTypeIsarQueryWhere
   }
 }
 
-extension IncidentTypeIsarQueryFilter
+extension IncidentTypesIsarQueryFilter
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QFilterCondition> {
   QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterFilterCondition>
       createdAtEqualTo(DateTime value) {
@@ -1048,13 +1051,13 @@ extension IncidentTypeIsarQueryFilter
   }
 }
 
-extension IncidentTypeIsarQueryObject
+extension IncidentTypesIsarQueryObject
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QFilterCondition> {}
 
-extension IncidentTypeIsarQueryLinks
+extension IncidentTypesIsarQueryLinks
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QFilterCondition> {}
 
-extension IncidentTypeIsarQuerySortBy
+extension IncidentTypesIsarQuerySortBy
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QSortBy> {
   QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterSortBy>
       sortByCreatedAt() {
@@ -1112,7 +1115,8 @@ extension IncidentTypeIsarQuerySortBy
     });
   }
 
-  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterSortBy> sortByName() {
+  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterSortBy>
+      sortByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
     });
@@ -1154,7 +1158,7 @@ extension IncidentTypeIsarQuerySortBy
   }
 }
 
-extension IncidentTypeIsarQuerySortThenBy
+extension IncidentTypesIsarQuerySortThenBy
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QSortThenBy> {
   QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterSortBy>
       thenByCreatedAt() {
@@ -1225,7 +1229,8 @@ extension IncidentTypeIsarQuerySortThenBy
     });
   }
 
-  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterSortBy> thenByName() {
+  QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QAfterSortBy>
+      thenByName() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'name', Sort.asc);
     });
@@ -1267,7 +1272,7 @@ extension IncidentTypeIsarQuerySortThenBy
   }
 }
 
-extension IncidentTypeIsarQueryWhereDistinct
+extension IncidentTypesIsarQueryWhereDistinct
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QDistinct> {
   QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QDistinct>
       distinctByCreatedAt() {
@@ -1319,7 +1324,7 @@ extension IncidentTypeIsarQueryWhereDistinct
   }
 }
 
-extension IncidentTypeIsarQueryProperty
+extension IncidentTypesIsarQueryProperty
     on QueryBuilder<IncidentTypesIsar, IncidentTypesIsar, QQueryProperty> {
   QueryBuilder<IncidentTypesIsar, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
