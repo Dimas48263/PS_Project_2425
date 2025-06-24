@@ -3,9 +3,10 @@ package pt.isel.ps.zcap.services.supportTables
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Component
 import pt.isel.ps.zcap.domain.supportTables.Zcap
-import pt.isel.ps.zcap.repository.dto.supportTables.toOutputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.ZcapInputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.ZcapOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.toOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.zcap.ZcapInputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.zcap.ZcapOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.zcap.toOutputModel
 import pt.isel.ps.zcap.repository.models.supportTables.BuildingTypeRepository
 import pt.isel.ps.zcap.repository.models.supportTables.EntitiesRepository
 import pt.isel.ps.zcap.repository.models.trees.TreeRepository

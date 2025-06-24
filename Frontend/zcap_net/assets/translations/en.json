@@ -131,5 +131,6 @@
   "value": "Value",
   "version": "Version",
   "warning": "Warning",
-  "welcome_message": "Welcome!!"
+  "welcome_message": "Welcome!!",
+  "zcap_detail_type": "ZCAP detail type"
 }

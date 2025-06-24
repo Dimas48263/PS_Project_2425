@@ -27,4 +27,5 @@ sealed class ServiceErrors {
     data object IncidentNotFound: ServiceErrors()
     data object ZcapNotFound: ServiceErrors()
     data object IncidentZcapNotFound: ServiceErrors()
+    data object DetailTypeCategoryNotFound: ServiceErrors()
 }

@@ -83,7 +83,6 @@
   "screen_settings_details": "Detalhes",
   "screen_settings_entities": "Entidades",
   "screen_settings_entity_types": "Tipos de Entidade",
-  "screen_settings_incident_types": "Tipos de Incidente",
   "screen_settings_isar_db_explorer": "ISAR Explorer",
   "screen_settings_special_need_types": "Tipos de Necessidades Speciais",
   "screen_settings_people": "Pessoas",
@@ -132,5 +131,6 @@
   "value": "Valor",
   "version": "Versão",
   "warning": "Aviso",
-  "welcome_message": "Bem vindo!!"
+  "welcome_message": "Bem vindo!!",
+  "zcap_detail_type": "Tipo de detalhe das ZCAPs"
 }

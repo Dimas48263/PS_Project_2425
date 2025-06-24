@@ -16,8 +16,8 @@ import pt.isel.ps.zcap.api.insertionFailedErrorMessage
 import pt.isel.ps.zcap.api.invalidDataErrorMessage
 import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
-import pt.isel.ps.zcap.repository.dto.supportTables.ZcapInputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.ZcapOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.zcap.ZcapInputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.zcap.ZcapOutputModel
 import pt.isel.ps.zcap.services.Failure
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success

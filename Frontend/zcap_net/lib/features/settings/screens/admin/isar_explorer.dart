@@ -19,6 +19,7 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_t
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 
 class IsarExplorerScreen extends StatefulWidget {
   const IsarExplorerScreen({super.key});
@@ -73,6 +74,8 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
                     value: 'RelationTypes', child: Text("Relation Types")),
                 DropdownMenuItem(
                     value: 'SpecialNeeds', child: Text("Special Need Types")),
+                DropdownMenuItem(
+                    value: 'ZcapDetailTypes', child: Text("Zcap Detail Types")),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -589,6 +592,49 @@ case 'UserAccessAllowances':
       case 'SpecialNeeds':
         return FutureBuilder<List<SpecialNeedIsar>>(
           future: isar.specialNeedIsars.where().findAll(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData)
+              return const Center(child: CircularProgressIndicator());
+            final items = snapshot.data!;
+            return _buildDataTable(
+              columns: const [
+                DataColumn(label: Text("ID")),
+                DataColumn(label: Text("RemoteId")),
+                DataColumn(label: Text("Name")),
+                DataColumn(label: Text("Start Date")),
+                DataColumn(label: Text("End Date")),
+                DataColumn(label: Text("Created at")),
+                DataColumn(label: Text("Updated at")),
+                DataColumn(label: Text("Is Sync")),
+              ],
+              rows: items
+                  .map((e) => DataRow(cells: [
+                        DataCell(Text(e.id.toString())),
+                        DataCell(Text(e.remoteId.toString())),
+                        DataCell(Text(e.name)),
+                        DataCell(Text(smallDate.format(e.startDate))),
+                        DataCell(Text(e.endDate != null
+                            ? smallDate.format(e.endDate!)
+                            : '')),
+                        DataCell(Text(smallDate.format(e.createdAt))),
+                        DataCell(Text(fullDate.format(e.lastUpdatedAt))),
+                        DataCell(Text(e.isSynced.toString())),
+                      ]))
+                  .toList(),
+            );
+          },
+        );
+      case 'ZcapDetailTypes':
+        return FutureBuilder<List<ZcapDetailTypeIsar>>(
+          future: () async {
+            final zcapDetailTypes = await isar.zcapDetailTypeIsars.where().findAll();
+
+            for (final zdt in zcapDetailTypes) {
+              await zdt.detailTypeCategory.load(); // <- obrigatório
+            }
+
+            return zcapDetailTypes;
+          }(),
           builder: (context, snapshot) {
             if (!snapshot.hasData)
               return const Center(child: CircularProgressIndicator());

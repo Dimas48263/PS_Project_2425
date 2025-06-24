@@ -120,7 +120,7 @@ DetailTypeCategoriesIsar _detailTypeCategoriesIsarDeserialize(
   object.isSynced = reader.readBool(offsets[2]);
   object.lastUpdatedAt = reader.readDateTime(offsets[3]);
   object.name = reader.readString(offsets[4]);
-  object.remoteId = reader.readLong(offsets[5]);
+  object.remoteId = reader.readLongOrNull(offsets[5]);
   object.startDate = reader.readDateTime(offsets[6]);
   return object;
 }
@@ -143,7 +143,7 @@ P _detailTypeCategoriesIsarDeserializeProp<P>(
     case 4:
       return (reader.readString(offset)) as P;
     case 5:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 6:
       return (reader.readDateTime(offset)) as P;
     default:
@@ -255,7 +255,29 @@ extension DetailTypeCategoriesIsarQueryWhere on QueryBuilder<
   }
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
-      QAfterWhereClause> remoteIdEqualTo(int remoteId) {
+      QAfterWhereClause> remoteIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterWhereClause> remoteIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterWhereClause> remoteIdEqualTo(int? remoteId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'remoteId',
@@ -265,7 +287,7 @@ extension DetailTypeCategoriesIsarQueryWhere on QueryBuilder<
   }
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
-      QAfterWhereClause> remoteIdNotEqualTo(int remoteId) {
+      QAfterWhereClause> remoteIdNotEqualTo(int? remoteId) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -301,7 +323,7 @@ extension DetailTypeCategoriesIsarQueryWhere on QueryBuilder<
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> remoteIdGreaterThan(
-    int remoteId, {
+    int? remoteId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -316,7 +338,7 @@ extension DetailTypeCategoriesIsarQueryWhere on QueryBuilder<
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> remoteIdLessThan(
-    int remoteId, {
+    int? remoteId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -331,8 +353,8 @@ extension DetailTypeCategoriesIsarQueryWhere on QueryBuilder<
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> remoteIdBetween(
-    int lowerRemoteId,
-    int upperRemoteId, {
+    int? lowerRemoteId,
+    int? upperRemoteId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -741,7 +763,25 @@ extension DetailTypeCategoriesIsarQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
-      QAfterFilterCondition> remoteIdEqualTo(int value) {
+      QAfterFilterCondition> remoteIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'remoteId',
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> remoteIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'remoteId',
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> remoteIdEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'remoteId',
@@ -752,7 +792,7 @@ extension DetailTypeCategoriesIsarQueryFilter on QueryBuilder<
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> remoteIdGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -766,7 +806,7 @@ extension DetailTypeCategoriesIsarQueryFilter on QueryBuilder<
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> remoteIdLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -780,8 +820,8 @@ extension DetailTypeCategoriesIsarQueryFilter on QueryBuilder<
 
   QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> remoteIdBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1170,7 +1210,7 @@ extension DetailTypeCategoriesIsarQueryProperty on QueryBuilder<
     });
   }
 
-  QueryBuilder<DetailTypeCategoriesIsar, int, QQueryOperations>
+  QueryBuilder<DetailTypeCategoriesIsar, int?, QQueryOperations>
       remoteIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'remoteId');

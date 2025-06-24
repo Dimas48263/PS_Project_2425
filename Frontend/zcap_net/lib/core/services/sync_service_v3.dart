@@ -31,6 +31,8 @@ import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 
 class SyncServiceV3 {
   final Isar isar;
@@ -444,6 +446,23 @@ final List<SyncEntry> syncEntries = [
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
+  SyncEntry<ZcapDetailTypeIsar, ZcapDetailType>(
+      endpoint: 'zcap-detail-types',
+      getCollection: (isar) => isar.zcapDetailTypeIsars,
+      idName: 'zcapDetailTypeId',
+      fromJson: ZcapDetailType.fromJson,
+      toIsar: (ApiTable category) async =>
+          ZcapDetailTypeIsar.toRemote(category as ZcapDetailType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<ZcapDetailTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+        final zcapDetailTypeIsar = isarTable as ZcapDetailTypeIsar;
+        await zcapDetailTypeIsar.detailTypeCategory.save();
+      }),
 /**
  * User tables
  */

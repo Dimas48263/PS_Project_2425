@@ -3,9 +3,11 @@ package pt.isel.ps.zcap.repository.dto.incidents.incidentZcap
 import pt.isel.ps.zcap.domain.incidents.IncidentZcap
 import pt.isel.ps.zcap.repository.dto.incidents.incident.IncidentOutputModel
 import pt.isel.ps.zcap.repository.dto.incidents.incident.toOutputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.EntitiesOutputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.ZcapOutputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.toOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entities.EntitiesOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.zcap.ZcapOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.toOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entities.toOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.zcap.toOutputModel
 import java.time.LocalDate
 import java.time.LocalDateTime
 

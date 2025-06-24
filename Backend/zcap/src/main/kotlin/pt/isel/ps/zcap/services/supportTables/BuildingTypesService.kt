@@ -2,8 +2,8 @@ package pt.isel.ps.zcap.services.supportTables
 
 import org.springframework.stereotype.Service
 import pt.isel.ps.zcap.domain.supportTables.BuildingType
-import pt.isel.ps.zcap.repository.dto.supportTables.BuildingTypeInputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.BuildingTypeOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.BuildingTypeInputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.BuildingTypeOutputModel
 import pt.isel.ps.zcap.repository.models.supportTables.BuildingTypeRepository
 import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors

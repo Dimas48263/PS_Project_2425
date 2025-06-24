@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.*
 import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
 import pt.isel.ps.zcap.api.exceptions.InvalidDataException
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
-import pt.isel.ps.zcap.repository.dto.supportTables.EntitiesInputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.EntitiesOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entities.EntitiesInputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entities.EntitiesOutputModel
 import pt.isel.ps.zcap.services.Failure
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success

@@ -1,7 +1,4 @@
-
-import 'package:zcap_net_app/core/services/remote_table.dart';
-
-class DataType implements ApiTable {
+/*class DataType implements ApiTable {
    @override
   int remoteId;
   final String name;
@@ -41,4 +38,25 @@ class DataType implements ApiTable {
     );
   }
   
+}*/
+
+enum DataTypes {
+  boolean,
+  int,
+  string,
+  double,
+  char,
+  float;
+
+  @override
+  String toString() => name;
+}
+
+extension DataTypesExtension on DataTypes {
+  static DataTypes fromString(String value) {
+    return DataTypes.values.firstWhere(
+      (e) => e.name.toLowerCase() == value.toLowerCase(),
+      orElse: () => DataTypes.string,
+    );
+  }
 }

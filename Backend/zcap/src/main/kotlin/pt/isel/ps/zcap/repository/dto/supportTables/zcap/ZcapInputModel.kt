@@ -1,4 +1,4 @@
-package pt.isel.ps.zcap.repository.dto.supportTables
+package pt.isel.ps.zcap.repository.dto.supportTables.zcap
 
 import java.time.LocalDate
 data class ZcapInputModel(
