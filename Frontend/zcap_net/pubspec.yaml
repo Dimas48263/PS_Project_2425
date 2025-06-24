@@ -26,6 +26,7 @@ dependencies:
   data_table_2: ^2.5.8
   easy_localization: ^3.0.1
   flutter_treeview: ^1.0.6
+  url_launcher: ^6.2.5
 
   cupertino_icons: ^1.0.2
   

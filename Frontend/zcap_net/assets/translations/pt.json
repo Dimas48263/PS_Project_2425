@@ -37,6 +37,7 @@
   "invalid_email": "Email inválido",
   "isel_course": "Licenciatura em Engenharia Informática e de Computadores",
   "isel_module": "Projeto e Seminário - Semestre de Verão 2024/25",
+  "latitude": "Latitude",
   "level": "Nível",
   "loading": "A carregar...",
   "log_app_started": "Aplicação iniciada com API: {{api}}",
@@ -45,6 +46,7 @@
   "login_nok": "Credenciais inválidas",
   "login_ok": "Credenciais válidas",
   "logout": "Sair",
+  "longitude": "Longitude",
   "name": "Nome",
   "new": "Novo",
   "no_end_date": "Sem data fim",
@@ -134,5 +136,9 @@
   "version": "Versão",
   "warning": "Aviso",
   "welcome_message": "Bem vindo!!",
-  "zcap_detail_type": "Tipo de detalhe das ZCAPs"
+  "zcap_detail_type": "Tipo de detalhe das ZCAPs",
+  "zcap_screen_buildingType": "Tipologia",
+  "zcap_screen_address": "Morada",
+  "zcap_screen_open_location": "Ver localização",
+  "zcap_screen_open_location_error": "Não foi possível abrir a localização"
 }

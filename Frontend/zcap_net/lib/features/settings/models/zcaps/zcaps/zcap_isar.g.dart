@@ -86,32 +86,6 @@ const ZcapIsarSchema = CollectionSchema(
           caseSensitive: false,
         )
       ],
-    ),
-    r'startDate': IndexSchema(
-      id: 7723980484494730382,
-      name: r'startDate',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'startDate',
-          type: IndexType.value,
-          caseSensitive: false,
-        )
-      ],
-    ),
-    r'isSynced': IndexSchema(
-      id: -39763503327887510,
-      name: r'isSynced',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'isSynced',
-          type: IndexType.value,
-          caseSensitive: false,
-        )
-      ],
     )
   },
   links: {
@@ -127,9 +101,9 @@ const ZcapIsarSchema = CollectionSchema(
       target: r'TreeIsar',
       single: true,
     ),
-    r'ent': LinkSchema(
-      id: 8963018710580100560,
-      name: r'ent',
+    r'zcapEntity': LinkSchema(
+      id: 635848589248584457,
+      name: r'zcapEntity',
       target: r'EntitiesIsar',
       single: true,
     )
@@ -186,7 +160,7 @@ ZcapIsar _zcapIsarDeserialize(
   object.latitude = reader.readDoubleOrNull(offsets[5]);
   object.longitude = reader.readDoubleOrNull(offsets[6]);
   object.name = reader.readString(offsets[7]);
-  object.remoteId = reader.readLong(offsets[8]);
+  object.remoteId = reader.readLongOrNull(offsets[8]);
   object.startDate = reader.readDateTime(offsets[9]);
   return object;
 }
@@ -215,7 +189,7 @@ P _zcapIsarDeserializeProp<P>(
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readLong(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 9:
       return (reader.readDateTime(offset)) as P;
     default:
@@ -236,7 +210,8 @@ void _zcapIsarAttach(IsarCollection<dynamic> col, Id id, ZcapIsar object) {
   object.buildingType.attach(
       col, col.isar.collection<BuildingTypesIsar>(), r'buildingType', id);
   object.tree.attach(col, col.isar.collection<TreeIsar>(), r'tree', id);
-  object.zcapEntity.attach(col, col.isar.collection<EntitiesIsar>(), r'ent', id);
+  object.zcapEntity
+      .attach(col, col.isar.collection<EntitiesIsar>(), r'zcapEntity', id);
 }
 
 extension ZcapIsarQueryWhereSort on QueryBuilder<ZcapIsar, ZcapIsar, QWhere> {
@@ -250,22 +225,6 @@ extension ZcapIsarQueryWhereSort on QueryBuilder<ZcapIsar, ZcapIsar, QWhere> {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'remoteId'),
-      );
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhere> anyStartDate() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'startDate'),
-      );
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhere> anyIsSynced() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'isSynced'),
       );
     });
   }
@@ -337,8 +296,28 @@ extension ZcapIsarQueryWhere on QueryBuilder<ZcapIsar, ZcapIsar, QWhereClause> {
     });
   }
 
+  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> remoteIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> remoteIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> remoteIdEqualTo(
-      int remoteId) {
+      int? remoteId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'remoteId',
@@ -348,7 +327,7 @@ extension ZcapIsarQueryWhere on QueryBuilder<ZcapIsar, ZcapIsar, QWhereClause> {
   }
 
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> remoteIdNotEqualTo(
-      int remoteId) {
+      int? remoteId) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -383,7 +362,7 @@ extension ZcapIsarQueryWhere on QueryBuilder<ZcapIsar, ZcapIsar, QWhereClause> {
   }
 
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> remoteIdGreaterThan(
-    int remoteId, {
+    int? remoteId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -397,7 +376,7 @@ extension ZcapIsarQueryWhere on QueryBuilder<ZcapIsar, ZcapIsar, QWhereClause> {
   }
 
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> remoteIdLessThan(
-    int remoteId, {
+    int? remoteId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -411,8 +390,8 @@ extension ZcapIsarQueryWhere on QueryBuilder<ZcapIsar, ZcapIsar, QWhereClause> {
   }
 
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> remoteIdBetween(
-    int lowerRemoteId,
-    int upperRemoteId, {
+    int? lowerRemoteId,
+    int? upperRemoteId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -424,141 +403,6 @@ extension ZcapIsarQueryWhere on QueryBuilder<ZcapIsar, ZcapIsar, QWhereClause> {
         upper: [upperRemoteId],
         includeUpper: includeUpper,
       ));
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> startDateEqualTo(
-      DateTime startDate) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'startDate',
-        value: [startDate],
-      ));
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> startDateNotEqualTo(
-      DateTime startDate) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'startDate',
-              lower: [],
-              upper: [startDate],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'startDate',
-              lower: [startDate],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'startDate',
-              lower: [startDate],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'startDate',
-              lower: [],
-              upper: [startDate],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> startDateGreaterThan(
-    DateTime startDate, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'startDate',
-        lower: [startDate],
-        includeLower: include,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> startDateLessThan(
-    DateTime startDate, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'startDate',
-        lower: [],
-        upper: [startDate],
-        includeUpper: include,
-      ));
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> startDateBetween(
-    DateTime lowerStartDate,
-    DateTime upperStartDate, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'startDate',
-        lower: [lowerStartDate],
-        includeLower: includeLower,
-        upper: [upperStartDate],
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> isSyncedEqualTo(
-      bool isSynced) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'isSynced',
-        value: [isSynced],
-      ));
-    });
-  }
-
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterWhereClause> isSyncedNotEqualTo(
-      bool isSynced) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isSynced',
-              lower: [],
-              upper: [isSynced],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isSynced',
-              lower: [isSynced],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isSynced',
-              lower: [isSynced],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isSynced',
-              lower: [],
-              upper: [isSynced],
-              includeUpper: false,
-            ));
-      }
     });
   }
 }
@@ -1219,8 +1063,24 @@ extension ZcapIsarQueryFilter
     });
   }
 
+  QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> remoteIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'remoteId',
+      ));
+    });
+  }
+
+  QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> remoteIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'remoteId',
+      ));
+    });
+  }
+
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> remoteIdEqualTo(
-      int value) {
+      int? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'remoteId',
@@ -1230,7 +1090,7 @@ extension ZcapIsarQueryFilter
   }
 
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> remoteIdGreaterThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1243,7 +1103,7 @@ extension ZcapIsarQueryFilter
   }
 
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> remoteIdLessThan(
-    int value, {
+    int? value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -1256,8 +1116,8 @@ extension ZcapIsarQueryFilter
   }
 
   QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> remoteIdBetween(
-    int lower,
-    int upper, {
+    int? lower,
+    int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -1357,16 +1217,16 @@ extension ZcapIsarQueryLinks
     });
   }
 
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> ent(
+  QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> zcapEntity(
       FilterQuery<EntitiesIsar> q) {
     return QueryBuilder.apply(this, (query) {
-      return query.link(q, r'ent');
+      return query.link(q, r'zcapEntity');
     });
   }
 
-  QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> entIsNull() {
+  QueryBuilder<ZcapIsar, ZcapIsar, QAfterFilterCondition> zcapEntityIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'ent', 0, true, 0, true);
+      return query.linkLength(r'zcapEntity', 0, true, 0, true);
     });
   }
 }
@@ -1749,7 +1609,7 @@ extension ZcapIsarQueryProperty
     });
   }
 
-  QueryBuilder<ZcapIsar, int, QQueryOperations> remoteIdProperty() {
+  QueryBuilder<ZcapIsar, int?, QQueryOperations> remoteIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'remoteId');
     });

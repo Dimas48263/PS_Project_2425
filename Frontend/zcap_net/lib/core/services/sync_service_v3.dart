@@ -496,5 +496,11 @@ final List<SyncEntry> syncEntries = [
               (collection as IsarCollection<ZcapIsar>)
                   .where()
                   .remoteIdEqualTo(remoteId)
-                  .findFirst()),
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+        final zcapIsar = isarTable as ZcapIsar;
+        await zcapIsar.buildingType.save();
+        await zcapIsar.tree.save();
+        await zcapIsar.zcapEntity.save();
+      }),
 ];

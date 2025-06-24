@@ -31,7 +31,7 @@ class BuildingTypesIsar implements IsarTable<BuildingType> {
   // Construtor sem nome (necessário para o Isar)
   BuildingTypesIsar();
 
-  factory BuildingTypesIsar.toRemote(BuildingType buildingType) {
+  static Future<BuildingTypesIsar> toRemote(BuildingType buildingType) async {
     return BuildingTypesIsar()
       ..remoteId = buildingType.remoteId
       ..name = buildingType.name

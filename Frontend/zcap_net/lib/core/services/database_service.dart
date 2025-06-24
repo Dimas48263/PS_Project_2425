@@ -21,7 +21,6 @@ import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart'
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
-import 'package:zcap_net_app/features/settings/screens/zcaps/zcaps/zcaps_screen.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 
 class CollectionSchemaEntry {

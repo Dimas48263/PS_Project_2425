@@ -165,4 +165,33 @@ class EntitiesIsar implements IsarTable<Entity> {
       ..lastUpdatedAt = lastUpdatedAt ?? this.lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
   }
+
+  static Future<EntitiesIsar> toRemote(Entity zcapEntity) async {
+    final remote =  EntitiesIsar()
+      ..remoteId = zcapEntity.remoteId
+      ..name = zcapEntity.name
+      ..email = zcapEntity.email
+      ..phone1 = zcapEntity.phone1
+      ..phone2 = zcapEntity.phone2
+      ..startDate = zcapEntity.startDate
+      ..endDate = zcapEntity.endDate
+      ..createdAt = zcapEntity.createdAt
+      ..lastUpdatedAt = zcapEntity.lastUpdatedAt
+      ..isSynced = true;
+
+      remote.entityType.value = await getOrBuildEntityType(zcapEntity.entityType);
+
+      return remote;
+  }
+
+    static Future<EntityTypeIsar> getOrBuildEntityType(EntityType entityType) async {
+    EntityTypeIsar? entityTypeIsar = await DatabaseService.db.entityTypeIsars.where().remoteIdEqualTo(entityType.remoteId).findFirst();
+    if (entityTypeIsar != null) return entityTypeIsar;
+
+    EntityTypeIsar newEntityType = EntityTypeIsar.toRemote(entityType);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.entityTypeIsars.put(newEntityType);
+    });
+    return newEntityType;
+  }
 }

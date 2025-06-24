@@ -1,8 +1,11 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap.dart';
 
@@ -13,39 +16,69 @@ class ZcapIsar implements IsarTable<Zcap> {
   @override
   Id id = Isar.autoIncrement;
 
+  @override
+  bool isSynced = false;
+
   @Index()
   @override
-  late int remoteId;
+  int? remoteId;
 
   late String name;
-  IsarLink<BuildingTypesIsar> buildingType = IsarLink<BuildingTypesIsar>();
   late String address;
 
+  IsarLink<BuildingTypesIsar> buildingType = IsarLink<BuildingTypesIsar>();
   IsarLink<TreeIsar> tree = IsarLink<TreeIsar>();
+  IsarLink<EntitiesIsar> zcapEntity = IsarLink<EntitiesIsar>();
 
   double? latitude;
   double? longitude;
 
-  IsarLink<EntitiesIsar> zcapEntity = IsarLink<EntitiesIsar>();
-
-
-  @Index()
   late DateTime startDate;
-
   DateTime? endDate;
-  late DateTime createdAt;
+  DateTime createdAt = DateTime.now();
+  @override
+  DateTime lastUpdatedAt = DateTime.now();
 
   @override
-  late DateTime lastUpdatedAt;
+  IsarTable<ApiTable> setEntityIdAndSync({int? remoteId, bool? isSynced}) {
+    return ZcapIsar()
+      ..id = id
+      ..remoteId = remoteId ?? this.remoteId
+      ..name = name
+      ..buildingType.value = buildingType.value
+      ..address = address
+      ..tree.value = tree.value
+      ..latitude = latitude
+      ..longitude = longitude
+      ..zcapEntity.value = zcapEntity.value
+      ..startDate = startDate
+      ..endDate = endDate
+      ..createdAt = createdAt
+      ..lastUpdatedAt = lastUpdatedAt
+      ..isSynced = isSynced ?? this.isSynced;
+  }
 
-  @Index()
   @override
-  bool isSynced = false;
-
-  ZcapIsar();
+  Zcap toEntity() {
+    return Zcap(
+      remoteId: remoteId ?? 0,
+      name: name,
+      buildingType: buildingType.value!.toEntity(),
+      address: address,
+      tree: tree.value!.toEntity(),
+      latitude: latitude,
+      longitude: longitude,
+      zcapEntity: zcapEntity.value!.toEntity(),
+      startDate: startDate,
+      endDate: endDate,
+      createdAt: createdAt,
+      lastUpdatedAt: lastUpdatedAt,
+      isSynced: isSynced,
+    );
+  }
 
   static Future<ZcapIsar> toRemote(Zcap zcap) async {
-    final zcapIsar = ZcapIsar()
+    final remote = ZcapIsar()
       ..remoteId = zcap.remoteId
       ..name = zcap.name
       ..address = zcap.address
@@ -57,49 +90,34 @@ class ZcapIsar implements IsarTable<Zcap> {
       ..lastUpdatedAt = zcap.lastUpdatedAt
       ..isSynced = true;
 
+    remote.buildingType.value = await getOrBuildBuildingType(zcap.buildingType);
+    remote.tree.value = await getOrBuildTree(zcap.tree);
+    remote.zcapEntity.value = await getOrBuildEntity(zcap.zcapEntity);
+
+    return remote;
+/*
     final buildingTypeIsar = await DatabaseService.db.buildingTypesIsars
             .filter()
             .remoteIdEqualTo(zcap.buildingType.remoteId)
             .findFirst() ??
         BuildingTypesIsar.toRemote(zcap.buildingType);
 
-    zcapIsar.buildingType.value = buildingTypeIsar;
-
+    remote.buildingType.value = buildingTypeIsar;
 
     if (zcap.tree != null) {
       final treeIsar =
           await TreeIsar.findOrBuildTree(zcap.tree!.remoteId, zcap.tree!);
-      zcapIsar.tree.value = treeIsar;
+      remote.tree.value = treeIsar;
     }
 
     final entityIsar = await DatabaseService.db.entitiesIsars
-        .filter()
-        .remoteIdEqualTo(zcap.zcapEntity.remoteId)
-        .findFirst() ??
+            .filter()
+            .remoteIdEqualTo(zcap.zcapEntity.remoteId)
+            .findFirst() ??
         EntitiesIsar.fromEntity(zcap.zcapEntity);
 
-    zcapIsar.zcapEntity.value = entityIsar as EntitiesIsar?;
-
-    return zcapIsar;
-  }
-
-  @override
-  Zcap toEntity() {
-    return Zcap(
-      remoteId: remoteId,
-      name: name,
-      buildingType: buildingType.value!.toEntity(),
-      address: address,
-      tree: tree.value?.toEntity(),
-      latitude: latitude,
-      longitude: longitude,
-      zcapEntity: zcapEntity.value!.toEntity(),
-      startDate: startDate,
-      endDate: endDate,
-      createdAt: createdAt,
-      lastUpdatedAt: lastUpdatedAt,
-      isSynced: isSynced,
-    );
+    remote.zcapEntity.value = entityIsar as EntitiesIsar?;
+*/
   }
 
   @override
@@ -115,7 +133,8 @@ class ZcapIsar implements IsarTable<Zcap> {
     lastUpdatedAt = zcap.lastUpdatedAt;
     isSynced = true;
 
-    final buildingTypeIsar = await DatabaseService.db.buildingTypesIsars
+  //TODO: missing the rest of the objects on update???????
+/*    final buildingTypeIsar = await DatabaseService.db.buildingTypesIsars
             .filter()
             .remoteIdEqualTo(zcap.buildingType.remoteId)
             .findFirst() ??
@@ -131,29 +150,56 @@ class ZcapIsar implements IsarTable<Zcap> {
     }
 
     final entityIsar = await DatabaseService.db.entitiesIsars
-        .filter()
-        .remoteIdEqualTo(zcap.zcapEntity.remoteId)
-        .findFirst() ??
+            .filter()
+            .remoteIdEqualTo(zcap.zcapEntity.remoteId)
+            .findFirst() ??
         EntitiesIsar.fromEntity(zcap.zcapEntity);
     zcapEntity.value = entityIsar as EntitiesIsar?;
+    */
   }
 
-  @override
-  IsarTable<ApiTable> setEntityIdAndSync({int? remoteId, bool? isSynced}) {
-    return ZcapIsar()
-      ..id = id
-      ..remoteId = remoteId ?? this.remoteId
-      ..name = name
-      ..address = address
-      ..tree = tree
-      ..latitude = latitude
-      ..longitude = longitude
-      ..zcapEntity = zcapEntity
-      ..startDate = startDate
-      ..endDate = endDate
-      ..createdAt = createdAt
-      ..lastUpdatedAt = lastUpdatedAt
-      ..isSynced = isSynced ?? this.isSynced
-      ..buildingType.value = buildingType.value;
+  static Future<BuildingTypesIsar> getOrBuildBuildingType(
+      BuildingType buildingType) async {
+    BuildingTypesIsar? buildingTypesIsar = await DatabaseService
+        .db.buildingTypesIsars
+        .where()
+        .remoteIdEqualTo(buildingType.remoteId)
+        .findFirst();
+    if (buildingTypesIsar != null) return buildingTypesIsar;
+
+    BuildingTypesIsar newBuildingType =
+        await BuildingTypesIsar.toRemote(buildingType);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.buildingTypesIsars.put(newBuildingType);
+    });
+    return newBuildingType;
+  }
+
+  static Future<TreeIsar> getOrBuildTree(Tree tree) async {
+    TreeIsar? treeIsar = await DatabaseService.db.treeIsars
+        .where()
+        .remoteIdEqualTo(tree.remoteId)
+        .findFirst();
+    if (treeIsar != null) return treeIsar;
+
+    TreeIsar newTree = await TreeIsar.toRemote(tree);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.treeIsars.put(newTree);
+    });
+    return newTree;
+  }
+
+  static Future<EntitiesIsar> getOrBuildEntity(Entity zcapEntity) async {
+    EntitiesIsar? entityIsar = await DatabaseService.db.entitiesIsars
+        .where()
+        .remoteIdEqualTo(zcapEntity.remoteId)
+        .findFirst();
+    if (entityIsar != null) return entityIsar;
+
+    EntitiesIsar newEntity = await EntitiesIsar.toRemote(zcapEntity);
+    await DatabaseService.db.writeTxn(() async {
+      await DatabaseService.db.entitiesIsars.put(newEntity);
+    });
+    return newEntity;
   }
 }

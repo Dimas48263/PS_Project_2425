@@ -9,7 +9,7 @@ class Zcap implements ApiTable {
   final String name;
   final BuildingType buildingType;
   final String address;
-  final Tree? tree;
+  final Tree tree;
   final double? latitude;
   final double? longitude;
   final Entity zcapEntity;
@@ -42,7 +42,7 @@ class Zcap implements ApiTable {
       name: json['name'],
       buildingType: BuildingType.fromJson(json['buildingType']),
       address: json['address'],
-      tree: json['treeRecordId'] != null? Tree.fromJson(json['treeRecordId']): null,
+      tree: Tree.fromJson(json['treeRecordId']),
       latitude: json['latitude'] != null
           ? (json['latitude'] as num).toDouble()
           : null,
@@ -63,7 +63,7 @@ class Zcap implements ApiTable {
       'name': name,
       'buildingTypeId': buildingType.remoteId,
       'address': address,
-      'treeRecordId': tree?.remoteId,
+      'treeRecordId': tree.remoteId,
       'latitude': latitude,
       'longitude': longitude,
       'entityId': zcapEntity.remoteId,
@@ -94,7 +94,7 @@ class Zcap implements ApiTable {
       address: address ?? this.address,
       tree: tree ?? this.tree,
       latitude: latitude ?? this.latitude,
-      zcapEntity: ent ?? this.zcapEntity,
+      zcapEntity: ent ?? zcapEntity,
       longitude: longitude ?? this.longitude,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,

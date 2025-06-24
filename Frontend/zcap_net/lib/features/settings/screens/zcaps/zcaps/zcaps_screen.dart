@@ -1,8 +1,12 @@
 import 'dart:async';
 
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
@@ -90,7 +94,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                     left: 10.0,
                                   ),
                                   title: Text(
-                                    '${zcap.remoteId > 0 ? "[${zcap.remoteId}] " : " "}${zcap.name}',
+                                    '${zcap.remoteId! > 0 ? "[${zcap.remoteId}] " : " "}${zcap.name}',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
                                   ),
@@ -98,10 +102,24 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                          '${'start'.tr()}: ${zcap.startDate.toLocal().toString().split(' ')[0]}'),
-                                      Text(
-                                        '${'end'.tr()}: ${zcap.endDate != null ? zcap.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                      Row(
+                                        children: [
+                                          Text(
+                                              '${'zcap_screen_buildingType'.tr()}: ${zcap.buildingType.value?.name}')
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                                '${'start'.tr()}: ${zcap.startDate.toLocal().toString().split(' ')[0]}'),
+                                          ),
+                                          Expanded(
+                                            child: Text(
+                                              '${'end'.tr()}: ${zcap.endDate != null ? zcap.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -111,6 +129,33 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
+                                      if (zcap.latitude != null &&
+                                          zcap.longitude != null)
+                                        IconButton(
+                                          icon: const Icon(Icons.location_on,
+                                              color: Colors.blue),
+                                          tooltip:
+                                              '${'zcap_screen_open_location'.tr()}:\n ${'latitude'.tr()}: ${zcap.latitude} \n ${'longitude'.tr()}: ${zcap.longitude}',
+                                          onPressed: () async {
+                                            final latitude = zcap.latitude!;
+                                            final longitude = zcap.longitude!;
+                                            final url = Uri.parse(
+                                                'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
+
+                                            if (await canLaunchUrl(url)) {
+                                              await launchUrl(url,
+                                                  mode: LaunchMode
+                                                      .externalApplication);
+                                            } else {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                    content: Text(
+                                                        'Não foi possível abrir o Google Maps.')),
+                                              );
+                                            }
+                                          },
+                                        ),
                                       if (!zcap.isSynced) CustomUnsyncedIcon(),
                                       IconButton(
                                         onPressed: () {
@@ -163,9 +208,23 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
   }
 
   void _addOrEditZcap({ZcapIsar? zcap}) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
     final nameController = TextEditingController(text: zcap?.name ?? "");
+    final addressController = TextEditingController(text: zcap?.address ?? "");
+    BuildingTypesIsar? buildingType = zcap?.buildingType.value;
     DateTime selectedStartDate = zcap?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = zcap?.endDate;
+
+    final availableBuildingTypes = await DatabaseService.db.buildingTypesIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
 
     final formKey = GlobalKey<FormState>();
 
@@ -188,6 +247,55 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           controller: nameController,
                           decoration: InputDecoration(
                               labelText: 'screen_zcap_name'.tr()),
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return 'required_field'.tr();
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(
+                          height: 12.0,
+                        ),
+                        DropdownSearch<BuildingTypesIsar>(
+                          selectedItem: buildingType,
+                          popupProps: PopupProps.menu(
+                            showSearchBox: true,
+                            searchFieldProps: TextFieldProps(
+                              decoration: InputDecoration(
+                                labelText:
+                                    '${'search'.tr()} ${'zcap_screen_buildingType'.tr()}',
+                              ),
+                            ),
+                          ),
+                          itemAsString: (BuildingTypesIsar? e) => e?.name ?? '',
+                          items: availableBuildingTypes,
+                          onChanged: (BuildingTypesIsar? value) {
+                            setModalState(() {
+                              buildingType = value;
+                            });
+                          },
+                          validator: (BuildingTypesIsar? value) {
+                            if (value == null) {
+                              return 'required_field'.tr();
+                            }
+                            return null;
+                          },
+                          dropdownDecoratorProps: DropDownDecoratorProps(
+                            dropdownSearchDecoration: InputDecoration(
+                              labelText: 'zcap_screen_buildingType'.tr(),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 12.0,
+                        ),
+                        TextFormField(
+                          controller: addressController,
+                          decoration: InputDecoration(
+                              labelText: 'zcap_screen_address'.tr()),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
                               return 'required_field'.tr();
