@@ -20,7 +20,9 @@ class TreeLevelDetailTypeIsar implements IsarTable<TreeLevelDetailType>{
 
   IsarLink<TreeLevelIsar> treeLevel = IsarLink<TreeLevelIsar>();
   IsarLink<TreeRecordDetailTypeIsar> detailType = IsarLink<TreeRecordDetailTypeIsar>();
+  @Index()
   late DateTime startDate;
+  @Index()
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override

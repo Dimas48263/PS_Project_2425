@@ -163,11 +163,20 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
   void _addOrEditTreeLevelDetailType(TreeLevelDetailTypeIsar? t) async {
     final formKey = GlobalKey<FormState>();
 
-    final availableTreeLevels =
-        await DatabaseService.db.treeLevelIsars.where().findAll();
+    final availableTreeLevels = await DatabaseService.db.treeLevelIsars
+        .filter()
+        .startDateLessThan(DateTime.now())
+        .and()
+        .group((q) => q.endDateIsNull().or().endDateGreaterThan(DateTime.now()))
+        .findAll();
 
-    final availableDetailTypes =
-        await DatabaseService.db.treeRecordDetailTypeIsars.where().findAll();
+    final availableDetailTypes = await DatabaseService
+        .db.treeRecordDetailTypeIsars
+        .filter()
+        .startDateLessThan(DateTime.now())
+        .and()
+        .group((q) => q.endDateIsNull().or().endDateGreaterThan(DateTime.now()))
+        .findAll();
 
     TreeLevelIsar? treeLevel = t?.treeLevel.value;
     TreeRecordDetailTypeIsar? detailType = t?.detailType.value;

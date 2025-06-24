@@ -71,6 +71,32 @@ const TreeIsarSchema = CollectionSchema(
           caseSensitive: false,
         )
       ],
+    ),
+    r'startDate': IndexSchema(
+      id: 7723980484494730382,
+      name: r'startDate',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'startDate',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
+    r'endDate': IndexSchema(
+      id: 422088669960424970,
+      name: r'endDate',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'endDate',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
     )
   },
   links: {
@@ -189,6 +215,22 @@ extension TreeIsarQueryWhereSort on QueryBuilder<TreeIsar, TreeIsar, QWhere> {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'remoteId'),
+      );
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhere> anyStartDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'startDate'),
+      );
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhere> anyEndDate() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'endDate'),
       );
     });
   }
@@ -365,6 +407,206 @@ extension TreeIsarQueryWhere on QueryBuilder<TreeIsar, TreeIsar, QWhereClause> {
         lower: [lowerRemoteId],
         includeLower: includeLower,
         upper: [upperRemoteId],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> startDateEqualTo(
+      DateTime startDate) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'startDate',
+        value: [startDate],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> startDateNotEqualTo(
+      DateTime startDate) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'startDate',
+              lower: [],
+              upper: [startDate],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'startDate',
+              lower: [startDate],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'startDate',
+              lower: [startDate],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'startDate',
+              lower: [],
+              upper: [startDate],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> startDateGreaterThan(
+    DateTime startDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'startDate',
+        lower: [startDate],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> startDateLessThan(
+    DateTime startDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'startDate',
+        lower: [],
+        upper: [startDate],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> startDateBetween(
+    DateTime lowerStartDate,
+    DateTime upperStartDate, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'startDate',
+        lower: [lowerStartDate],
+        includeLower: includeLower,
+        upper: [upperStartDate],
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> endDateIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'endDate',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> endDateIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'endDate',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> endDateEqualTo(
+      DateTime? endDate) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'endDate',
+        value: [endDate],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> endDateNotEqualTo(
+      DateTime? endDate) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'endDate',
+              lower: [],
+              upper: [endDate],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'endDate',
+              lower: [endDate],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'endDate',
+              lower: [endDate],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'endDate',
+              lower: [],
+              upper: [endDate],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> endDateGreaterThan(
+    DateTime? endDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'endDate',
+        lower: [endDate],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> endDateLessThan(
+    DateTime? endDate, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'endDate',
+        lower: [],
+        upper: [endDate],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<TreeIsar, TreeIsar, QAfterWhereClause> endDateBetween(
+    DateTime? lowerEndDate,
+    DateTime? upperEndDate, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'endDate',
+        lower: [lowerEndDate],
+        includeLower: includeLower,
+        upper: [upperEndDate],
         includeUpper: includeUpper,
       ));
     });

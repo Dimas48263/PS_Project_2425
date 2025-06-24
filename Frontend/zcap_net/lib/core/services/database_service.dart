@@ -19,6 +19,7 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_t
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 
 class CollectionSchemaEntry {
   final CollectionSchema schema;
@@ -38,6 +39,11 @@ class DatabaseService {
 /* ZCAPS */
     CollectionSchemaEntry(BuildingTypesIsarSchema,
         (db) => db.buildingTypesIsars, 'buildingTypes', 'buildingTypeId'),
+    CollectionSchemaEntry(
+        DetailTypeCategoriesIsarSchema,
+        (db) => db.detailTypeCategoriesIsars,
+        'detail-type-categories',
+        'detailTypeCategoryId'),
 
 /* Incidents */
     CollectionSchemaEntry(IncidentTypesIsarSchema,
@@ -56,7 +62,6 @@ class DatabaseService {
         'special-needs', 'specialNeedId'),
     CollectionSchemaEntry(SupportNeededIsarSchema,
         (db) => db.supportNeededIsars, 'support-needed', 'supportNeededId'),
-
 
 /* Users */
     CollectionSchemaEntry(
@@ -90,7 +95,7 @@ class DatabaseService {
         TreeLevelDetailTypeIsarSchema,
         (db) => db.treeLevelDetailTypeIsars,
         'tree-level-detail-type',
-        'treeLevelDetailTypeId')
+        'treeLevelDetailTypeId'),
   ];
 
   static Future<void> setup() async {

@@ -14,7 +14,9 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType> {
   int? remoteId;
   late String name;
   late String unit;
+  @Index()
   late DateTime startDate;
+  @Index()
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'tree_level_detail_type_isar.dart';
+part of 'detail_type_categories_isar.dart';
 
 // **************************************************************************
 // IsarCollectionGenerator
@@ -9,14 +9,14 @@ part of 'tree_level_detail_type_isar.dart';
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetTreeLevelDetailTypeIsarCollection on Isar {
-  IsarCollection<TreeLevelDetailTypeIsar> get treeLevelDetailTypeIsars =>
+extension GetDetailTypeCategoriesIsarCollection on Isar {
+  IsarCollection<DetailTypeCategoriesIsar> get detailTypeCategoriesIsars =>
       this.collection();
 }
 
-const TreeLevelDetailTypeIsarSchema = CollectionSchema(
-  name: r'TreeLevelDetailTypeIsar',
-  id: 7076326178335111363,
+const DetailTypeCategoriesIsarSchema = CollectionSchema(
+  name: r'DetailTypeCategoriesIsar',
+  id: -531571790569415909,
   properties: {
     r'createdAt': PropertySchema(
       id: 0,
@@ -38,21 +38,26 @@ const TreeLevelDetailTypeIsarSchema = CollectionSchema(
       name: r'lastUpdatedAt',
       type: IsarType.dateTime,
     ),
-    r'remoteId': PropertySchema(
+    r'name': PropertySchema(
       id: 4,
+      name: r'name',
+      type: IsarType.string,
+    ),
+    r'remoteId': PropertySchema(
+      id: 5,
       name: r'remoteId',
       type: IsarType.long,
     ),
     r'startDate': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'startDate',
       type: IsarType.dateTime,
     )
   },
-  estimateSize: _treeLevelDetailTypeIsarEstimateSize,
-  serialize: _treeLevelDetailTypeIsarSerialize,
-  deserialize: _treeLevelDetailTypeIsarDeserialize,
-  deserializeProp: _treeLevelDetailTypeIsarDeserializeProp,
+  estimateSize: _detailTypeCategoriesIsarEstimateSize,
+  serialize: _detailTypeCategoriesIsarSerialize,
+  deserialize: _detailTypeCategoriesIsarDeserialize,
+  deserializeProp: _detailTypeCategoriesIsarDeserializeProp,
   idName: r'id',
   indexes: {
     r'remoteId': IndexSchema(
@@ -67,66 +72,28 @@ const TreeLevelDetailTypeIsarSchema = CollectionSchema(
           caseSensitive: false,
         )
       ],
-    ),
-    r'startDate': IndexSchema(
-      id: 7723980484494730382,
-      name: r'startDate',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'startDate',
-          type: IndexType.value,
-          caseSensitive: false,
-        )
-      ],
-    ),
-    r'endDate': IndexSchema(
-      id: 422088669960424970,
-      name: r'endDate',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'endDate',
-          type: IndexType.value,
-          caseSensitive: false,
-        )
-      ],
     )
   },
-  links: {
-    r'treeLevel': LinkSchema(
-      id: -965367265424999501,
-      name: r'treeLevel',
-      target: r'TreeLevelIsar',
-      single: true,
-    ),
-    r'detailType': LinkSchema(
-      id: 7267027390846434291,
-      name: r'detailType',
-      target: r'TreeRecordDetailTypeIsar',
-      single: true,
-    )
-  },
+  links: {},
   embeddedSchemas: {},
-  getId: _treeLevelDetailTypeIsarGetId,
-  getLinks: _treeLevelDetailTypeIsarGetLinks,
-  attach: _treeLevelDetailTypeIsarAttach,
+  getId: _detailTypeCategoriesIsarGetId,
+  getLinks: _detailTypeCategoriesIsarGetLinks,
+  attach: _detailTypeCategoriesIsarAttach,
   version: '3.1.0+1',
 );
 
-int _treeLevelDetailTypeIsarEstimateSize(
-  TreeLevelDetailTypeIsar object,
+int _detailTypeCategoriesIsarEstimateSize(
+  DetailTypeCategoriesIsar object,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.name.length * 3;
   return bytesCount;
 }
 
-void _treeLevelDetailTypeIsarSerialize(
-  TreeLevelDetailTypeIsar object,
+void _detailTypeCategoriesIsarSerialize(
+  DetailTypeCategoriesIsar object,
   IsarWriter writer,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
@@ -135,28 +102,30 @@ void _treeLevelDetailTypeIsarSerialize(
   writer.writeDateTime(offsets[1], object.endDate);
   writer.writeBool(offsets[2], object.isSynced);
   writer.writeDateTime(offsets[3], object.lastUpdatedAt);
-  writer.writeLong(offsets[4], object.remoteId);
-  writer.writeDateTime(offsets[5], object.startDate);
+  writer.writeString(offsets[4], object.name);
+  writer.writeLong(offsets[5], object.remoteId);
+  writer.writeDateTime(offsets[6], object.startDate);
 }
 
-TreeLevelDetailTypeIsar _treeLevelDetailTypeIsarDeserialize(
+DetailTypeCategoriesIsar _detailTypeCategoriesIsarDeserialize(
   Id id,
   IsarReader reader,
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  final object = TreeLevelDetailTypeIsar();
+  final object = DetailTypeCategoriesIsar();
   object.createdAt = reader.readDateTime(offsets[0]);
   object.endDate = reader.readDateTimeOrNull(offsets[1]);
   object.id = id;
   object.isSynced = reader.readBool(offsets[2]);
   object.lastUpdatedAt = reader.readDateTime(offsets[3]);
-  object.remoteId = reader.readLongOrNull(offsets[4]);
-  object.startDate = reader.readDateTime(offsets[5]);
+  object.name = reader.readString(offsets[4]);
+  object.remoteId = reader.readLong(offsets[5]);
+  object.startDate = reader.readDateTime(offsets[6]);
   return object;
 }
 
-P _treeLevelDetailTypeIsarDeserializeProp<P>(
+P _detailTypeCategoriesIsarDeserializeProp<P>(
   IsarReader reader,
   int propertyId,
   int offset,
@@ -172,42 +141,40 @@ P _treeLevelDetailTypeIsarDeserializeProp<P>(
     case 3:
       return (reader.readDateTime(offset)) as P;
     case 4:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 5:
+      return (reader.readLong(offset)) as P;
+    case 6:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
-Id _treeLevelDetailTypeIsarGetId(TreeLevelDetailTypeIsar object) {
+Id _detailTypeCategoriesIsarGetId(DetailTypeCategoriesIsar object) {
   return object.id;
 }
 
-List<IsarLinkBase<dynamic>> _treeLevelDetailTypeIsarGetLinks(
-    TreeLevelDetailTypeIsar object) {
-  return [object.treeLevel, object.detailType];
+List<IsarLinkBase<dynamic>> _detailTypeCategoriesIsarGetLinks(
+    DetailTypeCategoriesIsar object) {
+  return [];
 }
 
-void _treeLevelDetailTypeIsarAttach(
-    IsarCollection<dynamic> col, Id id, TreeLevelDetailTypeIsar object) {
+void _detailTypeCategoriesIsarAttach(
+    IsarCollection<dynamic> col, Id id, DetailTypeCategoriesIsar object) {
   object.id = id;
-  object.treeLevel
-      .attach(col, col.isar.collection<TreeLevelIsar>(), r'treeLevel', id);
-  object.detailType.attach(
-      col, col.isar.collection<TreeRecordDetailTypeIsar>(), r'detailType', id);
 }
 
-extension TreeLevelDetailTypeIsarQueryWhereSort
-    on QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QWhere> {
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterWhere>
+extension DetailTypeCategoriesIsarQueryWhereSort on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QWhere> {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterWhere>
       anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterWhere>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterWhere>
       anyRemoteId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -215,29 +182,11 @@ extension TreeLevelDetailTypeIsarQueryWhereSort
       );
     });
   }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterWhere>
-      anyStartDate() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'startDate'),
-      );
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterWhere>
-      anyEndDate() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'endDate'),
-      );
-    });
-  }
 }
 
-extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
-    TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QWhereClause> {
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+extension DetailTypeCategoriesIsarQueryWhere on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QWhereClause> {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IdWhereClause.between(
@@ -247,7 +196,7 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
@@ -270,7 +219,7 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -279,7 +228,7 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
@@ -288,7 +237,7 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> idBetween(
     Id lowerId,
     Id upperId, {
@@ -305,30 +254,8 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> remoteIdIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'remoteId',
-        value: [null],
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> remoteIdIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'remoteId',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> remoteIdEqualTo(int? remoteId) {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterWhereClause> remoteIdEqualTo(int remoteId) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
         indexName: r'remoteId',
@@ -337,8 +264,8 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> remoteIdNotEqualTo(int? remoteId) {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterWhereClause> remoteIdNotEqualTo(int remoteId) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -372,9 +299,9 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> remoteIdGreaterThan(
-    int? remoteId, {
+    int remoteId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -387,9 +314,9 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> remoteIdLessThan(
-    int? remoteId, {
+    int remoteId, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -402,10 +329,10 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterWhereClause> remoteIdBetween(
-    int? lowerRemoteId,
-    int? upperRemoteId, {
+    int lowerRemoteId,
+    int upperRemoteId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -419,219 +346,11 @@ extension TreeLevelDetailTypeIsarQueryWhere on QueryBuilder<
       ));
     });
   }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> startDateEqualTo(DateTime startDate) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'startDate',
-        value: [startDate],
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> startDateNotEqualTo(DateTime startDate) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'startDate',
-              lower: [],
-              upper: [startDate],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'startDate',
-              lower: [startDate],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'startDate',
-              lower: [startDate],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'startDate',
-              lower: [],
-              upper: [startDate],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> startDateGreaterThan(
-    DateTime startDate, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'startDate',
-        lower: [startDate],
-        includeLower: include,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> startDateLessThan(
-    DateTime startDate, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'startDate',
-        lower: [],
-        upper: [startDate],
-        includeUpper: include,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> startDateBetween(
-    DateTime lowerStartDate,
-    DateTime upperStartDate, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'startDate',
-        lower: [lowerStartDate],
-        includeLower: includeLower,
-        upper: [upperStartDate],
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> endDateIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'endDate',
-        value: [null],
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> endDateIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'endDate',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> endDateEqualTo(DateTime? endDate) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'endDate',
-        value: [endDate],
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> endDateNotEqualTo(DateTime? endDate) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'endDate',
-              lower: [],
-              upper: [endDate],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'endDate',
-              lower: [endDate],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'endDate',
-              lower: [endDate],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'endDate',
-              lower: [],
-              upper: [endDate],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> endDateGreaterThan(
-    DateTime? endDate, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'endDate',
-        lower: [endDate],
-        includeLower: include,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> endDateLessThan(
-    DateTime? endDate, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'endDate',
-        lower: [],
-        upper: [endDate],
-        includeUpper: include,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterWhereClause> endDateBetween(
-    DateTime? lowerEndDate,
-    DateTime? upperEndDate, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'endDate',
-        lower: [lowerEndDate],
-        includeLower: includeLower,
-        upper: [upperEndDate],
-        includeUpper: includeUpper,
-      ));
-    });
-  }
 }
 
-extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
-    TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QFilterCondition> {
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+extension DetailTypeCategoriesIsarQueryFilter on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QFilterCondition> {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> createdAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -641,7 +360,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> createdAtGreaterThan(
     DateTime value, {
     bool include = false,
@@ -655,7 +374,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> createdAtLessThan(
     DateTime value, {
     bool include = false,
@@ -669,7 +388,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> createdAtBetween(
     DateTime lower,
     DateTime upper, {
@@ -687,7 +406,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> endDateIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNull(
@@ -696,7 +415,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> endDateIsNotNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(const FilterCondition.isNotNull(
@@ -705,7 +424,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> endDateEqualTo(DateTime? value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -715,7 +434,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> endDateGreaterThan(
     DateTime? value, {
     bool include = false,
@@ -729,7 +448,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> endDateLessThan(
     DateTime? value, {
     bool include = false,
@@ -743,7 +462,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> endDateBetween(
     DateTime? lower,
     DateTime? upper, {
@@ -761,7 +480,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -771,7 +490,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> idGreaterThan(
     Id value, {
     bool include = false,
@@ -785,7 +504,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> idLessThan(
     Id value, {
     bool include = false,
@@ -799,7 +518,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> idBetween(
     Id lower,
     Id upper, {
@@ -817,7 +536,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> isSyncedEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -827,7 +546,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> lastUpdatedAtEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -837,7 +556,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> lastUpdatedAtGreaterThan(
     DateTime value, {
     bool include = false,
@@ -851,7 +570,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> lastUpdatedAtLessThan(
     DateTime value, {
     bool include = false,
@@ -865,7 +584,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> lastUpdatedAtBetween(
     DateTime lower,
     DateTime upper, {
@@ -883,26 +602,146 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterFilterCondition> remoteIdIsNull() {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> nameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'remoteId',
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterFilterCondition> remoteIdIsNotNull() {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> nameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'remoteId',
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterFilterCondition> remoteIdEqualTo(int? value) {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> nameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> nameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'name',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> nameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> nameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+          QAfterFilterCondition>
+      nameContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+          QAfterFilterCondition>
+      nameMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'name',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> nameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'name',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> nameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'name',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
+      QAfterFilterCondition> remoteIdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'remoteId',
@@ -911,9 +750,9 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> remoteIdGreaterThan(
-    int? value, {
+    int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -925,9 +764,9 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> remoteIdLessThan(
-    int? value, {
+    int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -939,10 +778,10 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> remoteIdBetween(
-    int? lower,
-    int? upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -957,7 +796,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> startDateEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -967,7 +806,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> startDateGreaterThan(
     DateTime value, {
     bool include = false,
@@ -981,7 +820,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> startDateLessThan(
     DateTime value, {
     bool include = false,
@@ -995,7 +834,7 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar,
       QAfterFilterCondition> startDateBetween(
     DateTime lower,
     DateTime upper, {
@@ -1014,121 +853,106 @@ extension TreeLevelDetailTypeIsarQueryFilter on QueryBuilder<
   }
 }
 
-extension TreeLevelDetailTypeIsarQueryObject on QueryBuilder<
-    TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QFilterCondition> {}
+extension DetailTypeCategoriesIsarQueryObject on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QFilterCondition> {}
 
-extension TreeLevelDetailTypeIsarQueryLinks on QueryBuilder<
-    TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QFilterCondition> {
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterFilterCondition> treeLevel(FilterQuery<TreeLevelIsar> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.link(q, r'treeLevel');
-    });
-  }
+extension DetailTypeCategoriesIsarQueryLinks on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QFilterCondition> {}
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterFilterCondition> treeLevelIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'treeLevel', 0, true, 0, true);
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-          QAfterFilterCondition>
-      detailType(FilterQuery<TreeRecordDetailTypeIsar> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.link(q, r'detailType');
-    });
-  }
-
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar,
-      QAfterFilterCondition> detailTypeIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'detailType', 0, true, 0, true);
-    });
-  }
-}
-
-extension TreeLevelDetailTypeIsarQuerySortBy
-    on QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QSortBy> {
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+extension DetailTypeCategoriesIsarQuerySortBy on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QSortBy> {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByEndDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'endDate', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByEndDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'endDate', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByIsSyncedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByLastUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdatedAt', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByLastUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdatedAt', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
+      sortByName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'name', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
+      sortByNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByRemoteId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'remoteId', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByRemoteIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'remoteId', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       sortByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
@@ -1136,100 +960,114 @@ extension TreeLevelDetailTypeIsarQuerySortBy
   }
 }
 
-extension TreeLevelDetailTypeIsarQuerySortThenBy on QueryBuilder<
-    TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QSortThenBy> {
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+extension DetailTypeCategoriesIsarQuerySortThenBy on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QSortThenBy> {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByCreatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByEndDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'endDate', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByEndDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'endDate', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByIsSyncedDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByLastUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdatedAt', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByLastUpdatedAtDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastUpdatedAt', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
+      thenByName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'name', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
+      thenByNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'name', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByRemoteId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'remoteId', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByRemoteIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'remoteId', Sort.desc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.asc);
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QAfterSortBy>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QAfterSortBy>
       thenByStartDateDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'startDate', Sort.desc);
@@ -1237,44 +1075,51 @@ extension TreeLevelDetailTypeIsarQuerySortThenBy on QueryBuilder<
   }
 }
 
-extension TreeLevelDetailTypeIsarQueryWhereDistinct on QueryBuilder<
-    TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QDistinct> {
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QDistinct>
+extension DetailTypeCategoriesIsarQueryWhereDistinct on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QDistinct> {
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QDistinct>
       distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QDistinct>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QDistinct>
       distinctByEndDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'endDate');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QDistinct>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QDistinct>
       distinctByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSynced');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QDistinct>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QDistinct>
       distinctByLastUpdatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastUpdatedAt');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QDistinct>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QDistinct>
+      distinctByName({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'name', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QDistinct>
       distinctByRemoteId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'remoteId');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QDistinct>
+  QueryBuilder<DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QDistinct>
       distinctByStartDate() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'startDate');
@@ -1282,50 +1127,57 @@ extension TreeLevelDetailTypeIsarQueryWhereDistinct on QueryBuilder<
   }
 }
 
-extension TreeLevelDetailTypeIsarQueryProperty on QueryBuilder<
-    TreeLevelDetailTypeIsar, TreeLevelDetailTypeIsar, QQueryProperty> {
-  QueryBuilder<TreeLevelDetailTypeIsar, int, QQueryOperations> idProperty() {
+extension DetailTypeCategoriesIsarQueryProperty on QueryBuilder<
+    DetailTypeCategoriesIsar, DetailTypeCategoriesIsar, QQueryProperty> {
+  QueryBuilder<DetailTypeCategoriesIsar, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, DateTime, QQueryOperations>
+  QueryBuilder<DetailTypeCategoriesIsar, DateTime, QQueryOperations>
       createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, DateTime?, QQueryOperations>
+  QueryBuilder<DetailTypeCategoriesIsar, DateTime?, QQueryOperations>
       endDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'endDate');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, bool, QQueryOperations>
+  QueryBuilder<DetailTypeCategoriesIsar, bool, QQueryOperations>
       isSyncedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isSynced');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, DateTime, QQueryOperations>
+  QueryBuilder<DetailTypeCategoriesIsar, DateTime, QQueryOperations>
       lastUpdatedAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastUpdatedAt');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, int?, QQueryOperations>
+  QueryBuilder<DetailTypeCategoriesIsar, String, QQueryOperations>
+      nameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'name');
+    });
+  }
+
+  QueryBuilder<DetailTypeCategoriesIsar, int, QQueryOperations>
       remoteIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'remoteId');
     });
   }
 
-  QueryBuilder<TreeLevelDetailTypeIsar, DateTime, QQueryOperations>
+  QueryBuilder<DetailTypeCategoriesIsar, DateTime, QQueryOperations>
       startDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'startDate');
