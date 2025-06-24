@@ -1,4 +1,4 @@
-package pt.isel.ps.zcap.repository.dto.supportTables
+package pt.isel.ps.zcap.repository.dto.supportTables.detailTypesCategories
 
 import java.time.LocalDate
 

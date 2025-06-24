@@ -137,15 +137,15 @@ BEGIN
 	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* ANEPC', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
-IF (SELECT COUNT(*) FROM datatypes ) = 0
+--IF (SELECT COUNT(*) FROM datatypes ) = 0
 -- INSERT DATATYPES
-BEGIN
-	INSERT datatypes ([name]) VALUES ('boolean')
-	INSERT datatypes ([name]) VALUES ('int')
-	INSERT datatypes ([name]) VALUES ('double')
-	INSERT datatypes ([name]) VALUES ('char')
-	INSERT datatypes ([name]) VALUES ('string')
-END
+--BEGIN
+--	INSERT datatypes ([name]) VALUES ('boolean')
+--	INSERT datatypes ([name]) VALUES ('int')
+--	INSERT datatypes ([name]) VALUES ('double')
+--	INSERT datatypes ([name]) VALUES ('char')
+--	INSERT datatypes ([name]) VALUES ('string')
+--END
 
 IF (SELECT COUNT(*) FROM entities ) = 0
 BEGIN
@@ -165,14 +165,14 @@ END
 IF (SELECT COUNT(*) FROM zcapDetailTypes ) = 0
 BEGIN
 -- INSERT ZCAPDETAILTYPES
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataTypeId, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Área(m2)', 2, 3, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataTypeId, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Acesso a veículos pesados', 2, 1, 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataTypeId, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade c/pernoita', 2, 2, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataTypeId, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade s/pernoita', 2, 2, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataTypeId, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Climatização', 2, 1, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataTypeId, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Cozinha', 3, 1, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataTypeId, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade de confeção refeições', 3, 2, 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataTypeId, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Refeitório', 3, 1, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Área(m2)', 2, 'DOUBLE', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Acesso a veículos pesados', 2, 'BOOLEAN', 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade c/pernoita', 2, 'INT', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade s/pernoita', 2, 'INT', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Climatização', 2, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Cozinha', 3, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade de confeção refeições', 3, 'INT', 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Refeitório', 3, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM zcaps ) = 0

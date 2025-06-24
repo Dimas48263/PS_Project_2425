@@ -1,4 +1,4 @@
-package pt.isel.ps.zcap.repository.dto.supportTables
+package pt.isel.ps.zcap.repository.dto.supportTables.entities
 
 import pt.isel.ps.zcap.domain.supportTables.Entities
 import pt.isel.ps.zcap.domain.supportTables.EntityType

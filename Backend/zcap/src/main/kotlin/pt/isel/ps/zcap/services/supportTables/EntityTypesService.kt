@@ -2,10 +2,11 @@ package pt.isel.ps.zcap.services.supportTables
 
 import org.springframework.stereotype.Service
 import pt.isel.ps.zcap.domain.supportTables.EntityType
-import pt.isel.ps.zcap.repository.dto.supportTables.EntityTypeInputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.EntityTypeOutputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.toEntityType
-import pt.isel.ps.zcap.repository.dto.supportTables.toOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entityTypes.EntityTypeInputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entityTypes.EntityTypeOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entityTypes.toEntityType
+import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.toOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entityTypes.toOutputModel
 import pt.isel.ps.zcap.repository.models.supportTables.EntityTypeRepository
 import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors

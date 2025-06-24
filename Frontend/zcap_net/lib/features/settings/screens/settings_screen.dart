@@ -17,6 +17,7 @@ import 'package:zcap_net_app/features/settings/screens/users/user_data_access/us
 import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_profiles_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/users/users/users_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/detail_type_categories/detail_type_categories_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/zcaps/zcap_detail_types/zcap_detail_types_screen.dart';
 import 'entities/entities/entities_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -233,15 +234,15 @@ class SettingsScreen extends StatelessWidget {
                       ),
                       ListTile(
                         title: Text(
-                            'TODO: ${'screen_settings_detail_types'.tr()}'),
-//                            onTap: () {
-//                              Navigator.push(
-//                                context,
-//                                MaterialPageRoute(
-//                                    builder: (context) =>
-//                                        const EntityTypesScreenOld()),
-//                              );
-//                            },
+                            'zcap_detail_type'.tr()),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ZcapDetailTypesScreen()),
+                              );
+                            },
                       ),
                       ListTile(
                         title:

@@ -1,11 +1,11 @@
-package pt.isel.ps.zcap.repository.dto.supportTables
+package pt.isel.ps.zcap.repository.dto.supportTables.entityTypes
 
-import pt.isel.ps.zcap.domain.supportTables.BuildingType
+import pt.isel.ps.zcap.domain.supportTables.EntityType
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class BuildingTypeOutputModel(
-    val buildingTypeId: Long,
+data class EntityTypeOutputModel(
+    val entityTypeId: Long,
     val name: String,
 
     val startDate: LocalDate,
@@ -14,9 +14,10 @@ class BuildingTypeOutputModel(
     val lastUpdatedAt: LocalDateTime,
 )
 
-fun BuildingType.toOutputModel(): BuildingTypeOutputModel {
-    return BuildingTypeOutputModel(
-        buildingTypeId = buildingTypeId,
+// Conversion from domain Model to OutputModel
+fun EntityType.toOutputModel(): EntityTypeOutputModel {
+    return EntityTypeOutputModel(
+        entityTypeId = entityTypeId,
         name = name,
         startDate = startDate,
         endDate = endDate,

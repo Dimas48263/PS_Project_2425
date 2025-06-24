@@ -11,7 +11,7 @@ class DetailTypeCategoriesIsar implements IsarTable<DetailTypeCategories> {
 
   @Index()
   @override
-  late int remoteId;
+  int? remoteId;
 
   late String name = "";
 
@@ -39,7 +39,7 @@ class DetailTypeCategoriesIsar implements IsarTable<DetailTypeCategories> {
 
   @override
   DetailTypeCategories toEntity() => DetailTypeCategories(
-        remoteId: remoteId,
+        remoteId: remoteId ?? 0,
         name: name,
         startDate: startDate,
         endDate: endDate,
@@ -89,5 +89,10 @@ class DetailTypeCategoriesIsar implements IsarTable<DetailTypeCategories> {
     createdAt = detailTypeCategories.createdAt;
     lastUpdatedAt = detailTypeCategories.lastUpdatedAt;
     isSynced = true;
+  }
+
+  @override
+  String toString() {
+    return name;
   }
 }

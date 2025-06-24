@@ -1,6 +1,10 @@
-package pt.isel.ps.zcap.repository.dto.supportTables
+package pt.isel.ps.zcap.repository.dto.supportTables.zcap
 
 import pt.isel.ps.zcap.domain.supportTables.Zcap
+import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.BuildingTypeOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.toOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entities.EntitiesOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.entities.toOutputModel
 import pt.isel.ps.zcap.repository.dto.trees.tree.TreeOutputModel
 import pt.isel.ps.zcap.services.tree.toOutputModel
 import java.time.LocalDate

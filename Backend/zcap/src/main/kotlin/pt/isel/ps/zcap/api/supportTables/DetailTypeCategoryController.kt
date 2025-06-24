@@ -18,8 +18,8 @@ import pt.isel.ps.zcap.api.insertionFailedErrorMessage
 import pt.isel.ps.zcap.api.invalidDataErrorMessage
 import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
-import pt.isel.ps.zcap.repository.dto.supportTables.DetailTypeCategoryInputModel
-import pt.isel.ps.zcap.repository.dto.supportTables.DetailTypeCategoryOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.detailTypesCategories.DetailTypeCategoryInputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.detailTypesCategories.DetailTypeCategoryOutputModel
 import pt.isel.ps.zcap.services.Failure
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
