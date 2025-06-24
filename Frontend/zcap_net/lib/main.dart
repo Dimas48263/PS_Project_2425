@@ -98,4 +98,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-//TODO: implement all translations
