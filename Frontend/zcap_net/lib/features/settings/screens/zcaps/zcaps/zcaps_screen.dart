@@ -4,7 +4,6 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
@@ -131,31 +130,12 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                     children: [
                                       if (zcap.latitude != null &&
                                           zcap.longitude != null)
-                                        IconButton(
-                                          icon: const Icon(Icons.location_on,
-                                              color: Colors.blue),
-                                          tooltip:
-                                              '${'zcap_screen_open_location'.tr()}:\n ${'latitude'.tr()}: ${zcap.latitude} \n ${'longitude'.tr()}: ${zcap.longitude}',
-                                          onPressed: () async {
-                                            final latitude = zcap.latitude!;
-                                            final longitude = zcap.longitude!;
-                                            final url = Uri.parse(
-                                                'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude');
-
-                                            if (await canLaunchUrl(url)) {
-                                              await launchUrl(url,
-                                                  mode: LaunchMode
-                                                      .externalApplication);
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                    content: Text(
-                                                        'Não foi possível abrir o Google Maps.')),
-                                              );
-                                            }
-                                          },
-                                        ),
+                                        if (zcap.latitude != null &&
+                                            zcap.longitude != null)
+                                          CustomGMapsLocationButton(
+                                            latitude: zcap.latitude.toString(),
+                                            longitude: zcap.longitude.toString(),
+                                          ),
                                       if (!zcap.isSynced) CustomUnsyncedIcon(),
                                       IconButton(
                                         onPressed: () {
@@ -212,6 +192,10 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
     final today = DateTime(now.year, now.month, now.day);
     final nameController = TextEditingController(text: zcap?.name ?? "");
     final addressController = TextEditingController(text: zcap?.address ?? "");
+    final latitudeController =
+        TextEditingController(text: zcap?.latitude?.toString() ?? '');
+    final longitudeController =
+        TextEditingController(text: zcap?.longitude?.toString() ?? '');
     BuildingTypesIsar? buildingType = zcap?.buildingType.value;
     DateTime selectedStartDate = zcap?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = zcap?.endDate;
@@ -306,6 +290,13 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                         const SizedBox(
                           height: 12.0,
                         ),
+                        CustomLocationInputField(
+                          latitudeController: latitudeController,
+                          longitudeController: longitudeController,
+                        ),
+                        const SizedBox(
+                          height: 12.0,
+                        ),
                         CustomDateRangePicker(
                           startDate: selectedStartDate,
                           endDate: selectedEndDate,
@@ -337,6 +328,11 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           final editedZcap = zcap ?? ZcapIsar();
 
                           editedZcap.name = nameController.text.trim();
+                          editedZcap.buildingType.value = buildingType;
+                          editedZcap.latitude =
+                              double.tryParse(latitudeController.text);
+                          editedZcap.longitude =
+                              double.tryParse(longitudeController.text);
                           editedZcap.startDate = selectedStartDate;
                           editedZcap.endDate = selectedEndDate;
                           editedZcap.lastUpdatedAt = now;

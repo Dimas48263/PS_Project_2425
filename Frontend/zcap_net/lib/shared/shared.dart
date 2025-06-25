@@ -15,6 +15,9 @@ export '../widgets/custom_dropdown_search.dart';
 export '../widgets/custom_list_view.dart';
 export '../widgets/custom_form.dart';
 export '../widgets/custom_unsynced_icon.dart';
+export '../widgets/custom_gmaps_location.dart';
+export '../widgets/custom_location_input_field.dart';
+
 
 export './shared_dialogs.dart';
 export './date_utils.dart';
