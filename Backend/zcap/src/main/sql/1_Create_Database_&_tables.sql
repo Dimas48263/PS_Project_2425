@@ -389,7 +389,7 @@ CREATE TABLE zcapDetails (
 	[zcapDetailId]		BIGINT				IDENTITY(1,1) PRIMARY KEY,
 	[zcapId]			BIGINT				NOT NULL REFERENCES zcaps(zcapId),
 	[zcapDetailTypeId]	BIGINT				NOT NULL REFERENCES zcapDetailTypes(zcapDetailTypeId),
-	[value]				NVARCHAR(MAX)	NOT NULL,
+	[valueCol]				NVARCHAR(MAX)	NOT NULL,
     [startDate]			DATE NOT NULL,
     [endDate]			DATE NULL,
     [createdAt]			DATETIME NOT NULL,

@@ -20,6 +20,7 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 
@@ -51,6 +52,11 @@ class DatabaseService {
         (db) => db.zcapDetailTypeIsars,
         'zcap-detail-types',
         'zcapDetailTypeId'),
+    CollectionSchemaEntry(
+        ZcapDetailsIsarSchema,
+        (db) => db.zcapDetailsIsars,
+        'zcap-details',
+        'zcapDetailId'),
 
 /* Incidents */
     CollectionSchemaEntry(IncidentTypesIsarSchema,

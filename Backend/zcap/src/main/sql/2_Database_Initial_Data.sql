@@ -185,14 +185,14 @@ END
 IF (SELECT COUNT(*) FROM zcapDetails ) = 0
 BEGIN
 -- INSERT ZCAPDETAILS
-	INSERT zcapDetails (zcapId, zcapDetailTypeId, [value], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 1, 1301.55, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetails (zcapId, zcapDetailTypeId, [value], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 2, 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetails (zcapId, zcapDetailTypeId, [value], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 3, 130, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetails (zcapId, zcapDetailTypeId, [value], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 4, 290, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetails (zcapId, zcapDetailTypeId, [value], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 5, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetails (zcapId, zcapDetailTypeId, [value], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 6, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetails (zcapId, zcapDetailTypeId, [value], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 7, 1666, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetails (zcapId, zcapDetailTypeId, [value], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 8, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetails (zcapId, zcapDetailTypeId, [valueCol], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 1, 1301.55, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetails (zcapId, zcapDetailTypeId, [valueCol], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 2, 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetails (zcapId, zcapDetailTypeId, [valueCol], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 3, 130, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetails (zcapId, zcapDetailTypeId, [valueCol], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 4, 290, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetails (zcapId, zcapDetailTypeId, [valueCol], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 5, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetails (zcapId, zcapDetailTypeId, [valueCol], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 6, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetails (zcapId, zcapDetailTypeId, [valueCol], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 7, 1666, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetails (zcapId, zcapDetailTypeId, [valueCol], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 8, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 /* 2 - Zcap Tables initial data END */

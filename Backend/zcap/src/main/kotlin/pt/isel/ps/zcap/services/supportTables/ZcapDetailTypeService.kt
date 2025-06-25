@@ -6,6 +6,7 @@ import pt.isel.ps.zcap.domain.supportTables.ZcapDetailType
 import pt.isel.ps.zcap.repository.dto.supportTables.detailTypesCategories.toOutputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.zcapDetailTypes.ZcapDetailTypeInputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.zcapDetailTypes.ZcapDetailTypeOutputModel
+import pt.isel.ps.zcap.repository.dto.supportTables.zcapDetailTypes.toOutputModel
 import pt.isel.ps.zcap.repository.models.supportTables.DetailTypeCategoryRepository
 import pt.isel.ps.zcap.repository.models.supportTables.ZcapDetailTypeRepository
 import pt.isel.ps.zcap.services.Either
@@ -85,17 +86,4 @@ class ZcapDetailTypeService(
 
     fun getZcapDetailTypesValidOn(date: LocalDate): List<ZcapDetailTypeOutputModel> =
         repo.findValidOnDate(date).map { it.toOutputModel() }
-
-    fun ZcapDetailType.toOutputModel(): ZcapDetailTypeOutputModel =
-        ZcapDetailTypeOutputModel(
-            zcapDetailTypeId,
-            name,
-            detailTypeCategory.toOutputModel(),
-            dataType,
-            isMandatory,
-            startDate,
-            endDate,
-            createdAt,
-            lastUpdatedAt
-        )
 }
