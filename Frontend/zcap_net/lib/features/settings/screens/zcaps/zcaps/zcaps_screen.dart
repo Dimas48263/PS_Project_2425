@@ -5,6 +5,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
@@ -93,7 +94,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                     left: 10.0,
                                   ),
                                   title: Text(
-                                    '${zcap.remoteId! > 0 ? "[${zcap.remoteId}] " : " "}${zcap.name}',
+                                    '${(zcap.remoteId != null && zcap.remoteId! > 0) ? "[${zcap.remoteId}] " : " "}${zcap.name}',
                                     style:
                                         TextStyle(fontWeight: FontWeight.bold),
                                   ),
@@ -103,19 +104,56 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                     children: [
                                       Row(
                                         children: [
-                                          Text(
-                                              '${'zcap_screen_buildingType'.tr()}: ${zcap.buildingType.value?.name}')
+                                          Expanded(
+                                            child: CustomLabelValueText(
+                                              label: 'zcap_screen_buildingType'
+                                                  .tr(),
+                                              value: zcap.buildingType.value
+                                                      ?.name ??
+                                                  '',
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                CustomLabelValueText(
+                                                  label: 'screen_entity'.tr(),
+                                                  value: zcap.zcapEntity.value
+                                                          ?.name ??
+                                                      '',
+                                                ),
+                                                CustomLabelValueText(
+                                                  label: 'contact'.tr(),
+                                                  value:
+                                                      '${zcap.zcapEntity.value?.phone1 ?? ''}'
+                                                      '${(zcap.zcapEntity.value?.phone2?.isNotEmpty ?? false) ? ' \\ ${zcap.zcapEntity.value?.phone2}' : ''}',
+                                                ),
+                                              ],
+                                            ),
+                                          ),
                                         ],
                                       ),
                                       Row(
                                         children: [
                                           Expanded(
-                                            child: Text(
-                                                '${'start'.tr()}: ${zcap.startDate.toLocal().toString().split(' ')[0]}'),
+                                            child: CustomLabelValueText(
+                                                label: 'start'.tr(),
+                                                value: zcap.startDate
+                                                    .toLocal()
+                                                    .toString()
+                                                    .split(' ')[0]),
                                           ),
                                           Expanded(
-                                            child: Text(
-                                              '${'end'.tr()}: ${zcap.endDate != null ? zcap.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                            child: CustomLabelValueText(
+                                              label: 'end'.tr(),
+                                              value: zcap.endDate != null
+                                                  ? zcap.endDate!
+                                                      .toLocal()
+                                                      .toString()
+                                                      .split(' ')[0]
+                                                  : 'no_end_date'.tr(),
                                             ),
                                           ),
                                         ],
@@ -134,7 +172,8 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                             zcap.longitude != null)
                                           CustomGMapsLocationButton(
                                             latitude: zcap.latitude.toString(),
-                                            longitude: zcap.longitude.toString(),
+                                            longitude:
+                                                zcap.longitude.toString(),
                                           ),
                                       if (!zcap.isSynced) CustomUnsyncedIcon(),
                                       IconButton(
@@ -197,10 +236,22 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
     final longitudeController =
         TextEditingController(text: zcap?.longitude?.toString() ?? '');
     BuildingTypesIsar? buildingType = zcap?.buildingType.value;
+    EntitiesIsar? zcapEntity = zcap?.zcapEntity.value;
+
     DateTime selectedStartDate = zcap?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = zcap?.endDate;
 
     final availableBuildingTypes = await DatabaseService.db.buildingTypesIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+
+    final availableEntities = await DatabaseService.db.entitiesIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -237,6 +288,41 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                             }
                             return null;
                           },
+                        ),
+                        const SizedBox(
+                          height: 12.0,
+                        ),
+                        DropdownSearch<EntitiesIsar>(
+                          selectedItem: zcapEntity,
+                          popupProps: PopupProps.menu(
+                            showSearchBox: true,
+                            searchFieldProps: TextFieldProps(
+                              decoration: InputDecoration(
+                                labelText:
+                                    '${'search'.tr()} ${'screen_entity'.tr()}',
+                              ),
+                            ),
+                          ),
+                          itemAsString: (EntitiesIsar? e) => e?.name ?? '',
+                          items: availableEntities,
+                          onChanged: (EntitiesIsar? value) {
+                            setModalState(() {
+                              zcapEntity = value;
+                            });
+                          },
+                          validator: (EntitiesIsar? value) {
+                            if (value == null) {
+                              return 'required_field'.tr();
+                            }
+                            return null;
+                          },
+                          dropdownDecoratorProps: DropDownDecoratorProps(
+                            dropdownSearchDecoration: InputDecoration(
+                              labelText: 'screen_entity'.tr(),
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 4),
+                            ),
+                          ),
                         ),
                         const SizedBox(
                           height: 12.0,
@@ -328,7 +414,9 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           final editedZcap = zcap ?? ZcapIsar();
 
                           editedZcap.name = nameController.text.trim();
+                          editedZcap.address = addressController.text.trim();
                           editedZcap.buildingType.value = buildingType;
+                          editedZcap.zcapEntity.value = zcapEntity;
                           editedZcap.latitude =
                               double.tryParse(latitudeController.text);
                           editedZcap.longitude =
@@ -342,6 +430,9 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           }
 
                           await DatabaseService.db.zcapIsars.put(editedZcap);
+
+                          await editedZcap.buildingType.save();
+                          await editedZcap.zcapEntity.save();
                         });
 
                         navigator.pop();

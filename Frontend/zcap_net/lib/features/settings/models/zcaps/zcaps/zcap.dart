@@ -7,12 +7,12 @@ class Zcap implements ApiTable {
   @override
   int remoteId;
   final String name;
-  final BuildingType buildingType;
+  final BuildingType? buildingType;
   final String address;
-  final Tree tree;
+  final Tree? tree;
   final double? latitude;
   final double? longitude;
-  final Entity zcapEntity;
+  final Entity? zcapEntity;
   final DateTime startDate;
   final DateTime? endDate;
   final DateTime createdAt;
@@ -40,16 +40,18 @@ class Zcap implements ApiTable {
     return Zcap(
       remoteId: json['zcapId'],
       name: json['name'],
-      buildingType: BuildingType.fromJson(json['buildingType']),
+      buildingType: json['buildingType'] != null ? BuildingType.fromJson(json['buildingType']) : null,
       address: json['address'],
-      tree: Tree.fromJson(json['treeRecordId']),
+      tree: json['treeRecordId'] != null
+          ? Tree.fromJson(json['treeRecordId'])
+          : null,
       latitude: json['latitude'] != null
           ? (json['latitude'] as num).toDouble()
           : null,
       longitude: json['longitude'] != null
           ? (json['longitude'] as num).toDouble()
           : null,
-      zcapEntity: Entity.fromJson(json['entityId']),
+      zcapEntity: json['entityId'] != null ? Entity.fromJson(json['entityId']) : null,
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       createdAt: DateTime.parse(json['createdAt']),
@@ -61,12 +63,12 @@ class Zcap implements ApiTable {
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
-      'buildingTypeId': buildingType.remoteId,
+      'buildingTypeId': buildingType?.remoteId,
       'address': address,
-      'treeRecordId': tree.remoteId,
+      'treeRecordId': tree?.remoteId,
       'latitude': latitude,
       'longitude': longitude,
-      'entityId': zcapEntity.remoteId,
+      'entityId': zcapEntity?.remoteId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };

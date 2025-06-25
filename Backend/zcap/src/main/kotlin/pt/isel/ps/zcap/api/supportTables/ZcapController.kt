@@ -117,7 +117,7 @@ class ZcapController(
     @PostMapping
     fun saveZcap(@RequestBody input: ZcapInputModel): ResponseEntity<*> =
         when (val zcap = service.saveZcap(input)) {
-            is Success -> ResponseEntity.ok(zcap.value)
+            is Success -> ResponseEntity.status(HttpStatus.CREATED).body(zcap.value)
             is Failure -> when(zcap.value) {
                 is ServiceErrors.BuildingTypeNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Building Type", input.buildingTypeId))

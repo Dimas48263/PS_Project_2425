@@ -49,7 +49,7 @@ Future<void> _setup() async {
   AppConfig.initFromJson(configMap);
 
   await DatabaseService.setup();
-  SyncServiceManager().setup(); //Sync2
+//  SyncServiceManager().setup(); //Sync2
 
   await LogService.init(AppConfig.instance);
 
