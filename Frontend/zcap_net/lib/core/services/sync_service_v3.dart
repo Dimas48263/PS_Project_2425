@@ -175,6 +175,10 @@ class SyncServiceV3 {
           '[Sync] Existem ainda ${unsynced.length} registos locais por sincronizar. Não é possivel atualizar os dados locais. Aguardar nova tentativa...');
       return;
     }
+
+    LogService.log(
+      '[Sync] Inciando atualização dos dados locais. Endpoint: $endpoint',
+    );
     final apiData =
         await apiService.getList(endpoint, (json) => fromJson(json));
 
@@ -212,6 +216,9 @@ class SyncServiceV3 {
         });
       }
     }
+    LogService.log(
+      '[Sync] Dados locais atualizados com sucesso.',
+    );
   }
 
   Future<void> synchronizeEntry<TIsar extends IsarTable, TApi extends ApiTable>(

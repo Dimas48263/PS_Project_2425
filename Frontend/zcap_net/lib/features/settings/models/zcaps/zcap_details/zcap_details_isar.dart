@@ -65,6 +65,7 @@ class ZcapDetailsIsar implements IsarTable<ZcapDetails> {
     final remote = ZcapDetailsIsar()
       ..remoteId = zcapDetails.remoteId
       ..valueCol = zcapDetails.valueCol
+      ..startDate = zcapDetails.startDate
       ..endDate = zcapDetails.endDate
       ..createdAt = zcapDetails.createdAt
       ..lastUpdatedAt = zcapDetails.lastUpdatedAt

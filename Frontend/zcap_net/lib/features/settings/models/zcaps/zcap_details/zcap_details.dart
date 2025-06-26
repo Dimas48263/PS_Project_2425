@@ -26,10 +26,10 @@ class ZcapDetails implements ApiTable {
 
   factory ZcapDetails.fromJson(Map<String, dynamic> json) {
     return ZcapDetails(
-      remoteId: json['zcapId'],
+      remoteId: json['zcapDetailId'],
       valueCol: json['valueCol'],
       zcap: Zcap.fromJson(json['zcap']),
-      zcapDetailType: ZcapDetailType.fromJson(json['address']),
+      zcapDetailType: ZcapDetailType.fromJson(json['zcapDetailType']),
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       createdAt: DateTime.parse(json['createdAt']),
