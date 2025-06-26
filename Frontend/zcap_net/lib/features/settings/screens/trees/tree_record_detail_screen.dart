@@ -32,13 +32,31 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
   final _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late final Map<String, String> searchOptionsMap;
+  late final List<String> searchKeys;
+
+  String selectedSearchOption = 'value';
+
   @override
   void initState() {
     super.initState();
+
+    searchOptionsMap = {
+      'value': 'value'.tr(),
+      'detailType': 'screen_detail_type'.tr(),
+      'tree': 'tree'.tr(),
+    };
+
+    searchKeys = searchOptionsMap.keys.toList();
+
     detailsStream = DatabaseService.db.treeRecordDetailIsars
         .buildQuery<TreeRecordDetailIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
+      for (var item in data) {
+        if (!item.detailType.isLoaded) await item.detailType.load();
+        if (!item.tree.isLoaded) await item.tree.load();
+      }
       setState(() {
         details = data;
         _isLoading = false;
@@ -86,7 +104,14 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
 
   Widget _buildUI() {
     final filteredList = details.where((e) {
-      return e.valueCol.toLowerCase().contains(_searchTerm);
+      switch (selectedSearchOption) {
+        case 'detailType':
+          return e.detailType.value!.name.toLowerCase().contains(_searchTerm);
+        case 'tree':
+          return e.tree.value!.name.toLowerCase().contains(_searchTerm);
+        default:
+          return e.valueCol.toLowerCase().contains(_searchTerm);
+      }
     }).toList();
 
     return Padding(
@@ -94,12 +119,20 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       child: Column(
         children: [
           CustomSearchAndAddBar(
-            controller: _searchController,
-            onSearchChanged: (value) => setState(() {
-              _searchTerm = value.toLowerCase();
-            }),
-            onAddPressed: () => _addOrEditDetail(null),
-          ),
+              controller: _searchController,
+              onSearchChanged: (value) => setState(() {
+                    _searchTerm = value.toLowerCase();
+                  }),
+              onAddPressed: () => _addOrEditDetail(null),
+              dropDownFilter: customDropdownSearch(
+                  items: searchKeys,
+                  selectedItem: selectedSearchOption,
+                  onSelected: (value) =>
+                      setState(() => selectedSearchOption = value ?? 'value'),
+                  validator: (value) => null,
+                  label: 'search_by'.tr(),
+                  justLabel: true,
+                  itemLabelBuilder: (item) => searchOptionsMap[item] ?? item)),
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
@@ -140,6 +173,8 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     for (var tree in filteredList) {
       labelsList.add([
         '${'value'.tr()}: ${tree.valueCol}',
+        '${'screen_detail_type'.tr()}: ${tree.detailType.value!.name}',
+        '${'tree'.tr()}: ${tree.tree.value!.name}',
         '${'start'.tr()}: ${tree.startDate.toLocal().toString().split(' ')[0]}',
         '${'end'.tr()}: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
@@ -149,10 +184,6 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
 
   void _addOrEditDetail(TreeRecordDetailIsar? detail) async {
     final formKey = GlobalKey<FormState>();
-    if (detail != null) {
-      if (!detail.detailType.isLoaded) await detail.detailType.load();
-      if (!detail.tree.isLoaded) await detail.tree.load();
-    }
     final availableTrees = await DatabaseService.db.treeIsars
         .filter()
         .startDateLessThan(DateTime.now())

@@ -10,6 +10,7 @@ import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
+//TODO show just the detail types that the zcap doesnt have already?
 class ZcapDetailsScreen extends StatefulWidget {
   const ZcapDetailsScreen({super.key});
 
@@ -32,6 +33,10 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
         .buildQuery<ZcapDetailsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
+      for (var item in data) {
+        if (!item.zcap.isLoaded) await item.zcap.load();
+        if (!item.zcapDetailType.isLoaded) await item.zcapDetailType.load();
+      }
       setState(() {
         details = data;
         _isLoading = false;
@@ -55,7 +60,7 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('screen_settings_detail_category'.tr()),
+        title: Text('screen_settings_zcap_building_details'.tr()),
         actions: [
           IconButton(
             icon: const Icon(Icons.sync),
@@ -130,7 +135,9 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
     List<List<String>> labelsList = [];
     for (var detail in filteredList) {
       labelsList.add([
-        detail.valueCol,
+        '${'value'.tr()}: ${detail.valueCol}',
+        'Zcap: ${detail.zcap.value!.name}',
+        '${'screen_detail_type'.tr()}: ${detail.zcapDetailType.value!.name}',
         '${'start'.tr()}: ${detail.startDate.toLocal().toString().split(' ')[0]}',
         '${'end'.tr()}: ${detail.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
@@ -152,8 +159,9 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
         .and()
         .group((q) => q.endDateIsNull().or().endDateGreaterThan(DateTime.now()))
         .findAll();
-    
-    final availableZcapDetailTypes = await DatabaseService.db.zcapDetailTypeIsars
+
+    final availableZcapDetailTypes = await DatabaseService
+        .db.zcapDetailTypeIsars
         .filter()
         .startDateLessThan(DateTime.now())
         .and()
@@ -195,7 +203,8 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
                     });
                   },
                   validator: (value) =>
-                      value == null ? 'required_field'.tr() : null),
+                      value == null ? 'required_field'.tr() : null,
+                  label: 'zcap'.tr()),
               customDropdownSearch<ZcapDetailTypeIsar>(
                   items: availableZcapDetailTypes,
                   selectedItem: zcapDetailType,
@@ -205,7 +214,8 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
                     });
                   },
                   validator: (value) =>
-                      value == null ? 'required_field'.tr() : null)
+                      value == null ? 'required_field'.tr() : null,
+                  label: 'screen_detail_type'.tr())
             ]),
             actions: [
               TextButton(
@@ -219,8 +229,7 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
                     final navigator = Navigator.of(context);
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
-                      final newDetail =
-                          detail ?? ZcapDetailsIsar();
+                      final newDetail = detail ?? ZcapDetailsIsar();
                       newDetail.remoteId = detail?.remoteId ?? 0;
                       newDetail.valueCol = valueController.text;
                       newDetail.zcap.value = zcap;
@@ -231,8 +240,7 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
                       newDetail.lastUpdatedAt = now;
                       newDetail.isSynced = false;
 
-                      await DatabaseService.db.zcapDetailsIsars
-                          .put(newDetail);
+                      await DatabaseService.db.zcapDetailsIsars.put(newDetail);
                       await newDetail.zcap.save();
                       await newDetail.zcapDetailType.save();
                     });
