@@ -1,4 +1,3 @@
-import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
 
@@ -25,33 +24,30 @@ class UserProfile implements ApiTable {
     this.isSynced = true,
   });
 
-factory UserProfile.fromJson(Map<String, dynamic> json) {
-  final accessAllowancesList = (json['accessAllowances'] as List<dynamic>?)
-      ?.map((e) => UserProfileAccessAllowance.fromJson(e))
-      .toList() ?? [];
-
-  final profile = UserProfile(
-    remoteId: json['userProfileId'],
-    name: json['name'],
-    accessAllowances: accessAllowancesList,
-    startDate: DateTime.parse(json['startDate']),
-    endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-    createdAt: json['createdAt'] != null
-        ? DateTime.parse(json['createdAt'])
-        : DateTime.now(),
-    lastUpdatedAt: json['lastUpdatedAt'] != null
-        ? DateTime.parse(json['lastUpdatedAt'])
-        : DateTime.now(),
-  );
-  LogService.log(profile.toString());
-  return profile;
-}
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    final profile = UserProfile(
+      remoteId: json['userProfileId'],
+      name: json['name'],
+      accessAllowances: (json['accessAllowances'] as List)
+          .map((it) => UserProfileAccessAllowance.fromJson(it))
+          .toList(),
+      startDate: DateTime.parse(json['startDate']),
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      lastUpdatedAt: json['lastUpdatedAt'] != null
+          ? DateTime.parse(json['lastUpdatedAt'])
+          : DateTime.now(),
+    );
+    return profile;
+  }
 
   @override
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
-      'accessAllowances': accessAllowances.map((e) => e.toJson()).toList(),
+      'accessAllowances': accessAllowances.map((it) => it.toJson()).toList(),
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };

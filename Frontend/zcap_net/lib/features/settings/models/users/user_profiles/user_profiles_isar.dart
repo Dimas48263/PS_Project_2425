@@ -1,8 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
-import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
@@ -11,6 +10,8 @@ part 'user_profiles_isar.g.dart';
 
 @collection
 class UserProfilesIsar implements IsarTable<UserProfile> {
+  UserProfilesIsar();
+
   /*Local variables*/
   @override
   Id id = Isar.autoIncrement;
@@ -22,52 +23,65 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
   @override
   int? remoteId;
 
-  @Index(type: IndexType.value)
-  String name = "";
-  final accessAllowances = IsarLinks<UserProfileAccessAllowanceIsar>();
+  late String name;
+  IsarLinks<UserProfileAccessAllowanceIsar> accessAllowances =
+      IsarLinks<UserProfileAccessAllowanceIsar>();
 
-  DateTime startDate = DateTime(DateTime.now().year, 1, 1);
+  late DateTime startDate;
   DateTime? endDate;
   DateTime createdAt = DateTime.now();
   @override
   DateTime lastUpdatedAt = DateTime.now();
 
-  // Construtor sem nome (necessário para o Isar)
-  UserProfilesIsar();
-
-  UserProfilesIsar copyWith({
-    int? id,
-    int? remoteId,
-    String? name,
-    DateTime? startDate,
-    DateTime? endDate,
-    DateTime? createdAt,
-    DateTime? lastUpdatedAt,
-    bool? isSynced,
-  }) {
-    final copy = UserProfilesIsar()
-      ..id = id ?? this.id
+  @override
+  IsarTable<ApiTable> setEntityIdAndSync({int? remoteId, bool? isSynced}) {
+    final newUserProfile = UserProfilesIsar()
+      ..id = id
       ..remoteId = remoteId ?? this.remoteId
-      ..name = name ?? this.name
-      ..startDate = startDate ?? this.startDate
-      ..endDate = endDate ?? this.endDate
-      ..createdAt = createdAt ?? this.createdAt
-      ..lastUpdatedAt = lastUpdatedAt ?? this.lastUpdatedAt
+      ..name = name
+      ..startDate = startDate
+      ..endDate = endDate
+      ..createdAt = createdAt
+      ..lastUpdatedAt = lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
 
-    return copy;
+    newUserProfile.accessAllowances.addAll(accessAllowances);
+
+    return newUserProfile;
   }
 
-  UserProfilesIsar copyWithFromEntity(UserProfile entity) {
-    return copyWith(
-      remoteId: entity.remoteId,
-      name: entity.name,
-      startDate: entity.startDate,
-      endDate: entity.endDate,
-      createdAt: entity.createdAt,
-      lastUpdatedAt: entity.lastUpdatedAt,
-      isSynced: true,
+  @override
+  UserProfile toEntity({
+    List<UserProfileAccessAllowanceIsar> allowances = const [],
+  }) {
+    return UserProfile(
+      remoteId: remoteId ?? 0,
+      name: name,
+      accessAllowances: allowances.map((e) => e.toEntity()).toList(),
+      startDate: startDate,
+      endDate: endDate,
+      createdAt: createdAt,
+      lastUpdatedAt: lastUpdatedAt,
+      isSynced: isSynced,
     );
+  }
+
+  static Future<UserProfilesIsar> toRemote(UserProfile userProfile) async {
+    final remote = UserProfilesIsar()
+      ..remoteId = userProfile.remoteId
+      ..name = userProfile.name
+      ..startDate = userProfile.startDate
+      ..endDate = userProfile.endDate
+      ..createdAt = userProfile.createdAt
+      ..lastUpdatedAt = userProfile.lastUpdatedAt
+      ..isSynced = true;
+
+    final isarAllowances = await Future.wait(userProfile.accessAllowances.map(
+      (it) async => UserProfileAccessAllowanceIsar.fromEntity(it),
+    ));
+
+    remote.accessAllowances.addAll(isarAllowances);
+    return remote;
   }
 
   @override
@@ -79,95 +93,38 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
     createdAt = entity.createdAt;
     lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
-  }
 
-  // Método para converter a partir do modelo EntityType
-  factory UserProfilesIsar.fromEntity(UserProfile entity) {
-    return UserProfilesIsar()
-      ..remoteId = entity.remoteId
-      ..name = entity.name
-      ..startDate = entity.startDate
-      ..endDate = entity.endDate
-      ..createdAt = entity.createdAt
-      ..lastUpdatedAt = entity.lastUpdatedAt
-      ..isSynced = entity.isSynced;
-  }
-
-  // Método para converter para o modelo EntityType
-  @override
-  UserProfile toEntity({
-    List<UserProfileAccessAllowanceIsar> allowances = const [],
-  }) {
-    return UserProfile(
-      remoteId: remoteId ?? -1,
-      name: name,
-      accessAllowances: allowances.map((e) => e.toEntity()).toList(),
-      startDate: startDate,
-      endDate: endDate,
-      createdAt: createdAt,
-      lastUpdatedAt: lastUpdatedAt,
-      isSynced: isSynced,
+    await UserProfilesIsar.saveAccessAllowances(
+      profile: this,
+      allowances: entity.accessAllowances,
     );
-  }
-
-  factory UserProfilesIsar.toRemote(UserProfile entityType) {
-    return UserProfilesIsar()
-      ..remoteId = entityType.remoteId
-      ..name = entityType.name
-      ..startDate = entityType.startDate
-      ..endDate = entityType.endDate
-      ..createdAt = entityType.createdAt
-      ..lastUpdatedAt = entityType.lastUpdatedAt
-      ..isSynced = true;
-  }
-
-  @override
-  UserProfilesIsar setEntityIdAndSync(
-      {int? remoteId, bool? isSynced, DateTime? lastUpdatedAt}) {
-    LogService.log(
-        'setEntityIdAndSync chamado com remoteId=$remoteId, isSynced=$isSynced');
-    return UserProfilesIsar()
-      ..id = id
-      ..remoteId = remoteId ?? this.remoteId
-      ..name = name
-      ..startDate = startDate
-      ..endDate = endDate
-      ..createdAt = createdAt
-      ..lastUpdatedAt = lastUpdatedAt ?? this.lastUpdatedAt
-      ..isSynced = isSynced ?? this.isSynced;
   }
 
   static Future<void> saveAccessAllowances({
     required UserProfilesIsar profile,
     required List<UserProfileAccessAllowance> allowances,
   }) async {
-    for (final entity in allowances) {
-      final isarAllowance = UserProfileAccessAllowanceIsar.fromEntity(entity);
+    await DatabaseService.db.writeTxn(() async {
+      for (final entity in allowances) {
+        final isarAllowance = UserProfileAccessAllowanceIsar.fromEntity(entity);
 
-      isarAllowance.userProfile.value = profile;
+        isarAllowance.userProfile.value = profile;
 
-      await DatabaseService.db.userProfileAccessAllowanceIsars
-          .put(isarAllowance);
+        await DatabaseService.db.userProfileAccessAllowanceIsars
+            .put(isarAllowance);
+        await isarAllowance.userProfile.save();
 
-      await isarAllowance.userProfile.save();
+        profile.accessAllowances.add(isarAllowance);
+      }
 
-      profile.accessAllowances.add(isarAllowance);
-    }
-
-    await profile.accessAllowances.save();
-
-    await ensureAllAllowancesExist(profile);
+      await profile.accessAllowances.save();
+      await ensureAllAllowancesExist(profile);
+    });
   }
 
-//If a new profile access key is created, should create with read-write access
   static Future<void> ensureAllAllowancesExist(UserProfilesIsar profile) async {
     final allKeys =
         await DatabaseService.db.userAccessKeysIsars.where().findAll();
-
-//    await profile.accessAllowances.load();
-//    final existingRemoteIds = profile.accessAllowances
-//        .map((accessAllowances) => accessAllowances.remoteId)
-//        .toSet();
 
     final existingRemoteIds = await DatabaseService
         .db.userProfileAccessAllowanceIsars

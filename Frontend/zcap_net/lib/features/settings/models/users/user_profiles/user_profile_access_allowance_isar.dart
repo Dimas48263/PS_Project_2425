@@ -41,14 +41,14 @@ class UserProfileAccessAllowanceIsar {
       ..createdAt = createdAt ?? this.createdAt
       ..lastUpdatedAt = lastUpdatedAt ?? this.lastUpdatedAt;
 
-    copy.userProfile.value = userProfile.value;
+//    copy.userProfile.value = userProfile.value;
 
     return copy;
   }
 
   UserProfileAccessAllowance toEntity() {
     return UserProfileAccessAllowance(
-      remoteId: remoteId ?? -1,
+      remoteId: remoteId ?? 0,
       key: key,
       description: description,
       accessType: AccessType.values[accessTypeIndex],
@@ -64,7 +64,7 @@ class UserProfileAccessAllowanceIsar {
       ..key = entity.key
       ..description = entity.description
       ..accessTypeIndex = entity.accessType.index
-    ..createdAt = entity.createdAt
-    ..lastUpdatedAt = entity.lastUpdatedAt;
+      ..createdAt = entity.createdAt
+      ..lastUpdatedAt = entity.lastUpdatedAt;
   }
 }

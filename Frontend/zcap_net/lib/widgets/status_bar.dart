@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
-import 'package:zcap_net_app/core/services/sync_services/sync_service_manager.dart';
 
 class StatusBar extends StatelessWidget {
   final String? userName;

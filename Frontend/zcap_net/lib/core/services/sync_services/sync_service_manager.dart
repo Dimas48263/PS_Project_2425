@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:zcap_net_app/core/services/app_config.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/core/services/session_manager.dart';
 import 'package:zcap_net_app/core/services/sync_services/sync_manager.dart';
-import 'package:zcap_net_app/core/services/sync_services/tables/user_profiles_sync_service.dart';
 
 class SyncServiceManager {
   static final SyncServiceManager _instance = SyncServiceManager._internal();
@@ -20,7 +18,7 @@ class SyncServiceManager {
 
   void setup() {
     _syncManager = SyncManager([
-      UserProfilesSyncService(DatabaseService.db),
+//      UserProfilesSyncService(DatabaseService.db),
     ]);
 
     _startPeriodicSync();

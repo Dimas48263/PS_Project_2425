@@ -1,4 +1,3 @@
-import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/acess_type.dart';
 
 class UserProfileAccessAllowance {
@@ -30,7 +29,6 @@ class UserProfileAccessAllowance {
   }
 
   Map<String, dynamic> toJson() {
-    LogService.log('Name: ${accessType.name} | Index: ${accessType.index}');
     return {
       'userProfileAccessKeyId': remoteId,
       'accessType': accessType.index,

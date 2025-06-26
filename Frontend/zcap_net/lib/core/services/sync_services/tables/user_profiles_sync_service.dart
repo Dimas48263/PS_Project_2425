@@ -1,3 +1,4 @@
+/*
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/sync_services/abstract_syncable_service.dart';
@@ -117,3 +118,4 @@ class UserProfilesSyncService implements SyncableService {
     await syncToServer();
   }
 }
+*/
