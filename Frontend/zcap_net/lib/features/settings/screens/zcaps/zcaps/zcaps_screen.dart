@@ -497,8 +497,6 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
             label:
                 "${'value'.tr()} (${'example'.tr()}: ${detailType.dataType.example})",
             validator: (val) {
-              print('Val: $val');
-              print('dataType: ${detailType.dataType.name}');
               if (val == null || val.isEmpty) return 'required_field'.tr();
               if (validateValue(detailType.dataType.name, val)) return null;
               return 'wrong_format'.tr();
