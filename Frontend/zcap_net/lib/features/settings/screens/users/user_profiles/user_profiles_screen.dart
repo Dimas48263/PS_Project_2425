@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
-import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_access_editor_screen.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
 
@@ -108,7 +106,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                 children: [
                                   IconButton(
                                     icon: const Icon(Icons.vpn_key),
-                                    tooltip: 'tooltip_edit_user_allowances'.tr(),
+                                    tooltip:
+                                        'tooltip_edit_user_allowances'.tr(),
                                     onPressed: () {
                                       _editUserAccessAllowances(userProfile);
                                     },
@@ -212,46 +211,6 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
               ),
               actions: [
                 CancelTextButton(),
-                TextButton(
-                  onPressed: () async {
-                    if (formKey.currentState!.validate() &&
-                        nameController.text.isNotEmpty) {
-                      final now = DateTime.now();
-                      final navigator = Navigator.of(context);
-
-                      final editedUserProfile =
-                          userProfile ?? UserProfilesIsar();
-
-                      await DatabaseService.db.writeTxn(() async {
-                        editedUserProfile.name = nameController.text.trim();
-                        editedUserProfile.startDate = selectedStartDate;
-                        editedUserProfile.endDate = selectedEndDate;
-                        editedUserProfile.lastUpdatedAt = now;
-                        editedUserProfile.isSynced = false;
-                        if (userProfile == null) {
-                          editedUserProfile.createdAt = now;
-                        }
-
-                        await DatabaseService.db.userProfilesIsars
-                            .put(editedUserProfile);
-                      });
-
-                      if (userProfile == null) {
-                        await editedUserProfile.accessAllowances.load();
-
-                        await DatabaseService.db.writeTxn(() async {
-                          await UserProfilesIsar.ensureAllAllowancesExist(
-                              editedUserProfile);
-                        });
-
-                        await _editUserAccessAllowances(editedUserProfile);
-                      }
-
-                      navigator.pop();
-                    }
-                  },
-                  child: Text('save'.tr()),
-                ),
               ],
             );
           },
@@ -265,55 +224,14 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
       await UserProfilesIsar.ensureAllAllowancesExist(profile);
     });
 
-    await profile.accessAllowances.load();
-
-    final tempAllowances =
-        profile.accessAllowances.map((a) => a.copyWith()).toList();
-
     await showDialog(
       context: context,
       builder: (_) {
         return AlertDialog(
-          title: Text('${'tooltip_edit_user_allowances'.tr()} - ${profile.name}'),
-          content: SizedBox(
-            height: 400,
-            width: 500,
-            child: UserAccessEditor(
-              allowances: tempAllowances,
-              onChanged: (allowance, newType) {
-                allowance.accessTypeIndex = newType.index;
-                allowance.lastUpdatedAt = DateTime.now();
-              },
-            ),
-          ),
+          title:
+              Text('${'tooltip_edit_user_allowances'.tr()} - ${profile.name}'),
           actions: [
             CancelTextButton(),
-            TextButton(
-              onPressed: () async {
-                await DatabaseService.db.writeTxn(() async {
-                  await profile.accessAllowances.load();
-
-                  for (final updatedAllowance in tempAllowances) {
-                    final original = profile.accessAllowances.firstWhere(
-                      (a) => a.remoteId == updatedAllowance.remoteId,
-                      orElse: () => updatedAllowance,
-                    );
-
-                    original.accessTypeIndex = updatedAllowance.accessTypeIndex;
-                    original.lastUpdatedAt = updatedAllowance.lastUpdatedAt;
-
-                    await DatabaseService.db.userProfileAccessAllowanceIsars.put(original);
-                  }
-
-                  profile.isSynced = false;
-                  profile.lastUpdatedAt = DateTime.now();
-                  await DatabaseService.db.userProfilesIsars.put(profile);
-                });
-
-                Navigator.of(context).pop();
-              },
-              child: Text('save'.tr()),
-            ),
           ],
         );
       },

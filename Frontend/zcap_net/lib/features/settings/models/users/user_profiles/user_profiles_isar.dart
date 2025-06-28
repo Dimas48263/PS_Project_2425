@@ -1,8 +1,8 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/acess_type.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys_isar.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
 
@@ -24,8 +24,6 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
   int? remoteId;
 
   late String name;
-  IsarLinks<UserProfileAccessAllowanceIsar> accessAllowances =
-      IsarLinks<UserProfileAccessAllowanceIsar>();
 
   late DateTime startDate;
   DateTime? endDate;
@@ -45,8 +43,6 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
       ..lastUpdatedAt = lastUpdatedAt
       ..isSynced = isSynced ?? this.isSynced;
 
-    newUserProfile.accessAllowances.addAll(accessAllowances);
-
     return newUserProfile;
   }
 
@@ -57,7 +53,6 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
     return UserProfile(
       remoteId: remoteId ?? 0,
       name: name,
-      accessAllowances: allowances.map((e) => e.toEntity()).toList(),
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
@@ -66,7 +61,18 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
     );
   }
 
-  static Future<UserProfilesIsar> toRemote(UserProfile userProfile) async {
+  factory UserProfilesIsar.fromEntityType(UserProfile userProfile) {
+    return UserProfilesIsar()
+      ..remoteId = userProfile.remoteId
+      ..name = userProfile.name
+      ..startDate = userProfile.startDate
+      ..endDate = userProfile.endDate
+      ..createdAt = userProfile.createdAt
+      ..lastUpdatedAt = userProfile.lastUpdatedAt
+      ..isSynced = userProfile.isSynced;
+  }
+
+  factory UserProfilesIsar.toRemote(UserProfile userProfile) {
     final remote = UserProfilesIsar()
       ..remoteId = userProfile.remoteId
       ..name = userProfile.name
@@ -76,11 +82,6 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
       ..lastUpdatedAt = userProfile.lastUpdatedAt
       ..isSynced = true;
 
-    final isarAllowances = await Future.wait(userProfile.accessAllowances.map(
-      (it) async => UserProfileAccessAllowanceIsar.fromEntity(it),
-    ));
-
-    remote.accessAllowances.addAll(isarAllowances);
     return remote;
   }
 
@@ -93,13 +94,9 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
     createdAt = entity.createdAt;
     lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
-
-    await UserProfilesIsar.saveAccessAllowances(
-      profile: this,
-      allowances: entity.accessAllowances,
-    );
   }
 
+/*
   static Future<void> saveAccessAllowances({
     required UserProfilesIsar profile,
     required List<UserProfileAccessAllowance> allowances,
@@ -114,13 +111,11 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
             .put(isarAllowance);
         await isarAllowance.userProfile.save();
 
-        profile.accessAllowances.add(isarAllowance);
       }
 
-      await profile.accessAllowances.save();
       await ensureAllAllowancesExist(profile);
     });
-  }
+  }*/
 
   static Future<void> ensureAllAllowancesExist(UserProfilesIsar profile) async {
     final allKeys =
@@ -143,7 +138,7 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
         final newAllowance = UserProfileAccessAllowanceIsar()
           ..key = missing.accessKey
           ..remoteId = missing.remoteId
-          ..accessTypeIndex = 0 // default Read-Write
+          ..accessTypeIndex = AccessType.readWrite // default Read-Write
           ..description = missing.description
           ..userProfile.value = profile;
 

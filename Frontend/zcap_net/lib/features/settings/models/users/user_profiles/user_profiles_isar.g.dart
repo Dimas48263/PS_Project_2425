@@ -71,29 +71,9 @@ const UserProfilesIsarSchema = CollectionSchema(
           caseSensitive: false,
         )
       ],
-    ),
-    r'name': IndexSchema(
-      id: 879695947855722453,
-      name: r'name',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'name',
-          type: IndexType.value,
-          caseSensitive: true,
-        )
-      ],
     )
   },
-  links: {
-    r'accessAllowances': LinkSchema(
-      id: -3359955356963587862,
-      name: r'accessAllowances',
-      target: r'UserProfileAccessAllowanceIsar',
-      single: false,
-    )
-  },
+  links: {},
   embeddedSchemas: {},
   getId: _userProfilesIsarGetId,
   getLinks: _userProfilesIsarGetLinks,
@@ -175,17 +155,12 @@ Id _userProfilesIsarGetId(UserProfilesIsar object) {
 }
 
 List<IsarLinkBase<dynamic>> _userProfilesIsarGetLinks(UserProfilesIsar object) {
-  return [object.accessAllowances];
+  return [];
 }
 
 void _userProfilesIsarAttach(
     IsarCollection<dynamic> col, Id id, UserProfilesIsar object) {
   object.id = id;
-  object.accessAllowances.attach(
-      col,
-      col.isar.collection<UserProfileAccessAllowanceIsar>(),
-      r'accessAllowances',
-      id);
 }
 
 extension UserProfilesIsarQueryWhereSort
@@ -200,14 +175,6 @@ extension UserProfilesIsarQueryWhereSort
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'remoteId'),
-      );
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhere> anyName() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'name'),
       );
     });
   }
@@ -394,147 +361,6 @@ extension UserProfilesIsarQueryWhere
         upper: [upperRemoteId],
         includeUpper: includeUpper,
       ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhereClause>
-      nameEqualTo(String name) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'name',
-        value: [name],
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhereClause>
-      nameNotEqualTo(String name) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'name',
-              lower: [],
-              upper: [name],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'name',
-              lower: [name],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'name',
-              lower: [name],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'name',
-              lower: [],
-              upper: [name],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhereClause>
-      nameGreaterThan(
-    String name, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'name',
-        lower: [name],
-        includeLower: include,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhereClause>
-      nameLessThan(
-    String name, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'name',
-        lower: [],
-        upper: [name],
-        includeUpper: include,
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhereClause>
-      nameBetween(
-    String lowerName,
-    String upperName, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'name',
-        lower: [lowerName],
-        includeLower: includeLower,
-        upper: [upperName],
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhereClause>
-      nameStartsWith(String NamePrefix) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'name',
-        lower: [NamePrefix],
-        upper: ['$NamePrefix\u{FFFFF}'],
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhereClause>
-      nameIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'name',
-        value: [''],
-      ));
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterWhereClause>
-      nameIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.lessThan(
-              indexName: r'name',
-              upper: [''],
-            ))
-            .addWhereClause(IndexWhereClause.greaterThan(
-              indexName: r'name',
-              lower: [''],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.greaterThan(
-              indexName: r'name',
-              lower: [''],
-            ))
-            .addWhereClause(IndexWhereClause.lessThan(
-              indexName: r'name',
-              upper: [''],
-            ));
-      }
     });
   }
 }
@@ -1064,69 +890,7 @@ extension UserProfilesIsarQueryObject
     on QueryBuilder<UserProfilesIsar, UserProfilesIsar, QFilterCondition> {}
 
 extension UserProfilesIsarQueryLinks
-    on QueryBuilder<UserProfilesIsar, UserProfilesIsar, QFilterCondition> {
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      accessAllowances(FilterQuery<UserProfileAccessAllowanceIsar> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.link(q, r'accessAllowances');
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      accessAllowancesLengthEqualTo(int length) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'accessAllowances', length, true, length, true);
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      accessAllowancesIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'accessAllowances', 0, true, 0, true);
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      accessAllowancesIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'accessAllowances', 0, false, 999999, true);
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      accessAllowancesLengthLessThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'accessAllowances', 0, true, length, include);
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      accessAllowancesLengthGreaterThan(
-    int length, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(
-          r'accessAllowances', length, include, 999999, true);
-    });
-  }
-
-  QueryBuilder<UserProfilesIsar, UserProfilesIsar, QAfterFilterCondition>
-      accessAllowancesLengthBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(
-          r'accessAllowances', lower, includeLower, upper, includeUpper);
-    });
-  }
-}
+    on QueryBuilder<UserProfilesIsar, UserProfilesIsar, QFilterCondition> {}
 
 extension UserProfilesIsarQuerySortBy
     on QueryBuilder<UserProfilesIsar, UserProfilesIsar, QSortBy> {

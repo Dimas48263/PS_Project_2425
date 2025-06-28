@@ -1,3 +1,4 @@
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 
 class UserAccessKeys implements ApiTable {

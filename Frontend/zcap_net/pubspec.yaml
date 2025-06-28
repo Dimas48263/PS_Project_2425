@@ -27,6 +27,7 @@ dependencies:
   easy_localization: ^3.0.1
   flutter_treeview: ^1.0.6
   url_launcher: ^6.2.5
+  animated_tree_view: ^2.3.0
 
   cupertino_icons: ^1.0.2
   

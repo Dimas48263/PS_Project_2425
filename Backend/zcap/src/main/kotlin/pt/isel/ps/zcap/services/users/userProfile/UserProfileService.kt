@@ -28,16 +28,14 @@ class UserProfileService(
     fun getAllUserProfiles(): List<UserProfileOutputModel> {
         val userProfiles = userProfileRepository.findAll()
         return userProfiles.map {
-            val userProfileAllowances = userProfileAccessAllowanceRepository.findByUserProfile(it)
-            toOutputModel(it, userProfileAllowances)
+            toOutputModel(it,)
         }
     }
 
     fun getUserProfilesValidOn(date: LocalDate): List<UserProfileOutputModel> {
         val validProfiles = userProfileRepository.findValidOnDate(date)
         return validProfiles.map {
-            val userProfileAllowances = userProfileAccessAllowanceRepository.findByUserProfile(it)
-            toOutputModel(it, userProfileAllowances)
+            toOutputModel(it,)
         }
     }
 
@@ -46,7 +44,7 @@ class UserProfileService(
             ?: return failure(ServiceErrors.RecordNotFound)
 
         val userProfileAllowances = userProfileAccessAllowanceRepository.findByUserProfile(profile)
-        return success(toOutputModel(profile, userProfileAllowances))
+        return success(toOutputModel(profile,))
     }
 
     fun addUserProfile(newProfile: UserProfileInputModel): Either<ServiceErrors, UserProfileOutputModel> {
@@ -78,7 +76,7 @@ class UserProfileService(
 
             userProfileAccessAllowanceRepository.saveAll(accessAllowances)
 
-            success(toOutputModel(profile, accessAllowances))
+            success(toOutputModel(profile,))
         } catch (ex: Exception) {
             failure(ServiceErrors.InsertFailed)
         }
@@ -121,7 +119,7 @@ class UserProfileService(
 
             userProfileAccessAllowanceRepository.saveAll(existingAllowances)
 
-            success(toOutputModel(savedProfile, existingAllowances))
+            success(toOutputModel(savedProfile,))
         } catch (ex: Exception) {
             failure(ServiceErrors.UpdateFailed)
         }
@@ -139,20 +137,10 @@ class UserProfileService(
     )
 
     // Conversion from domain Model to OutputModel
-    fun toOutputModel(profile: UserProfile, allowances: List<UserProfileAccessAllowance>): UserProfileOutputModel {
+    fun toOutputModel(profile: UserProfile): UserProfileOutputModel {
         return UserProfileOutputModel(
             userProfileId = profile.userProfileId,
             name = profile.name,
-            accessAllowances = allowances.map {
-                UserProfileAccessAllowanceOutputModel(
-                    userProfileAccessKeyId = it.userProfileAccessKey.userProfileAccessKeyId,
-                    key = it.userProfileAccessKey.accessKey,
-                    description = it.userProfileAccessKey.description,
-                    accessType = it.accessType,
-                    createdAt = it.userProfileAccessKey.createdAt,
-                    lastUpdatedAt = it.userProfileAccessKey.lastUpdatedAt,
-                )
-            },
             startDate = profile.startDate,
             endDate = profile.endDate,
             createdAt = profile.createdAt,

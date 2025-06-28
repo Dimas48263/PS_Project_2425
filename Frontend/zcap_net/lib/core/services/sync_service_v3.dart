@@ -13,6 +13,10 @@ import 'package:zcap_net_app/features/settings/models/people/support/support_nee
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
@@ -508,19 +512,39 @@ final List<SyncEntry> syncEntries = [
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
-  SyncEntry<UserAccessKeysIsar, UserAccessKeys>(
-      endpoint: 'users/profiles',
-      getCollection: (isar) => isar.userAccessKeysIsars,
-      idName: 'userProfileId',
-      fromJson: UserAccessKeys.fromJson,
-      toIsar: (ApiTable accessKeys) async =>
-          UserAccessKeysIsar.toRemote(accessKeys as UserAccessKeys),
+  SyncEntry<UserProfilesIsar, UserProfile>(
+    endpoint: 'users/profiles',
+    getCollection: (isar) => isar.userProfilesIsars,
+    idName: 'userProfileId',
+    fromJson: UserProfile.fromJson,
+    toIsar: (ApiTable userProfile) async =>
+        UserProfilesIsar.toRemote(userProfile as UserProfile),
+    findByRemoteId:
+        (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+            (collection as IsarCollection<UserProfilesIsar>)
+                .where()
+                .remoteIdEqualTo(remoteId)
+                .findFirst(),
+  ),
+  SyncEntry<UserProfileAccessAllowanceIsar, UserProfileAccessAllowance>(
+      endpoint: 'users/profiles/allowances',
+      getCollection: (isar) => isar.userProfileAccessAllowanceIsars,
+      idName: 'userProfileAccessKeyId',
+      fromJson: UserProfileAccessAllowance.fromJson,
+      toIsar: (ApiTable allowances) async =>
+          UserProfileAccessAllowanceIsar.toRemote(
+              allowances as UserProfileAccessAllowance),
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
-              (collection as IsarCollection<UserAccessKeysIsar>)
+              (collection as IsarCollection<UserProfileAccessAllowanceIsar>)
                   .where()
                   .remoteIdEqualTo(remoteId)
-                  .findFirst()),
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+        final allowancesIsar = isarTable as UserProfileAccessAllowanceIsar;
+        await allowancesIsar.userProfile.save();
+      }),
+
   /**
  * ZCAPS
  */

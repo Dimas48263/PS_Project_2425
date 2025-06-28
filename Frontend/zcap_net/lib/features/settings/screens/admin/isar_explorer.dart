@@ -368,11 +368,6 @@ case 'UserAccessAllowances':
       final profiles = await isar.userProfilesIsars.where().findAll();
       final List<UserProfileAccessAllowanceIsar> allAllowances = [];
 
-      for (final profile in profiles) {
-        await profile.accessAllowances.load();
-        allAllowances.addAll(profile.accessAllowances.toList());
-      }
-
       // Carrega os links dos allowances
       for (final allowance in allAllowances) {
         await allowance.userProfile.load();

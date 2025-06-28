@@ -23,7 +23,7 @@ class _UserAccessEditorState extends State<UserAccessEditor> {
       itemCount: widget.allowances.length,
       itemBuilder: (context, index) {
         final allowance = widget.allowances[index];
-        final currentType = AccessType.values[allowance.accessTypeIndex];
+        final currentType = allowance.accessTypeIndex;
 
         return ListTile(
           title: Text(allowance.description),
@@ -33,7 +33,7 @@ class _UserAccessEditorState extends State<UserAccessEditor> {
             onChanged: (newValue) {
               if (newValue != null) {
                 setState(() {
-                  allowance.accessTypeIndex = newValue.index;
+                  allowance.accessTypeIndex = AccessType.values[newValue.index];
                   allowance.lastUpdatedAt = DateTime.now();
                 });
                 widget.onChanged(allowance, newValue);

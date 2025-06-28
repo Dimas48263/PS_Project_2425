@@ -91,7 +91,6 @@ class UserProfileServiceV1(private val userProfileRepository: UserProfileReposit
             userProfileId = profile.userProfileId,
             name = profile.name,
 //            userProfileDetail = emptyList(), //NOT IMPLEMENTED
-            accessAllowances = emptyList(),
             startDate = profile.startDate,
             endDate = profile.endDate,
             createdAt = profile.createdAt,

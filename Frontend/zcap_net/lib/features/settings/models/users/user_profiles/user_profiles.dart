@@ -1,11 +1,9 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
 
 class UserProfile implements ApiTable {
   @override
   final int remoteId;
   final String name;
-  final List<UserProfileAccessAllowance> accessAllowances;
   final DateTime startDate;
   final DateTime? endDate;
   final DateTime createdAt;
@@ -16,7 +14,6 @@ class UserProfile implements ApiTable {
   UserProfile({
     required this.remoteId,
     required this.name,
-    required this.accessAllowances,
     required this.startDate,
     this.endDate,
     required this.createdAt,
@@ -28,9 +25,6 @@ class UserProfile implements ApiTable {
     final profile = UserProfile(
       remoteId: json['userProfileId'],
       name: json['name'],
-      accessAllowances: (json['accessAllowances'] as List)
-          .map((it) => UserProfileAccessAllowance.fromJson(it))
-          .toList(),
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       createdAt: json['createdAt'] != null
@@ -47,16 +41,16 @@ class UserProfile implements ApiTable {
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
-      'accessAllowances': accessAllowances.map((it) => it.toJson()).toList(),
+      'accessAllowances': [], //TODO: access_allowances list
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
   }
 
+/*
   UserProfile copyWith({
     int? id,
     String? name,
-    List<UserProfileAccessAllowance>? accessAllowances,
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,
@@ -66,7 +60,6 @@ class UserProfile implements ApiTable {
     return UserProfile(
       remoteId: id ?? remoteId,
       name: name ?? this.name,
-      accessAllowances: accessAllowances ?? this.accessAllowances,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       createdAt: createdAt ?? this.createdAt,
@@ -74,4 +67,5 @@ class UserProfile implements ApiTable {
       isSynced: isSynced ?? this.isSynced,
     );
   }
+  */
 }

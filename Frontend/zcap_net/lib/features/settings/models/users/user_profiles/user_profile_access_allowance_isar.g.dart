@@ -21,7 +21,8 @@ const UserProfileAccessAllowanceIsarSchema = CollectionSchema(
     r'accessTypeIndex': PropertySchema(
       id: 0,
       name: r'accessTypeIndex',
-      type: IsarType.long,
+      type: IsarType.byte,
+      enumMap: _UserProfileAccessAllowanceIsaraccessTypeIndexEnumValueMap,
     ),
     r'createdAt': PropertySchema(
       id: 1,
@@ -33,18 +34,23 @@ const UserProfileAccessAllowanceIsarSchema = CollectionSchema(
       name: r'description',
       type: IsarType.string,
     ),
-    r'key': PropertySchema(
+    r'isSynced': PropertySchema(
       id: 3,
+      name: r'isSynced',
+      type: IsarType.bool,
+    ),
+    r'key': PropertySchema(
+      id: 4,
       name: r'key',
       type: IsarType.string,
     ),
     r'lastUpdatedAt': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'lastUpdatedAt',
       type: IsarType.dateTime,
     ),
     r'remoteId': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'remoteId',
       type: IsarType.long,
     )
@@ -101,12 +107,13 @@ void _userProfileAccessAllowanceIsarSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.accessTypeIndex);
+  writer.writeByte(offsets[0], object.accessTypeIndex.index);
   writer.writeDateTime(offsets[1], object.createdAt);
   writer.writeString(offsets[2], object.description);
-  writer.writeString(offsets[3], object.key);
-  writer.writeDateTime(offsets[4], object.lastUpdatedAt);
-  writer.writeLong(offsets[5], object.remoteId);
+  writer.writeBool(offsets[3], object.isSynced);
+  writer.writeString(offsets[4], object.key);
+  writer.writeDateTime(offsets[5], object.lastUpdatedAt);
+  writer.writeLong(offsets[6], object.remoteId);
 }
 
 UserProfileAccessAllowanceIsar _userProfileAccessAllowanceIsarDeserialize(
@@ -116,13 +123,17 @@ UserProfileAccessAllowanceIsar _userProfileAccessAllowanceIsarDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = UserProfileAccessAllowanceIsar();
-  object.accessTypeIndex = reader.readLong(offsets[0]);
+  object.accessTypeIndex =
+      _UserProfileAccessAllowanceIsaraccessTypeIndexValueEnumMap[
+              reader.readByteOrNull(offsets[0])] ??
+          AccessType.readWrite;
   object.createdAt = reader.readDateTime(offsets[1]);
   object.description = reader.readString(offsets[2]);
   object.id = id;
-  object.key = reader.readString(offsets[3]);
-  object.lastUpdatedAt = reader.readDateTime(offsets[4]);
-  object.remoteId = reader.readLongOrNull(offsets[5]);
+  object.isSynced = reader.readBool(offsets[3]);
+  object.key = reader.readString(offsets[4]);
+  object.lastUpdatedAt = reader.readDateTime(offsets[5]);
+  object.remoteId = reader.readLongOrNull(offsets[6]);
   return object;
 }
 
@@ -134,21 +145,36 @@ P _userProfileAccessAllowanceIsarDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (_UserProfileAccessAllowanceIsaraccessTypeIndexValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          AccessType.readWrite) as P;
     case 1:
       return (reader.readDateTime(offset)) as P;
     case 2:
       return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 5:
+      return (reader.readDateTime(offset)) as P;
+    case 6:
       return (reader.readLongOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _UserProfileAccessAllowanceIsaraccessTypeIndexEnumValueMap = {
+  'readWrite': 0,
+  'readOnly': 1,
+  'none': 2,
+};
+const _UserProfileAccessAllowanceIsaraccessTypeIndexValueEnumMap = {
+  0: AccessType.readWrite,
+  1: AccessType.readOnly,
+  2: AccessType.none,
+};
 
 Id _userProfileAccessAllowanceIsarGetId(UserProfileAccessAllowanceIsar object) {
   return object.id;
@@ -378,7 +404,7 @@ extension UserProfileAccessAllowanceIsarQueryFilter on QueryBuilder<
     UserProfileAccessAllowanceIsar,
     QFilterCondition> {
   QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
-      QAfterFilterCondition> accessTypeIndexEqualTo(int value) {
+      QAfterFilterCondition> accessTypeIndexEqualTo(AccessType value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'accessTypeIndex',
@@ -389,7 +415,7 @@ extension UserProfileAccessAllowanceIsarQueryFilter on QueryBuilder<
 
   QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
       QAfterFilterCondition> accessTypeIndexGreaterThan(
-    int value, {
+    AccessType value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -403,7 +429,7 @@ extension UserProfileAccessAllowanceIsarQueryFilter on QueryBuilder<
 
   QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
       QAfterFilterCondition> accessTypeIndexLessThan(
-    int value, {
+    AccessType value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -417,8 +443,8 @@ extension UserProfileAccessAllowanceIsarQueryFilter on QueryBuilder<
 
   QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
       QAfterFilterCondition> accessTypeIndexBetween(
-    int lower,
-    int upper, {
+    AccessType lower,
+    AccessType upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -679,6 +705,16 @@ extension UserProfileAccessAllowanceIsarQueryFilter on QueryBuilder<
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
+      QAfterFilterCondition> isSyncedEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isSynced',
+        value: value,
       ));
     });
   }
@@ -1021,6 +1057,20 @@ extension UserProfileAccessAllowanceIsarQuerySortBy on QueryBuilder<
   }
 
   QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
+      QAfterSortBy> sortByIsSynced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSynced', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
+      QAfterSortBy> sortByIsSyncedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSynced', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
       QAfterSortBy> sortByKey() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'key', Sort.asc);
@@ -1124,6 +1174,20 @@ extension UserProfileAccessAllowanceIsarQuerySortThenBy on QueryBuilder<
   }
 
   QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
+      QAfterSortBy> thenByIsSynced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSynced', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
+      QAfterSortBy> thenByIsSyncedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isSynced', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
       QAfterSortBy> thenByKey() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'key', Sort.asc);
@@ -1190,6 +1254,13 @@ extension UserProfileAccessAllowanceIsarQueryWhereDistinct on QueryBuilder<
   }
 
   QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
+      QDistinct> distinctByIsSynced() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isSynced');
+    });
+  }
+
+  QueryBuilder<UserProfileAccessAllowanceIsar, UserProfileAccessAllowanceIsar,
       QDistinct> distinctByKey({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'key', caseSensitive: caseSensitive);
@@ -1222,7 +1293,7 @@ extension UserProfileAccessAllowanceIsarQueryProperty on QueryBuilder<
     });
   }
 
-  QueryBuilder<UserProfileAccessAllowanceIsar, int, QQueryOperations>
+  QueryBuilder<UserProfileAccessAllowanceIsar, AccessType, QQueryOperations>
       accessTypeIndexProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'accessTypeIndex');
@@ -1240,6 +1311,13 @@ extension UserProfileAccessAllowanceIsarQueryProperty on QueryBuilder<
       descriptionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'description');
+    });
+  }
+
+  QueryBuilder<UserProfileAccessAllowanceIsar, bool, QQueryOperations>
+      isSyncedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isSynced');
     });
   }
 
