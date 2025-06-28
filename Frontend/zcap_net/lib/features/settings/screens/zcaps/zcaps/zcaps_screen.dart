@@ -427,17 +427,19 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                         editedZcap.endDate = selectedEndDate;
                         editedZcap.lastUpdatedAt = now;
                         editedZcap.isSynced = false;
-                        if (zcap == null) {
+                        if (zcap != null) {
+                          DatabaseService.db.writeTxn(() async {
+                            await DatabaseService.db.zcapIsars.put(editedZcap);
+
+                            await editedZcap.buildingType.save();
+                            await editedZcap.zcapEntity.save();
+                          });
+                          navigator.pop();  
+                        } else {
                           editedZcap.createdAt = now;
+                          navigator.pop();
+                        _addDetails(editedZcap); 
                         }
-
-                        //await DatabaseService.db.zcapIsars.put(editedZcap);
-
-                        //await editedZcap.buildingType.save();
-                        //await editedZcap.zcapEntity.save();
-
-                        navigator.pop();
-                        _addDetails(editedZcap);
                       }
                     },
                     child: Text('save'.tr()),
@@ -454,7 +456,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
         await DatabaseService.db.zcapDetailTypeIsars.where().findAll();
     final mandatoryDetailTypes =
         detailTypes.where((e) => e.isMandatory).toList();
-    List<ZcapDetailsIsar> details= [];
+    List<ZcapDetailsIsar> details = [];
     ZcapDetailsIsar? detail;
     for (var i = 0; i < mandatoryDetailTypes.length; i++) {
       final mandatoryDetailType = mandatoryDetailTypes[i];
@@ -481,8 +483,8 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
     }
   }
 
-  Future<ZcapDetailsIsar?> _addOrEditDetail(ZcapDetailTypeIsar detailType, ZcapIsar zcap,
-      int index, int total) async {
+  Future<ZcapDetailsIsar?> _addOrEditDetail(ZcapDetailTypeIsar detailType,
+      ZcapIsar zcap, int index, int total) async {
     final formKey = GlobalKey<FormState>();
     final valueController = TextEditingController(text: '');
     DateTime startDate = DateTime.now();
