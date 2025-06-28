@@ -8,6 +8,8 @@ Widget customDropdownSearch<T>(
     required void Function(T?) onSelected,
     required String? Function(T?) validator,
     String? label,
+    bool justLabel = false,
+    final String Function(T)? itemLabelBuilder,
     bool enabled = true}) {
   return DropdownSearch<T>(
     enabled: enabled,
@@ -21,12 +23,12 @@ Widget customDropdownSearch<T>(
         ),
       ),
     ),
-    itemAsString: (item) => item.toString(),
+    itemAsString: itemLabelBuilder ?? (item) => item.toString(),
     onChanged: (value) => onSelected(value),
     validator: (value) => validator(value),
     dropdownDecoratorProps: DropDownDecoratorProps(
       dropdownSearchDecoration: InputDecoration(
-        labelText: label ?? 'select_an_option'.tr(),//'select_label'.tr(namedArgs: {'label': label}),
+        labelText: label == null ? 'select_an_option'.tr() : justLabel ? label : 'select_label'.tr(namedArgs: {'label': label}),
         contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       ),
     ),

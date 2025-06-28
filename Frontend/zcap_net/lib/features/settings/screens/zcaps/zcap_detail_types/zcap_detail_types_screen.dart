@@ -25,6 +25,8 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
   final _searchController = TextEditingController();
   String _searchTerm = '';
 
+  bool _isSearchingByName = true;
+
   @override
   void initState() {
     super.initState();
@@ -32,6 +34,9 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
         .buildQuery<ZcapDetailTypeIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
+      for (var item in data) {
+        if (!item.detailTypeCategory.isLoaded) await item.detailTypeCategory.load();
+      }
       setState(() {
         zcapDetailTypes = data;
         _isLoading = false;
@@ -79,7 +84,13 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
 
   Widget _buildUI() {
     final filteredList = zcapDetailTypes.where((e) {
-      return e.name.toLowerCase().contains(_searchTerm);
+      if (_isSearchingByName) {
+        return e.name.toLowerCase().contains(_searchTerm);
+      } else {
+        return e.detailTypeCategory.value!.name
+            .toLowerCase()
+            .contains(_searchTerm);
+      }
     }).toList();
 
     return Padding(
@@ -87,12 +98,21 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
       child: Column(
         children: [
           CustomSearchAndAddBar(
-            controller: _searchController,
-            onSearchChanged: (value) => setState(() {
-              _searchTerm = value.toLowerCase();
-            }),
-            onAddPressed: () => _addOrEditZcapDetailType(null),
-          ),
+              controller: _searchController,
+              onSearchChanged: (value) => setState(() {
+                    _searchTerm = value.toLowerCase();
+                  }),
+              onAddPressed: () => _addOrEditZcapDetailType(null),
+              dropDownFilter: customDropdownSearch(
+                  items: ['name'.tr(), 'screen_settings_detail_category_name'.tr()],
+                  selectedItem: _isSearchingByName
+                      ? 'name'.tr()
+                      : 'screen_settings_detail_category_name'.tr(),
+                  onSelected: (value) => setState(
+                      () => _isSearchingByName = value == 'name'.tr()),
+                  validator: (value) => null,
+                  label: 'search_by'.tr(),
+                  justLabel: true)),
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
@@ -132,7 +152,8 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
     List<List<String>> labelsList = [];
     for (var zdt in filteredList) {
       labelsList.add([
-        zdt.name,
+        "${'name'.tr()}: ${zdt.name}",
+        "${'screen_settings_detail_category_name'.tr()}: ${zdt.detailTypeCategory.value!.name}",
         '${'start'.tr()}: ${zdt.startDate.toLocal().toString().split(' ')[0]}',
         '${'end'.tr()}: ${zdt.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
@@ -142,11 +163,6 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
 
   void _addOrEditZcapDetailType(ZcapDetailTypeIsar? zcapDetailType) async {
     final formKey = GlobalKey<FormState>();
-    if (zcapDetailType != null) {
-      if (!zcapDetailType.detailTypeCategory.isLoaded) {
-        await zcapDetailType.detailTypeCategory.load();
-      }
-    }
     final availableDetailTypeCategory = await DatabaseService
         .db.detailTypeCategoriesIsars
         .filter()
@@ -198,7 +214,8 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                     });
                   },
                   validator: (value) =>
-                      value == null ? 'required_field'.tr() : null),
+                      value == null ? 'required_field'.tr() : null,
+                  label: 'screen_settings_detail_category_name'.tr()),
               customDropdownSearch<DataTypes>(
                   items: DataTypes.values,
                   selectedItem: dataType,
@@ -208,7 +225,8 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                     });
                   },
                   validator: (value) =>
-                      value == null ? 'required_field'.tr() : null)
+                      value == null ? 'required_field'.tr() : null,
+                  label: 'data_type'.tr()),
             ]),
             actions: [
               CancelTextButton(),
@@ -219,17 +237,22 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                   if (formKey.currentState!.validate()) {
                     final now = DateTime.now();
                     await DatabaseService.db.writeTxn(() async {
-                      final newZcapDetailType = zcapDetailType ?? ZcapDetailTypeIsar();
-                      newZcapDetailType.remoteId = zcapDetailType?.remoteId ?? 0;
+                      final newZcapDetailType =
+                          zcapDetailType ?? ZcapDetailTypeIsar();
+                      newZcapDetailType.remoteId =
+                          zcapDetailType?.remoteId ?? 0;
                       newZcapDetailType.name = nameController.text;
-                      newZcapDetailType.detailTypeCategory.value = detailTypeCategory;
+                      newZcapDetailType.detailTypeCategory.value =
+                          detailTypeCategory;
                       newZcapDetailType.dataType = dataType!;
                       newZcapDetailType.startDate = startDate ?? now;
                       newZcapDetailType.endDate = endDate;
-                      newZcapDetailType.createdAt = zcapDetailType?.createdAt ?? now;
+                      newZcapDetailType.createdAt =
+                          zcapDetailType?.createdAt ?? now;
                       newZcapDetailType.lastUpdatedAt = now;
                       newZcapDetailType.isSynced = false;
-                      await DatabaseService.db.zcapDetailTypeIsars.put(newZcapDetailType);
+                      await DatabaseService.db.zcapDetailTypeIsars
+                          .put(newZcapDetailType);
                       await newZcapDetailType.detailTypeCategory.save();
                     });
                     navigator.pop();

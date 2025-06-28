@@ -435,6 +435,9 @@ final List<SyncEntry> syncEntries = [
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
+  /**
+ * ZCAPS
+ */
   SyncEntry<BuildingTypesIsar, BuildingType>(
       endpoint: 'buildingTypes',
       getCollection: (isar) => isar.buildingTypesIsars,
@@ -477,6 +480,24 @@ final List<SyncEntry> syncEntries = [
       saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
         final zcapDetailTypeIsar = isarTable as ZcapDetailTypeIsar;
         await zcapDetailTypeIsar.detailTypeCategory.save();
+      }),
+  SyncEntry<ZcapIsar, Zcap>(
+      endpoint: 'zcaps',
+      getCollection: (isar) => isar.zcapIsars,
+      idName: 'zcapId',
+      fromJson: Zcap.fromJson,
+      toIsar: (ApiTable zcap) async => ZcapIsar.toRemote(zcap as Zcap),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<ZcapIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+        final zcapIsar = isarTable as ZcapIsar;
+        await zcapIsar.buildingType.save();
+        await zcapIsar.tree.save();
+        await zcapIsar.zcapEntity.save();
       }),
   SyncEntry<ZcapDetailsIsar, ZcapDetails>(
       endpoint: 'zcap-details',
@@ -545,25 +566,4 @@ final List<SyncEntry> syncEntries = [
         await allowancesIsar.userProfile.save();
       }),
 
-  /**
- * ZCAPS
- */
-  SyncEntry<ZcapIsar, Zcap>(
-      endpoint: 'zcaps',
-      getCollection: (isar) => isar.zcapIsars,
-      idName: 'zcapId',
-      fromJson: Zcap.fromJson,
-      toIsar: (ApiTable zcap) async => ZcapIsar.toRemote(zcap as Zcap),
-      findByRemoteId:
-          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
-              (collection as IsarCollection<ZcapIsar>)
-                  .where()
-                  .remoteIdEqualTo(remoteId)
-                  .findFirst(),
-      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
-        final zcapIsar = isarTable as ZcapIsar;
-        await zcapIsar.buildingType.save();
-        await zcapIsar.tree.save();
-        await zcapIsar.zcapEntity.save();
-      }),
 ];

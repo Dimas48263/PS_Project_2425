@@ -21,6 +21,8 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
   final _searchController = TextEditingController();
   String _searchTerm = '';
 
+  bool _isSearchingByName = true;
+
   @override
   void initState() {
     super.initState();
@@ -75,7 +77,11 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
 
   Widget _buildUI() {
     final filteredList = treeLevels.where((e) {
-      return e.name.toLowerCase().contains(_searchTerm);
+      if (_isSearchingByName) {
+        return e.name.toLowerCase().contains(_searchTerm);
+      } else {
+        return e.levelId.toString().toLowerCase().contains(_searchTerm);
+      }
     }).toList();
 
     return Padding(
@@ -87,7 +93,17 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
                   }),
-              onAddPressed: () => _addOrEditTreeLevel(null)),
+              onAddPressed: () => _addOrEditTreeLevel(null),
+              dropDownFilter: customDropdownSearch(
+                  items: ['name'.tr(), 'level'.tr()],
+                  selectedItem: _isSearchingByName
+                      ? 'name'.tr()
+                      : 'level'.tr(),
+                  onSelected: (value) => setState(
+                      () => _isSearchingByName = value == 'name'.tr()),
+                  validator: (value) => null,
+                  label: 'search_by'.tr(),
+                  justLabel: true)),
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
@@ -126,7 +142,8 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     List<List<String>> labelsList = [];
     for (var treeLevel in filteredList) {
       labelsList.add([
-        treeLevel.name,
+        '${'name'.tr()}: ${treeLevel.name}',
+        '${'level'.tr()}: ${treeLevel.levelId}',
         '${'start'.tr()}: ${treeLevel.startDate.toLocal().toString().split(' ')[0]}',
         '${'end'.tr()}: ${treeLevel.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);

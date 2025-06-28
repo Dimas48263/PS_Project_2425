@@ -23,13 +23,31 @@ class _TreesScreenState extends State<TreesScreen> {
   final _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late final Map<String, String> searchOptionsMap;
+  late final List<String> searchKeys;
+
+  String selectedSearchOption = 'name';
+
   @override
   void initState() {
     super.initState();
+
+    searchOptionsMap = {
+      'name': 'name'.tr(),
+      'level': 'level'.tr(),
+      'parent': 'parent'.tr(),
+    };
+
+    searchKeys = searchOptionsMap.keys.toList();
+
     treesStream = DatabaseService.db.treeIsars
         .buildQuery<TreeIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
+      for (var element in data) {
+        if (!element.treeLevel.isLoaded) await element.treeLevel.load();
+        if (!element.parent.isLoaded) await element.parent.load();
+      }
       setState(() {
         trees = data;
         _isLoading = false;
@@ -75,7 +93,15 @@ class _TreesScreenState extends State<TreesScreen> {
 
   Widget _buildUI() {
     final filteredList = trees.where((e) {
-      return e.name.toLowerCase().contains(_searchTerm);
+      switch (selectedSearchOption) {
+        case 'level':
+          return e.treeLevel.value!.name.toLowerCase().contains(_searchTerm);
+        case 'parent':
+          if (e.parent.value == null) return false;
+          return e.parent.value!.name.toLowerCase().contains(_searchTerm);
+        default:
+          return e.name.toLowerCase().contains(_searchTerm);
+      }
     }).toList();
 
     return Padding(
@@ -88,6 +114,15 @@ class _TreesScreenState extends State<TreesScreen> {
               _searchTerm = value.toLowerCase();
             }),
             onAddPressed: () => _addOrEditTree(null),
+            dropDownFilter: customDropdownSearch(
+                items: searchKeys,
+                selectedItem: selectedSearchOption,
+                onSelected: (value) =>
+                    setState(() => selectedSearchOption = value ?? 'name'),
+                validator: (value) => null,
+                label: 'search_by'.tr(),
+                justLabel: true,
+                itemLabelBuilder: (item) => searchOptionsMap[item] ?? item),
           ),
           const SizedBox(height: 10.0),
           _isLoading
@@ -105,8 +140,7 @@ class _TreesScreenState extends State<TreesScreen> {
                       context: context,
                       builder: (context) => ConfirmDialog(
                         title: 'confirm_delete'.tr(),
-                        content:
-                            'confirm_delete_message'.tr(),
+                        content: 'confirm_delete_message'.tr(),
                       ),
                     );
                     if (confirm == true) {
@@ -125,7 +159,9 @@ class _TreesScreenState extends State<TreesScreen> {
     List<List<String>> labelsList = [];
     for (var tree in filteredList) {
       labelsList.add([
-        tree.name,
+        '${'name'.tr()}: ${tree.name}',
+        '${'level'.tr()}: ${tree.treeLevel.value!.name}',
+        '${'parent'.tr()}: ${tree.parent.value?.name ?? 'no_parent'.tr()}',
         '${'start'.tr()}: ${tree.startDate.toLocal().toString().split(' ')[0]}',
         '${'end'.tr()}: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
@@ -135,10 +171,6 @@ class _TreesScreenState extends State<TreesScreen> {
 
   void _addOrEditTree(TreeIsar? tree) async {
     final formKey = GlobalKey<FormState>();
-    if (tree != null) {
-      if (!tree.treeLevel.isLoaded) await tree.treeLevel.load();
-      if (!tree.parent.isLoaded) await tree.parent.load();
-    }
     final availableTreeLevels =
         await DatabaseService.db.treeLevelIsars.where().findAll();
     final nameController = TextEditingController(text: tree?.name ?? '');
@@ -148,7 +180,8 @@ class _TreesScreenState extends State<TreesScreen> {
     DateTime? endDate = tree?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
-      TextControllersInputFormConfig(controller: nameController, label: 'name'.tr()),
+      TextControllersInputFormConfig(
+          controller: nameController, label: 'name'.tr()),
     ];
 
     showDialog(
@@ -156,7 +189,9 @@ class _TreesScreenState extends State<TreesScreen> {
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
-            title: Text(tree == null ? '${'new'.tr()} ${'tree_element'.tr()}' : '${'edit'.tr()} ${'screen_settings_structure'.tr()}'),
+            title: Text(tree == null
+                ? '${'new'.tr()} ${'tree_element'.tr()}'
+                : '${'edit'.tr()} ${'screen_settings_structure'.tr()}'),
             content: buildForm(
                 formKey, context, textControllersConfig, startDate, endDate,
                 (value) {
@@ -180,8 +215,10 @@ class _TreesScreenState extends State<TreesScreen> {
                     });
                   },
                   validator: (value) =>
-                      value == null ? 'required_field'.tr() : null),
+                      value == null ? 'required_field'.tr() : null,
+                  label: 'level'.tr()),
               customDropdownSearch<TreeIsar>(
+                label: 'parent'.tr(),
                 enabled: treeLevel != null && treeLevel!.levelId > 1,
                 items: treeLevel == null
                     ? trees

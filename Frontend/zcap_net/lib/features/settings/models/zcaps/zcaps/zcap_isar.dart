@@ -179,4 +179,9 @@ class ZcapIsar implements IsarTable<Zcap> {
     });
     return newEntity;
   }
+
+  @override
+  String toString() {
+    return name;
+  }
 }

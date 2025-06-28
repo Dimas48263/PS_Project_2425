@@ -104,4 +104,9 @@ class ZcapDetailTypeIsar implements IsarTable {
     });
     return newDetailTypeCategory;
   }
+
+  @override
+  String toString() {
+    return name;
+  }
 }
