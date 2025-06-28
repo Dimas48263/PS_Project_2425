@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
@@ -136,9 +137,8 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
-              : buildListView(
-                  filteredList,
-                  getLabelsList(filteredList),
+              : buildListViewV2<TreeRecordDetailIsar>(
+                  getLabelsListV2(filteredList),
                   (detail) {
                     syncServiceV3.synchronize(
                         detail,
@@ -178,6 +178,25 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
         '${'start'.tr()}: ${tree.startDate.toLocal().toString().split(' ')[0]}',
         '${'end'.tr()}: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
+    }
+    return labelsList;
+  }
+
+  List<CustomElementListView> getLabelsListV2(
+      List<TreeRecordDetailIsar> filteredList) {
+    List<CustomElementListView> labelsList = [];
+    for (var tree in filteredList) {
+      labelsList.add(
+        CustomElementListView(tree, '[${tree.remoteId}] ${tree.valueCol}', [
+          [
+            '${'screen_detail_type'.tr()}: ${tree.detailType.value!.name}',
+            '${'tree'.tr()}: ${tree.tree.value!.name}'
+          ], [
+            '${'start'.tr()}: ${tree.startDate.toLocal().toString().split(' ')[0]}',
+            '${'end'.tr()}: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
+          ]
+        ]),
+      );
     }
     return labelsList;
   }

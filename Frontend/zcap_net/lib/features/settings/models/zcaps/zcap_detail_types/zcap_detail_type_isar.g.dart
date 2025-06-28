@@ -34,28 +34,33 @@ const ZcapDetailTypeIsarSchema = CollectionSchema(
       name: r'endDate',
       type: IsarType.dateTime,
     ),
-    r'isSynced': PropertySchema(
+    r'isMandatory': PropertySchema(
       id: 3,
+      name: r'isMandatory',
+      type: IsarType.bool,
+    ),
+    r'isSynced': PropertySchema(
+      id: 4,
       name: r'isSynced',
       type: IsarType.bool,
     ),
     r'lastUpdatedAt': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'lastUpdatedAt',
       type: IsarType.dateTime,
     ),
     r'name': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'name',
       type: IsarType.string,
     ),
     r'remoteId': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'remoteId',
       type: IsarType.long,
     ),
     r'startDate': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'startDate',
       type: IsarType.dateTime,
     )
@@ -140,11 +145,12 @@ void _zcapDetailTypeIsarSerialize(
   writer.writeDateTime(offsets[0], object.createdAt);
   writer.writeByte(offsets[1], object.dataType.index);
   writer.writeDateTime(offsets[2], object.endDate);
-  writer.writeBool(offsets[3], object.isSynced);
-  writer.writeDateTime(offsets[4], object.lastUpdatedAt);
-  writer.writeString(offsets[5], object.name);
-  writer.writeLong(offsets[6], object.remoteId);
-  writer.writeDateTime(offsets[7], object.startDate);
+  writer.writeBool(offsets[3], object.isMandatory);
+  writer.writeBool(offsets[4], object.isSynced);
+  writer.writeDateTime(offsets[5], object.lastUpdatedAt);
+  writer.writeString(offsets[6], object.name);
+  writer.writeLong(offsets[7], object.remoteId);
+  writer.writeDateTime(offsets[8], object.startDate);
 }
 
 ZcapDetailTypeIsar _zcapDetailTypeIsarDeserialize(
@@ -160,11 +166,12 @@ ZcapDetailTypeIsar _zcapDetailTypeIsarDeserialize(
       DataTypes.boolean;
   object.endDate = reader.readDateTimeOrNull(offsets[2]);
   object.id = id;
-  object.isSynced = reader.readBool(offsets[3]);
-  object.lastUpdatedAt = reader.readDateTime(offsets[4]);
-  object.name = reader.readString(offsets[5]);
-  object.remoteId = reader.readLongOrNull(offsets[6]);
-  object.startDate = reader.readDateTime(offsets[7]);
+  object.isMandatory = reader.readBool(offsets[3]);
+  object.isSynced = reader.readBool(offsets[4]);
+  object.lastUpdatedAt = reader.readDateTime(offsets[5]);
+  object.name = reader.readString(offsets[6]);
+  object.remoteId = reader.readLongOrNull(offsets[7]);
+  object.startDate = reader.readDateTime(offsets[8]);
   return object;
 }
 
@@ -186,12 +193,14 @@ P _zcapDetailTypeIsarDeserializeProp<P>(
     case 3:
       return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 6:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 7:
+      return (reader.readLongOrNull(offset)) as P;
+    case 8:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -909,6 +918,16 @@ extension ZcapDetailTypeIsarQueryFilter
   }
 
   QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QAfterFilterCondition>
+      isMandatoryEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isMandatory',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QAfterFilterCondition>
       isSyncedEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1306,6 +1325,20 @@ extension ZcapDetailTypeIsarQuerySortBy
   }
 
   QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QAfterSortBy>
+      sortByIsMandatory() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMandatory', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QAfterSortBy>
+      sortByIsMandatoryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMandatory', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QAfterSortBy>
       sortByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
@@ -1435,6 +1468,20 @@ extension ZcapDetailTypeIsarQuerySortThenBy
   }
 
   QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QAfterSortBy>
+      thenByIsMandatory() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMandatory', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QAfterSortBy>
+      thenByIsMandatoryDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMandatory', Sort.desc);
+    });
+  }
+
+  QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QAfterSortBy>
       thenByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isSynced', Sort.asc);
@@ -1529,6 +1576,13 @@ extension ZcapDetailTypeIsarQueryWhereDistinct
   }
 
   QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QDistinct>
+      distinctByIsMandatory() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isMandatory');
+    });
+  }
+
+  QueryBuilder<ZcapDetailTypeIsar, ZcapDetailTypeIsar, QDistinct>
       distinctByIsSynced() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isSynced');
@@ -1590,6 +1644,13 @@ extension ZcapDetailTypeIsarQueryProperty
       endDateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'endDate');
+    });
+  }
+
+  QueryBuilder<ZcapDetailTypeIsar, bool, QQueryOperations>
+      isMandatoryProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isMandatory');
     });
   }
 

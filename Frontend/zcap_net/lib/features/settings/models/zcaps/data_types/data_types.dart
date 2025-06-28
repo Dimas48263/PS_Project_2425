@@ -50,6 +50,23 @@ enum DataTypes {
 
   @override
   String toString() => name;
+
+  String get example {
+    switch (this) {
+      case DataTypes.boolean:
+        return 'true';
+      case DataTypes.int:
+        return '99';
+      case DataTypes.string:
+        return '"exemplo"';
+      case DataTypes.double:
+        return '3.14';
+      case DataTypes.char:
+        return "'A'";
+      case DataTypes.float:
+        return '3.14';
+    }
+  }
 }
 
 extension DataTypesExtension on DataTypes {
