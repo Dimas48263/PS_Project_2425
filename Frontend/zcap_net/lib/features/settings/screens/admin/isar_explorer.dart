@@ -365,7 +365,7 @@ class _IsarExplorerScreenState extends State<IsarExplorerScreen> {
 case 'UserAccessAllowances':
   return FutureBuilder<List<UserProfileAccessAllowanceIsar>>(
     future: () async {
-      final profiles = await isar.userProfilesIsars.where().findAll();
+      //final profiles = await isar.userProfilesIsars.where().findAll();
       final List<UserProfileAccessAllowanceIsar> allAllowances = [];
 
       // Carrega os links dos allowances

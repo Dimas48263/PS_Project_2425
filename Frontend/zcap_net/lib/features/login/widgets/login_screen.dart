@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/about/about_screen.dart';
+import 'package:zcap_net_app/features/home/screens/help_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/widgets/hero_widget.dart';
 import '../../../shared/shared.dart';
@@ -92,6 +93,16 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(
         title: Text("login".tr()),
         actions: [
+          IconButton(
+              icon: const Icon(Icons.help),
+              tooltip: 'help'.tr(),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HelpScreen()),
+                );
+              },
+            ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             tooltip: 'about'.tr(),

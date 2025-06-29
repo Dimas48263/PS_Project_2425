@@ -644,7 +644,6 @@ CREATE TABLE [userProfileAccessAllowance](
 	[accessType]					[int]		NOT NULL,
 	[createdAt]						DATETIME	NOT NULL,
 	[lastUpdatedAt]					DATETIME	NOT NULL
-
 	)
 --/*** END: USERPROFILEDETAILS ***/
 
