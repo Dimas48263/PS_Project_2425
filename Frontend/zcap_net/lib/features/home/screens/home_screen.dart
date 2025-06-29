@@ -131,14 +131,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   Text('welcome_message'.tr(), style: TextStyle(fontSize: 24)),
                   SizedBox(height: 10.0),
-/*                  IconButton(
-                    onPressed: () async =>
-                        {await SyncServiceManager().syncNow()},
-                    icon: const Icon(
-                      Icons.sync_problem,
-                      color: Colors.amberAccent,
-                    ),
-                  )*/
                 ],
               ),
             ),

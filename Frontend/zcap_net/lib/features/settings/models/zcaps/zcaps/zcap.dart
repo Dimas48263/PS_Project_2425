@@ -40,7 +40,9 @@ class Zcap implements ApiTable {
     return Zcap(
       remoteId: json['zcapId'],
       name: json['name'],
-      buildingType: json['buildingType'] != null ? BuildingType.fromJson(json['buildingType']) : null,
+      buildingType: json['buildingType'] != null
+          ? BuildingType.fromJson(json['buildingType'])
+          : null,
       address: json['address'],
       tree: json['treeRecordId'] != null
           ? Tree.fromJson(json['treeRecordId'])
@@ -51,7 +53,8 @@ class Zcap implements ApiTable {
       longitude: json['longitude'] != null
           ? (json['longitude'] as num).toDouble()
           : null,
-      zcapEntity: json['entityId'] != null ? Entity.fromJson(json['entityId']) : null,
+      zcapEntity:
+          json['entityId'] != null ? Entity.fromJson(json['entityId']) : null,
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       createdAt: DateTime.parse(json['createdAt']),
@@ -61,6 +64,21 @@ class Zcap implements ApiTable {
 
   @override
   Map<String, dynamic> toJsonInput() {
+    return {
+      'name': name,
+      'buildingTypeId': buildingType?.remoteId,
+      'address': address,
+      'treeRecordId': tree?.remoteId,
+      'latitude': latitude,
+      'longitude': longitude,
+      'entityId': zcapEntity?.remoteId,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
     return {
       'name': name,
       'buildingTypeId': buildingType?.remoteId,

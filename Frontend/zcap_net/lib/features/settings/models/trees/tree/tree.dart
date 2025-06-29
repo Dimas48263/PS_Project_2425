@@ -52,6 +52,17 @@ class Tree implements ApiTable {
     };
   }
 
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    return {
+      'name': name,
+      'treeLevelId': treeLevel.remoteId,
+      'parentId': parent?.remoteId,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
   Tree copyWith({
     int? id,
     String? name,

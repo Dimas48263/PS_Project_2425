@@ -14,7 +14,7 @@ class UserProfileAccessAllowanceIsar
   @override
   Id id = Isar.autoIncrement;
   @override
-  bool isSynced = false;
+  bool isSynced = true; //default true, is synced by userProfile
 
   @override
   @Index()
@@ -121,9 +121,9 @@ class UserProfileAccessAllowanceIsar
       ..isSynced = isSynced ?? this.isSynced;
   }
 
-
-    static Future<UserProfileAccessAllowanceIsar> toRemote(UserProfileAccessAllowance allowances) async {
-    final remote =  UserProfileAccessAllowanceIsar()
+  static Future<UserProfileAccessAllowanceIsar> toRemote(
+      UserProfileAccessAllowance allowances) async {
+    final remote = UserProfileAccessAllowanceIsar()
       ..remoteId = allowances.remoteId
       ..key = allowances.key
       ..description = allowances.description
@@ -132,13 +132,19 @@ class UserProfileAccessAllowanceIsar
       ..lastUpdatedAt = allowances.lastUpdatedAt
       ..isSynced = true;
 
-      remote.userProfile.value = await getOrBuildUserProfile(allowances.userProfile);
+    remote.userProfile.value =
+        await getOrBuildUserProfile(allowances.userProfile);
 
-      return remote;
+    return remote;
   }
 
-      static Future<UserProfilesIsar> getOrBuildUserProfile(UserProfile userProfile) async {
-    UserProfilesIsar? userProfilesIsar = await DatabaseService.db.userProfilesIsars.where().remoteIdEqualTo(userProfile.remoteId).findFirst();
+  static Future<UserProfilesIsar> getOrBuildUserProfile(
+      UserProfile userProfile) async {
+    UserProfilesIsar? userProfilesIsar = await DatabaseService
+        .db.userProfilesIsars
+        .where()
+        .remoteIdEqualTo(userProfile.remoteId)
+        .findFirst();
     if (userProfilesIsar != null) return userProfilesIsar;
 
     UserProfilesIsar newUserProfile = UserProfilesIsar.toRemote(userProfile);
@@ -146,5 +152,17 @@ class UserProfileAccessAllowanceIsar
       await DatabaseService.db.userProfilesIsars.put(newUserProfile);
     });
     return newUserProfile;
+  }
+
+  UserProfileAccessAllowanceIsar copyWith() {
+    return UserProfileAccessAllowanceIsar()
+      ..id = id
+      ..remoteId = remoteId
+      ..key = key
+      ..description = description
+      ..accessTypeIndex = accessTypeIndex
+      ..lastUpdatedAt = lastUpdatedAt
+      ..isSynced = isSynced
+      ..userProfile.value = userProfile.value;
   }
 }

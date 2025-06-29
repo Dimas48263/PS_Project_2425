@@ -10,14 +10,13 @@ class DetailTypeCategories implements ApiTable {
   @override
   final DateTime lastUpdatedAt;
 
-  DetailTypeCategories({
-    required this.remoteId,
-    required this.name,
-    required this.startDate,
-    required this.endDate,
-    required this.createdAt,
-    required this.lastUpdatedAt
-  });
+  DetailTypeCategories(
+      {required this.remoteId,
+      required this.name,
+      required this.startDate,
+      required this.endDate,
+      required this.createdAt,
+      required this.lastUpdatedAt});
 
   factory DetailTypeCategories.fromJson(Map<String, dynamic> json) {
     return DetailTypeCategories(
@@ -32,13 +31,25 @@ class DetailTypeCategories implements ApiTable {
 
   @override
   Map<String, dynamic> toJsonInput() => {
-    'detailTypeCategoryId': remoteId,
-    'name': name,
-    'startDate': startDate.toIso8601String(),
-    'endDate': endDate?.toIso8601String(),
-    'createdAt': createdAt.toIso8601String(),
-    'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
-  };
+        'detailTypeCategoryId': remoteId,
+        'name': name,
+        'startDate': startDate.toIso8601String(),
+        'endDate': endDate?.toIso8601String(),
+        'createdAt': createdAt.toIso8601String(),
+        'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
+      };
+
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    return {
+      'detailTypeCategoryId': remoteId,
+      'name': name,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
+    };
+  }
 
   DetailTypeCategories copyWith({
     int? remoteId,

@@ -1,9 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
+import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_access_editor_screen.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
 
@@ -211,6 +214,28 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
               ),
               actions: [
                 CancelTextButton(),
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final name = nameController.text.trim();
+
+                      final updatedProfile = userProfile ?? UserProfilesIsar();
+                      updatedProfile.name = name;
+                      updatedProfile.startDate = selectedStartDate;
+                      updatedProfile.endDate = selectedEndDate;
+                      updatedProfile.lastUpdatedAt = DateTime.now();
+                      updatedProfile.isSynced = false;
+
+                      await DatabaseService.db.writeTxn(() async {
+                        await DatabaseService.db.userProfilesIsars
+                            .put(updatedProfile);
+                      });
+
+                      Navigator.of(context).pop();
+                    }
+                  },
+                ),
               ],
             );
           },
@@ -220,19 +245,62 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
   }
 
   Future<void> _editUserAccessAllowances(UserProfilesIsar profile) async {
-    await DatabaseService.db.writeTxn(() async {
-      await UserProfilesIsar.ensureAllAllowancesExist(profile);
-    });
+
+    final originalAllowances = await DatabaseService
+        .db.userProfileAccessAllowanceIsars
+        .filter()
+        .userProfile((q) => q.idEqualTo(profile.id))
+        .sortByKey()
+        .findAll();
+
+    final editableAllowances =
+        originalAllowances.map((a) => a.copyWith()).toList();
 
     await showDialog(
       context: context,
       builder: (_) {
-        return AlertDialog(
-          title:
-              Text('${'tooltip_edit_user_allowances'.tr()} - ${profile.name}'),
-          actions: [
-            CancelTextButton(),
-          ],
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text(
+                  '${'tooltip_edit_user_allowances'.tr()} - ${profile.name}'),
+              content: SizedBox(
+                width: double.maxFinite,
+                height: 400,
+                child: UserAccessEditor(
+                  allowances: editableAllowances,
+                  onChanged: (edited, newType) {
+                    setState(() {
+                      edited.accessTypeIndex = newType;
+                      edited.lastUpdatedAt = DateTime.now();
+                    });
+                  },
+                ),
+              ),
+              actions: [
+                CancelTextButton(),
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    await DatabaseService.db.writeTxn(() async {
+                      for (final edited in editableAllowances) {
+                        await DatabaseService.db.userProfileAccessAllowanceIsars
+                            .put(edited);
+                      }
+                    });
+
+                    profile.isSynced = false;
+                    profile.lastUpdatedAt = DateTime.now();
+                    await DatabaseService.db.writeTxn(() async {
+                      await DatabaseService.db.userProfilesIsars.put(profile);
+                    });
+                    
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
         );
       },
     );

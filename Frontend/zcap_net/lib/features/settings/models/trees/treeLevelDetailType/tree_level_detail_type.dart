@@ -32,6 +32,16 @@ class TreeLevelDetailType implements ApiTable {
     };
   }
 
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    return {
+      'treeLevelId': treeLevel.remoteId,
+      'detailTypeId': detailType.remoteId,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
   factory TreeLevelDetailType.fromJson(Map<String, dynamic> json) =>
       TreeLevelDetailType(
         remoteId: json['treeLevelDetailTypeId'] as int,

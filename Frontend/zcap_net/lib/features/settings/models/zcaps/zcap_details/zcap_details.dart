@@ -48,6 +48,17 @@ class ZcapDetails implements ApiTable {
     };
   }
 
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    return {
+      'zcapId': zcap.remoteId,
+      'zcapDetailTypeId': zcapDetailType.remoteId,
+      'valueCol': valueCol,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
   ZcapDetails copyWith(
       {int? remoteId,
       String? valueCol,

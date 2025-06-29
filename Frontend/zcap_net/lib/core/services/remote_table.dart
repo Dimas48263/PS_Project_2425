@@ -13,5 +13,6 @@ abstract class ApiTable {
   int get remoteId;
   DateTime get lastUpdatedAt;
   Map<String, dynamic> toJsonInput();
+  Future<Map<String, dynamic>> toJsonInputAsync();  //similar to toJsonInput just with async to allow usage of async functions
 }
 

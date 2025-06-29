@@ -28,69 +28,67 @@ class UserProfileService(
     fun getAllUserProfiles(): List<UserProfileOutputModel> {
         val userProfiles = userProfileRepository.findAll()
         return userProfiles.map {
-            toOutputModel(it,)
+            toOutputModel(it)
         }
     }
 
     fun getUserProfilesValidOn(date: LocalDate): List<UserProfileOutputModel> {
         val validProfiles = userProfileRepository.findValidOnDate(date)
         return validProfiles.map {
-            toOutputModel(it,)
+            toOutputModel(it)
         }
     }
 
     fun getUserProfileById(userProfileId: Long): Either<ServiceErrors, UserProfileOutputModel> {
-        val profile = userProfileRepository.findById(userProfileId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+        val profile =
+            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
 
         val userProfileAllowances = userProfileAccessAllowanceRepository.findByUserProfile(profile)
-        return success(toOutputModel(profile,))
+        return success(toOutputModel(profile))
     }
 
     fun addUserProfile(newProfile: UserProfileInputModel): Either<ServiceErrors, UserProfileOutputModel> {
-        if (newProfile.name.isBlank()
-            || newProfile.startDate.isAfter(newProfile.endDate ?: newProfile.startDate)
-        )
-            return failure(ServiceErrors.InvalidDataInput)
-
-        val tempProfile = UserProfile(
-            name = newProfile.name,
-            startDate = newProfile.startDate,
-            endDate = newProfile.endDate,
-        )
-
+        if (newProfile.name.isBlank() || newProfile.startDate.isAfter(
+                newProfile.endDate ?: newProfile.startDate
+            )
+        ) return failure(ServiceErrors.InvalidDataInput)
 
         return try {
-            val profile = userProfileRepository.save(tempProfile)
-            val accessAllowances = newProfile.accessAllowances.mapNotNull {
-                if (it.accessType !in 0 until AccessType.entries.size) return@mapNotNull null
-                val accessKey = userProfileAccessKeysRepository.findById(it.userProfileAccessKeyId).getOrNull()
-                    ?: return@mapNotNull null
+            val savedProfile = userProfileRepository.save(
+                UserProfile(
+                    name = newProfile.name,
+                    startDate = newProfile.startDate,
+                    endDate = newProfile.endDate
+                )
+            )
 
+            val allAccessKeys = userProfileAccessKeysRepository.findAll()
+
+            val accessAllowances = allAccessKeys.map { accessKey ->
                 UserProfileAccessAllowance(
-                    userProfile = profile,
+                    userProfile = savedProfile,
                     userProfileAccessKey = accessKey,
-                    accessType = it.accessType
+                    accessType = AccessType.READ_WRITE.value
                 )
             }
 
             userProfileAccessAllowanceRepository.saveAll(accessAllowances)
 
-            success(toOutputModel(profile,))
+            success(toOutputModel(savedProfile))
+
         } catch (ex: Exception) {
             failure(ServiceErrors.InsertFailed)
         }
     }
 
     fun updateUserProfile(
-        userProfileId: Long,
-        updatedProfile: UserProfileInputModel
+        userProfileId: Long, updatedProfile: UserProfileInputModel
     ): Either<ServiceErrors, UserProfileOutputModel> {
 
-        if (updatedProfile.name.isBlank()
-            || updatedProfile.startDate.isAfter(updatedProfile.endDate ?: updatedProfile.startDate)
-        )
-            return failure(ServiceErrors.InvalidDataInput)
+        if (updatedProfile.name.isBlank() || updatedProfile.startDate.isAfter(
+                updatedProfile.endDate ?: updatedProfile.startDate
+            )
+        ) return failure(ServiceErrors.InvalidDataInput)
 
         val oldProfile =
             userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
@@ -105,21 +103,42 @@ class UserProfileService(
         return try {
             val savedProfile = userProfileRepository.save(newProfile)
 
+            val allAccessKeys = userProfileAccessKeysRepository.findAll()
+
             val existingAllowances = userProfileAccessAllowanceRepository.findByUserProfile(savedProfile)
+                .associateBy { it.userProfileAccessKey.userProfileAccessKeyId }
 
-            for (existing in existingAllowances) {
-                val updated = updatedProfile.accessAllowances
-                    .find { it.userProfileAccessKeyId == existing.userProfileAccessKey.userProfileAccessKeyId }
+            val existingAllowancesById = existingAllowances.values.associateBy { it.userProfileAccessAllowanceId }
 
-                if (updated != null) {
-                    existing.accessType = updated.accessType
-                    existing.lastUpdatedAt = LocalDateTime.now()
+            val toSave = allAccessKeys.map { accessKey ->
+                val existing = existingAllowances.values.find {
+                    it.userProfileAccessKey.userProfileAccessKeyId == accessKey.userProfileAccessKeyId
+                }
+
+                val input = updatedProfile.accessAllowances.find {
+                    it.userProfileAccessKeyId == existing?.userProfileAccessAllowanceId
+                }
+
+                when {
+                    existing != null -> {
+                        existing.accessType = input?.accessType ?: existing.accessType
+                        existing.lastUpdatedAt = LocalDateTime.now()
+                        existing
+                    }
+
+                    else -> {
+                        UserProfileAccessAllowance(
+                            userProfile = savedProfile,
+                            userProfileAccessKey = accessKey,
+                            accessType = 0 // ou outro valor default
+                        )
+                    }
                 }
             }
 
-            userProfileAccessAllowanceRepository.saveAll(existingAllowances)
+            userProfileAccessAllowanceRepository.saveAll(toSave)
+            success(toOutputModel(savedProfile))
 
-            success(toOutputModel(savedProfile,))
         } catch (ex: Exception) {
             failure(ServiceErrors.UpdateFailed)
         }

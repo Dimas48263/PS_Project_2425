@@ -1,4 +1,3 @@
-import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 
 class UserAccessKeys implements ApiTable {
@@ -40,6 +39,11 @@ class UserAccessKeys implements ApiTable {
     return {'accessKey': accessKey, 'description': description};
   }
 
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    return {'accessKey': accessKey, 'description': description};
+  }
+  
   UserAccessKeys copyWith({
     int? id,
     String? accessKey,

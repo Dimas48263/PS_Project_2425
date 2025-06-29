@@ -30,6 +30,16 @@ class TreeRecordDetailType implements ApiTable {
     };
   }
 
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    return {
+      'name': name,
+      'unit': unit,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
   factory TreeRecordDetailType.fromJson(Map<String, dynamic> json) {
     return TreeRecordDetailType(
       remoteId: json['detailTypeId'],

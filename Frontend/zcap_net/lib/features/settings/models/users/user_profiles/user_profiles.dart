@@ -1,4 +1,8 @@
+import 'package:isar/isar.dart';
+import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 
 class UserProfile implements ApiTable {
   @override
@@ -41,31 +45,26 @@ class UserProfile implements ApiTable {
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
-      'accessAllowances': [], //TODO: access_allowances list
+      'accessAllowances':
+          [], //no accessallowances, need to use async version instead
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
   }
 
-/*
-  UserProfile copyWith({
-    int? id,
-    String? name,
-    DateTime? startDate,
-    DateTime? endDate,
-    DateTime? createdAt,
-    DateTime? lastUpdatedAt,
-    bool? isSynced,
-  }) {
-    return UserProfile(
-      remoteId: id ?? remoteId,
-      name: name ?? this.name,
-      startDate: startDate ?? this.startDate,
-      endDate: endDate ?? this.endDate,
-      createdAt: createdAt ?? this.createdAt,
-      lastUpdatedAt: lastUpdatedAt ?? this.lastUpdatedAt,
-      isSynced: isSynced ?? this.isSynced,
-    );
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    final allowances = await DatabaseService.db.userProfileAccessAllowanceIsars
+        .filter()
+        .userProfile((q) => q.remoteIdEqualTo(remoteId))
+        .findAll();
+
+    return {
+      'name': name,
+      'accessAllowances':
+          allowances.map((a) => a.toEntity().toJsonInput()).toList(),
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
   }
-  */
 }

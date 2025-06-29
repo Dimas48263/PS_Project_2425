@@ -30,7 +30,8 @@ class ZcapDetailType extends ApiTable {
     return ZcapDetailType(
       remoteId: json['zcapDetailTypeId'],
       name: json['name'],
-      detailTypeCategory: DetailTypeCategories.fromJson(json['detailTypeCategory']),
+      detailTypeCategory:
+          DetailTypeCategories.fromJson(json['detailTypeCategory']),
       dataType: DataTypesExtension.fromString(json['dataType'] as String),
       isMandatory: json['isMandatory'],
       startDate: DateTime.parse(json['startDate']),
@@ -46,6 +47,18 @@ class ZcapDetailType extends ApiTable {
 
   @override
   Map<String, dynamic> toJsonInput() {
+    return {
+      'name': name,
+      'detailTypeCategoryId': detailTypeCategory.remoteId,
+      'dataType': dataType.name,
+      'isMandatory': isMandatory,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
     return {
       'name': name,
       'detailTypeCategoryId': detailTypeCategory.remoteId,

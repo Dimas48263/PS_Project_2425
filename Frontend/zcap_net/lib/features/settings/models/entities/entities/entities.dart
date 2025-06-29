@@ -57,4 +57,17 @@ class Entity implements ApiTable {
       'endDate': endDate?.toIso8601String(),
     };
   }
+
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    return {
+      'name': name,
+      'entityTypeId': entityType.remoteId,
+      if (email != null) 'email': email,
+      'phone1': phone1,
+      if (phone2 != null) 'phone2': phone2,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
 }

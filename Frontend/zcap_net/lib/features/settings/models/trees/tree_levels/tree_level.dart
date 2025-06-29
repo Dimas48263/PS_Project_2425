@@ -1,6 +1,6 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
 
-class TreeLevel implements ApiTable{
+class TreeLevel implements ApiTable {
   @override
   int remoteId;
   final int levelId;
@@ -23,25 +23,36 @@ class TreeLevel implements ApiTable{
     required this.lastUpdatedAt,
   });
 
-factory TreeLevel.fromJson(Map<String, dynamic> json) {
-  return TreeLevel(
-    remoteId: json['treeLevelId'],
-    levelId: json['levelId'],
-    name: json['name'],
-    description: json['description'],
-    startDate: DateTime.parse(json['startDate']),
-    endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-    createdAt: json['createdAt'] != null
-        ? DateTime.parse(json['createdAt'])
-        : DateTime.now(),
-    lastUpdatedAt: json['lastUpdatedAt'] != null
-        ? DateTime.parse(json['lastUpdatedAt'])
-        : DateTime.now(),
-  );
-}
+  factory TreeLevel.fromJson(Map<String, dynamic> json) {
+    return TreeLevel(
+      remoteId: json['treeLevelId'],
+      levelId: json['levelId'],
+      name: json['name'],
+      description: json['description'],
+      startDate: DateTime.parse(json['startDate']),
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      lastUpdatedAt: json['lastUpdatedAt'] != null
+          ? DateTime.parse(json['lastUpdatedAt'])
+          : DateTime.now(),
+    );
+  }
 
-@override
+  @override
   Map<String, dynamic> toJsonInput() {
+    return {
+      'levelId': levelId,
+      'name': name,
+      'description': description,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
     return {
       'levelId': levelId,
       'name': name,

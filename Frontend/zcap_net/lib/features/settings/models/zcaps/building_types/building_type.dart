@@ -1,6 +1,6 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
 
-class BuildingType implements ApiTable{
+class BuildingType implements ApiTable {
   @override
   int remoteId;
   final String name;
@@ -21,23 +21,32 @@ class BuildingType implements ApiTable{
     this.isSynced = true,
   });
 
-factory BuildingType.fromJson(Map<String, dynamic> json) {
-  return BuildingType(
-    remoteId: json['buildingTypeId'],
-    name: json['name'],
-    startDate: DateTime.parse(json['startDate']),
-    endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-    createdAt: json['createdAt'] != null
-        ? DateTime.parse(json['createdAt'])
-        : DateTime.now(),
-    lastUpdatedAt: json['lastUpdatedAt'] != null
-        ? DateTime.parse(json['lastUpdatedAt'])
-        : DateTime.now(),
-  );
-}
+  factory BuildingType.fromJson(Map<String, dynamic> json) {
+    return BuildingType(
+      remoteId: json['buildingTypeId'],
+      name: json['name'],
+      startDate: DateTime.parse(json['startDate']),
+      endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      lastUpdatedAt: json['lastUpdatedAt'] != null
+          ? DateTime.parse(json['lastUpdatedAt'])
+          : DateTime.now(),
+    );
+  }
 
   @override
   Map<String, dynamic> toJsonInput() {
+    return {
+      'name': name,
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate?.toIso8601String(),
+    };
+  }
+
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
     return {
       'name': name,
       'startDate': startDate.toIso8601String(),

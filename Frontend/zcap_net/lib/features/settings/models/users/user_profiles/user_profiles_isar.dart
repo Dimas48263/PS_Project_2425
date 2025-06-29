@@ -1,8 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/acess_type.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
 
@@ -94,61 +91,5 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
     createdAt = entity.createdAt;
     lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
-  }
-
-/*
-  static Future<void> saveAccessAllowances({
-    required UserProfilesIsar profile,
-    required List<UserProfileAccessAllowance> allowances,
-  }) async {
-    await DatabaseService.db.writeTxn(() async {
-      for (final entity in allowances) {
-        final isarAllowance = UserProfileAccessAllowanceIsar.fromEntity(entity);
-
-        isarAllowance.userProfile.value = profile;
-
-        await DatabaseService.db.userProfileAccessAllowanceIsars
-            .put(isarAllowance);
-        await isarAllowance.userProfile.save();
-
-      }
-
-      await ensureAllAllowancesExist(profile);
-    });
-  }*/
-
-  static Future<void> ensureAllAllowancesExist(UserProfilesIsar profile) async {
-    final allKeys =
-        await DatabaseService.db.userAccessKeysIsars.where().findAll();
-
-    final existingRemoteIds = await DatabaseService
-        .db.userProfileAccessAllowanceIsars
-        .filter()
-        .userProfile((q) => q.idEqualTo(profile.id))
-        .findAll()
-        .then((list) => list.map((e) => e.remoteId).toSet());
-
-    final missingKeys = allKeys
-        .where((allowance) => !existingRemoteIds.contains(allowance.remoteId));
-
-    if (missingKeys.isEmpty) return;
-
-    await DatabaseService.db.writeTxn(() async {
-      for (final missing in missingKeys) {
-        final newAllowance = UserProfileAccessAllowanceIsar()
-          ..key = missing.accessKey
-          ..remoteId = missing.remoteId
-          ..accessTypeIndex = AccessType.readWrite // default Read-Write
-          ..description = missing.description
-          ..userProfile.value = profile;
-
-        await DatabaseService.db.userProfileAccessAllowanceIsars
-            .put(newAllowance);
-      }
-
-      profile.isSynced = false;
-      profile.lastUpdatedAt = DateTime.now();
-      await DatabaseService.db.userProfilesIsars.put(profile);
-    });
   }
 }

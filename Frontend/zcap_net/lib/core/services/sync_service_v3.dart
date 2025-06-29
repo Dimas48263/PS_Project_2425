@@ -120,12 +120,12 @@ class SyncServiceV3 {
   ) async {
     final apiEntity = entity.toEntity();
     try {
-      final dataToSend = apiEntity.toJsonInput();
+      final dataToSend = await apiEntity.toJsonInputAsync();
       if (apiEntity.remoteId <= 0) {
         LogService.log(
             '[Sync] Criando nova entidade: endpoint $endpoint, dados $dataToSend');
         final created =
-            await apiService.post(endpoint, apiEntity.toJsonInput());
+            await apiService.post(endpoint, dataToSend);
         if (created[idName] != null) {
           final newRecord = entity.setEntityIdAndSync(
             remoteId: created[idName],
@@ -142,7 +142,7 @@ class SyncServiceV3 {
         LogService.log(
             '[Sync] Atualizando entidade existente: (id: ${apiEntity.remoteId}), dados: $dataToSend');
         await apiService.put(
-            '$endpoint/${apiEntity.remoteId}', apiEntity.toJsonInput());
+            '$endpoint/${apiEntity.remoteId}', dataToSend);
 
         final newRecord = entity.setEntityIdAndSync(isSynced: true) as T;
         await isar.writeTxn(() async {

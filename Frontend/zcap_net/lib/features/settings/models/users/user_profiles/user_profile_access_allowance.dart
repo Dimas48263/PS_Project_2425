@@ -44,4 +44,12 @@ class UserProfileAccessAllowance implements ApiTable {
       'accessType': accessType.index,
     };
   }
+
+  @override
+  Future<Map<String, dynamic>> toJsonInputAsync() async {
+    return {
+      'userProfileAccessKeyId': remoteId,
+      'accessType': accessType.index,
+    };
+  }
 }
