@@ -1,9 +1,10 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
@@ -12,18 +13,19 @@ class DetailTypeCategoriesScreen extends StatefulWidget {
   const DetailTypeCategoriesScreen({super.key});
 
   @override
-  State<DetailTypeCategoriesScreen> createState() => _DetailTypeCategoriesScreenState();
+  State<DetailTypeCategoriesScreen> createState() =>
+      _DetailTypeCategoriesScreenState();
 }
 
-class _DetailTypeCategoriesScreenState extends State<DetailTypeCategoriesScreen> {
+class _DetailTypeCategoriesScreenState
+    extends State<DetailTypeCategoriesScreen> {
   List<DetailTypeCategoriesIsar> detailTypeCategories = [];
   StreamSubscription? detailTypeCategoriesStream;
 
   bool _isLoading = true;
   final _searchController = TextEditingController();
   String _searchTerm = '';
-  
-  
+
   @override
   void initState() {
     super.initState();
@@ -104,7 +106,8 @@ class _DetailTypeCategoriesScreenState extends State<DetailTypeCategoriesScreen>
                         'detail-type-categories',
                         'detailTypeCategoryId');
                   },
-                  (detailTypeCategory) => _addOrEditDetailTypeCategory(detailTypeCategory),
+                  (detailTypeCategory) =>
+                      _addOrEditDetailTypeCategory(detailTypeCategory),
                   (detailTypeCategory) async {
                     final confirm = await showDialog<bool>(
                       context: context,
@@ -125,7 +128,8 @@ class _DetailTypeCategoriesScreenState extends State<DetailTypeCategoriesScreen>
     );
   }
 
-  List<List<String>> getLabelsList(List<DetailTypeCategoriesIsar> filteredList) {
+  List<List<String>> getLabelsList(
+      List<DetailTypeCategoriesIsar> filteredList) {
     List<List<String>> labelsList = [];
     for (var detailTypeCategory in filteredList) {
       labelsList.add([
@@ -134,12 +138,14 @@ class _DetailTypeCategoriesScreenState extends State<DetailTypeCategoriesScreen>
         '${'end'.tr()}: ${detailTypeCategory.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
       ]);
     }
-    return labelsList;  
+    return labelsList;
   }
 
-  void _addOrEditDetailTypeCategory(DetailTypeCategoriesIsar? detailTypeCategory) {
+  void _addOrEditDetailTypeCategory(
+      DetailTypeCategoriesIsar? detailTypeCategory) {
     final formKey = GlobalKey<FormState>();
-    final nameController = TextEditingController(text: detailTypeCategory?.name ?? '');
+    final nameController =
+        TextEditingController(text: detailTypeCategory?.name ?? '');
     DateTime? startDate = detailTypeCategory?.startDate ?? DateTime.now();
     DateTime? endDate = detailTypeCategory?.endDate;
 
@@ -151,6 +157,8 @@ class _DetailTypeCategoriesScreenState extends State<DetailTypeCategoriesScreen>
     showDialog(
       context: context,
       builder: (context) {
+        final allowances = context.watch<UserAllowancesProvider>();
+
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title: Text(detailTypeCategory == null
@@ -171,36 +179,42 @@ class _DetailTypeCategoriesScreenState extends State<DetailTypeCategoriesScreen>
             }, []),
             actions: [
               TextButton(
-                child: Text('cancel'.tr()),
+                child: Text(
+                    allowances.canWrite('user_access_settings_detail_category')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              TextButton(
-                child: Text('save'.tr()),
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    final now = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      final newDetailTypeCategory = detailTypeCategory ?? DetailTypeCategoriesIsar();
-                      newDetailTypeCategory.remoteId = detailTypeCategory?.remoteId ?? 0;
-                      newDetailTypeCategory.name = nameController.text;
-                      newDetailTypeCategory.startDate = startDate ?? now;
-                      newDetailTypeCategory.endDate = endDate;
-                      newDetailTypeCategory.createdAt = detailTypeCategory?.createdAt ?? now;
-                      newDetailTypeCategory.lastUpdatedAt = now;
-                      newDetailTypeCategory.isSynced = false;
+              if (allowances.canWrite('user_access_settings_detail_category'))
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final now = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        final newDetailTypeCategory =
+                            detailTypeCategory ?? DetailTypeCategoriesIsar();
+                        newDetailTypeCategory.remoteId =
+                            detailTypeCategory?.remoteId ?? 0;
+                        newDetailTypeCategory.name = nameController.text;
+                        newDetailTypeCategory.startDate = startDate ?? now;
+                        newDetailTypeCategory.endDate = endDate;
+                        newDetailTypeCategory.createdAt =
+                            detailTypeCategory?.createdAt ?? now;
+                        newDetailTypeCategory.lastUpdatedAt = now;
+                        newDetailTypeCategory.isSynced = false;
 
-                      await DatabaseService.db.detailTypeCategoriesIsars.put(newDetailTypeCategory);
-                    });
-                    Navigator.pop(context);
-                  }
-                },
-              ),
+                        await DatabaseService.db.detailTypeCategoriesIsars
+                            .put(newDetailTypeCategory);
+                      });
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
             ],
           );
         });
       },
     );
   }
-
-
 }

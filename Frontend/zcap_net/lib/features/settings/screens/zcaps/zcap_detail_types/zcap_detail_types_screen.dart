@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/data_types/data_types.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
@@ -201,6 +203,8 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
+          final allowances = context.watch<UserAllowancesProvider>();
+
           return AlertDialog(
             title: Text(zcapDetailType == null
                 ? '${'new'.tr()} ${'zcap_detail_type'.tr()}'
@@ -254,37 +258,44 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                   label: 'mandatory_optional'.tr())
             ]),
             actions: [
-              CancelTextButton(),
               TextButton(
-                child: Text('save'.tr()),
-                onPressed: () async {
-                  final navigator = Navigator.of(context);
-                  if (formKey.currentState!.validate()) {
-                    final now = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      final newZcapDetailType =
-                          zcapDetailType ?? ZcapDetailTypeIsar();
-                      newZcapDetailType.remoteId =
-                          zcapDetailType?.remoteId ?? 0;
-                      newZcapDetailType.name = nameController.text;
-                      newZcapDetailType.detailTypeCategory.value =
-                          detailTypeCategory;
-                      newZcapDetailType.dataType = dataType!;
-                      newZcapDetailType.isMandatory = isMandatory!;
-                      newZcapDetailType.startDate = startDate ?? now;
-                      newZcapDetailType.endDate = endDate;
-                      newZcapDetailType.createdAt =
-                          zcapDetailType?.createdAt ?? now;
-                      newZcapDetailType.lastUpdatedAt = now;
-                      newZcapDetailType.isSynced = false;
-                      await DatabaseService.db.zcapDetailTypeIsars
-                          .put(newZcapDetailType);
-                      await newZcapDetailType.detailTypeCategory.save();
-                    });
-                    navigator.pop();
-                  }
-                },
+                child: Text(
+                    allowances.canWrite('user_access_settings_zcap_detail_type')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
+                onPressed: () => Navigator.pop(context),
               ),
+              if (allowances.canWrite('user_access_settings_zcap_detail_type'))
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    final navigator = Navigator.of(context);
+                    if (formKey.currentState!.validate()) {
+                      final now = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        final newZcapDetailType =
+                            zcapDetailType ?? ZcapDetailTypeIsar();
+                        newZcapDetailType.remoteId =
+                            zcapDetailType?.remoteId ?? 0;
+                        newZcapDetailType.name = nameController.text;
+                        newZcapDetailType.detailTypeCategory.value =
+                            detailTypeCategory;
+                        newZcapDetailType.dataType = dataType!;
+                        newZcapDetailType.isMandatory = isMandatory!;
+                        newZcapDetailType.startDate = startDate ?? now;
+                        newZcapDetailType.endDate = endDate;
+                        newZcapDetailType.createdAt =
+                            zcapDetailType?.createdAt ?? now;
+                        newZcapDetailType.lastUpdatedAt = now;
+                        newZcapDetailType.isSynced = false;
+                        await DatabaseService.db.zcapDetailTypeIsars
+                            .put(newZcapDetailType);
+                        await newZcapDetailType.detailTypeCategory.save();
+                      });
+                      navigator.pop();
+                    }
+                  },
+                ),
             ],
           );
         });

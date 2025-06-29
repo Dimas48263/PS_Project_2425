@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
@@ -96,11 +98,9 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
               onAddPressed: () => _addOrEditTreeLevel(null),
               dropDownFilter: customDropdownSearch(
                   items: ['name'.tr(), 'level'.tr()],
-                  selectedItem: _isSearchingByName
-                      ? 'name'.tr()
-                      : 'level'.tr(),
-                  onSelected: (value) => setState(
-                      () => _isSearchingByName = value == 'name'.tr()),
+                  selectedItem: _isSearchingByName ? 'name'.tr() : 'level'.tr(),
+                  onSelected: (value) =>
+                      setState(() => _isSearchingByName = value == 'name'.tr()),
                   validator: (value) => null,
                   label: 'search_by'.tr(),
                   justLabel: true)),
@@ -132,7 +132,8 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                             .delete(treeLevel.id);
                       });
                     }
-                  }),
+                  },
+                ),
         ],
       ),
     );
@@ -183,6 +184,8 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        final allowances = context.watch<UserAllowancesProvider>();
+
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title: Text(treeLevel == null
@@ -203,34 +206,40 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
             }, []),
             actions: [
               TextButton(
-                child: Text('cancel'.tr()),
+                child: Text(
+                    allowances.canWrite('user_access_settings_tree_levels')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              TextButton(
-                child: Text('save'.tr()),
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    final now = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      final newTreeLevel = treeLevel ?? TreeLevelIsar();
-                      newTreeLevel.remoteId = treeLevel?.remoteId ?? 0;
-                      newTreeLevel.levelId = int.parse(levelIdController.text);
-                      newTreeLevel.name = nameController.text;
-                      newTreeLevel.description =
-                          descriptionController.text.isEmpty
-                              ? null
-                              : descriptionController.text;
-                      newTreeLevel.startDate = startDate ?? now;
-                      newTreeLevel.endDate = endDate;
-                      newTreeLevel.isSynced = false;
+              if (allowances.canWrite('user_access_settings_tree_levels'))
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final now = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        final newTreeLevel = treeLevel ?? TreeLevelIsar();
+                        newTreeLevel.remoteId = treeLevel?.remoteId ?? 0;
+                        newTreeLevel.levelId =
+                            int.parse(levelIdController.text);
+                        newTreeLevel.name = nameController.text;
+                        newTreeLevel.description =
+                            descriptionController.text.isEmpty
+                                ? null
+                                : descriptionController.text;
+                        newTreeLevel.startDate = startDate ?? now;
+                        newTreeLevel.endDate = endDate;
+                        newTreeLevel.isSynced = false;
 
-                      await DatabaseService.db.treeLevelIsars.put(newTreeLevel);
-                    });
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
-                  }
-                },
-              ),
+                        await DatabaseService.db.treeLevelIsars
+                            .put(newTreeLevel);
+                      });
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
             ],
           );
         });

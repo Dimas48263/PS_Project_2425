@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/widgets/confirm_dialog.dart';
-import 'package:zcap_net_app/widgets/custom_cancel_text_button.dart';
 import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
 import 'package:zcap_net_app/widgets/custom_form.dart';
 import 'package:zcap_net_app/widgets/custom_list_view.dart';
@@ -191,7 +191,8 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
           [
             '${'screen_detail_type'.tr()}: ${tree.detailType.value!.name}',
             '${'tree'.tr()}: ${tree.tree.value!.name}'
-          ], [
+          ],
+          [
             '${'start'.tr()}: ${tree.startDate.toLocal().toString().split(' ')[0]}',
             '${'end'.tr()}: ${tree.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
           ]
@@ -246,6 +247,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
+          final allowances = context.watch<UserAllowancesProvider>();
           return AlertDialog(
             title: Text(detail == null
                 ? '${'new'.tr()} ${'detail'.tr()}'
@@ -297,31 +299,38 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                       value == null ? 'required_field'.tr() : null),
             ]),
             actions: [
-              CancelTextButton(),
               TextButton(
-                child: Text('save'.tr()),
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    final now = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      final newDetail = detail ?? TreeRecordDetailIsar();
-                      newDetail.remoteId = detail?.remoteId ?? 0;
-                      newDetail.valueCol = valueController.text;
-                      newDetail.detailType.value = detailType;
-                      newDetail.tree.value = tree;
-                      newDetail.startDate = startDate ?? now;
-                      newDetail.endDate = endDate;
-                      newDetail.isSynced = false;
-                      await DatabaseService.db.treeRecordDetailIsars
-                          .put(newDetail);
-                      await newDetail.detailType.save();
-                      await newDetail.tree.save();
-                    });
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
-                  }
-                },
+                child: Text(
+                    allowances.canWrite('user_access_settings_tree_details')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
+                onPressed: () => Navigator.pop(context),
               ),
+              if (allowances.canWrite('user_access_settings_tree_details'))
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final now = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        final newDetail = detail ?? TreeRecordDetailIsar();
+                        newDetail.remoteId = detail?.remoteId ?? 0;
+                        newDetail.valueCol = valueController.text;
+                        newDetail.detailType.value = detailType;
+                        newDetail.tree.value = tree;
+                        newDetail.startDate = startDate ?? now;
+                        newDetail.endDate = endDate;
+                        newDetail.isSynced = false;
+                        await DatabaseService.db.treeRecordDetailIsars
+                            .put(newDetail);
+                        await newDetail.detailType.save();
+                        await newDetail.tree.save();
+                      });
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
             ],
           );
         });

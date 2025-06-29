@@ -24,6 +24,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final userName = SessionManager().userName;
     final allowances = context.watch<UserAllowancesProvider>();
+//    LogService.log(
+//        'Allowances: ${allowances.accessMap.entries.map((entry) => '${entry.key}: ${entry.value}').join(', ')}');
 
     return Scaffold(
       appBar: AppBar(

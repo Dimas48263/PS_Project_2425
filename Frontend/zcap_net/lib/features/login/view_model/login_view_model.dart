@@ -54,12 +54,12 @@ class LoginViewModel {
         .userProfile((q) => q.remoteIdEqualTo(userProfileRemoteId))
         .findAll();
 
- //   LogService.log(
- //       "Allowances filtrados por userProfileRemoteId ($userProfileRemoteId): ${_accessAllowances.length}");
+//    LogService.log(
+//        "Allowances filtrados por userProfileRemoteId ($userProfileRemoteId): ${_accessAllowances.length}");
 
 //    LogService.log(
 //        "Chamando loadAccess com ${_accessAllowances.length} allowances");
-//    allowancesProvider.loadAccess(profile, _accessAllowances);
+    allowancesProvider.loadAccess(profile, _accessAllowances);
 
 //    LogService.log(
 //        "Allowances carregados no login: ${_accessAllowances.map((a) => a.key).toList()}");

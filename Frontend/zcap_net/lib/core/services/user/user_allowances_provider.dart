@@ -8,6 +8,9 @@ class UserAllowancesProvider extends ChangeNotifier {
   UserProfilesIsar? _profile;
   Map<String, AccessType> _accessMap = {};
 
+  Map<String, AccessType> get accessMap => _accessMap;
+
+
   void loadAccess(UserProfilesIsar profile, List<UserProfileAccessAllowanceIsar> allowances) {
     _profile = profile;
     _accessMap = {

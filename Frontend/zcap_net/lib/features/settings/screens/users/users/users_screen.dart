@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 import 'package:zcap_net_app/features/settings/screens/users/users/user_service.dart';
@@ -106,10 +108,28 @@ class _UsersScreenState extends State<UsersScreen> {
                                         '${'profile'.tr()}: $userProfileName');
                                   },
                                 ),
-                                Text(
-                                    '${'start'.tr()}: ${user.startDate.toLocal().toString().split(' ')[0]}'),
-                                Text(
-                                  '${'end'.tr()}: ${user.endDate != null ? user.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomLabelValueText(
+                                          label: 'start'.tr(),
+                                          value: user.startDate
+                                              .toLocal()
+                                              .toString()
+                                              .split(' ')[0]),
+                                    ),
+                                    Expanded(
+                                      child: CustomLabelValueText(
+                                        label: 'end'.tr(),
+                                        value: user.endDate != null
+                                            ? user.endDate!
+                                                .toLocal()
+                                                .toString()
+                                                .split(' ')[0]
+                                            : 'no_end_date'.tr(),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -185,6 +205,8 @@ class _UsersScreenState extends State<UsersScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        final allowances = context.watch<UserAllowancesProvider>();
+
         return StatefulBuilder(
           builder: (context, setModalState) {
             return AlertDialog(
@@ -279,59 +301,65 @@ class _UsersScreenState extends State<UsersScreen> {
                 ),
               ),
               actions: [
-                CancelTextButton(),
                 TextButton(
-                  onPressed: () async {
-                    final isUniqueUserName =
-                        await UserService.validateUniqueUserName(
-                      userName: userNameController.text,
-                      context: context,
-                      ownUserId: user?.id,
-                    );
-                    if (!isUniqueUserName) return;
-
-                    if (formKey.currentState!.validate() &&
-                        userNameController.text.isNotEmpty &&
-                        (user != null || passwordsMatch)) {
-                      final now = DateTime.now();
-
-                      await DatabaseService.db.writeTxn(() async {
-                        final editedUser = user ?? UsersIsar();
-
-                        editedUser.userName =
-                            userNameController.text.trim().toLowerCase();
-                        editedUser.name = nameController.text.trim();
-                        editedUser.startDate = selectedStartDate;
-                        editedUser.endDate = selectedEndDate;
-                        editedUser.lastUpdatedAt = now;
-                        editedUser.isSynced = false;
-                        if (user == null) {
-                          editedUser.password =
-                              encryptPassword(passwordController.text.trim());
-                          editedUser.createdAt = now;
-                        }
-
-                        editedUser.userProfile.value = userProfile;
-
-                        await DatabaseService.db.usersIsars.put(editedUser);
-                        await editedUser.userProfile.save();
-                      });
-
-                      Navigator.pop(context);
-                    } else {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return CustomAlertDialog(
-                            title: 'invalid_data'.tr(),
-                            content: 'save_error'.tr(),
-                          );
-                        },
-                      );
-                    }
-                  },
-                  child: Text('save'.tr()),
+                  child: Text(allowances.canWrite('user_access_settings_users')
+                      ? 'cancel'.tr()
+                      : 'close'.tr()),
+                  onPressed: () => Navigator.pop(context),
                 ),
+                if (allowances.canWrite('user_access_settings_users'))
+                  TextButton(
+                    onPressed: () async {
+                      final isUniqueUserName =
+                          await UserService.validateUniqueUserName(
+                        userName: userNameController.text,
+                        context: context,
+                        ownUserId: user?.id,
+                      );
+                      if (!isUniqueUserName) return;
+
+                      if (formKey.currentState!.validate() &&
+                          userNameController.text.isNotEmpty &&
+                          (user != null || passwordsMatch)) {
+                        final now = DateTime.now();
+
+                        await DatabaseService.db.writeTxn(() async {
+                          final editedUser = user ?? UsersIsar();
+
+                          editedUser.userName =
+                              userNameController.text.trim().toLowerCase();
+                          editedUser.name = nameController.text.trim();
+                          editedUser.startDate = selectedStartDate;
+                          editedUser.endDate = selectedEndDate;
+                          editedUser.lastUpdatedAt = now;
+                          editedUser.isSynced = false;
+                          if (user == null) {
+                            editedUser.password =
+                                encryptPassword(passwordController.text.trim());
+                            editedUser.createdAt = now;
+                          }
+
+                          editedUser.userProfile.value = userProfile;
+
+                          await DatabaseService.db.usersIsars.put(editedUser);
+                          await editedUser.userProfile.save();
+                        });
+
+                        Navigator.pop(context);
+                      } else {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return CustomAlertDialog(
+                              title: 'invalid_data'.tr(),
+                              content: 'save_error'.tr(),
+                            );
+                          },
+                        );
+                      }
+                    },
+                    child: Text('save'.tr()),
+                  ),
               ],
             );
           },

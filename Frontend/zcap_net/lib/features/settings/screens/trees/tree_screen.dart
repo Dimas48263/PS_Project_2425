@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'dart:async';
@@ -187,6 +189,8 @@ class _TreesScreenState extends State<TreesScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        final allowances = context.watch<UserAllowancesProvider>();
+
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title: Text(tree == null
@@ -243,32 +247,39 @@ class _TreesScreenState extends State<TreesScreen> {
               )
             ]),
             actions: [
-              CancelTextButton(),
               TextButton(
-                child: Text('save'.tr()),
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    final now = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      final newTree = tree ?? TreeIsar();
-                      newTree.remoteId = tree?.remoteId ?? 0;
-                      newTree.name = nameController.text;
-                      newTree.treeLevel.value = treeLevel;
-                      newTree.parent.value = parent;
-                      newTree.startDate = startDate ?? now;
-                      newTree.endDate = endDate;
-                      newTree.isSynced = false;
-                      await DatabaseService.db.treeIsars.put(newTree);
-                      await newTree.treeLevel.save();
-                      if (newTree.parent.value != null) {
-                        await newTree.parent.save();
-                      }
-                    });
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
-                  }
-                },
+                child: Text(
+                    allowances.canWrite('user_access_settings_tree_elements')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
+                onPressed: () => Navigator.pop(context),
               ),
+              if (allowances.canWrite('user_access_settings_tree_elements'))
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final now = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        final newTree = tree ?? TreeIsar();
+                        newTree.remoteId = tree?.remoteId ?? 0;
+                        newTree.name = nameController.text;
+                        newTree.treeLevel.value = treeLevel;
+                        newTree.parent.value = parent;
+                        newTree.startDate = startDate ?? now;
+                        newTree.endDate = endDate;
+                        newTree.isSynced = false;
+                        await DatabaseService.db.treeIsars.put(newTree);
+                        await newTree.treeLevel.save();
+                        if (newTree.parent.value != null) {
+                          await newTree.parent.save();
+                        }
+                      });
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
             ],
           );
         });

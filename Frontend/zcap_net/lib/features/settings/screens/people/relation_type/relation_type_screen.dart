@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
@@ -92,10 +94,28 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      '${'start'.tr()}: ${relationType.startDate.toLocal().toString().split(' ')[0]}'),
-                                  Text(
-                                    '${'end'.tr()}: ${relationType.endDate != null ? relationType.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                            label: 'start'.tr(),
+                                            value: relationType.startDate
+                                                .toLocal()
+                                                .toString()
+                                                .split(' ')[0]),
+                                      ),
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                          label: 'end'.tr(),
+                                          value: relationType.endDate != null
+                                              ? relationType.endDate!
+                                                  .toLocal()
+                                                  .toString()
+                                                  .split(' ')[0]
+                                              : 'no_end_date'.tr(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -150,7 +170,8 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
   }
 
   void _addOrEditRelationType({RelationTypeIsar? relationType}) async {
-    final nameController = TextEditingController(text: relationType?.name ?? "");
+    final nameController =
+        TextEditingController(text: relationType?.name ?? "");
     DateTime selectedStartDate = relationType?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = relationType?.endDate;
 
@@ -161,6 +182,8 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setModalState) {
+              final allowances = context.watch<UserAllowancesProvider>();
+
               return AlertDialog(
                 title: Text(relationType != null
                     ? '${'edit'.tr()} ${'screen_relation_type'.tr()}'
@@ -204,36 +227,45 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                   ),
                 ),
                 actions: [
-                  CancelTextButton(),
                   TextButton(
-                    onPressed: () async {
-                      if ( formKey.currentState!.validate() &&
-                        nameController.text.isNotEmpty) {
-                        final now = DateTime.now();
-                        final navigator = Navigator.of(context);
-
-                        await DatabaseService.db.writeTxn(() async {
-                          final editedRelationType =
-                              relationType ?? RelationTypeIsar();
-
-                          editedRelationType.name = nameController.text.trim();
-                          editedRelationType.startDate = selectedStartDate;
-                          editedRelationType.endDate = selectedEndDate;
-                          editedRelationType.lastUpdatedAt = now;
-                          editedRelationType.isSynced = false;
-                          if (relationType == null) {
-                            editedRelationType.createdAt = now;
-                          }
-
-                          await DatabaseService.db.relationTypeIsars
-                              .put(editedRelationType);
-                        });
-
-                        navigator.pop();
-                      }
-                    },
-                    child: Text('save'.tr()),
+                    child: Text(allowances.canWrite(
+                            'user_access_settings_people_relation_types')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                  if (allowances
+                      .canWrite('user_access_settings_people_relation_types'))
+                    TextButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate() &&
+                            nameController.text.isNotEmpty) {
+                          final now = DateTime.now();
+                          final navigator = Navigator.of(context);
+
+                          await DatabaseService.db.writeTxn(() async {
+                            final editedRelationType =
+                                relationType ?? RelationTypeIsar();
+
+                            editedRelationType.name =
+                                nameController.text.trim();
+                            editedRelationType.startDate = selectedStartDate;
+                            editedRelationType.endDate = selectedEndDate;
+                            editedRelationType.lastUpdatedAt = now;
+                            editedRelationType.isSynced = false;
+                            if (relationType == null) {
+                              editedRelationType.createdAt = now;
+                            }
+
+                            await DatabaseService.db.relationTypeIsars
+                                .put(editedRelationType);
+                          });
+
+                          navigator.pop();
+                        }
+                      },
+                      child: Text('save'.tr()),
+                    ),
                 ],
               );
             },

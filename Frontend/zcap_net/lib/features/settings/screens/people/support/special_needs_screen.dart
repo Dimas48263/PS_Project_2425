@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
@@ -92,10 +94,28 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      '${'start'.tr()}: ${supportNeeded.startDate.toLocal().toString().split(' ')[0]}'),
-                                  Text(
-                                    '${'end'.tr()}: ${supportNeeded.endDate != null ? supportNeeded.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                            label: 'start'.tr(),
+                                            value: supportNeeded.startDate
+                                                .toLocal()
+                                                .toString()
+                                                .split(' ')[0]),
+                                      ),
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                          label: 'end'.tr(),
+                                          value: supportNeeded.endDate != null
+                                              ? supportNeeded.endDate!
+                                                  .toLocal()
+                                                  .toString()
+                                                  .split(' ')[0]
+                                              : 'no_end_date'.tr(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -162,6 +182,8 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setModalState) {
+              final allowances = context.watch<UserAllowancesProvider>();
+
               return AlertDialog(
                 title: Text(supportNeeded != null
                     ? '${'edit'.tr()} ${'screen_support_needed_type'.tr()}'
@@ -205,36 +227,45 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
                   ),
                 ),
                 actions: [
-                  CancelTextButton(),
                   TextButton(
-                    onPressed: () async {
-                      if (formKey.currentState!.validate() &&
-                          nameController.text.isNotEmpty) {
-                        final now = DateTime.now();
-                        final navigator = Navigator.of(context);
-
-                        await DatabaseService.db.writeTxn(() async {
-                          final editedSupportNeeded =
-                              supportNeeded ?? SupportNeededIsar();
-
-                          editedSupportNeeded.name = nameController.text.trim();
-                          editedSupportNeeded.startDate = selectedStartDate;
-                          editedSupportNeeded.endDate = selectedEndDate;
-                          editedSupportNeeded.lastUpdatedAt = now;
-                          editedSupportNeeded.isSynced = false;
-                          if (supportNeeded == null) {
-                            editedSupportNeeded.createdAt = now;
-                          }
-
-                          await DatabaseService.db.supportNeededIsars
-                              .put(editedSupportNeeded);
-                        });
-
-                        navigator.pop();
-                      }
-                    },
-                    child: Text('save'.tr()),
+                    child: Text(allowances
+                            .canWrite('user_access_settings_support_need_types')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                  if (allowances
+                      .canWrite('user_access_settings_support_need_types'))
+                    TextButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate() &&
+                            nameController.text.isNotEmpty) {
+                          final now = DateTime.now();
+                          final navigator = Navigator.of(context);
+
+                          await DatabaseService.db.writeTxn(() async {
+                            final editedSupportNeeded =
+                                supportNeeded ?? SupportNeededIsar();
+
+                            editedSupportNeeded.name =
+                                nameController.text.trim();
+                            editedSupportNeeded.startDate = selectedStartDate;
+                            editedSupportNeeded.endDate = selectedEndDate;
+                            editedSupportNeeded.lastUpdatedAt = now;
+                            editedSupportNeeded.isSynced = false;
+                            if (supportNeeded == null) {
+                              editedSupportNeeded.createdAt = now;
+                            }
+
+                            await DatabaseService.db.supportNeededIsars
+                                .put(editedSupportNeeded);
+                          });
+
+                          navigator.pop();
+                        }
+                      },
+                      child: Text('save'.tr()),
+                    ),
                 ],
               );
             },

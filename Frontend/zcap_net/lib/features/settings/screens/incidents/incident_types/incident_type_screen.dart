@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
@@ -92,10 +94,28 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      '${'start'.tr()}: ${incidentType.startDate.toLocal().toString().split(' ')[0]}'),
-                                  Text(
-                                    '${'end'.tr()}: ${incidentType.endDate != null ? incidentType.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                            label: 'start'.tr(),
+                                            value: incidentType.startDate
+                                                .toLocal()
+                                                .toString()
+                                                .split(' ')[0]),
+                                      ),
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                          label: 'end'.tr(),
+                                          value: incidentType.endDate != null
+                                              ? incidentType.endDate!
+                                                  .toLocal()
+                                                  .toString()
+                                                  .split(' ')[0]
+                                              : 'no_end_date'.tr(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -150,15 +170,17 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
   }
 
   void _addOrEditIncidentType({IncidentTypesIsar? incidentType}) async {
-    final nameController = TextEditingController(text: incidentType?.name ?? "");
+    final nameController =
+        TextEditingController(text: incidentType?.name ?? "");
     DateTime selectedStartDate = incidentType?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = incidentType?.endDate;
-
     final formKey = GlobalKey<FormState>();
 
     showDialog(
         context: context,
         builder: (context) {
+          final allowances = context.watch<UserAllowancesProvider>();
+
           return StatefulBuilder(
             builder: (context, setModalState) {
               return AlertDialog(
@@ -204,36 +226,45 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
                   ),
                 ),
                 actions: [
-                  CancelTextButton(),
                   TextButton(
-                    onPressed: () async {
-                      if (formKey.currentState!.validate() &&
-                          nameController.text.isNotEmpty) {
-                        final now = DateTime.now();
-                        final navigator = Navigator.of(context);
-
-                        await DatabaseService.db.writeTxn(() async {
-                          final editedIncidentType =
-                              incidentType ?? IncidentTypesIsar();
-
-                          editedIncidentType.name = nameController.text.trim();
-                          editedIncidentType.startDate = selectedStartDate;
-                          editedIncidentType.endDate = selectedEndDate;
-                          editedIncidentType.lastUpdatedAt = now;
-                          editedIncidentType.isSynced = false;
-                          if (incidentType == null) {
-                            editedIncidentType.createdAt = now;
-                          }
-
-                          await DatabaseService.db.incidentTypesIsars
-                              .put(editedIncidentType);
-                        });
-
-                        navigator.pop();
-                      }
-                    },
-                    child: Text('save'.tr()),
+                    child: Text(allowances
+                            .canWrite('user_access_settings_incident_types')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                  if (allowances
+                      .canWrite('user_access_settings_incident_types'))
+                    TextButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate() &&
+                            nameController.text.isNotEmpty) {
+                          final now = DateTime.now();
+                          final navigator = Navigator.of(context);
+
+                          await DatabaseService.db.writeTxn(() async {
+                            final editedIncidentType =
+                                incidentType ?? IncidentTypesIsar();
+
+                            editedIncidentType.name =
+                                nameController.text.trim();
+                            editedIncidentType.startDate = selectedStartDate;
+                            editedIncidentType.endDate = selectedEndDate;
+                            editedIncidentType.lastUpdatedAt = now;
+                            editedIncidentType.isSynced = false;
+                            if (incidentType == null) {
+                              editedIncidentType.createdAt = now;
+                            }
+
+                            await DatabaseService.db.incidentTypesIsars
+                                .put(editedIncidentType);
+                          });
+
+                          navigator.pop();
+                        }
+                      },
+                      child: Text('save'.tr()),
+                    ),
                 ],
               );
             },

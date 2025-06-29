@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
@@ -92,11 +94,29 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      '${'start'.tr()}: ${entityType.startDate.toLocal().toString().split(' ')[0]}'),
-                                  Text(
-                                    '${'end'.tr()}: ${entityType.endDate != null ? entityType.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
-                                  ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: CustomLabelValueText(
+                                                label: 'start'.tr(),
+                                                value: entityType.startDate
+                                                    .toLocal()
+                                                    .toString()
+                                                    .split(' ')[0]),
+                                          ),
+                                          Expanded(
+                                            child: CustomLabelValueText(
+                                              label: 'end'.tr(),
+                                              value: entityType.endDate != null
+                                                  ? entityType.endDate!
+                                                      .toLocal()
+                                                      .toString()
+                                                      .split(' ')[0]
+                                                  : 'no_end_date'.tr(),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                 ],
                               ),
                               trailing: Row(
@@ -159,6 +179,8 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
     showDialog(
         context: context,
         builder: (context) {
+          final allowances = context.watch<UserAllowancesProvider>();
+
           return StatefulBuilder(
             builder: (context, setModalState) {
               return AlertDialog(
@@ -204,36 +226,43 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                   ),
                 ),
                 actions: [
-                  CancelTextButton(),
                   TextButton(
-                    onPressed: () async {
-                      if (formKey.currentState!.validate() &&
-                          nameController.text.isNotEmpty) {
-                        final now = DateTime.now();
-                        final navigator = Navigator.of(context);
-
-                        await DatabaseService.db.writeTxn(() async {
-                          final editedEntityType =
-                              entityType ?? EntityTypeIsar();
-
-                          editedEntityType.name = nameController.text.trim();
-                          editedEntityType.startDate = selectedStartDate;
-                          editedEntityType.endDate = selectedEndDate;
-                          editedEntityType.lastUpdatedAt = now;
-                          editedEntityType.isSynced = false;
-                          if (entityType == null) {
-                            editedEntityType.createdAt = now;
-                          }
-
-                          await DatabaseService.db.entityTypeIsars
-                              .put(editedEntityType);
-                        });
-
-                        navigator.pop();
-                      }
-                    },
-                    child: Text('save'.tr()),
+                    child: Text(
+                        allowances.canWrite('user_access_settings_entity_types')
+                            ? 'cancel'.tr()
+                            : 'close'.tr()),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                  if (allowances.canWrite('user_access_settings_entity_types'))
+                    TextButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate() &&
+                            nameController.text.isNotEmpty) {
+                          final now = DateTime.now();
+                          final navigator = Navigator.of(context);
+
+                          await DatabaseService.db.writeTxn(() async {
+                            final editedEntityType =
+                                entityType ?? EntityTypeIsar();
+
+                            editedEntityType.name = nameController.text.trim();
+                            editedEntityType.startDate = selectedStartDate;
+                            editedEntityType.endDate = selectedEndDate;
+                            editedEntityType.lastUpdatedAt = now;
+                            editedEntityType.isSynced = false;
+                            if (entityType == null) {
+                              editedEntityType.createdAt = now;
+                            }
+
+                            await DatabaseService.db.entityTypeIsars
+                                .put(editedEntityType);
+                          });
+
+                          navigator.pop();
+                        }
+                      },
+                      child: Text('save'.tr()),
+                    ),
                 ],
               );
             },

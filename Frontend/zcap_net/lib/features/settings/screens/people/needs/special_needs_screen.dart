@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
@@ -92,10 +94,28 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      '${'start'.tr()}: ${specialNeed.startDate.toLocal().toString().split(' ')[0]}'),
-                                  Text(
-                                    '${'end'.tr()}: ${specialNeed.endDate != null ? specialNeed.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                            label: 'start'.tr(),
+                                            value: specialNeed.startDate
+                                                .toLocal()
+                                                .toString()
+                                                .split(' ')[0]),
+                                      ),
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                          label: 'end'.tr(),
+                                          value: specialNeed.endDate != null
+                                              ? specialNeed.endDate!
+                                                  .toLocal()
+                                                  .toString()
+                                                  .split(' ')[0]
+                                              : 'no_end_date'.tr(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -161,6 +181,8 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setModalState) {
+              final allowances = context.watch<UserAllowancesProvider>();
+
               return AlertDialog(
                 title: Text(specialNeed != null
                     ? '${'edit'.tr()} ${'screen_special_need_type'.tr()}'
@@ -204,36 +226,44 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                   ),
                 ),
                 actions: [
-                  CancelTextButton(),
                   TextButton(
-                    onPressed: () async {
-                      if (formKey.currentState!.validate() &&
-                          nameController.text.isNotEmpty) {
-                        final now = DateTime.now();
-                        final navigator = Navigator.of(context);
-
-                        await DatabaseService.db.writeTxn(() async {
-                          final editedSpecialNeed =
-                              specialNeed ?? SpecialNeedIsar();
-
-                          editedSpecialNeed.name = nameController.text.trim();
-                          editedSpecialNeed.startDate = selectedStartDate;
-                          editedSpecialNeed.endDate = selectedEndDate;
-                          editedSpecialNeed.lastUpdatedAt = now;
-                          editedSpecialNeed.isSynced = false;
-                          if (specialNeed == null) {
-                            editedSpecialNeed.createdAt = now;
-                          }
-
-                          await DatabaseService.db.specialNeedIsars
-                              .put(editedSpecialNeed);
-                        });
-
-                        navigator.pop();
-                      }
-                    },
-                    child: Text('save'.tr()),
+                    child: Text(allowances
+                            .canWrite('user_access_settings_special_need_types')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                  if (allowances
+                      .canWrite('user_access_settings_special_need_types'))
+                    TextButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate() &&
+                            nameController.text.isNotEmpty) {
+                          final now = DateTime.now();
+                          final navigator = Navigator.of(context);
+
+                          await DatabaseService.db.writeTxn(() async {
+                            final editedSpecialNeed =
+                                specialNeed ?? SpecialNeedIsar();
+
+                            editedSpecialNeed.name = nameController.text.trim();
+                            editedSpecialNeed.startDate = selectedStartDate;
+                            editedSpecialNeed.endDate = selectedEndDate;
+                            editedSpecialNeed.lastUpdatedAt = now;
+                            editedSpecialNeed.isSynced = false;
+                            if (specialNeed == null) {
+                              editedSpecialNeed.createdAt = now;
+                            }
+
+                            await DatabaseService.db.specialNeedIsars
+                                .put(editedSpecialNeed);
+                          });
+
+                          navigator.pop();
+                        }
+                      },
+                      child: Text('save'.tr()),
+                    ),
                 ],
               );
             },

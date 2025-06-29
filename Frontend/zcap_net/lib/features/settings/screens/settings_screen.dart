@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
 import 'package:zcap_net_app/features/settings/screens/incidents/incident_types/incident_type_screen.dart';
@@ -26,6 +28,7 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final allowances = context.watch<UserAllowancesProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_configs'.tr()),
@@ -41,59 +44,66 @@ class SettingsScreen extends StatelessWidget {
               childrenPadding:
                   EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               children: [
-                ListTile(
-                  title: Text('screen_settings_tree_levels'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const TreeLevelsScreen()),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('screen_settings_tree_elements'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const TreesScreen()),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('screen_settings_detail_types'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const TreeRecordDetailTypesScreen()),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('screen_settings_details'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const TreeRecordDetailsScreen()),
-                    );
-                  },
-                ),
-                ListTile(
-                  title: Text('screen_settings_tree_level_detail_type'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const TreeLevelDetailTypeScreen()),
-                    );
-                  },
-                ),
+                if (allowances.canRead('user_access_settings_tree_levels'))
+                  ListTile(
+                    title: Text('screen_settings_tree_levels'.tr()),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TreeLevelsScreen()),
+                      );
+                    },
+                  ),
+                if (allowances.canRead('user_access_settings_tree_elements'))
+                  ListTile(
+                    title: Text('screen_settings_tree_elements'.tr()),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const TreesScreen()),
+                      );
+                    },
+                  ),
+                if (allowances
+                    .canRead('user_access_settings_tree_detail_types'))
+                  ListTile(
+                    title: Text('screen_settings_detail_types'.tr()),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const TreeRecordDetailTypesScreen()),
+                      );
+                    },
+                  ),
+                if (allowances.canRead('user_access_settings_tree_details'))
+                  ListTile(
+                    title: Text('screen_settings_details'.tr()),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const TreeRecordDetailsScreen()),
+                      );
+                    },
+                  ),
+                if (allowances
+                    .canRead('user_access_settings_tree_detail_association'))
+                  ListTile(
+                    title: Text('screen_settings_tree_level_detail_type'.tr()),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const TreeLevelDetailTypeScreen()),
+                      );
+                    },
+                  ),
               ],
             ),
             const Divider(),
@@ -105,16 +115,17 @@ class SettingsScreen extends StatelessWidget {
               childrenPadding:
                   EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               children: [
-                ListTile(
-                  title: Text('screen_settings_incident_types'.tr()),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const IncidentTypesScreen()),
-                    );
-                  },
-                ),
+                if (allowances.canRead('user_access_settings_incident_types'))
+                  ListTile(
+                    title: Text('screen_settings_incident_types'.tr()),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const IncidentTypesScreen()),
+                      );
+                    },
+                  ),
               ],
             ),
             const Divider(),
@@ -128,37 +139,42 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    ListTile(
-                      title: Text('screen_settings_users'.tr()),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const UsersScreen()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      title: Text('screen_settings_user_profiles'.tr()),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const UserProfilesScreen()),
-                        );
-                      },
-                    ),
-                    ListTile(
-                      title: Text('screen_settings_user_access_data'.tr()),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const UserDataAccessScreen()),
-                        );
-                      },
-                    ),
+                    if (allowances.canRead('user_access_settings_users'))
+                      ListTile(
+                        title: Text('screen_settings_users'.tr()),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const UsersScreen()),
+                          );
+                        },
+                      ),
+                    if (allowances
+                        .canRead('user_access_settings_user_profiles'))
+                      ListTile(
+                        title: Text('screen_settings_user_profiles'.tr()),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const UserProfilesScreen()),
+                          );
+                        },
+                      ),
+                    if (allowances.canRead('user_access_settings_users_data'))
+                      ListTile(
+                        title: Text('screen_settings_user_access_data'.tr()),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const UserDataAccessScreen()), //TODO: access data Screen
+                          );
+                        },
+                      ),
                   ],
                 ),
               ],
@@ -180,28 +196,32 @@ class SettingsScreen extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          ListTile(
-                            title: Text('screen_settings_entity_types'.tr()),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const EntityTypesScreen()),
-                              );
-                            },
-                          ),
-                          ListTile(
-                            title: Text('screen_settings_entities'.tr()),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const EntitiesScreen()),
-                              );
-                            },
-                          ),
+                          if (allowances
+                              .canRead('user_access_settings_entity_types'))
+                            ListTile(
+                              title: Text('screen_settings_entity_types'.tr()),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const EntityTypesScreen()),
+                                );
+                              },
+                            ),
+                          if (allowances
+                              .canRead('user_access_settings_entities'))
+                            ListTile(
+                              title: Text('screen_settings_entities'.tr()),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const EntitiesScreen()),
+                                );
+                              },
+                            ),
                         ],
                       ),
                     ]),
@@ -211,52 +231,59 @@ class SettingsScreen extends StatelessWidget {
                     childrenPadding:
                         EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     children: [
-                      ListTile(
-                        title: Text('screen_settings_building_types'.tr()),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const BuildingTypesScreen()),
-                          );
-                        },
-                      ),
-                      ListTile(
-                        title: Text('screen_settings_detail_category'.tr()),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const DetailTypeCategoriesScreen()),
-                              );
-                            },
-                      ),
-                      ListTile(
-                        title: Text(
-                            'zcap_detail_type'.tr()),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ZcapDetailTypesScreen()),
-                              );
-                            },
-                      ),
-                      ListTile(
-                        title:
-                            Text('screen_settings_zcap_building_details'.tr()),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const ZcapDetailsScreen()),
-                              );
-                            },
-                      ),
+                      if (allowances
+                          .canRead('user_access_settings_building_types'))
+                        ListTile(
+                          title: Text('screen_settings_building_types'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const BuildingTypesScreen()),
+                            );
+                          },
+                        ),
+                      if (allowances
+                          .canRead('user_access_settings_detail_category'))
+                        ListTile(
+                          title: Text('screen_settings_detail_category'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DetailTypeCategoriesScreen()),
+                            );
+                          },
+                        ),
+                      if (allowances
+                          .canRead('user_access_settings_zcap_detail_type'))
+                        ListTile(
+                          title: Text('zcap_detail_type'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ZcapDetailTypesScreen()),
+                            );
+                          },
+                        ),
+                      if (allowances
+                          .canRead('user_access_settings_detail_per_zcap'))
+                        ListTile(
+                          title: Text(
+                              'screen_settings_zcap_building_details'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const ZcapDetailsScreen()),
+                            );
+                          },
+                        ),
                     ]),
                 ExpansionTile(
                     title: Text('screen_settings_people'.tr()),
@@ -264,39 +291,47 @@ class SettingsScreen extends StatelessWidget {
                     childrenPadding:
                         EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     children: [
-                      ListTile(
-                        title: Text('screen_settings_relation_types'.tr()),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const RelationTypeScreen()),
-                          );
-                        },
-                      ),
-                      ListTile(
-                        title: Text('screen_settings_special_need_types'.tr()),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const SpecialNeedsScreen()),
-                          );
-                        },
-                      ),
-                      ListTile(
-                        title: Text('screen_settings_support_need_types'.tr()),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    const SupportNeededScreen()),
-                          );
-                        },
-                      ),
+                      if (allowances.canRead(
+                          'user_access_settings_people_relation_types'))
+                        ListTile(
+                          title: Text('screen_settings_relation_types'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RelationTypeScreen()),
+                            );
+                          },
+                        ),
+                      if (allowances
+                          .canRead('user_access_settings_special_need_types'))
+                        ListTile(
+                          title:
+                              Text('screen_settings_special_need_types'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SpecialNeedsScreen()),
+                            );
+                          },
+                        ),
+                      if (allowances
+                          .canRead('user_access_settings_support_need_types'))
+                        ListTile(
+                          title:
+                              Text('screen_settings_support_need_types'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const SupportNeededScreen()),
+                            );
+                          },
+                        ),
                     ]),
               ],
             ),

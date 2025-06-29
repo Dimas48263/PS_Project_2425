@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_access_editor_screen.dart';
@@ -188,6 +190,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
     showDialog(
       context: context,
       builder: (context) {
+        final allowances = context.watch<UserAllowancesProvider>();
+
         return StatefulBuilder(
           builder: (context, setModalState) {
             return AlertDialog(
@@ -231,29 +235,37 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                 ),
               ),
               actions: [
-                CancelTextButton(),
                 TextButton(
-                  child: Text('save'.tr()),
-                  onPressed: () async {
-                    if (formKey.currentState!.validate()) {
-                      final name = nameController.text.trim();
-
-                      final updatedProfile = userProfile ?? UserProfilesIsar();
-                      updatedProfile.name = name;
-                      updatedProfile.startDate = selectedStartDate;
-                      updatedProfile.endDate = selectedEndDate;
-                      updatedProfile.lastUpdatedAt = DateTime.now();
-                      updatedProfile.isSynced = false;
-
-                      await DatabaseService.db.writeTxn(() async {
-                        await DatabaseService.db.userProfilesIsars
-                            .put(updatedProfile);
-                      });
-
-                      Navigator.of(context).pop();
-                    }
-                  },
+                  child: Text(
+                      allowances.canWrite('user_access_settings_user_profiles')
+                          ? 'cancel'.tr()
+                          : 'close'.tr()),
+                  onPressed: () => Navigator.pop(context),
                 ),
+                if (allowances.canWrite('user_access_settings_user_profiles'))
+                  TextButton(
+                    child: Text('save'.tr()),
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        final name = nameController.text.trim();
+
+                        final updatedProfile =
+                            userProfile ?? UserProfilesIsar();
+                        updatedProfile.name = name;
+                        updatedProfile.startDate = selectedStartDate;
+                        updatedProfile.endDate = selectedEndDate;
+                        updatedProfile.lastUpdatedAt = DateTime.now();
+                        updatedProfile.isSynced = false;
+
+                        await DatabaseService.db.writeTxn(() async {
+                          await DatabaseService.db.userProfilesIsars
+                              .put(updatedProfile);
+                        });
+
+                        Navigator.of(context).pop();
+                      }
+                    },
+                  ),
               ],
             );
           },
@@ -276,6 +288,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
     await showDialog(
       context: context,
       builder: (_) {
+        final allowances = context.watch<UserAllowancesProvider>();
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -295,26 +308,33 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                 ),
               ),
               actions: [
-                CancelTextButton(),
                 TextButton(
-                  child: Text('save'.tr()),
-                  onPressed: () async {
-                    await DatabaseService.db.writeTxn(() async {
-                      for (final edited in editableAllowances) {
-                        await DatabaseService.db.userProfileAccessAllowanceIsars
-                            .put(edited);
-                      }
-                    });
-
-                    profile.isSynced = false;
-                    profile.lastUpdatedAt = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      await DatabaseService.db.userProfilesIsars.put(profile);
-                    });
-
-                    Navigator.of(context).pop();
-                  },
+                  child: Text(
+                      allowances.canWrite('user_access_settings_user_profiles')
+                          ? 'cancel'.tr()
+                          : 'close'.tr()),
+                  onPressed: () => Navigator.pop(context),
                 ),
+                if (allowances.canWrite('user_access_settings_user_profiles'))
+                  TextButton(
+                    child: Text('save'.tr()),
+                    onPressed: () async {
+                      await DatabaseService.db.writeTxn(() async {
+                        for (final edited in editableAllowances) {
+                          await DatabaseService
+                              .db.userProfileAccessAllowanceIsars
+                              .put(edited);
+                        }
+                      });
+
+                      profile.isSynced = false;
+                      profile.lastUpdatedAt = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        await DatabaseService.db.userProfilesIsars.put(profile);
+                      });
+                      Navigator.of(context).pop();
+                    },
+                  ),
               ],
             );
           },

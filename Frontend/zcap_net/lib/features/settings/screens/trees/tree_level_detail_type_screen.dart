@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
@@ -187,6 +189,7 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
+          final allowances = context.watch<UserAllowancesProvider>();
           return AlertDialog(
             title: Text(t == null
                 ? '${'new'.tr()} ${'detail'.tr()}'
@@ -225,31 +228,39 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
                       value == null ? 'required_field'.tr() : null),
             ]),
             actions: [
-              CancelTextButton(),
               TextButton(
-                child: Text('save'.tr()),
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    final now = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      final newTreeLevelDetailType =
-                          t ?? TreeLevelDetailTypeIsar();
-                      newTreeLevelDetailType.remoteId = t?.remoteId ?? 0;
-                      newTreeLevelDetailType.detailType.value = detailType;
-                      newTreeLevelDetailType.treeLevel.value = treeLevel;
-                      newTreeLevelDetailType.startDate = startDate ?? now;
-                      newTreeLevelDetailType.endDate = endDate;
-                      newTreeLevelDetailType.isSynced = false;
-                      await DatabaseService.db.treeLevelDetailTypeIsars
-                          .put(newTreeLevelDetailType);
-                      await newTreeLevelDetailType.detailType.save();
-                      await newTreeLevelDetailType.treeLevel.save();
-                    });
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
-                  }
-                },
+                child: Text(allowances.canWrite(
+                        'user_access_settings_tree_detail_association')
+                    ? 'cancel'.tr()
+                    : 'close'.tr()),
+                onPressed: () => Navigator.pop(context),
               ),
+              if (allowances
+                  .canWrite('user_access_settings_tree_detail_association'))
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final now = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        final newTreeLevelDetailType =
+                            t ?? TreeLevelDetailTypeIsar();
+                        newTreeLevelDetailType.remoteId = t?.remoteId ?? 0;
+                        newTreeLevelDetailType.detailType.value = detailType;
+                        newTreeLevelDetailType.treeLevel.value = treeLevel;
+                        newTreeLevelDetailType.startDate = startDate ?? now;
+                        newTreeLevelDetailType.endDate = endDate;
+                        newTreeLevelDetailType.isSynced = false;
+                        await DatabaseService.db.treeLevelDetailTypeIsars
+                            .put(newTreeLevelDetailType);
+                        await newTreeLevelDetailType.detailType.save();
+                        await newTreeLevelDetailType.treeLevel.save();
+                      });
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
             ],
           );
         });

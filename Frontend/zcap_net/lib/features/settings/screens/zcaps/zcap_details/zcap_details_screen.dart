@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
@@ -177,6 +179,8 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
+          final allowances = context.watch<UserAllowancesProvider>();
+
           return AlertDialog(
             title: Text(detail == null
                 ? '${'new'.tr()} ${'detail'.tr()}'
@@ -219,35 +223,40 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
             ]),
             actions: [
               TextButton(
-                child: Text('cancel'.tr()),
+                child: Text(
+                    allowances.canWrite('user_access_settings_detail_per_zcap')
+                        ? 'cancel'.tr()
+                        : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              TextButton(
-                child: Text('save'.tr()),
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    final navigator = Navigator.of(context);
-                    final now = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      final newDetail = detail ?? ZcapDetailsIsar();
-                      newDetail.remoteId = detail?.remoteId ?? 0;
-                      newDetail.valueCol = valueController.text;
-                      newDetail.zcap.value = zcap;
-                      newDetail.zcapDetailType.value = zcapDetailType;
-                      newDetail.startDate = startDate ?? now;
-                      newDetail.endDate = endDate;
-                      newDetail.createdAt = detail?.createdAt ?? now;
-                      newDetail.lastUpdatedAt = now;
-                      newDetail.isSynced = false;
+              if (allowances.canWrite('user_access_settings_detail_per_zcap'))
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final navigator = Navigator.of(context);
+                      final now = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        final newDetail = detail ?? ZcapDetailsIsar();
+                        newDetail.remoteId = detail?.remoteId ?? 0;
+                        newDetail.valueCol = valueController.text;
+                        newDetail.zcap.value = zcap;
+                        newDetail.zcapDetailType.value = zcapDetailType;
+                        newDetail.startDate = startDate ?? now;
+                        newDetail.endDate = endDate;
+                        newDetail.createdAt = detail?.createdAt ?? now;
+                        newDetail.lastUpdatedAt = now;
+                        newDetail.isSynced = false;
 
-                      await DatabaseService.db.zcapDetailsIsars.put(newDetail);
-                      await newDetail.zcap.save();
-                      await newDetail.zcapDetailType.save();
-                    });
-                    navigator.pop();
-                  }
-                },
-              ),
+                        await DatabaseService.db.zcapDetailsIsars
+                            .put(newDetail);
+                        await newDetail.zcap.save();
+                        await newDetail.zcapDetailType.save();
+                      });
+                      navigator.pop();
+                    }
+                  },
+                ),
             ],
           );
         });

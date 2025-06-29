@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 
 Widget buildListView<T extends IsarTable>(
-    List<T> list,
-    List<List<String>> labelsList,
-    void Function(T) onSync,
-    void Function(T) onEdit,
-    Future<void> Function(T) onDelete) {
+  List<T> list,
+  List<List<String>> labelsList,
+  void Function(T) onSync,
+  void Function(T) onEdit,
+  Future<void> Function(T) onDelete,
+) {
   return Expanded(
     child: ListView.builder(
       itemCount: list.length,

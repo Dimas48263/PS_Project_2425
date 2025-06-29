@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
@@ -63,8 +65,7 @@ class _TreeRecordDetailTypesScreenState
                   'detailTypeId');
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text('service_sync_ok'.tr())),
+                  SnackBar(content: Text('service_sync_ok'.tr())),
                 );
               }
             },
@@ -109,8 +110,7 @@ class _TreeRecordDetailTypesScreenState
                       context: context,
                       builder: (context) => ConfirmDialog(
                         title: 'confirm_delete'.tr(),
-                        content:
-                            'confirm_delete_message'.tr(),
+                        content: 'confirm_delete_message'.tr(),
                       ),
                     );
                     if (confirm == true) {
@@ -134,7 +134,8 @@ class _TreeRecordDetailTypesScreenState
     DateTime? endDate = detailType?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
-      TextControllersInputFormConfig(controller: nameController, label: 'name'.tr()),
+      TextControllersInputFormConfig(
+          controller: nameController, label: 'name'.tr()),
       TextControllersInputFormConfig(
           controller: unitController, label: 'unit'.tr()),
     ];
@@ -143,9 +144,12 @@ class _TreeRecordDetailTypesScreenState
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
+          final allowances = context.watch<UserAllowancesProvider>();
+
           return AlertDialog(
-            title:
-                Text(detailType == null ? '${'new'.tr()} ${'tree_element'.tr()}' : '${'edit'.tr()} ${'screen_settings_structure'.tr()}'),
+            title: Text(detailType == null
+                ? '${'new'.tr()} ${'tree_element'.tr()}'
+                : '${'edit'.tr()} ${'screen_settings_structure'.tr()}'),
             content: buildForm(
                 formKey, context, textControllersConfig, startDate, endDate,
                 (value) {
@@ -160,29 +164,36 @@ class _TreeRecordDetailTypesScreenState
               });
             }, []),
             actions: [
-              CancelTextButton(),
               TextButton(
-                child: Text('save'.tr()),
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    final now = DateTime.now();
-                    await DatabaseService.db.writeTxn(() async {
-                      final newDetailType =
-                          detailType ?? TreeRecordDetailTypeIsar();
-                      newDetailType.remoteId = detailType?.remoteId ?? 0;
-                      newDetailType.name = nameController.text;
-                      newDetailType.unit = unitController.text;
-                      newDetailType.startDate = startDate ?? now;
-                      newDetailType.endDate = endDate;
-                      newDetailType.isSynced = false;
-                      await DatabaseService.db.treeRecordDetailTypeIsars
-                          .put(newDetailType);
-                    });
-                    // ignore: use_build_context_synchronously
-                    Navigator.pop(context);
-                  }
-                },
+                child: Text(allowances
+                        .canWrite('user_access_settings_tree_detail_types')
+                    ? 'cancel'.tr()
+                    : 'close'.tr()),
+                onPressed: () => Navigator.pop(context),
               ),
+              if (allowances.canWrite('user_access_settings_tree_detail_types'))
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final now = DateTime.now();
+                      await DatabaseService.db.writeTxn(() async {
+                        final newDetailType =
+                            detailType ?? TreeRecordDetailTypeIsar();
+                        newDetailType.remoteId = detailType?.remoteId ?? 0;
+                        newDetailType.name = nameController.text;
+                        newDetailType.unit = unitController.text;
+                        newDetailType.startDate = startDate ?? now;
+                        newDetailType.endDate = endDate;
+                        newDetailType.isSynced = false;
+                        await DatabaseService.db.treeRecordDetailTypeIsars
+                            .put(newDetailType);
+                      });
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context);
+                    }
+                  },
+                ),
             ],
           );
         });
