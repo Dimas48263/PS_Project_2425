@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:window_size/window_size.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/home/screens/home_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
@@ -34,7 +36,12 @@ void main() async {
       supportedLocales: supportedLanguages.map((e) => Locale(e.code)).toList(),
       path: 'assets/translations',
       fallbackLocale: const Locale('pt'),
-      child: MyApp(sessionManager: session, supportedLanguages: supportedLanguages),
+      child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider(create: (_) => UserAllowancesProvider()),
+          ],
+          child: MyApp(
+              sessionManager: session, supportedLanguages: supportedLanguages)),
     ),
   );
 }
@@ -48,15 +55,8 @@ Future<void> _setup() async {
   AppConfig.initFromJson(configMap);
 
   await DatabaseService.setup();
-//  SyncServiceManager().setup(); //Sync2
 
   await LogService.init(AppConfig.instance);
-
-  LogService.log(
-    'log_app_started'.tr(namedArgs: {
-      'api': AppConfig.instance.apiUrl,
-    }),
-  );
 }
 
 class MyApp extends StatelessWidget {

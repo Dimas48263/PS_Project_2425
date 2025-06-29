@@ -95,10 +95,28 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      '${'start'.tr()}: ${userProfile.startDate.toLocal().toString().split(' ')[0]}'),
-                                  Text(
-                                    '${'end'.tr()}: ${userProfile.endDate != null ? userProfile.endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}',
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                            label: 'start'.tr(),
+                                            value: userProfile.startDate
+                                                .toLocal()
+                                                .toString()
+                                                .split(' ')[0]),
+                                      ),
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                          label: 'end'.tr(),
+                                          value: userProfile.endDate != null
+                                              ? userProfile.endDate!
+                                                  .toLocal()
+                                                  .toString()
+                                                  .split(' ')[0]
+                                              : 'no_end_date'.tr(),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -245,7 +263,6 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
   }
 
   Future<void> _editUserAccessAllowances(UserProfilesIsar profile) async {
-
     final originalAllowances = await DatabaseService
         .db.userProfileAccessAllowanceIsars
         .filter()
@@ -294,7 +311,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                     await DatabaseService.db.writeTxn(() async {
                       await DatabaseService.db.userProfilesIsars.put(profile);
                     });
-                    
+
                     Navigator.of(context).pop();
                   },
                 ),

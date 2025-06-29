@@ -20,10 +20,13 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+
         final token = data['token'];
 
         LogService.log("Login online: $lowerCaseUserName");
 
+        SessionManager().setUserRemoteId(data['userId']);
+        SessionManager().setUserProfileRemoteId(data['userProfileId']);
         SessionManager().setToken(token);
         SessionManager().setUserName(lowerCaseUserName);
         return true;

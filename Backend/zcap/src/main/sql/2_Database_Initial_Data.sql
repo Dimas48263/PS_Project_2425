@@ -322,8 +322,27 @@ END
 
 IF (SELECT COUNT(*) FROM userProfileAccessKeys ) = 0
 BEGIN
-	INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_screen_settings', N'Manages access to the menu option to access the Settings menu', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_users_screen', N'Manages access to the menu option to access Users options in the Settings screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_screen_zcaps', N'Menu item ZCAPS', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_screen_incidents', N'Menu item Incidents', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_screen_settings', N'Menu item Settings', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_structure_levels', N'Menu item Structure Levels in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_structure_elements', N'Menu item Structure Elements in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_structure_detail_types', N'Menu item Structure Detail Types in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_structure_details', N'Menu item Structure Details in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_structure_detail_association', N'Menu item Structure Level-Detail association in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_incident_types', N'Menu item Incident types in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_users', N'Menu item Users in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_user_profiles', N'Menu item User Profiles in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_users_data', N'Menu item Users Data in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_entity_types', N'Menu item Entity Types in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_entities', N'Menu item Entities in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_building_types', N'Menu item Building Types in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_detail_category', N'Menu item Detail Category in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_zcap_detail_type', N'Menu item Zcap Detail Type in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_detail_per_zcap', N'Menu item Zcap Detail in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_people_relation_type', N'Menu item People Relation in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_special_need_types', N'Menu item People Special Needs in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_support_need_types', N'Menu item People Support Needs in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM users ) = 0

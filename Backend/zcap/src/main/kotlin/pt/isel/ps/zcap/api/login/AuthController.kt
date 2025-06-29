@@ -33,10 +33,13 @@ class AuthController(
             response.addCookie(cookie)
 
             val responseBody = mapOf(
+                "userId" to  validLogin.user.userId,
+                "userName" to validLogin.user.userName,
+                "name" to validLogin.user.name,
+                "userProfileId" to validLogin.user.userProfile.userProfileId,
+                "message" to "Welcome, ${validLogin.user.name}!",
                 "token" to validLogin.token,
-                "user" to mapOf("name" to validLogin.user.name),
-                "message" to "Welcome, ${validLogin.user.name}!"
-            )
+                )
 
             ResponseEntity.ok(responseBody)
 

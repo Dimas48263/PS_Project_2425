@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import '../shared/date_utils.dart';
+import 'package:zcap_net_app/shared/shared.dart';
 
 class CustomDateRangePicker extends StatelessWidget {
   final DateTime startDate;
@@ -57,24 +57,47 @@ class CustomDateRangePicker extends StatelessWidget {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          title: Text(
-              '${"start".tr()}: ${startDate.toLocal().toString().split(' ')[0]}'),
-          trailing: const Icon(Icons.calendar_today),
-          onTap: () => _selectStartDate(context),
+@override
+Widget build(BuildContext context) {
+  return Column(
+    children: [
+      InkWell(
+        onTap: () => _selectStartDate(context),
+        child: Row(
+          children: [
+            Expanded(
+              child: CustomLabelValueText(
+                label: 'start'.tr(),
+                value: startDate.toLocal().toString().split(' ')[0],
+              ),
+            ),
+            const Icon(Icons.calendar_today, size: 20),
+          ],
         ),
-        ListTile(
-          title: Text(
-              '${"end".tr()}: ${endDate != null ? endDate!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}'),
-          trailing: const Icon(Icons.calendar_today),
+      ),
+      const SizedBox(height: 12),
+      Tooltip(
+        message: 'long_press_to_clear'.tr(),
+        child: InkWell(
           onTap: () => _selectEndDate(context),
           onLongPress: () => onEndDateChanged(null),
+          child: Row(
+            children: [
+              Expanded(
+                child: CustomLabelValueText(
+                  label: 'end'.tr(),
+                  value: endDate != null
+                      ? endDate!.toLocal().toString().split(' ')[0]
+                      : 'no_end_date'.tr(),
+                ),
+              ),
+              const Icon(Icons.calendar_today, size: 20),
+            ],
+          ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
+
 }

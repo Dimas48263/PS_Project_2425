@@ -56,7 +56,6 @@ class StatusBar extends StatelessWidget {
                     ? InkWell(
                         onTap: () async {
                           await syncServiceV3.synchronizeAll();
-                          //await SyncServiceManager().syncNow();
                         },
                         child: Icon(
                           Icons.cloud_outlined,

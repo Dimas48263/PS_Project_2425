@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/about/about_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
@@ -21,6 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final userName = SessionManager().userName;
+    final allowances = context.watch<UserAllowancesProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -67,34 +70,37 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.maps_home_work_outlined),
-              title: Text('screen_zcaps'.tr()),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ZcapsScreen(userName: userName)),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.report_problem_outlined),
-              title: Text('screen_incidents'.tr()),
-              onTap: () {
-                // TODO: Navegar para o ecrã de Incidents
-
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings),
-              title: Text('screen_settings_configs'.tr()),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SettingsScreen()),
-                );
-              },
-            ),
+            if (allowances.canRead('user_access_screen_zcaps'))
+              ListTile(
+                leading: const Icon(Icons.maps_home_work_outlined),
+                title: Text('screen_zcaps'.tr()),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ZcapsScreen(userName: userName)),
+                  );
+                },
+              ),
+            if (allowances.canRead('user_access_screen_incidents'))
+              ListTile(
+                leading: const Icon(Icons.report_problem_outlined),
+                title: Text('screen_incidents'.tr()),
+                onTap: () {
+                  // TODO: Navegar para o ecrã de Incidents
+                },
+              ),
+            if (allowances.canRead('user_access_screen_settings'))
+              ListTile(
+                leading: const Icon(Icons.settings),
+                title: Text('screen_settings_configs'.tr()),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => SettingsScreen()),
+                  );
+                },
+              ),
             const Divider(),
             ListTile(
               leading: const Icon(Icons.help),

@@ -1,5 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/about/about_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/widgets/hero_widget.dart';
@@ -36,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final success = await _loginViewModel.login(
       _usernameController.text,
       _passwordController.text,
+      allowancesProvider: context.read<UserAllowancesProvider>(),
     );
 
     if (!mounted) return;
