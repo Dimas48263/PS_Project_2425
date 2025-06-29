@@ -23,6 +23,8 @@ class ZcapDetailTypeIsar implements IsarTable {
   IsarLink<DetailTypeCategoriesIsar> detailTypeCategory = IsarLink<DetailTypeCategoriesIsar>();
   @enumerated
   late DataTypes dataType;
+  late bool isMandatory;
+
   @Index()
   late DateTime startDate;
   @Index()
@@ -41,6 +43,7 @@ class ZcapDetailTypeIsar implements IsarTable {
       ..name = name
       ..detailTypeCategory.value = detailTypeCategory.value
       ..dataType = dataType
+      ..isMandatory = isMandatory
       ..startDate = startDate
       ..endDate = endDate
       ..createdAt = createdAt
@@ -55,7 +58,7 @@ class ZcapDetailTypeIsar implements IsarTable {
       name: name,
       detailTypeCategory: detailTypeCategory.value!.toEntity(),
       dataType: dataType,
-      isMandatory: false,
+      isMandatory: isMandatory,
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
@@ -70,6 +73,7 @@ class ZcapDetailTypeIsar implements IsarTable {
     name = zcapDetailType.name;
     detailTypeCategory.value = DetailTypeCategoriesIsar.fromEntity(zcapDetailType.detailTypeCategory);
     dataType = zcapDetailType.dataType;
+    isMandatory = zcapDetailType.isMandatory;
     startDate = zcapDetailType.startDate;
     endDate = zcapDetailType.endDate;
     createdAt = zcapDetailType.createdAt;
@@ -82,6 +86,7 @@ class ZcapDetailTypeIsar implements IsarTable {
       ..remoteId = zcapDetailType.remoteId
       ..name = zcapDetailType.name
       ..dataType = zcapDetailType.dataType
+      ..isMandatory = zcapDetailType.isMandatory
       ..startDate = zcapDetailType.startDate
       ..endDate = zcapDetailType.endDate
       ..createdAt = zcapDetailType.createdAt

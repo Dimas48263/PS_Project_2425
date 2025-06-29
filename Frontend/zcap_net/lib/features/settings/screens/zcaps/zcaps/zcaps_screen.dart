@@ -7,9 +7,12 @@ import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
+import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class ZcapsScreen extends StatefulWidget {
   final String? userName;
@@ -410,32 +413,33 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                         final now = DateTime.now();
                         final navigator = Navigator.of(context);
 
-                        await DatabaseService.db.writeTxn(() async {
-                          final editedZcap = zcap ?? ZcapIsar();
+                        final editedZcap = zcap ?? ZcapIsar();
 
-                          editedZcap.name = nameController.text.trim();
-                          editedZcap.address = addressController.text.trim();
-                          editedZcap.buildingType.value = buildingType;
-                          editedZcap.zcapEntity.value = zcapEntity;
-                          editedZcap.latitude =
-                              double.tryParse(latitudeController.text);
-                          editedZcap.longitude =
-                              double.tryParse(longitudeController.text);
-                          editedZcap.startDate = selectedStartDate;
-                          editedZcap.endDate = selectedEndDate;
-                          editedZcap.lastUpdatedAt = now;
-                          editedZcap.isSynced = false;
-                          if (zcap == null) {
-                            editedZcap.createdAt = now;
-                          }
+                        editedZcap.name = nameController.text.trim();
+                        editedZcap.address = addressController.text.trim();
+                        editedZcap.buildingType.value = buildingType;
+                        editedZcap.zcapEntity.value = zcapEntity;
+                        editedZcap.latitude =
+                            double.tryParse(latitudeController.text);
+                        editedZcap.longitude =
+                            double.tryParse(longitudeController.text);
+                        editedZcap.startDate = selectedStartDate;
+                        editedZcap.endDate = selectedEndDate;
+                        editedZcap.lastUpdatedAt = now;
+                        editedZcap.isSynced = false;
+                        if (zcap != null) {
+                          DatabaseService.db.writeTxn(() async {
+                            await DatabaseService.db.zcapIsars.put(editedZcap);
 
-                          await DatabaseService.db.zcapIsars.put(editedZcap);
-
-                          await editedZcap.buildingType.save();
-                          await editedZcap.zcapEntity.save();
-                        });
-
-                        navigator.pop();
+                            await editedZcap.buildingType.save();
+                            await editedZcap.zcapEntity.save();
+                          });
+                          navigator.pop();  
+                        } else {
+                          editedZcap.createdAt = now;
+                          navigator.pop();
+                        _addDetails(editedZcap); 
+                        }
                       }
                     },
                     child: Text('save'.tr()),
@@ -445,5 +449,155 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
             },
           );
         });
+  }
+
+  void _addDetails(ZcapIsar zcap) async {
+    final detailTypes =
+        await DatabaseService.db.zcapDetailTypeIsars.where().findAll();
+    final mandatoryDetailTypes =
+        detailTypes.where((e) => e.isMandatory).toList();
+    List<ZcapDetailsIsar> details = [];
+    ZcapDetailsIsar? detail;
+    for (var i = 0; i < mandatoryDetailTypes.length; i++) {
+      final mandatoryDetailType = mandatoryDetailTypes[i];
+      detail = await _addOrEditDetail(
+          mandatoryDetailType, zcap, i, mandatoryDetailTypes.length);
+      if (detail == null) {
+        break;
+      } else {
+        details.add(detail);
+      }
+    }
+    if (detail != null) {
+      //guarda a zcap e os detalhes
+      DatabaseService.db.writeTxn(() async {
+        await DatabaseService.db.zcapIsars.put(zcap);
+        await zcap.buildingType.save();
+        await zcap.zcapEntity.save();
+        for (final det in details) {
+          await DatabaseService.db.zcapDetailsIsars.put(det);
+          await det.zcapDetailType.save();
+          await det.zcap.save();
+        }
+      });
+    }
+  }
+
+  Future<ZcapDetailsIsar?> _addOrEditDetail(ZcapDetailTypeIsar detailType,
+      ZcapIsar zcap, int index, int total) async {
+    final formKey = GlobalKey<FormState>();
+    final valueController = TextEditingController(text: '');
+    DateTime startDate = DateTime.now();
+    DateTime? endDate;
+    List<TextControllersInputFormConfig>? textControllersConfig;
+    bool? boolField;
+    String? selectedItemLabel;
+    if (detailType.dataType.name != 'boolean') {
+      textControllersConfig = [
+        TextControllersInputFormConfig(
+            controller: valueController,
+            label:
+                "${'value'.tr()} (${'example'.tr()}: ${detailType.dataType.example})",
+            validator: (val) {
+              if (val == null || val.isEmpty) return 'required_field'.tr();
+              if (validateValue(detailType.dataType.name, val)) return null;
+              return 'wrong_format'.tr();
+            }),
+      ];
+    }
+
+    final shouldContinue = await showDialog<ZcapDetailsIsar>(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setModalState) {
+            return AlertDialog(
+              title: Text(
+                  '${'detail'.tr()}: ${detailType.name}.  ${index + 1}/$total'),
+              content: buildForm(formKey, context, textControllersConfig ?? [],
+                  startDate, endDate, (value) {
+                setState(() => startDate = value);
+                setModalState(() {}); // Atualiza o dialog
+              }, (value) {
+                setState(() => endDate = value);
+                setModalState(() {}); // Atualiza o dialog
+              }, () {
+                setModalState(() {
+                  endDate = null;
+                });
+              },
+                  textControllersConfig == null
+                      ? [
+                          customDropdownSearch<String>(
+                              items: ['true'.tr(), 'false'.tr()],
+                              selectedItem: selectedItemLabel,
+                              onSelected: (String? value) {
+                                setModalState(() {
+                                  selectedItemLabel = value;
+                                  boolField = selectedItemLabel == 'true'.tr();
+                                });
+                              },
+                              validator: (value) =>
+                                  value == null ? 'required_field'.tr() : null)
+                        ]
+                      : []),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(null),
+                  child: Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate()) {
+                      final String val;
+                      if (boolField != null) {
+                        if (boolField!) {
+                          val = 'true';
+                        } else {
+                          val = 'false';
+                        }
+                      } else {
+                        val = valueController.text.trim();
+                      }
+                      final now = DateTime.now();
+                      final editedDetail = ZcapDetailsIsar();
+                      editedDetail.remoteId = 0;
+                      editedDetail.valueCol = val;
+                      editedDetail.zcap.value = zcap;
+                      editedDetail.zcapDetailType.value = detailType;
+                      editedDetail.startDate = startDate;
+                      editedDetail.endDate = endDate;
+                      editedDetail.createdAt = now;
+                      editedDetail.lastUpdatedAt = now;
+                      editedDetail.isSynced = false;
+                      Navigator.of(context).pop(editedDetail);
+                    }
+                  },
+                  child: Text('Next'),
+                ),
+              ],
+            );
+          });
+        });
+    return shouldContinue;
+  }
+
+  bool validateValue(String type, String value) {
+    switch (type) {
+      case 'string':
+        if (value.isEmpty) return false;
+        return true;
+      case 'int':
+        return int.tryParse(value) != null;
+      case 'double':
+        return double.tryParse(value) != null;
+      case 'boolean':
+        return value == 'true' || value == 'false';
+      case 'char':
+        return value.length == 1;
+      case 'float':
+        return double.tryParse(value) != null;
+      default:
+        return true;
+    }
   }
 }

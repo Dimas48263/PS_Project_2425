@@ -35,7 +35,8 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
         .watch(fireImmediately: true)
         .listen((data) async {
       for (var item in data) {
-        if (!item.detailTypeCategory.isLoaded) await item.detailTypeCategory.load();
+        if (!item.detailTypeCategory.isLoaded)
+          await item.detailTypeCategory.load();
       }
       setState(() {
         zcapDetailTypes = data;
@@ -104,12 +105,15 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                   }),
               onAddPressed: () => _addOrEditZcapDetailType(null),
               dropDownFilter: customDropdownSearch(
-                  items: ['name'.tr(), 'screen_settings_detail_category_name'.tr()],
+                  items: [
+                    'name'.tr(),
+                    'screen_settings_detail_category_name'.tr()
+                  ],
                   selectedItem: _isSearchingByName
                       ? 'name'.tr()
                       : 'screen_settings_detail_category_name'.tr(),
-                  onSelected: (value) => setState(
-                      () => _isSearchingByName = value == 'name'.tr()),
+                  onSelected: (value) =>
+                      setState(() => _isSearchingByName = value == 'name'.tr()),
                   validator: (value) => null,
                   label: 'search_by'.tr(),
                   justLabel: true)),
@@ -176,8 +180,17 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
     DetailTypeCategoriesIsar? detailTypeCategory =
         zcapDetailType?.detailTypeCategory.value;
     DataTypes? dataType = zcapDetailType?.dataType;
+    bool? isMandatory = zcapDetailType?.isMandatory;
     DateTime? startDate = zcapDetailType?.startDate ?? DateTime.now();
     DateTime? endDate = zcapDetailType?.endDate;
+    String? selectedItemLabel;
+    if (isMandatory == true) {
+      selectedItemLabel = 'is_mandatory'.tr();
+    } else if (isMandatory == false) {
+      selectedItemLabel = 'is_optional'.tr();
+    } else {
+      selectedItemLabel = null;
+    }
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
@@ -227,6 +240,18 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null,
                   label: 'data_type'.tr()),
+              customDropdownSearch<String>(
+                  items: ['is_mandatory'.tr(), 'is_optional'.tr()],
+                  selectedItem: selectedItemLabel,
+                  onSelected: (String? value) {
+                    setModalState(() {
+                      selectedItemLabel = value;
+                      isMandatory = selectedItemLabel == 'is_mandatory'.tr();
+                    });
+                  },
+                  validator: (value) =>
+                      value == null ? 'required_field'.tr() : null,
+                  label: 'mandatory_optional'.tr())
             ]),
             actions: [
               CancelTextButton(),
@@ -245,6 +270,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                       newZcapDetailType.detailTypeCategory.value =
                           detailTypeCategory;
                       newZcapDetailType.dataType = dataType!;
+                      newZcapDetailType.isMandatory = isMandatory!;
                       newZcapDetailType.startDate = startDate ?? now;
                       newZcapDetailType.endDate = endDate;
                       newZcapDetailType.createdAt =
