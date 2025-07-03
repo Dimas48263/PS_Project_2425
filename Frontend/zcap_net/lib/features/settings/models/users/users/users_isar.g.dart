@@ -69,6 +69,19 @@ const UsersIsarSchema = CollectionSchema(
   deserializeProp: _usersIsarDeserializeProp,
   idName: r'id',
   indexes: {
+    r'remoteId': IndexSchema(
+      id: 6301175856541681032,
+      name: r'remoteId',
+      unique: true,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'remoteId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'userName': IndexSchema(
       id: -1677712070637581736,
       name: r'userName',
@@ -192,6 +205,59 @@ void _usersIsarAttach(IsarCollection<dynamic> col, Id id, UsersIsar object) {
 }
 
 extension UsersIsarByIndex on IsarCollection<UsersIsar> {
+  Future<UsersIsar?> getByRemoteId(int? remoteId) {
+    return getByIndex(r'remoteId', [remoteId]);
+  }
+
+  UsersIsar? getByRemoteIdSync(int? remoteId) {
+    return getByIndexSync(r'remoteId', [remoteId]);
+  }
+
+  Future<bool> deleteByRemoteId(int? remoteId) {
+    return deleteByIndex(r'remoteId', [remoteId]);
+  }
+
+  bool deleteByRemoteIdSync(int? remoteId) {
+    return deleteByIndexSync(r'remoteId', [remoteId]);
+  }
+
+  Future<List<UsersIsar?>> getAllByRemoteId(List<int?> remoteIdValues) {
+    final values = remoteIdValues.map((e) => [e]).toList();
+    return getAllByIndex(r'remoteId', values);
+  }
+
+  List<UsersIsar?> getAllByRemoteIdSync(List<int?> remoteIdValues) {
+    final values = remoteIdValues.map((e) => [e]).toList();
+    return getAllByIndexSync(r'remoteId', values);
+  }
+
+  Future<int> deleteAllByRemoteId(List<int?> remoteIdValues) {
+    final values = remoteIdValues.map((e) => [e]).toList();
+    return deleteAllByIndex(r'remoteId', values);
+  }
+
+  int deleteAllByRemoteIdSync(List<int?> remoteIdValues) {
+    final values = remoteIdValues.map((e) => [e]).toList();
+    return deleteAllByIndexSync(r'remoteId', values);
+  }
+
+  Future<Id> putByRemoteId(UsersIsar object) {
+    return putByIndex(r'remoteId', object);
+  }
+
+  Id putByRemoteIdSync(UsersIsar object, {bool saveLinks = true}) {
+    return putByIndexSync(r'remoteId', object, saveLinks: saveLinks);
+  }
+
+  Future<List<Id>> putAllByRemoteId(List<UsersIsar> objects) {
+    return putAllByIndex(r'remoteId', objects);
+  }
+
+  List<Id> putAllByRemoteIdSync(List<UsersIsar> objects,
+      {bool saveLinks = true}) {
+    return putAllByIndexSync(r'remoteId', objects, saveLinks: saveLinks);
+  }
+
   Future<UsersIsar?> getByUserName(String userName) {
     return getByIndex(r'userName', [userName]);
   }
@@ -251,6 +317,14 @@ extension UsersIsarQueryWhereSort
   QueryBuilder<UsersIsar, UsersIsar, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterWhere> anyRemoteId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'remoteId'),
+      );
     });
   }
 }
@@ -317,6 +391,116 @@ extension UsersIsarQueryWhere
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterWhereClause> remoteIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterWhereClause> remoteIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterWhereClause> remoteIdEqualTo(
+      int? remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'remoteId',
+        value: [remoteId],
+      ));
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterWhereClause> remoteIdNotEqualTo(
+      int? remoteId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [remoteId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'remoteId',
+              lower: [],
+              upper: [remoteId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterWhereClause> remoteIdGreaterThan(
+    int? remoteId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [remoteId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterWhereClause> remoteIdLessThan(
+    int? remoteId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [],
+        upper: [remoteId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterWhereClause> remoteIdBetween(
+    int? lowerRemoteId,
+    int? upperRemoteId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'remoteId',
+        lower: [lowerRemoteId],
+        includeLower: includeLower,
+        upper: [upperRemoteId],
         includeUpper: includeUpper,
       ));
     });

@@ -87,26 +87,33 @@ class _UsersScreenState extends State<UsersScreen> {
                         return Card(
                           child: ListTile(
                             contentPadding: EdgeInsets.only(left: 10.0),
-                            title: Text(
-                              '${user.remoteId != null ? "[${user.remoteId}] " : ""}${user.userName}',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
+                            title: CustomLabelValueText(label: 'username'.tr() , value: user.userName),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(user.name),
-                                FutureBuilder(
-                                  future: user.userProfile.load(),
-                                  builder: (context, snapshot) {
-                                    final userProfileName =
-                                        snapshot.connectionState ==
-                                                ConnectionState.done
-                                            ? user.userProfile.value?.name ??
-                                                'unknown_profile'.tr()
-                                            : 'loading'.tr();
-                                    return Text(
-                                        '${'profile'.tr()}: $userProfileName');
-                                  },
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: CustomLabelValueText(
+                                          label: 'name'.tr(), value: user.name),
+                                    ),
+                                    Expanded(
+                                      child: FutureBuilder(
+                                        future: user.userProfile.load(),
+                                        builder: (context, snapshot) {
+                                          final userProfileName =
+                                              snapshot.connectionState ==
+                                                      ConnectionState.done
+                                                  ? user.userProfile.value?.name ??
+                                                      'unknown_profile'.tr()
+                                                  : 'loading'.tr();
+                                          return CustomLabelValueText(
+                                              label: 'profile'.tr(),
+                                              value: userProfileName);
+                                        },
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 Row(
                                   children: [
@@ -138,14 +145,7 @@ class _UsersScreenState extends State<UsersScreen> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                if (!user.isSynced)
-                                  IconButton(
-                                    onPressed: () {},
-                                    icon: const Icon(
-                                      Icons.sync_problem,
-                                      color: Colors.amberAccent,
-                                    ),
-                                  ),
+                                if (!user.isSynced) CustomUnsyncedIcon(),
                                 IconButton(
                                   onPressed: () {
                                     _addOrEditUser(user: user);

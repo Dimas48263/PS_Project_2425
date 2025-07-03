@@ -5,6 +5,7 @@ import java.time.LocalDate
 data class UserUpdateInputModel(
     val userName: String,
     val name: String,
+    val password: String,
     val userProfileId: Long,
     val userDataProfileId: Long,
     val startDate: LocalDate,

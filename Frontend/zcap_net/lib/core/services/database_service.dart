@@ -78,7 +78,7 @@ class DatabaseService {
 
 /* Users */
     CollectionSchemaEntry(
-        UsersIsarSchema, (db) => db.usersIsars, 'users', 'userId'),
+        UsersIsarSchema, (db) => db.usersIsars, 'syncable/users', 'userId'),
     CollectionSchemaEntry(
         UserAccessKeysIsarSchema,
         (db) => db.userAccessKeysIsars,

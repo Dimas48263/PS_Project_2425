@@ -9,6 +9,7 @@ data class UserOutputModel(
     val userId: Long,
     val userName: String,
     val name: String,
+    val password: String,
     val userProfile: UserProfileOutputModel,
     val userDataProfile: UserDataProfileOutputModel,
     val startDate: LocalDate,

@@ -76,24 +76,21 @@ Widget build(BuildContext context) {
         ),
       ),
       const SizedBox(height: 12),
-      Tooltip(
-        message: 'long_press_to_clear'.tr(),
-        child: InkWell(
-          onTap: () => _selectEndDate(context),
-          onLongPress: () => onEndDateChanged(null),
-          child: Row(
-            children: [
-              Expanded(
-                child: CustomLabelValueText(
-                  label: 'end'.tr(),
-                  value: endDate != null
-                      ? endDate!.toLocal().toString().split(' ')[0]
-                      : 'no_end_date'.tr(),
-                ),
+      InkWell(
+        onTap: () => _selectEndDate(context),
+        onLongPress: () => onEndDateChanged(null),
+        child: Row(
+          children: [
+            Expanded(
+              child: CustomLabelValueText(
+                label: 'end'.tr(),
+                value: endDate != null
+                    ? endDate!.toLocal().toString().split(' ')[0]
+                    : 'no_end_date'.tr(),
               ),
-              const Icon(Icons.calendar_today, size: 20),
-            ],
-          ),
+            ),
+            const Icon(Icons.calendar_today, size: 20),
+          ],
         ),
       ),
     ],

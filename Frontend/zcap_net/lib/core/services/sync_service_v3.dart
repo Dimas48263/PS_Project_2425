@@ -17,6 +17,8 @@ import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_p
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/users/users.dart';
+import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
@@ -124,8 +126,7 @@ class SyncServiceV3 {
       if (apiEntity.remoteId <= 0) {
         LogService.log(
             '[Sync] Criando nova entidade: endpoint $endpoint, dados $dataToSend');
-        final created =
-            await apiService.post(endpoint, dataToSend);
+        final created = await apiService.post(endpoint, dataToSend);
         if (created[idName] != null) {
           final newRecord = entity.setEntityIdAndSync(
             remoteId: created[idName],
@@ -141,8 +142,7 @@ class SyncServiceV3 {
       } else {
         LogService.log(
             '[Sync] Atualizando entidade existente: (id: ${apiEntity.remoteId}), dados: $dataToSend');
-        await apiService.put(
-            '$endpoint/${apiEntity.remoteId}', dataToSend);
+        await apiService.put('$endpoint/${apiEntity.remoteId}', dataToSend);
 
         final newRecord = entity.setEntityIdAndSync(isSynced: true) as T;
         await isar.writeTxn(() async {
@@ -438,19 +438,6 @@ final List<SyncEntry> syncEntries = [
   /**
  * ZCAPS
  */
-  SyncEntry<BuildingTypesIsar, BuildingType>(
-      endpoint: 'buildingTypes',
-      getCollection: (isar) => isar.buildingTypesIsars,
-      idName: 'buildingTypeId',
-      fromJson: BuildingType.fromJson,
-      toIsar: (ApiTable buildingType) async =>
-          BuildingTypesIsar.toRemote(buildingType as BuildingType),
-      findByRemoteId:
-          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
-              (collection as IsarCollection<BuildingTypesIsar>)
-                  .where()
-                  .remoteIdEqualTo(remoteId)
-                  .findFirst()),
   SyncEntry<DetailTypeCategoriesIsar, DetailTypeCategories>(
       endpoint: 'detail-type-categories',
       getCollection: (isar) => isar.detailTypeCategoriesIsars,
@@ -461,6 +448,19 @@ final List<SyncEntry> syncEntries = [
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<DetailTypeCategoriesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<BuildingTypesIsar, BuildingType>(
+      endpoint: 'buildingTypes',
+      getCollection: (isar) => isar.buildingTypesIsars,
+      idName: 'buildingTypeId',
+      fromJson: BuildingType.fromJson,
+      toIsar: (ApiTable buildingType) async =>
+          BuildingTypesIsar.toRemote(buildingType as BuildingType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<BuildingTypesIsar>)
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
@@ -565,5 +565,21 @@ final List<SyncEntry> syncEntries = [
         final allowancesIsar = isarTable as UserProfileAccessAllowanceIsar;
         await allowancesIsar.userProfile.save();
       }),
-
+  SyncEntry<UsersIsar, Users>(
+    endpoint: 'syncable/users',
+    getCollection: (isar) => isar.usersIsars,
+    idName: 'userId',
+    fromJson: Users.fromJson,
+    toIsar: (ApiTable users) async => UsersIsar.toRemote(users as Users),
+    findByRemoteId:
+        (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+            (collection as IsarCollection<UsersIsar>)
+                .where()
+                .remoteIdEqualTo(remoteId)
+                .findFirst(),
+    saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+      final userProfile = isarTable as UsersIsar;
+      await userProfile.userProfile.save();
+    },
+  ),
 ];

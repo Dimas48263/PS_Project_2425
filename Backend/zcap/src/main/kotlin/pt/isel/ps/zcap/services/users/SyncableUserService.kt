@@ -21,7 +21,7 @@ import java.util.*
 import kotlin.jvm.optionals.getOrNull
 
 @Service
-class UserService(
+class SyncableUserService(
     private val userRepository: UserRepository,
     private val userProfileService: UserProfileServiceV1,
     private val userDataProfileService: UserDataProfileService,
@@ -29,30 +29,31 @@ class UserService(
     private val jwtConfig: JwtConfig
 ) {
 
-    fun getAllUsers(): List<UserOutputModel> {
+    fun getSyncableAllUsers(): List<UserOutputModel> {
         val users: List<User> = userRepository.findAll()
-        return users.map { toOutputModel(it) }
+        return users.map { toOutputModel(it, it.password) }
     }
 
-    fun getUserById(userId: Long): Either<ServiceErrors, UserOutputModel> {
+
+    fun getSyncableUserById(userId: Long): Either<ServiceErrors, UserOutputModel> {
         val user: User = userRepository.findById(userId).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
 
-        return success(toOutputModel(user))
+        return success(toOutputModel(user, user.password))
     }
 
-    fun getUsersByUserName(userName: String): Either<ServiceErrors, List<UserOutputModel>> {
+    fun getSyncableUsersByUserName(userName: String): Either<ServiceErrors, List<UserOutputModel>> {
         val users: List<User> = userRepository.findByUserName(userName)
 
         return if (users.isEmpty())
             failure(ServiceErrors.RecordNotFound)
         else
-            success(users.map { toOutputModel(it) })
+            success(users.map { toOutputModel(it, it.password) })
     }
 
-    fun getUsersValidOn(date: LocalDate): List<UserOutputModel> {
+    fun getSyncableUsersValidOn(date: LocalDate): List<UserOutputModel> {
         val validUsers = userRepository.findValidOnDate(date)
-        return validUsers.map { toOutputModel(it) }
+        return validUsers.map { toOutputModel(it, it.password) }
     }
 
     fun isUserNameValidForInterval(
@@ -76,11 +77,11 @@ class UserService(
         }
     }
 
-    fun addUser(newUser: UserInputModel): Either<ServiceErrors, UserOutputModel> {
+    fun syncableAddUser(newUser: UserInputModel): Either<ServiceErrors, UserOutputModel> {
 
-        if (!isPasswordComplex(password = newUser.password)) {
-            return failure(ServiceErrors.InvalidPasswordComplexity)
-        }
+//        if (!isPasswordComplex(password = newUser.password)) {
+//            return failure(ServiceErrors.InvalidPasswordComplexity)
+//        }
 
         if (!isUserNameValidForInterval(newUser.userName, newUser.startDate, newUser.endDate)) {
             return failure(ServiceErrors.RecordAlreadyExists)
@@ -103,13 +104,13 @@ class UserService(
         )
 
         return try {
-            success(toOutputModel(userRepository.save(user)))
+            success(toOutputModel(userRepository.save(user), user.password))
         } catch (ex: Exception) {
             failure(ServiceErrors.InsertFailed)
         }
     }
 
-    fun updateUser(userId: Long, user: UserUpdateInputModel): Either<ServiceErrors, UserOutputModel> {
+    fun syncableUpdateUser(userId: Long, user: UserUpdateInputModel): Either<ServiceErrors, UserOutputModel> {
         val existingUser = userRepository.findById(userId).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
 
@@ -128,6 +129,7 @@ class UserService(
         val updatedUser = existingUser.copy(
             userName = user.userName,
             name = user.name,
+            password = user.password,
             userProfile = userProfile,
             userDataProfile = userDataProfile,
             startDate = user.startDate,
@@ -137,13 +139,13 @@ class UserService(
 
         return try {
             val savedUser = userRepository.save(updatedUser)
-            success(toOutputModel(savedUser))
+            success(toOutputModel(savedUser, savedUser.password))
         } catch (ex: Exception) {
             failure(ServiceErrors.UpdateFailed)
         }
     }
 
-    fun updatePassword(
+    fun syncableUpdatePassword(
         userId: Long,
         currentPassword: String,
         newPassword: String
@@ -167,11 +169,12 @@ class UserService(
 
         return try {
             val updatedUser = userRepository.save(newUser)
-            success(toOutputModel(updatedUser))
+            success(toOutputModel(updatedUser, updatedUser.password))
         } catch (ex: Exception) {
             failure(ServiceErrors.UpdateFailed)
         }
     }
+
 
     fun isPasswordComplex(password: String): Boolean {
         return password.length >= 8                         // length
@@ -197,13 +200,13 @@ class UserService(
         )
 
     // Conversion from domain Model to OutputModel
-    private fun toOutputModel(user: User): UserOutputModel {
+    private fun toOutputModel(user: User, password: String): UserOutputModel {
 
         return UserOutputModel(
             userId = user.userId,
             userName = user.userName,
             name = user.name,
-            password = "",
+            password = password,
             userProfile = userProfileService.toOutputModel(user.userProfile),
             userDataProfile = userDataProfileService.toOutputModel(user.userDataProfile),
             startDate = user.startDate,
@@ -247,18 +250,5 @@ class UserService(
         } catch (ex: Exception) {
             throw RuntimeException("Login failed: ${ex.message}")
         }
-    }
-
-    fun getAuthenticatedUser(jwt: String): Either<ServiceErrors, UserOutputModel> {
-
-        val claims = Jwts.parserBuilder()
-            .setSigningKey(jwtConfig.jwtSecretKey())
-            .build()
-            .parseClaimsJws(jwt)
-            .body
-
-        val userId = claims.issuer.toLong()
-
-        return getUserById(userId)
     }
 }
