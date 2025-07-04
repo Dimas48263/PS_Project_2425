@@ -32,6 +32,7 @@
   "error_post_failed": "Erro ao enviar dados: código {{code}}, resposta: {{body}}",
   "error_put_failed": "Erro ao atualizar dados: código {{code}}, resposta: {{body}}",
   "example": "Exemplo",
+  "example_abbreviation": "ex.",
   "false": "Nao",
   "fill_data": "Por favor, insira um {field}",
   "help": "Ajuda",

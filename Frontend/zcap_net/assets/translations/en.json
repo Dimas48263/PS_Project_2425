@@ -32,6 +32,7 @@
   "error_post_failed": "Failed to send data: code {{code}}, response: {{body}}",
   "error_put_failed": "Failed to update data: code {{code}}, response: {{body}}",
   "example": "Example",
+  "example_abbreviation": "e.g.",
   "false": "False",
   "fill_data": "Please, insert a {field}",
   "help": "Help",

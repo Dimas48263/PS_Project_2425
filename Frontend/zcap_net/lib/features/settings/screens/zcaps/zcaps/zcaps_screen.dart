@@ -7,12 +7,12 @@ import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
-import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class ZcapsScreen extends StatefulWidget {
   final String? userName;
@@ -30,6 +30,10 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
+  Map<ZcapIsar, List<ZcapDetailsIsar>> zcapsWithDetails = {};
+  List<ZcapDetailsIsar> allDetails = [];
+  StreamSubscription? allDetailsStream;
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +44,19 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
       setState(() {
         zcaps = data;
         _isLoading = false;
+      });
+    });
+
+    allDetailsStream = DatabaseService.db.zcapDetailsIsars
+        .buildQuery<ZcapDetailsIsar>()
+        .watch(fireImmediately: true)
+        .listen((data) {
+      setState(() {
+        allDetails = data;
+        for (var zcap in zcaps) {
+          zcapsWithDetails[zcap] =
+              allDetails.where((e) => e.zcap.value!.id == zcap.id).toList();
+        }
       });
     });
 
@@ -264,11 +281,51 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
 
+    final availableCategories = await DatabaseService
+        .db.detailTypeCategoriesIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+
+    final availableDetailTypes = await DatabaseService.db.zcapDetailTypeIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+
+    List<ZcapDetailsIsar> zcapDetails =
+        zcap != null ? zcapsWithDetails[zcap]! : [];
+
+    Map<ZcapDetailTypeIsar, ZcapDetailsIsar?> zcapDetailsMap = {};
+
+    for (var availableDetailType in availableDetailTypes) {
+      ZcapDetailsIsar? search;
+      try {
+        search = zcapDetails.firstWhere((element) =>
+            element.zcapDetailType.value!.id == availableDetailType.id);
+      } catch (e) {
+        search = null;
+      }
+      zcapDetailsMap[availableDetailType] = search;
+    }
+
     final formKey = GlobalKey<FormState>();
+    final detailsFormKey = GlobalKey<FormState>();
 
     showDialog(
         context: context,
         builder: (context) {
+          bool detailsFormValidated = false;
+          bool showDetailsError = false;
           return StatefulBuilder(
             builder: (context, setModalState) {
               return AlertDialog(
@@ -400,6 +457,40 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                             });
                           },
                         ),
+                        const SizedBox(
+                          height: 12.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              //centrar,
+                              onPressed: () {
+                                showDetails(
+                                  context,
+                                  availableCategories,
+                                  detailsFormKey,
+                                  zcapDetailsMap,
+                                  onValidated: () {
+                                    setModalState(() {
+                                      detailsFormValidated = true;
+                                      showDetailsError = false;
+                                    });
+                                  },
+                                );
+                              },
+                              child: const Text('Abrir detalhes'),
+                            ),
+                          ],
+                        ),
+                        if (showDetailsError)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8.0),
+                            child: Text(
+                              'Por favor preencha os detalhes obrigatórios.',
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -410,9 +501,18 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                     onPressed: () async {
                       if (formKey.currentState!.validate() &&
                           nameController.text.isNotEmpty) {
+                        if (!detailsFormValidated) {
+                          setModalState(() {
+                            showDetailsError = true;
+                          });
+                          return;
+                        }
                         final now = DateTime.now();
                         final navigator = Navigator.of(context);
-
+                        for (var m in zcapDetailsMap.keys) {
+                          print('detailType ${m.name} with detail ${zcapDetailsMap[m]?.valueCol}');
+                        }
+                        
                         final editedZcap = zcap ?? ZcapIsar();
 
                         editedZcap.name = nameController.text.trim();
@@ -427,19 +527,25 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                         editedZcap.endDate = selectedEndDate;
                         editedZcap.lastUpdatedAt = now;
                         editedZcap.isSynced = false;
-                        if (zcap != null) {
-                          DatabaseService.db.writeTxn(() async {
-                            await DatabaseService.db.zcapIsars.put(editedZcap);
-
-                            await editedZcap.buildingType.save();
-                            await editedZcap.zcapEntity.save();
-                          });
-                          navigator.pop();  
-                        } else {
+                        if (zcap == null) {
                           editedZcap.createdAt = now;
-                          navigator.pop();
-                        _addDetails(editedZcap); 
                         }
+                        DatabaseService.db.writeTxn(() async {
+                          await DatabaseService.db.zcapIsars.put(editedZcap);
+                          await editedZcap.buildingType.save();
+                          await editedZcap.zcapEntity.save();
+                          for (var m in zcapDetailsMap.keys) {
+                            final detail = zcapDetailsMap[m];
+                            if (detail != null) {
+                              detail.zcap.value = editedZcap;
+                              await DatabaseService.db.zcapDetailsIsars.put(detail);
+                              await detail.zcap.save();
+                              await detail.zcapDetailType.save();
+                            }
+                          }
+                        });
+                        navigator.pop();
+
                       }
                     },
                     child: Text('save'.tr()),
@@ -451,134 +557,48 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
         });
   }
 
-  void _addDetails(ZcapIsar zcap) async {
-    final detailTypes =
-        await DatabaseService.db.zcapDetailTypeIsars.where().findAll();
-    final mandatoryDetailTypes =
-        detailTypes.where((e) => e.isMandatory).toList();
-    List<ZcapDetailsIsar> details = [];
-    ZcapDetailsIsar? detail;
-    for (var i = 0; i < mandatoryDetailTypes.length; i++) {
-      final mandatoryDetailType = mandatoryDetailTypes[i];
-      detail = await _addOrEditDetail(
-          mandatoryDetailType, zcap, i, mandatoryDetailTypes.length);
-      if (detail == null) {
-        break;
-      } else {
-        details.add(detail);
-      }
-    }
-    if (detail != null) {
-      //guarda a zcap e os detalhes
-      DatabaseService.db.writeTxn(() async {
-        await DatabaseService.db.zcapIsars.put(zcap);
-        await zcap.buildingType.save();
-        await zcap.zcapEntity.save();
-        for (final det in details) {
-          await DatabaseService.db.zcapDetailsIsars.put(det);
-          await det.zcapDetailType.save();
-          await det.zcap.save();
-        }
-      });
-    }
-  }
-
-  Future<ZcapDetailsIsar?> _addOrEditDetail(ZcapDetailTypeIsar detailType,
-      ZcapIsar zcap, int index, int total) async {
-    final formKey = GlobalKey<FormState>();
-    final valueController = TextEditingController(text: '');
-    DateTime startDate = DateTime.now();
-    DateTime? endDate;
-    List<TextControllersInputFormConfig>? textControllersConfig;
-    bool? boolField;
-    String? selectedItemLabel;
-    if (detailType.dataType.name != 'boolean') {
-      textControllersConfig = [
-        TextControllersInputFormConfig(
-            controller: valueController,
-            label:
-                "${'value'.tr()} (${'example'.tr()}: ${detailType.dataType.example})",
-            validator: (val) {
-              if (val == null || val.isEmpty) return 'required_field'.tr();
-              if (validateValue(detailType.dataType.name, val)) return null;
-              return 'wrong_format'.tr();
-            }),
-      ];
-    }
-
-    final shouldContinue = await showDialog<ZcapDetailsIsar>(
-        context: context,
-        builder: (context) {
-          return StatefulBuilder(builder: (context, setModalState) {
-            return AlertDialog(
-              title: Text(
-                  '${'detail'.tr()}: ${detailType.name}.  ${index + 1}/$total'),
-              content: buildForm(formKey, context, textControllersConfig ?? [],
-                  startDate, endDate, (value) {
-                setState(() => startDate = value);
-                setModalState(() {}); // Atualiza o dialog
-              }, (value) {
-                setState(() => endDate = value);
-                setModalState(() {}); // Atualiza o dialog
-              }, () {
-                setModalState(() {
-                  endDate = null;
-                });
-              },
-                  textControllersConfig == null
-                      ? [
-                          customDropdownSearch<String>(
-                              items: ['true'.tr(), 'false'.tr()],
-                              selectedItem: selectedItemLabel,
-                              onSelected: (String? value) {
-                                setModalState(() {
-                                  selectedItemLabel = value;
-                                  boolField = selectedItemLabel == 'true'.tr();
-                                });
-                              },
-                              validator: (value) =>
-                                  value == null ? 'required_field'.tr() : null)
-                        ]
-                      : []),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(null),
-                  child: Text('Cancelar'),
+  Future<void> showDetails(BuildContext context,
+      List<DetailTypeCategoriesIsar> categories, GlobalKey<FormState> formKey, Map<ZcapDetailTypeIsar, ZcapDetailsIsar?> typeDetailMap,
+      {VoidCallback? onValidated}) async {
+    final overlay = Overlay.of(context);
+    late OverlayEntry overlayEntry;
+    final form = await detailsForm(
+      categories,
+      () => overlayEntry.remove(),
+      formKey,
+      context,
+      typeDetailMap,
+      onValidated: onValidated,
+    );
+    overlayEntry = OverlayEntry(
+      builder: (context) => GestureDetector(
+        onTap: () => overlayEntry.remove(),
+        child: Material(
+          color: Colors.black54,
+          child: Center(
+            child: GestureDetector(
+              onTap: () {}, // Impede fechar ao clicar no form
+              child: Container(
+                width: 320,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                TextButton(
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {
-                      final String val;
-                      if (boolField != null) {
-                        if (boolField!) {
-                          val = 'true';
-                        } else {
-                          val = 'false';
-                        }
-                      } else {
-                        val = valueController.text.trim();
-                      }
-                      final now = DateTime.now();
-                      final editedDetail = ZcapDetailsIsar();
-                      editedDetail.remoteId = 0;
-                      editedDetail.valueCol = val;
-                      editedDetail.zcap.value = zcap;
-                      editedDetail.zcapDetailType.value = detailType;
-                      editedDetail.startDate = startDate;
-                      editedDetail.endDate = endDate;
-                      editedDetail.createdAt = now;
-                      editedDetail.lastUpdatedAt = now;
-                      editedDetail.isSynced = false;
-                      Navigator.of(context).pop(editedDetail);
-                    }
-                  },
-                  child: Text('Next'),
-                ),
-              ],
-            );
-          });
-        });
-    return shouldContinue;
+                child:
+                    form /*_DetailsForm(
+                  category: category,
+                  onClose: () => overlayEntry.remove(),
+                )*/
+                ,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    overlay.insert(overlayEntry);
   }
 
   bool validateValue(String type, String value) {
@@ -591,7 +611,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
       case 'double':
         return double.tryParse(value) != null;
       case 'boolean':
-        return value == 'true' || value == 'false';
+        return value == '0' || value == '1';
       case 'char':
         return value.length == 1;
       case 'float':
@@ -599,5 +619,208 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
       default:
         return true;
     }
+  }
+
+  Future<Widget> detailsForm(
+      List<DetailTypeCategoriesIsar> categories,
+      VoidCallback onClose,
+      GlobalKey<FormState> formKey,
+      BuildContext context,
+      Map<ZcapDetailTypeIsar, ZcapDetailsIsar?> typeDetailMap,
+      {VoidCallback? onValidated}) async {
+    Map<DetailTypeCategoriesIsar, List<ZcapDetailTypeIsar>> detailsByCategory =
+        {};
+
+    final detailTypeKeys = typeDetailMap.keys.toList();
+
+    final Map<int, TextEditingController> detailControllers = {};
+
+    for (var detailType in detailTypeKeys) {
+      final existingDetail = typeDetailMap[detailType];
+
+      detailControllers[detailType.id] = TextEditingController(
+        text: existingDetail?.valueCol ?? '',
+      );
+    }
+
+    for (var category in categories) {
+      final detailTypes = detailTypeKeys.where((e) {
+        return e.detailTypeCategory.value!.id == category.id;
+      }).toList();
+      detailsByCategory[category] = detailTypes;
+    }
+    return Form(
+      key: formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Editar Detalhes',
+                style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 10),
+            for (int i = 0; i < categories.length; i++)
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const SizedBox(height: 10),
+                  if (i > 0) const Divider(),
+                  const SizedBox(height: 10),
+                  Text(categories[i].name,
+                      style: Theme.of(context).textTheme.titleSmall),
+                  for (var detailType in detailsByCategory[categories[i]]!)
+                    Column(
+                      children: [
+                        detailType.dataType.name != 'boolean'
+                            ? TextFormField(
+                                controller: detailControllers[detailType.id],
+                                decoration: InputDecoration(
+                                  labelText: detailType.isMandatory
+                                      ? '${detailType.name}*'
+                                      : detailType.name,
+                                  hintText:
+                                      "${'example_abbreviation'.tr()} ${detailType.dataType.example}",
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.always,
+                                ),
+                                validator: (value) {
+                                  if (!detailType.isMandatory) {
+                                    if (value != null && value.isNotEmpty) {
+                                      if (validateValue(
+                                          detailType.dataType.name, value)) {
+                                        return null;
+                                      } else {
+                                        return 'wrong_format'.tr();
+                                      }
+                                    }
+                                    return null;
+                                  } else {
+                                    if (value == null || value.isEmpty) {
+                                      return 'required_field'.tr();
+                                    }
+                                    if (validateValue(
+                                        detailType.dataType.name, value)) {
+                                      return null;
+                                    }
+                                    return 'wrong_format'.tr();
+                                  }
+                                })
+                            : FormField<bool>(
+                                initialValue: detailControllers[detailType.id]?.text != '' ? detailControllers[detailType.id]?.text == '1' : null, 
+                                validator: (value) {
+                                  if (detailType.isMandatory && value == null) {
+                                    return 'required_field'.tr();
+                                  }
+                                  return null;
+                                },
+                                builder: (field) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(detailType.isMandatory
+                                          ? '${detailType.name}*'
+                                          : detailType.name),
+                                      Row(
+                                        children: [
+                                          Checkbox(
+                                            value: field.value == true,
+                                            onChanged: (val) {
+                                              final newValue =
+                                                  field.value == true
+                                                      ? null
+                                                      : true;
+                                              field.didChange(newValue);
+                                              detailControllers[detailType.id]!.text = newValue != null ? '1' : '';
+                                            },
+                                          ),
+                                          Text("true".tr()),
+                                          const SizedBox(width: 20),
+                                          Checkbox(
+                                            value: field.value == false,
+                                            onChanged: (val) {
+                                              final newValue =
+                                                  field.value == false
+                                                      ? null
+                                                      : false;
+                                              field.didChange(newValue);
+                                              detailControllers[detailType.id]!.text = newValue != null ? '0' : '';
+                                            },
+                                          ),
+                                          Text("false".tr()),
+                                        ],
+                                      ),
+                                      if (field.hasError)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 4),
+                                          child: Text(
+                                            field.errorText!,
+                                            style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12),
+                                          ),
+                                        )
+                                    ],
+                                  );
+                                },
+                              ),
+                        const SizedBox(height: 10),
+                      ],
+                    ),
+                ],
+              ),
+            SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: onClose,
+                    child: const Text('Cancelar'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (formKey.currentState?.validate() ?? false) {
+                        for (var detailType in detailTypeKeys) {
+                          final controller = detailControllers[detailType.id];
+                          final detail = typeDetailMap[detailType];
+                          if (detail == null) {
+                            typeDetailMap[detailType] = ZcapDetailsIsar()
+                              ..isSynced = false
+                              ..remoteId = 0
+                              ..valueCol = controller?.text ?? ''
+                              ..zcapDetailType.value = detailType
+                              ..startDate = DateTime.now()
+                              ..createdAt = DateTime.now()
+                              ..lastUpdatedAt = DateTime.now();
+                          } else {
+                            if (detail.valueCol != controller?.text) {
+                              typeDetailMap[detailType] = ZcapDetailsIsar()
+                              ..isSynced = false
+                              ..remoteId = detail.remoteId
+                              ..valueCol = controller?.text ?? ''
+                              ..zcapDetailType.value = detailType
+                              ..startDate = DateTime.now()
+                              ..createdAt = DateTime.now()
+                              ..lastUpdatedAt = DateTime.now();
+                            }
+                          }
+                        }
+                        onValidated?.call();
+                        onClose();
+                      }
+                    },
+                    child: const Text('Guardar'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
