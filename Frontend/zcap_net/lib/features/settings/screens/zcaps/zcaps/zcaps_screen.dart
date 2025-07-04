@@ -509,9 +509,6 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                         }
                         final now = DateTime.now();
                         final navigator = Navigator.of(context);
-                        for (var m in zcapDetailsMap.keys) {
-                          print('detailType ${m.name} with detail ${zcapDetailsMap[m]?.valueCol}');
-                        }
                         
                         final editedZcap = zcap ?? ZcapIsar();
 
