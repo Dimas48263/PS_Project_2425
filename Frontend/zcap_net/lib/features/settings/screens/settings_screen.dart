@@ -270,7 +270,7 @@ class SettingsScreen extends StatelessWidget {
                             );
                           },
                         ),
-                      if (allowances
+                      /*if (allowances
                           .canRead('user_access_settings_detail_per_zcap'))
                         ListTile(
                           title: Text(
@@ -283,7 +283,7 @@ class SettingsScreen extends StatelessWidget {
                                       const ZcapDetailsScreen()),
                             );
                           },
-                        ),
+                        ),*/
                     ]),
                 ExpansionTile(
                     title: Text('screen_settings_people'.tr()),
