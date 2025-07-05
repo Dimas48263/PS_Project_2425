@@ -43,7 +43,6 @@ class AuthService {
 
     if (isOfflineLogin) {
       LogService.log("Login offline com sucesso para o user $username.");
-      SessionManager().setUserName(lowerCaseUserName);
       return true;
     } else {
       LogService.log("Login offline falhou.");
@@ -59,7 +58,32 @@ class AuthService {
       LogService.log("Utilizador não encontrado localmente.");
       return false;
     }
-    return user.password == encryptPassword(password);
+
+    final loginResult = verifyPassword(password, user.password);
+
+    if (!loginResult) return false;
+
+    SessionManager().setUserName(username);
+
+    if (user.remoteId != null) {
+      SessionManager().setUserRemoteId(user.remoteId!);
+    } else {
+      SessionManager().setLocalUserId(user.id);
+    }
+
+    await user.userProfile.load();
+    final userProfile = user.userProfile.value;
+
+    if (userProfile == null) {
+      LogService.log("Perfil do utilizador local é null");
+      return false;
+    } else if (userProfile.remoteId != null) {
+      SessionManager().setUserProfileRemoteId(userProfile.remoteId!);
+    } else {
+      SessionManager().setLocalUserProfileId(userProfile.id);
+    }
+
+    return true;
   }
 
   void logout() {

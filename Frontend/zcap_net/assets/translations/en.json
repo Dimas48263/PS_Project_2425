@@ -7,6 +7,7 @@
   "admin_password": "Administrator password",
   "alternative_contact": "Alternative contact",
   "app_description": "Civil Protection Support System",
+  "api_error": "Remote Server not available",
   "app_name": "ZCAP Net",
   "authors": "Autores",
   "cancel": "Cancel",

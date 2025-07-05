@@ -87,7 +87,8 @@ class _UsersScreenState extends State<UsersScreen> {
                         return Card(
                           child: ListTile(
                             contentPadding: EdgeInsets.only(left: 10.0),
-                            title: CustomLabelValueText(label: 'username'.tr() , value: user.userName),
+                            title: CustomLabelValueText(
+                                label: 'username'.tr(), value: user.userName),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -101,12 +102,12 @@ class _UsersScreenState extends State<UsersScreen> {
                                       child: FutureBuilder(
                                         future: user.userProfile.load(),
                                         builder: (context, snapshot) {
-                                          final userProfileName =
-                                              snapshot.connectionState ==
-                                                      ConnectionState.done
-                                                  ? user.userProfile.value?.name ??
-                                                      'unknown_profile'.tr()
-                                                  : 'loading'.tr();
+                                          final userProfileName = snapshot
+                                                      .connectionState ==
+                                                  ConnectionState.done
+                                              ? user.userProfile.value?.name ??
+                                                  'unknown_profile'.tr()
+                                              : 'loading'.tr();
                                           return CustomLabelValueText(
                                               label: 'profile'.tr(),
                                               value: userProfileName);
@@ -335,7 +336,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           editedUser.isSynced = false;
                           if (user == null) {
                             editedUser.password =
-                                encryptPassword(passwordController.text.trim());
+                                hashPassword(passwordController.text.trim());
                             editedUser.createdAt = now;
                           }
 

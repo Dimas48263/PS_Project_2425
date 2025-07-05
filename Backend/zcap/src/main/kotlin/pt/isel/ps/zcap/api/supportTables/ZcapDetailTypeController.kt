@@ -119,7 +119,10 @@ class ZcapDetailTypeController(
     @PostMapping
     fun saveZcapDetailTypes(@RequestBody input: ZcapDetailTypeInputModel): ResponseEntity<ZcapDetailTypeOutputModel> =
         when (val zcapDetailType = service.saveZcapDetailType(input)) {
-            is Success -> ResponseEntity.status(HttpStatus.CREATED).body(zcapDetailType.value)
+            is Success -> {
+                print(zcapDetailType)
+                ResponseEntity.status(HttpStatus.CREATED).body(zcapDetailType.value)
+            }
             is Failure -> when(zcapDetailType.value) {
                 is ServiceErrors.DetailTypeCategoryNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Detail Type Category", input.detailTypeCategoryId))

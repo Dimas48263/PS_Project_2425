@@ -6,6 +6,7 @@
   "admin": "Admin",
   "admin_password": "Senha de Administrador",
   "alternative_contact": "Contacto alternativo",
+  "api_error": "Servidor remoto indisponível",
   "app_description": "Sistema de apoio à Proteção Civil",
   "app_name": "ZCAP Net",
   "authors": "Autores",

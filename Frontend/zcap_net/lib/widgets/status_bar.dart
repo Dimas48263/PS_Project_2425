@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:zcap_net_app/core/services/auth_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
+import 'package:zcap_net_app/core/services/session_manager.dart';
+import 'package:zcap_net_app/widgets/custom_nok_snack_bar.dart';
+import 'package:zcap_net_app/widgets/custom_ok_snack_bar.dart';
+import 'package:zcap_net_app/widgets/custom_prompt_for_password.dart';
 
 class StatusBar extends StatelessWidget {
   final String? userName;
@@ -65,7 +70,33 @@ class StatusBar extends StatelessWidget {
                       )
                     : InkWell(
                         onTap: () async {
-                          await syncServiceV3.synchronizeAll();
+                          try {
+                            final apiStatus = await apiService.ping();
+                            if (apiStatus.statusCode != 200) {
+                              LogService.log('Offline');
+                              CustomNOkSnackBar.show(context, 'api_error'.tr());
+                              return;
+                            }
+
+                            final userName = SessionManager().userName!;
+                            final password = await customPromptForPassword(
+                                context, userName);
+                            if (password == null) return;
+
+                            final success =
+                                await AuthService().login(userName, password);
+                            if (success) {
+                              CustomOkSnackBar.show(
+                                context,
+                                'login_ok'.tr(),
+                              );
+                              await syncServiceV3.synchronizeAll();
+                            }
+                          } catch (e, stack) {
+                            LogService.log('Erro no login ou sincronização: $e\n$stack');
+                            CustomNOkSnackBar.show(
+                                context, 'Erro desconhecido');
+                          }
                         },
                         child: Icon(
                           Icons.cloud_off,

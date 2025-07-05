@@ -1,6 +1,7 @@
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/session_manager.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/about/about_screen.dart';
 import 'package:zcap_net_app/features/home/screens/help_screen.dart';
@@ -44,6 +45,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!mounted) return;
     Navigator.of(context).pop();
+
+    LogService.log("remoteId: ${SessionManager().remoteId}");
+    LogService.log(
+        "userProfileRemoteId: ${SessionManager().userProfileRemoteId}");
+    LogService.log("Login result (final): $success");
 
     if (success) {
       CustomOkSnackBar.show(
@@ -94,15 +100,15 @@ class _LoginScreenState extends State<LoginScreen> {
         title: Text("login".tr()),
         actions: [
           IconButton(
-              icon: const Icon(Icons.help),
-              tooltip: 'help'.tr(),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HelpScreen()),
-                );
-              },
-            ),
+            icon: const Icon(Icons.help),
+            tooltip: 'help'.tr(),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HelpScreen()),
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.info_outline),
             tooltip: 'about'.tr(),

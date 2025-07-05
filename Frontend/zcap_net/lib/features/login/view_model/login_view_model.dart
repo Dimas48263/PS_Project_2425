@@ -26,6 +26,7 @@ class LoginViewModel {
     }
 
     final loginSuccess = await _authService.login(username, password);
+    LogService.log('Login result: $loginSuccess');
     if (!loginSuccess) {
       LogService.log("Login failed");
       return false;
@@ -54,15 +55,8 @@ class LoginViewModel {
         .userProfile((q) => q.remoteIdEqualTo(userProfileRemoteId))
         .findAll();
 
-//    LogService.log(
-//        "Allowances filtrados por userProfileRemoteId ($userProfileRemoteId): ${_accessAllowances.length}");
-
-//    LogService.log(
-//        "Chamando loadAccess com ${_accessAllowances.length} allowances");
     allowancesProvider.loadAccess(profile, _accessAllowances);
 
-//    LogService.log(
-//        "Allowances carregados no login: ${_accessAllowances.map((a) => a.key).toList()}");
     return true;
   }
 }
