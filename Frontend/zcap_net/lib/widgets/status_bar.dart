@@ -93,9 +93,13 @@ class StatusBar extends StatelessWidget {
                               await syncServiceV3.synchronizeAll();
                             }
                           } catch (e, stack) {
-                            LogService.log('Erro no login ou sincronização: $e\n$stack');
+                            LogService.log(
+                                'Erro de login ou sincronização: $e\n$stack');
                             CustomNOkSnackBar.show(
-                                context, 'Erro desconhecido');
+                                context,
+                                'service_sync_error'.tr(namedArgs: {
+                                  'error': e.toString(),
+                                }));
                           }
                         },
                         child: Icon(
