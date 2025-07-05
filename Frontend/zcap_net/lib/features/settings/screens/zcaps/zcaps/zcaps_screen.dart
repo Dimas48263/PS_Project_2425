@@ -479,7 +479,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                   },
                                 );
                               },
-                              child: const Text('Abrir detalhes'),
+                              child: Text('open_details'.tr()),
                             ),
                           ],
                         ),
@@ -487,7 +487,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 8.0),
                             child: Text(
-                              'Por favor preencha os detalhes obrigatórios.',
+                              'fill_mandatory_details_error'.tr(),
                               style: TextStyle(color: Colors.red, fontSize: 12),
                             ),
                           ),

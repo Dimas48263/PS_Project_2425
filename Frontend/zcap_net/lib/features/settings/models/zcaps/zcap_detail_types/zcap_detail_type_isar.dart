@@ -71,7 +71,7 @@ class ZcapDetailTypeIsar implements IsarTable {
     final zcapDetailType = entity as ZcapDetailType;
     remoteId = zcapDetailType.remoteId;
     name = zcapDetailType.name;
-    detailTypeCategory.value = DetailTypeCategoriesIsar.fromEntity(zcapDetailType.detailTypeCategory);
+    detailTypeCategory.value = await findOrBuildDetailTypeCategory(zcapDetailType.detailTypeCategory);
     dataType = zcapDetailType.dataType;
     isMandatory = zcapDetailType.isMandatory;
     startDate = zcapDetailType.startDate;
