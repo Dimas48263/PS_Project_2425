@@ -20,7 +20,6 @@ import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_
 import 'package:zcap_net_app/features/settings/screens/users/users/users_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/detail_type_categories/detail_type_categories_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/zcap_detail_types/zcap_detail_types_screen.dart';
-import 'package:zcap_net_app/features/settings/screens/zcaps/zcap_details/zcap_details_screen.dart';
 import 'entities/entities/entities_screen.dart';
 
 class SettingsScreen extends StatelessWidget {

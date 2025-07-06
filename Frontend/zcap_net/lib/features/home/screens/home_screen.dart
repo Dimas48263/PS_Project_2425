@@ -4,6 +4,7 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/about/about_screen.dart';
+import 'package:zcap_net_app/features/home/screens/change_password_screen.dart';
 import 'package:zcap_net_app/features/home/screens/help_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/zcaps/zcaps_screen.dart';
@@ -126,6 +127,15 @@ class _HomeScreenState extends State<HomeScreen> {
               },
             ),
             const Divider(),
+            if (allowances.canRead('user_access_password_change'))
+            ListTile(
+              leading: const Icon(Icons.lock),
+              title: Text('change_password'.tr()),
+              onTap: () {
+                Navigator.pop(context);
+                showChangePasswordDialog(context);
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.exit_to_app),
               title: Text('logout'.tr()),

@@ -18,6 +18,7 @@ export '../widgets/custom_unsynced_icon.dart';
 export '../widgets/custom_gmaps_location.dart';
 export '../widgets/custom_location_input_field.dart';
 export '../widgets/custom_label_value_text.dart';
+export '../widgets/custom_password_confirmation.dart';
 
 
 export './shared_dialogs.dart';
