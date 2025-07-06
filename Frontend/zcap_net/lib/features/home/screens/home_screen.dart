@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(),
             if (allowances.canRead('user_access_password_change'))
             ListTile(
-              leading: const Icon(Icons.lock),
+              leading: const Icon(Icons.lock_reset),
               title: Text('change_password'.tr()),
               onTap: () {
                 Navigator.pop(context);

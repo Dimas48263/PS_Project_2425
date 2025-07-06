@@ -10,8 +10,8 @@ IF (SELECT COUNT(*) FROM treeLevels) = 0
 BEGIN
 	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 'País', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (2, 'NUTS 1', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (3, 'NUTS 2', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (4, 'NUTS 3', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (3, 'NUTS 2 - Região', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (4, 'NUTS 3 - Sub-Região', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (5, 'Município', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (6, 'Freguesia', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (7, 'Codigo Postal', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -202,7 +202,7 @@ print 'Inserting Person Tables initial data:'
 IF (SELECT COUNT(*) FROM departureDestination ) = 0
 BEGIN
 	INSERT INTO departureDestination([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('zcap', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('casa de familiares', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('zcap', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Casa de familiares', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('residencia', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
@@ -216,22 +216,22 @@ END
 IF (SELECT COUNT(*) FROM specialNeeds ) = 0
 BEGIN
 	INSERT INTO specialNeeds([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('gravidez', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('doença', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('medicamentos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
+	('gravidez', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Doença', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('medicamentos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
 END
 
 IF (SELECT COUNT(*) FROM personSpecialNeeds ) = 0
 BEGIN
 	INSERT INTO personSpecialNeeds(personId, specialNeedId, [description], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	(1, 2, NULL, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), (2, 4, 'perna partida', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	(1, 2, NULL, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), (2, 4, 'Perna partida', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM supportNeeded ) = 0
 BEGIN
 	INSERT INTO supportNeeded([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('alojamento', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('comida', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('vestuário', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('cuidados médicos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('apoio psicológico', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('procura de familiar', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('alojamento', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Comida', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('vestuário', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Cuidados médicos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('apoio psicológico', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Procura de familiar', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 	('outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
@@ -382,6 +382,8 @@ INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_people_relation_types', N'Menu item People Relation in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_special_need_types', N'Menu item People Special Needs in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_support_need_types', N'Menu item People Support Needs in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_password_change', N'Menu option to allow user to change password', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_reset_passwords', N'Menu option to allow user to reset other users passwords', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM userProfileAccessAllowance) = 0

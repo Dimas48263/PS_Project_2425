@@ -629,11 +629,10 @@ CREATE TABLE userProfileDetails (
 */
 CREATE TABLE [userProfileAccessKeys](
 	[userProfileAccessKeyId]	[bigint] IDENTITY(1,1) PRIMARY KEY,
-	[accessKey]					[nvarchar](255) NOT NULL,
+	[accessKey]					[nvarchar](255) NOT NULL UNIQUE,
 	[description]				[nvarchar](2000) NOT NULL,
 	[createdAt]					DATETIME		NOT NULL,
 	[lastUpdatedAt]				DATETIME		NOT NULL
-
 	)
 
 

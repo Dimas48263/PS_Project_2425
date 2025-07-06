@@ -12,7 +12,6 @@ import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dar
 import 'package:zcap_net_app/features/settings/screens/users/users/user_service.dart';
 import 'package:zcap_net_app/shared/security_utils.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/custom_password_confirmation.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -60,6 +59,7 @@ class _UsersScreenState extends State<UsersScreen> {
       final userName = user.userName.toLowerCase();
       return userName.contains(_searchTerm);
     }).toList();
+    final allowances = context.watch<UserAllowancesProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -152,6 +152,13 @@ class _UsersScreenState extends State<UsersScreen> {
                                     _addOrEditUser(user: user);
                                   },
                                   icon: const Icon(Icons.edit),
+                                ),
+                                  if (allowances.canWrite('user_access_reset_passwords'))
+                                IconButton(
+                                  onPressed: () =>
+                                      _showResetPasswordDialog(context, user),
+                                  icon: const Icon(Icons.lock_reset),
+                                  tooltip: 'reset_password'.tr(),
                                 ),
                                 IconButton(
                                   onPressed: () async {
@@ -361,6 +368,75 @@ class _UsersScreenState extends State<UsersScreen> {
                     },
                     child: Text('save'.tr()),
                   ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _showResetPasswordDialog(BuildContext context, UsersIsar user) {
+    final passwordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    bool passwordsMatch = false;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text('reset_password'.tr()),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomPasswordConfirmation(
+                      passwordController: passwordController,
+                      passwordConfirmationController: confirmPasswordController,
+                      onValidationChanged: (valid) {
+                        setState(() {
+                          passwordsMatch = valid;
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  child: Text('cancel'.tr()),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (!formKey.currentState!.validate() || !passwordsMatch) {
+                      return;
+                    }
+
+                    await DatabaseService.db.writeTxn(() async {
+                      user.password =
+                          hashPassword(passwordController.text.trim());
+                      user.lastUpdatedAt = DateTime.now();
+                      user.isSynced = false;
+                      await DatabaseService.db.usersIsars.put(user);
+                    });
+
+                    Navigator.pop(context);
+
+                    showDialog(
+                      context: context,
+                      builder: (_) => CustomAlertDialog(
+                        title: 'success'.tr(),
+                        content: 'password_changed'.tr(),
+                      ),
+                    );
+                  },
+                ),
               ],
             );
           },
