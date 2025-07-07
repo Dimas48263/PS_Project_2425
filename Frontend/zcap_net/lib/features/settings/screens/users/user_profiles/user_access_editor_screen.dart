@@ -19,37 +19,80 @@ class UserAccessEditor extends StatefulWidget {
 }
 
 class _UserAccessEditorState extends State<UserAccessEditor> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchTerm = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _searchController.addListener(() {
+      setState(() {
+        _searchTerm = _searchController.text.toLowerCase();
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.allowances.length,
-      itemBuilder: (context, index) {
-        final allowance = widget.allowances[index];
-        final currentType = allowance.accessTypeIndex;
+    final filteredAllowances = widget.allowances.where((allowance) {
+      final translatedKey = allowance.key.tr().toLowerCase();
+      return translatedKey.contains(_searchTerm);
+    }).toList();
 
-        return ListTile(
-          title: Text(allowance.key.tr()),
-          subtitle: CustomLabelValueText(label: 'key'.tr(), value: allowance.key),
-          trailing: DropdownButton<AccessType>(
-            value: currentType,
-            onChanged: (newValue) {
-              if (newValue != null) {
-                setState(() {
-                  allowance.accessTypeIndex = AccessType.values[newValue.index];
-                  allowance.lastUpdatedAt = DateTime.now();
-                });
-                widget.onChanged(allowance, newValue);
-              }
-            },
-            items: AccessType.values.map((type) {
-              return DropdownMenuItem(
-                value: type,
-                child: Text(type.label),
-              );
-            }).toList(),
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              labelText: 'search'.tr(),
+              prefixIcon: const Icon(Icons.search),
+              border: const OutlineInputBorder(),
+            ),
           ),
-        );
-      },
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: filteredAllowances.length,
+            itemBuilder: (context, index) {
+              final allowance = filteredAllowances[index];
+              final currentType = allowance.accessTypeIndex;
+
+              return ListTile(
+                title: Text(allowance.key.tr()),
+                subtitle: CustomLabelValueText(
+                    label: 'key'.tr(), value: allowance.key),
+                trailing: DropdownButton<AccessType>(
+                  value: currentType,
+                  onChanged: (newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        allowance.accessTypeIndex =
+                            AccessType.values[newValue.index];
+                        allowance.lastUpdatedAt = DateTime.now();
+                      });
+                      widget.onChanged(allowance, newValue);
+                    }
+                  },
+                  items: AccessType.values.map((type) {
+                    return DropdownMenuItem(
+                      value: type,
+                      child: Text(type.label),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }
