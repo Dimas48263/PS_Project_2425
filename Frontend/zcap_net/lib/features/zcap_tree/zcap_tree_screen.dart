@@ -4,8 +4,10 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/data/app_date_provider.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
@@ -13,7 +15,9 @@ import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categori
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
+import 'package:zcap_net_app/features/zcap_tree/tree_wrapper.dart';
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/custom_app_refrence_date_picker.dart';
 
 class ZcapTreeScreen extends StatefulWidget {
   const ZcapTreeScreen({super.key});
@@ -27,6 +31,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
 
   String _searchTerm = '';
   final TextEditingController _searchController = TextEditingController();
+  DateTime? _currentReferenceDate;
 
   List<ZcapIsar> zcaps = [];
   List<ZcapDetailsIsar> allDetails = [];
@@ -76,6 +81,8 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
   }
 
   Future<void> buildTree() async {
+    final referenceDate =
+        context.read<AppReferenceDateProvider>().referenceDate;
     final isar = DatabaseService.db;
 
     for (final z in zcaps) {
@@ -85,6 +92,12 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
 
     final Map<int, List<ZcapIsar>> zcapsByTree = {};
     for (var z in zcaps) {
+      //App reference date validation
+      if (z.startDate.isAfter(referenceDate) ||
+          (z.endDate != null && z.endDate!.isBefore(referenceDate))) {
+        continue;
+      }
+
       if (_searchTerm.isNotEmpty &&
           !z.name.toLowerCase().contains(_searchTerm)) {
         continue;
@@ -119,29 +132,33 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
     });
   }
 
-  Future<TreeNode> buildTreeNode(
+  Future<TreeNode<dynamic>> buildTreeNode(
     TreeIsar tree,
     Map<int, List<ZcapIsar>> zcapsByTree,
     Map<int, TreeIsar> treeMap,
   ) async {
-    final node = TreeNode<dynamic>(data: tree);
-
-    final zcaps = zcapsByTree[tree.id];
-    if (zcaps != null) {
-      for (var z in zcaps) {
-        node.add(TreeNode<dynamic>(data: z));
-      }
-    }
-
     final children =
         treeMap.values.where((t) => t.parent.value?.id == tree.id).toList();
 
+    final zcaps = zcapsByTree[tree.id] ?? [];
+    int totalZcaps = zcaps.length;
+
+    final node = TreeNode<dynamic>(data: null);
+
     for (var child in children) {
       final childNode = await buildTreeNode(child, zcapsByTree, treeMap);
-      if (childNode.children.isNotEmpty) {
-        node.add(childNode);
+      node.add(childNode);
+
+      if (childNode.data is TreeWrapper) {
+        totalZcaps += (childNode.data as TreeWrapper).zcapCount;
       }
     }
+
+    for (var z in zcaps) {
+      node.add(TreeNode<dynamic>(data: z));
+    }
+
+    node.data = TreeWrapper(tree, totalZcaps);
 
     return node;
   }
@@ -155,9 +172,25 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newReferenceDate =
+        context.watch<AppReferenceDateProvider>().referenceDate;
+    if (_currentReferenceDate != newReferenceDate) {
+      _currentReferenceDate = newReferenceDate;
+      buildTree();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('screen_zcaps'.tr())),
+      appBar: AppBar(
+        title: Text('screen_zcaps'.tr()),
+        actions: [
+          AppReferenceDateWidget(),
+        ],
+      ),
       body: Column(
         children: [
           Padding(
@@ -297,14 +330,17 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
                         ),
                       ),
                     );
-                  } else if (data is TreeIsar) {
+                  } else if (data is TreeWrapper) {
                     // Tree Level
+                    if (data.zcapCount <= 0) {
+                      return const SizedBox.shrink();
+                    }
                     return Card(
                       elevation: 2,
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       color: bgColor,
                       child: ListTile(
-                        title: Text(data.name),
+                        title: Text('${data.tree.name} (${data.zcapCount})'),
                       ),
                     );
                   } else {

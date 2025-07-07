@@ -9,6 +9,7 @@ import 'package:zcap_net_app/features/home/screens/help_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/zcaps/zcaps_screen.dart';
 import 'package:zcap_net_app/features/zcap_tree/zcap_tree_screen.dart';
+import 'package:zcap_net_app/widgets/custom_app_refrence_date_picker.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
 import '../../../core/services/session_manager.dart';
 import '../../login/widgets/login_screen.dart';
@@ -27,13 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final userName = SessionManager().userName;
     final allowances = context.watch<UserAllowancesProvider>();
-//    LogService.log(
-//        'Allowances: ${allowances.accessMap.entries.map((entry) => '${entry.key}: ${entry.value}').join(', ')}');
 
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_main_menu'.tr()),
         actions: [
+          AppReferenceDateWidget(),
           IconButton(
             onPressed: () {
               isDarkModeNotifier.value = !isDarkModeNotifier.value;
@@ -78,14 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
             if (allowances.canRead('user_access_screen_zcaps'))
               ListTile(
                 leading: Icon(Icons.account_tree),
-                title: Text('ZCAP Tree'),
+                title: Text('screen_zcaps'.tr()),
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const ZcapTreeScreen()),
                   );
                 },
               ),
-            if (allowances.canRead('user_access_screen_zcaps'))
+/*            if (allowances.canRead('user_access_screen_zcaps'))
               ListTile(
                 leading: const Icon(Icons.maps_home_work_outlined),
                 title: Text('screen_zcaps'.tr()),
@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) => ZcapsScreen(userName: userName)),
                   );
                 },
-              ),
+              ),*/
             if (allowances.canRead('user_access_screen_incidents'))
               ListTile(
                 leading: const Icon(Icons.report_problem_outlined),
