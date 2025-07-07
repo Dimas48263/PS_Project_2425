@@ -8,6 +8,7 @@ import 'package:zcap_net_app/features/home/screens/change_password_screen.dart';
 import 'package:zcap_net_app/features/home/screens/help_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/zcaps/zcaps_screen.dart';
+import 'package:zcap_net_app/features/zcap_tree/zcap_tree_screen.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
 import '../../../core/services/session_manager.dart';
 import '../../login/widgets/login_screen.dart';
@@ -76,6 +77,16 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             if (allowances.canRead('user_access_screen_zcaps'))
               ListTile(
+                leading: Icon(Icons.account_tree),
+                title: Text('ZCAP Tree'),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const ZcapTreeScreen()),
+                  );
+                },
+              ),
+            if (allowances.canRead('user_access_screen_zcaps'))
+              ListTile(
                 leading: const Icon(Icons.maps_home_work_outlined),
                 title: Text('screen_zcaps'.tr()),
                 onTap: () {
@@ -128,14 +139,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const Divider(),
             if (allowances.canRead('user_access_password_change'))
-            ListTile(
-              leading: const Icon(Icons.lock_reset),
-              title: Text('change_password'.tr()),
-              onTap: () {
-                Navigator.pop(context);
-                showChangePasswordDialog(context);
-              },
-            ),
+              ListTile(
+                leading: const Icon(Icons.lock_reset),
+                title: Text('change_password'.tr()),
+                onTap: () {
+                  Navigator.pop(context);
+                  showChangePasswordDialog(context);
+                },
+              ),
             ListTile(
               leading: const Icon(Icons.exit_to_app),
               title: Text('logout'.tr()),

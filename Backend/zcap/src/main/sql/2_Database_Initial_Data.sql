@@ -180,6 +180,8 @@ BEGIN
 
 INSERT INTO [dbo].[zcaps] ([name],[buildingTypeId],[address],[treeRecordId],[latitude],[longitude],[entityId],[startDate],[createdAt],[lastUpdatedAt])
 		VALUES ('Escola Secundária de Odivelas', 1, 'Av. Prof. Dr. Augusto Abreu Lopes 23, 2675-300 Odivelas', 30, 38.794205, -9.179649, 1, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT INTO [dbo].[zcaps] ([name],[buildingTypeId],[address],[treeRecordId],[latitude],[longitude],[entityId],[startDate],[createdAt],[lastUpdatedAt])
+		VALUES ('Pavilhão Gimnodesportivo de Santa Cruz', 1, 'Caminho Francisco Freitas Branco, Machico', 38, 32.6890444, -16.7961675, 1, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM zcapDetails ) = 0

@@ -25,6 +25,7 @@
   "description": "Description",
   "detail": "Detail",
   "edit": "Edit",
+  "edit_detail": "Edit detail",
   "email": "Email",
   "end": "End",
   "error": "Error",
