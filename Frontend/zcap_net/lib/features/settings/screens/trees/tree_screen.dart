@@ -78,11 +78,14 @@ class _TreesScreenState extends State<TreesScreen> {
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              await syncServiceV3.syncAllPending(
-                  DatabaseService.db.treeIsars, 'trees', 'treeRecordId');
-              if (context.mounted) {
+              final success = await syncServiceV3.synchronizeAll();
+              if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('service_sync_error'.tr())),
                 );
               }
             },
@@ -132,10 +135,7 @@ class _TreesScreenState extends State<TreesScreen> {
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  (tree) {
-                    syncServiceV3.synchronize(tree,
-                        DatabaseService.db.treeIsars, 'trees', 'treeRecordId');
-                  },
+                  () async => await syncServiceV3.synchronizeAll(),
                   (tree) => _addOrEditTree(tree),
                   (tree) async {
                     final confirm = await showDialog<bool>(

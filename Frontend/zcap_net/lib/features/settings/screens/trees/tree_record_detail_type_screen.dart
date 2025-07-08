@@ -59,13 +59,14 @@ class _TreeRecordDetailTypesScreenState
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              await syncServiceV3.syncAllPending(
-                  DatabaseService.db.treeRecordDetailTypeIsars,
-                  'tree-record-detail-types',
-                  'detailTypeId');
-              if (context.mounted) {
+              final success = await syncServiceV3.synchronizeAll();
+              if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('service_sync_error'.tr())),
                 );
               }
             },
@@ -97,13 +98,7 @@ class _TreeRecordDetailTypesScreenState
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  (detailType) {
-                    syncServiceV3.synchronize(
-                        detailType,
-                        DatabaseService.db.treeRecordDetailTypeIsars,
-                        'tree-record-detail-types',
-                        'detailTypeId');
-                  },
+                  () async => await syncServiceV3.synchronizeAll(),
                   (detailType) => _addOrEditTreerRecordDetailType(detailType),
                   (detailType) async {
                     final confirm = await showDialog<bool>(
@@ -148,8 +143,8 @@ class _TreeRecordDetailTypesScreenState
 
           return AlertDialog(
             title: Text(detailType == null
-                ? '${'new'.tr()} ${'tree_element'.tr()}'
-                : '${'edit'.tr()} ${'screen_settings_structure'.tr()}'),
+                ? '${'new'.tr()} ${'screen_detail_type'.tr()}'
+                : '${'edit'.tr()} ${'screen_detail_type'.tr()}'),
             content: buildForm(
                 formKey, context, textControllersConfig, startDate, endDate,
                 (value) {
@@ -189,7 +184,6 @@ class _TreeRecordDetailTypesScreenState
                         await DatabaseService.db.treeRecordDetailTypeIsars
                             .put(newDetailType);
                       });
-                      // ignore: use_build_context_synchronously
                       Navigator.pop(context);
                     }
                   },

@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
@@ -61,6 +62,8 @@ class DatabaseService {
 /* Incidents */
     CollectionSchemaEntry(IncidentTypesIsarSchema,
         (db) => db.incidentTypesIsars, 'incident-types', 'incidentTypeId'),
+    CollectionSchemaEntry(IncidentsIsarSchema,
+        (db) => db.incidentsIsars, 'incidents', 'incidentId'),
 
 /* Support Tables */
     CollectionSchemaEntry(
@@ -125,6 +128,7 @@ class DatabaseService {
     db = await Isar.open(
       collectionSchemas.map((e) => e.schema).toList(),
       directory: appDir,
+      inspector: true,
     );
   }
 

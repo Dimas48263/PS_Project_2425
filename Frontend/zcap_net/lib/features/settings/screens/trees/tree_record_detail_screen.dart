@@ -86,13 +86,14 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              await syncServiceV3.syncAllPending(
-                  DatabaseService.db.treeRecordDetailIsars,
-                  'tree-record-details',
-                  'detailId');
-              if (context.mounted) {
+              final success = await syncServiceV3.synchronizeAll();
+              if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('service_sync_error'.tr())),
                 );
               }
             },
@@ -139,13 +140,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
               ? const CircularProgressIndicator()
               : buildListViewV2<TreeRecordDetailIsar>(
                   getLabelsListV2(filteredList),
-                  (detail) {
-                    syncServiceV3.synchronize(
-                        detail,
-                        DatabaseService.db.treeRecordDetailIsars,
-                        'tree-record-details',
-                        'detailId');
-                  },
+                  () async => await syncServiceV3.synchronizeAll(),
                   (detail) => _addOrEditDetail(detail),
                   (detail) async {
                     final confirm = await showDialog<bool>(
@@ -266,6 +261,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
               });
             }, [
               customDropdownSearch<TreeRecordDetailTypeIsar>(
+                  label: 'screen_detail_type'.tr(),
                   items: availableDetailTypes,
                   selectedItem: detailType,
                   onSelected: (TreeRecordDetailTypeIsar? value) {
@@ -282,6 +278,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null),
               customDropdownSearch<TreeIsar>(
+                  label: 'screen_settings_tree_elements'.tr(),
                   enabled: detailType != null,
                   items: detailType != null
                       ? availableTrees

@@ -4,7 +4,7 @@ import 'package:zcap_net_app/core/services/remote_table.dart';
 Widget buildListView<T extends IsarTable>(
   List<T> list,
   List<List<String>> labelsList,
-  void Function(T) onSync,
+  Future<bool> Function() onSync,
   void Function(T) onEdit,
   Future<void> Function(T) onDelete,
 ) {
@@ -31,7 +31,7 @@ Widget buildListView<T extends IsarTable>(
               children: [
                 if (!item.isSynced)
                   IconButton(
-                    onPressed: () => onSync(item),
+                    onPressed: () => onSync(),
                     icon: const Icon(Icons.sync_problem,
                         color: Colors.orange, size: 30),
                   ),
@@ -63,7 +63,7 @@ class CustomElementListView<T extends IsarTable> {
 
 Widget buildListViewV2<T extends IsarTable>(
     List<CustomElementListView> list,
-    void Function(T) onSync,
+    Future<bool> Function() onSync,
     void Function(T) onEdit,
     Future<void> Function(T) onDelete) {
   return Expanded(
@@ -100,7 +100,7 @@ Widget buildListViewV2<T extends IsarTable>(
               children: [
                 if (!item.element.isSynced)
                   IconButton(
-                    onPressed: () => onSync(item.element as T),
+                    onPressed: () => onSync(),
                     icon: const Icon(Icons.sync_problem,
                         color: Colors.orange, size: 30),
                   ),
