@@ -42,7 +42,7 @@ class ZcapDetails implements ApiTable {
     return {
       'zcapId': zcap.remoteId,
       'zcapDetailTypeId': zcapDetailType.remoteId,
-      'valueCol': valueCol,
+      'valueCol': valueCol.toString(),
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
@@ -53,7 +53,7 @@ class ZcapDetails implements ApiTable {
     return {
       'zcapId': zcap.remoteId,
       'zcapDetailTypeId': zcapDetailType.remoteId,
-      'valueCol': valueCol,
+      'valueCol': valueCol.toString(),
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };

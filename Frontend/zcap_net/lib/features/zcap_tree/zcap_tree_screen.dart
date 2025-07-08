@@ -18,6 +18,7 @@ import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart
 import 'package:zcap_net_app/features/zcap_tree/tree_wrapper.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/custom_app_refrence_date_picker.dart';
+import 'package:zcap_net_app/widgets/tree_item_picker.dart';
 
 class ZcapTreeScreen extends StatefulWidget {
   const ZcapTreeScreen({super.key});
@@ -93,7 +94,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
     final Map<int, List<ZcapIsar>> zcapsByTree = {};
     for (var z in zcaps) {
       //App reference date validation
-      if (z.startDate.isAfter(referenceDate) ||
+      if (z.startDate.isAfter(referenceDate.add(const Duration(days: 1))) ||
           (z.endDate != null && z.endDate!.isBefore(referenceDate))) {
         continue;
       }
@@ -220,7 +221,8 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
 
                   final maxDepth = 12;
                   final t = (level / maxDepth).clamp(0.0, 1.0);
-                  final bgColor = Color.lerp(AppColors.gradiantStartColor, AppColors.gradiantEndColor, t);
+                  final bgColor = Color.lerp(AppColors.gradiantStartColor,
+                      AppColors.gradiantEndColor, t);
 
                   // ZCAP
                   if (data is ZcapIsar) {
@@ -371,6 +373,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
       TextEditingController(text: zcap?.longitude?.toString() ?? '');
   BuildingTypesIsar? buildingType = zcap?.buildingType.value;
   EntitiesIsar? zcapEntity = zcap?.zcapEntity.value;
+  TreeIsar? selectedTree = zcap?.tree.value;
 
   DateTime selectedStartDate = zcap?.startDate ?? DateTime.now();
   DateTime? selectedEndDate = zcap?.endDate;
@@ -540,6 +543,15 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
                       const SizedBox(
                         height: 12.0,
                       ),
+                      TreeItemPicker(
+                        initialTree: selectedTree,
+                        onChanged: (tree) {
+                          setModalState(() {
+                            selectedTree = tree;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 12.0),
                       TextFormField(
                         controller: addressController,
                         decoration: InputDecoration(
@@ -638,6 +650,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
                           double.tryParse(latitudeController.text);
                       editedZcap.longitude =
                           double.tryParse(longitudeController.text);
+                      editedZcap.tree.value = selectedTree;
                       editedZcap.startDate = selectedStartDate;
                       editedZcap.endDate = selectedEndDate;
                       editedZcap.lastUpdatedAt = now;
@@ -649,6 +662,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
                         await DatabaseService.db.zcapIsars.put(editedZcap);
                         await editedZcap.buildingType.save();
                         await editedZcap.zcapEntity.save();
+                        await editedZcap.tree.save();
                         for (var m in zcapDetailsMap.keys) {
                           final detail = zcapDetailsMap[m];
                           if (detail != null) {

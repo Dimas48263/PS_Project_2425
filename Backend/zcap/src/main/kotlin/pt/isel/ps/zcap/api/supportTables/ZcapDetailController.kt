@@ -76,9 +76,10 @@ class ZcapDetailController(
     fun getZcapDetailById(@PathVariable id: Long): ResponseEntity<ZcapDetailOutputModel> =
         when (val zcapDetail = service.getZcapDetailById(id)) {
             is Success -> ResponseEntity.ok(zcapDetail.value)
-            is Failure -> when(zcapDetail.value) {
+            is Failure -> when (zcapDetail.value) {
                 is ServiceErrors.RecordNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Zcap Detail", id))
+
                 else -> throw Exception("NOT SUPPOSED TO BE HERE")
             }
         }
@@ -96,7 +97,8 @@ class ZcapDetailController(
             ),
             ApiResponse(
                 responseCode = "400",
-                description = "Tipo de dados invalidos. Esperado o formato X mas recebido formato Y.", content = [Content(
+                description = "Tipo de dados invalidos. Esperado o formato X mas recebido formato Y.",
+                content = [Content(
                     mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class)
                 )]
             ),
@@ -120,15 +122,19 @@ class ZcapDetailController(
     fun saveZcapDetail(@RequestBody input: ZcapDetailInputModel): ResponseEntity<ZcapDetailOutputModel> =
         when (val zcapDetail = service.saveZcapDetail(input)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(zcapDetail.value)
-            is Failure -> when(zcapDetail.value) {
+            is Failure -> when (zcapDetail.value) {
                 is ServiceErrors.ZcapNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Zcap", input.zcapId))
+
                 is ServiceErrors.ZcapDetailTypeNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Zcap Detail Type", input.zcapDetailTypeId))
+
                 is ServiceErrors.InvalidDataInput ->
                     throw InvalidDataException(invalidDataErrorMessage)
+
                 is ServiceErrors.UpdateFailed ->
                     throw DatabaseInsertException(insertionFailedErrorMessage)
+
                 else -> throw Exception("NOT SUPPOSED TO BE HERE")
             }
         }
@@ -146,7 +152,8 @@ class ZcapDetailController(
             ),
             ApiResponse(
                 responseCode = "400",
-                description = "Tipo de dados invalidos. Esperado o formato X mas recebido formato Y.", content = [Content(
+                description = "Tipo de dados invalidos. Esperado o formato X mas recebido formato Y.",
+                content = [Content(
                     mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class)
                 )]
             ),
@@ -172,17 +179,22 @@ class ZcapDetailController(
     ): ResponseEntity<ZcapDetailOutputModel> =
         when (val zcapDetail = service.updateZcapDetailById(id, input)) {
             is Success -> ResponseEntity.ok(zcapDetail.value)
-            is Failure -> when(zcapDetail.value) {
+            is Failure -> when (zcapDetail.value) {
                 is ServiceErrors.RecordNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Zcap Detail", input.zcapId))
+
                 is ServiceErrors.ZcapNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Zcap", input.zcapId))
+
                 is ServiceErrors.ZcapDetailTypeNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Zcap Detail Type", input.zcapDetailTypeId))
+
                 is ServiceErrors.InvalidDataInput ->
                     throw InvalidDataException(invalidDataErrorMessage)
+
                 is ServiceErrors.UpdateFailed ->
                     throw DatabaseInsertException(insertionFailedErrorMessage)
+
                 else -> throw Exception("NOT SUPPOSED TO BE HERE")
             }
         }

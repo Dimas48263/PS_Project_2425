@@ -38,7 +38,8 @@ class ZcapDetailService(
             ?: return failure(ServiceErrors.ZcapNotFound)
         val zcapDetailType = zcapDetailTypeRepo.findById(input.zcapDetailTypeId).getOrNull()
             ?: return failure(ServiceErrors.ZcapDetailTypeNotFound)
-        if (input.valueCol.isBlank() ||
+        if (
+            //input.valueCol.isBlank() ||
             input.startDate.isAfter(input.endDate ?: input.startDate))
             return failure(ServiceErrors.InvalidDataInput)
         val newZcapDetail = ZcapDetail(

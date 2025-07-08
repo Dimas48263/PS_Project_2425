@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
@@ -13,6 +14,7 @@ import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_de
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
+import 'package:zcap_net_app/widgets/tree_item_picker.dart';
 
 class ZcapsScreen extends StatefulWidget {
   final String? userName;
@@ -257,6 +259,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
         TextEditingController(text: zcap?.longitude?.toString() ?? '');
     BuildingTypesIsar? buildingType = zcap?.buildingType.value;
     EntitiesIsar? zcapEntity = zcap?.zcapEntity.value;
+    TreeIsar? selectedTree = zcap?.tree.value;
 
     DateTime selectedStartDate = zcap?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = zcap?.endDate;
@@ -422,6 +425,15 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                         const SizedBox(
                           height: 12.0,
                         ),
+                        TreeItemPicker(
+                          initialTree: selectedTree,
+                          onChanged: (tree) {
+                            setModalState(() {
+                              selectedTree = tree;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 12.0),
                         TextFormField(
                           controller: addressController,
                           decoration: InputDecoration(
@@ -509,7 +521,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                         }
                         final now = DateTime.now();
                         final navigator = Navigator.of(context);
-                        
+
                         final editedZcap = zcap ?? ZcapIsar();
 
                         editedZcap.name = nameController.text.trim();
@@ -520,6 +532,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                             double.tryParse(latitudeController.text);
                         editedZcap.longitude =
                             double.tryParse(longitudeController.text);
+                        editedZcap.tree.value = selectedTree;
                         editedZcap.startDate = selectedStartDate;
                         editedZcap.endDate = selectedEndDate;
                         editedZcap.lastUpdatedAt = now;
@@ -531,18 +544,19 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           await DatabaseService.db.zcapIsars.put(editedZcap);
                           await editedZcap.buildingType.save();
                           await editedZcap.zcapEntity.save();
+                          await editedZcap.tree.save();
                           for (var m in zcapDetailsMap.keys) {
                             final detail = zcapDetailsMap[m];
                             if (detail != null) {
                               detail.zcap.value = editedZcap;
-                              await DatabaseService.db.zcapDetailsIsars.put(detail);
+                              await DatabaseService.db.zcapDetailsIsars
+                                  .put(detail);
                               await detail.zcap.save();
                               await detail.zcapDetailType.save();
                             }
                           }
                         });
                         navigator.pop();
-
                       }
                     },
                     child: Text('save'.tr()),
@@ -554,8 +568,11 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
         });
   }
 
-  Future<void> showDetails(BuildContext context,
-      List<DetailTypeCategoriesIsar> categories, GlobalKey<FormState> formKey, Map<ZcapDetailTypeIsar, ZcapDetailsIsar?> typeDetailMap,
+  Future<void> showDetails(
+      BuildContext context,
+      List<DetailTypeCategoriesIsar> categories,
+      GlobalKey<FormState> formKey,
+      Map<ZcapDetailTypeIsar, ZcapDetailsIsar?> typeDetailMap,
       {VoidCallback? onValidated}) async {
     final overlay = Overlay.of(context);
     late OverlayEntry overlayEntry;
@@ -702,7 +719,12 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                   }
                                 })
                             : FormField<bool>(
-                                initialValue: detailControllers[detailType.id]?.text != '' ? detailControllers[detailType.id]?.text == '1' : null, 
+                                initialValue:
+                                    detailControllers[detailType.id]?.text != ''
+                                        ? detailControllers[detailType.id]
+                                                ?.text ==
+                                            '1'
+                                        : null,
                                 validator: (value) {
                                   if (detailType.isMandatory && value == null) {
                                     return 'required_field'.tr();
@@ -727,7 +749,9 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                                       ? null
                                                       : true;
                                               field.didChange(newValue);
-                                              detailControllers[detailType.id]!.text = newValue != null ? '1' : '';
+                                              detailControllers[detailType.id]!
+                                                      .text =
+                                                  newValue != null ? '1' : '';
                                             },
                                           ),
                                           Text("true".tr()),
@@ -740,7 +764,9 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                                       ? null
                                                       : false;
                                               field.didChange(newValue);
-                                              detailControllers[detailType.id]!.text = newValue != null ? '0' : '';
+                                              detailControllers[detailType.id]!
+                                                      .text =
+                                                  newValue != null ? '0' : '';
                                             },
                                           ),
                                           Text("false".tr()),
@@ -796,13 +822,13 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           } else {
                             if (detail.valueCol != controller?.text) {
                               typeDetailMap[detailType] = ZcapDetailsIsar()
-                              ..isSynced = false
-                              ..remoteId = detail.remoteId
-                              ..valueCol = controller?.text ?? ''
-                              ..zcapDetailType.value = detailType
-                              ..startDate = DateTime.now()
-                              ..createdAt = DateTime.now()
-                              ..lastUpdatedAt = DateTime.now();
+                                ..isSynced = false
+                                ..remoteId = detail.remoteId
+                                ..valueCol = controller?.text ?? ''
+                                ..zcapDetailType.value = detailType
+                                ..startDate = DateTime.now()
+                                ..createdAt = DateTime.now()
+                                ..lastUpdatedAt = DateTime.now();
                             }
                           }
                         }
