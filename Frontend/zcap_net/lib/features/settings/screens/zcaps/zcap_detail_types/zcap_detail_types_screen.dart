@@ -208,7 +208,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
           return AlertDialog(
             title: Text(zcapDetailType == null
                 ? '${'new'.tr()} ${'zcap_detail_type'.tr()}'
-                : '${'edit'.tr()} ${'screen_detail_types'.tr()}'),
+                : '${'edit'.tr()} ${'zcap_detail_type'.tr()}'),
             content: buildForm(
                 formKey, context, textControllersConfig, startDate, endDate,
                 (value) {

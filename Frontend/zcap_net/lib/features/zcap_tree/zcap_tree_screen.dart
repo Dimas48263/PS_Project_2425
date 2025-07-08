@@ -218,12 +218,9 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
                   final data = node.data;
                   final level = node.level;
 
-                  final startColor = const Color(0xFF66B2B2);
-                  final endColor = const Color(0xFFFFFFFF);
-
                   final maxDepth = 12;
                   final t = (level / maxDepth).clamp(0.0, 1.0);
-                  final bgColor = Color.lerp(startColor, endColor, t);
+                  final bgColor = Color.lerp(AppColors.gradiantStartColor, AppColors.gradiantEndColor, t);
 
                   // ZCAP
                   if (data is ZcapIsar) {

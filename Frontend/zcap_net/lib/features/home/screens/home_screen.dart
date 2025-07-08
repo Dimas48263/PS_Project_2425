@@ -7,7 +7,6 @@ import 'package:zcap_net_app/features/about/about_screen.dart';
 import 'package:zcap_net_app/features/home/screens/change_password_screen.dart';
 import 'package:zcap_net_app/features/home/screens/help_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
-import 'package:zcap_net_app/features/settings/screens/zcaps/zcaps/zcaps_screen.dart';
 import 'package:zcap_net_app/features/zcap_tree/zcap_tree_screen.dart';
 import 'package:zcap_net_app/widgets/custom_app_refrence_date_picker.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
@@ -85,18 +84,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 },
               ),
-/*            if (allowances.canRead('user_access_screen_zcaps'))
-              ListTile(
-                leading: const Icon(Icons.maps_home_work_outlined),
-                title: Text('screen_zcaps'.tr()),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ZcapsScreen(userName: userName)),
-                  );
-                },
-              ),*/
             if (allowances.canRead('user_access_screen_incidents'))
               ListTile(
                 leading: const Icon(Icons.report_problem_outlined),

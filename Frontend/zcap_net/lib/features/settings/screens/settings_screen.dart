@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/session_manager.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
@@ -20,6 +21,7 @@ import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_
 import 'package:zcap_net_app/features/settings/screens/users/users/users_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/detail_type_categories/detail_type_categories_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/zcap_detail_types/zcap_detail_types_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/zcaps/zcaps/zcaps_screen.dart';
 import 'entities/entities/entities_screen.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -28,6 +30,8 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final allowances = context.watch<UserAllowancesProvider>();
+    final userName = SessionManager().userName;
+
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_configs'.tr()),
@@ -100,6 +104,19 @@ class SettingsScreen extends StatelessWidget {
                         MaterialPageRoute(
                             builder: (context) =>
                                 const TreeLevelDetailTypeScreen()),
+                      );
+                    },
+                  ),
+                if (allowances.canRead('user_access_screen_zcaps'))
+                  ListTile(
+                    leading: const Icon(Icons.maps_home_work_outlined),
+                    title: Text('screen_zcaps'.tr()),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ZcapsScreen(userName: userName)),
                       );
                     },
                   ),

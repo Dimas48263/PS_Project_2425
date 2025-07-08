@@ -16,7 +16,7 @@ class UserAllowancesProvider extends ChangeNotifier {
     _accessMap = {
       for (var a in allowances) a.key: a.accessTypeIndex,
     };
-    LogService.log("loadAccess chamado com ${allowances.length} allowances");
+    LogService.log("LoadAccess call with ${allowances.length} allowances");
     notifyListeners();
   }
 
