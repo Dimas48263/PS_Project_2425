@@ -60,13 +60,14 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              await syncServiceV3.syncAllPending(
-                  DatabaseService.db.treeLevelIsars,
-                  'tree-levels',
-                  'treeLevelId');
-              if (context.mounted) {
+              final success = await syncServiceV3.synchronizeAll();
+              if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('service_sync_error'.tr())),
                 );
               }
             },
@@ -110,13 +111,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  (treeLevel) {
-                    syncServiceV3.synchronize(
-                        treeLevel,
-                        DatabaseService.db.treeLevelIsars,
-                        'tree-levels',
-                        'treeLevelId');
-                  },
+                  () async => await syncServiceV3.synchronizeAll(),
                   (treeLevel) => _addOrEditTreeLevel(treeLevel),
                   (treeLevel) async {
                     final confirm = await showDialog<bool>(

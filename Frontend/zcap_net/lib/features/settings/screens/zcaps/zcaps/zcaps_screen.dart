@@ -583,11 +583,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child:
-                    form /*_DetailsForm(
-                  category: category,
-                  onClose: () => overlayEntry.remove(),
-                )*/
-                ,
+                    form,
               ),
             ),
           ),

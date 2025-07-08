@@ -99,13 +99,7 @@ class _DetailTypeCategoriesScreenState
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  (detailTypeCategory) {
-                    syncServiceV3.synchronize(
-                        detailTypeCategory,
-                        DatabaseService.db.detailTypeCategoriesIsars,
-                        'detail-type-categories',
-                        'detailTypeCategoryId');
-                  },
+                  () async => await syncServiceV3.synchronizeAll(),
                   (detailTypeCategory) =>
                       _addOrEditDetailTypeCategory(detailTypeCategory),
                   (detailTypeCategory) async {

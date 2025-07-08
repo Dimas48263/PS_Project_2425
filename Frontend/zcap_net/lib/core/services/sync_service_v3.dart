@@ -5,6 +5,8 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs.dart';
@@ -99,10 +101,21 @@ class SyncServiceV3 {
         .map((local) => synchronize(local, collection, endpoint, idName)));
   }
 
-  Future<void> synchronizeAll() async {
+  Future<bool> synchronizeAll() async {
+    bool success = true;
+
     for (var entry in syncEntries) {
-      await synchronizeEntry(entry);
+      try {
+        await synchronizeEntry(entry);
+      } catch (e, stack) {
+        LogService.log(
+            '[Sync] Erro ao sincronizar entry ${entry.endpoint}: $e');
+        LogService.log('Stack: $stack');
+        success = false;
+      }
     }
+
+    return success;
   }
 
   void _reportRemaining(int count) {
@@ -362,6 +375,23 @@ final List<SyncEntry> syncEntries = [
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
+    SyncEntry<IncidentsIsar, Incidents>(
+      endpoint: 'incidents',
+      getCollection: (isar) => isar.incidentsIsars,
+      idName: 'incidentId',
+      fromJson: Incidents.fromJson,
+      toIsar: (ApiTable incident) async =>
+          IncidentsIsar.toRemote(incident as Incidents),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<IncidentsIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> incident) async {
+        final incidentIsar = incident as IncidentsIsar;
+        await incidentIsar.incidentType.save();
+      }),
 
   /**
        * Support Tables

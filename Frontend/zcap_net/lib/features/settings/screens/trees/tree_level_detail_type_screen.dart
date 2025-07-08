@@ -68,13 +68,14 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              await syncServiceV3.syncAllPending(
-                  DatabaseService.db.treeLevelDetailTypeIsars,
-                  'tree-level-detail-type',
-                  'treeLevelDetailTypeId');
-              if (context.mounted) {
+              final success = await syncServiceV3.synchronizeAll();
+              if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('service_sync_error'.tr())),
                 );
               }
             },
@@ -112,7 +113,8 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
                 onSelected: (value) =>
                     setState(() => _isSearchingBylevel = value == 'level'.tr()),
                 validator: (value) => null,
-                label: 'search_by'.tr()),
+                label: 'search_by'.tr(),
+                justLabel: true),
           ),
           const SizedBox(height: 10.0),
           _isLoading
@@ -120,13 +122,7 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  (detail) {
-                    syncServiceV3.synchronize(
-                        detail,
-                        DatabaseService.db.treeLevelDetailTypeIsars,
-                        'tree-level-detail-type',
-                        'treeLevelDetailTypeId');
-                  },
+                  () async => await syncServiceV3.synchronizeAll(),
                   (detail) => _addOrEditTreeLevelDetailType(detail),
                   (detail) async {
                     final confirm = await showDialog<bool>(
@@ -192,8 +188,8 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
           final allowances = context.watch<UserAllowancesProvider>();
           return AlertDialog(
             title: Text(t == null
-                ? '${'new'.tr()} ${'detail'.tr()}'
-                : '${'edit'.tr()} ${'detail'.tr()}'),
+                ? '${'new'.tr()} ${'tree_level_detail_type'.tr()}'
+                : '${'edit'.tr()} ${'tree_level_detail_type'.tr()}'),
             content:
                 buildForm(formKey, context, [], startDate, endDate, (value) {
               setState(() => startDate = value);
@@ -207,6 +203,7 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
               });
             }, [
               customDropdownSearch<TreeRecordDetailTypeIsar>(
+                  label: 'screen_detail_type'.tr(),
                   items: availableDetailTypes,
                   selectedItem: detailType,
                   onSelected: (TreeRecordDetailTypeIsar? value) {
@@ -217,6 +214,7 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null),
               customDropdownSearch<TreeLevelIsar>(
+                  label: 'level'.tr(),
                   items: availableTreeLevels,
                   selectedItem: treeLevel,
                   onSelected: (TreeLevelIsar? value) {

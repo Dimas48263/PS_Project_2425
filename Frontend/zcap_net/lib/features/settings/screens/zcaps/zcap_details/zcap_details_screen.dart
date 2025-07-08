@@ -105,13 +105,7 @@ class _ZcapDetailsScreenState extends State<ZcapDetailsScreen> {
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  (detail) {
-                    syncServiceV3.synchronize(
-                        detail,
-                        DatabaseService.db.zcapDetailsIsars,
-                        'zcap-details',
-                        'zcapDetailId');
-                  },
+                  () async => await syncServiceV3.synchronizeAll(),
                   (detail) => _addOrEditDetail(detail),
                   (detail) async {
                     final confirm = await showDialog<bool>(
