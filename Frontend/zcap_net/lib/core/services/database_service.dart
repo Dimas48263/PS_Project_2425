@@ -7,6 +7,7 @@ import 'package:zcap_net_app/features/settings/models/incidents/incident_types/i
 import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/persons/persons_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
@@ -78,6 +79,8 @@ class DatabaseService {
 /* Persons */
     CollectionSchemaEntry(DepartureDestinationIsarSchema, (db) => db.departureDestinationIsars,
         'departure-destinations', 'departureDestinationId'),
+    CollectionSchemaEntry(PersonsIsarSchema,
+        (db) => db.personsIsars, 'persons', 'personId'),
     CollectionSchemaEntry(RelationTypeIsarSchema, (db) => db.relationTypeIsars,
         'relation-type', 'relationTypeId'),
     CollectionSchemaEntry(SpecialNeedIsarSchema, (db) => db.specialNeedIsars,
