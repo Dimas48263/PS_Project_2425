@@ -5,8 +5,14 @@ class AppReferenceDateProvider extends ChangeNotifier {
 
   DateTime get referenceDate => _referenceDate;
 
-  void setReferenceDate(DateTime newDate) {
-    _referenceDate = newDate;
+  DateTime get startOfMonth =>
+      DateTime(_referenceDate.year, _referenceDate.month, 1);
+
+  DateTime get endOfMonth =>
+      DateTime(_referenceDate.year, _referenceDate.month + 1, 0);
+
+  void setReferenceMonthYear(int year, int month) {
+    _referenceDate = DateTime(year, month);
     notifyListeners();
   }
 }

@@ -83,7 +83,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
 
   Future<void> buildTree() async {
     final referenceDate =
-        context.read<AppReferenceDateProvider>().referenceDate;
+        context.read<AppReferenceDateProvider>();
     final isar = DatabaseService.db;
 
     for (final z in zcaps) {
@@ -94,8 +94,8 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
     final Map<int, List<ZcapIsar>> zcapsByTree = {};
     for (var z in zcaps) {
       //App reference date validation
-      if (z.startDate.isAfter(referenceDate.add(const Duration(days: 1))) ||
-          (z.endDate != null && z.endDate!.isBefore(referenceDate))) {
+      if (z.startDate.isAfter(referenceDate.endOfMonth) ||
+          (z.endDate != null && z.endDate!.isBefore(referenceDate.startOfMonth))) {
         continue;
       }
 
