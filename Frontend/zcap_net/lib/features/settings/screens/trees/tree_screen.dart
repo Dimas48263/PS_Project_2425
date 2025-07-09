@@ -78,7 +78,7 @@ class _TreesScreenState extends State<TreesScreen> {
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              final success = await syncServiceV3.synchronizeAll();
+              final success = await syncService.synchronizeAll();
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
@@ -135,7 +135,7 @@ class _TreesScreenState extends State<TreesScreen> {
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  () async => await syncServiceV3.synchronizeAll(),
+                  () async => await syncService.synchronizeAll(),
                   (tree) => _addOrEditTree(tree),
                   (tree) async {
                     final confirm = await showDialog<bool>(

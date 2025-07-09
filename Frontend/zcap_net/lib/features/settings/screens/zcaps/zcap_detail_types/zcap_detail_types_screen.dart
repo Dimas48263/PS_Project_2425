@@ -68,7 +68,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              await syncServiceV3.syncAllPending(
+              await syncService.syncAllPending(
                   DatabaseService.db.zcapDetailTypeIsars,
                   'zcap-detail-types',
                   'zcapDetailTypeId');
@@ -125,7 +125,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  () async => await syncServiceV3.synchronizeAll(),
+                  () async => await syncService.synchronizeAll(),
                   (zdt) => _addOrEditZcapDetailType(zdt),
                   (zdt) async {
                     final confirm = await showDialog<bool>(

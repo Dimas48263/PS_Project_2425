@@ -61,7 +61,7 @@ class _DetailTypeCategoriesScreenState
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              await syncServiceV3.syncAllPending(
+              await syncService.syncAllPending(
                   DatabaseService.db.detailTypeCategoriesIsars,
                   'detail-type-categories',
                   'detailTypeCategoryId');
@@ -99,7 +99,7 @@ class _DetailTypeCategoriesScreenState
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  () async => await syncServiceV3.synchronizeAll(),
+                  () async => await syncService.synchronizeAll(),
                   (detailTypeCategory) =>
                       _addOrEditDetailTypeCategory(detailTypeCategory),
                   (detailTypeCategory) async {

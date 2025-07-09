@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:zcap_net_app/core/services/app_config.dart';
@@ -28,106 +27,63 @@ import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_de
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 
-class CollectionSchemaEntry {
-  final CollectionSchema schema;
-  final IsarCollection<dynamic> Function(Isar) collection;
-  final String endpoint;
-  final String idName;
-
-  CollectionSchemaEntry(
-      this.schema, this.collection, this.endpoint, this.idName);
-}
-
 class DatabaseService {
   static late final Isar db;
 
-  static final List<CollectionSchemaEntry> collectionSchemas = [
+  static List<CollectionSchema> schemas = [
+    /**
+     * Tree
+     */
+    TreeLevelIsarSchema,
+    TreeIsarSchema,
+    TreeRecordDetailTypeIsarSchema,
+    TreeRecordDetailIsarSchema,
+    TreeLevelDetailTypeIsarSchema,
+    
+    /**
+     * Entities
+     */
+    EntityTypeIsarSchema,
+    EntitiesIsarSchema,
 
-/* ZCAPS */
-    CollectionSchemaEntry(BuildingTypesIsarSchema,
-        (db) => db.buildingTypesIsars, 'buildingTypes', 'buildingTypeId'),
-    CollectionSchemaEntry(
-        DetailTypeCategoriesIsarSchema,
-        (db) => db.detailTypeCategoriesIsars,
-        'detail-type-categories',
-        'detailTypeCategoryId'),
-    CollectionSchemaEntry(
-        ZcapDetailTypeIsarSchema,
-        (db) => db.zcapDetailTypeIsars,
-        'zcap-detail-types',
-        'zcapDetailTypeId'),
-    CollectionSchemaEntry(
-        ZcapDetailsIsarSchema,
-        (db) => db.zcapDetailsIsars,
-        'zcap-details',
-        'zcapDetailId'),
-
-/* Incidents */
-    CollectionSchemaEntry(IncidentTypesIsarSchema,
-        (db) => db.incidentTypesIsars, 'incident-types', 'incidentTypeId'),
-    CollectionSchemaEntry(IncidentsIsarSchema,
-        (db) => db.incidentsIsars, 'incidents', 'incidentId'),
-    CollectionSchemaEntry(IncidentZcapsIsarSchema,
-        (db) => db.incidentZcapsIsars, 'incident-zcaps', 'incidentZcapId'),
-
-/* Support Tables */
-    CollectionSchemaEntry(
-        EntitiesIsarSchema, (db) => db.entitiesIsars, 'entities', 'entityId'),
-    CollectionSchemaEntry(EntityTypeIsarSchema, (db) => db.entityTypeIsars,
-        'entity-types', 'entityTypeId'),
-
-/* Persons */
-    CollectionSchemaEntry(DepartureDestinationIsarSchema, (db) => db.departureDestinationIsars,
-        'departure-destinations', 'departureDestinationId'),
-    CollectionSchemaEntry(PersonsIsarSchema,
-        (db) => db.personsIsars, 'persons', 'personId'),
-    CollectionSchemaEntry(RelationTypeIsarSchema, (db) => db.relationTypeIsars,
-        'relation-type', 'relationTypeId'),
-    CollectionSchemaEntry(SpecialNeedIsarSchema, (db) => db.specialNeedIsars,
-        'special-needs', 'specialNeedId'),
-    CollectionSchemaEntry(SupportNeededIsarSchema,
-        (db) => db.supportNeededIsars, 'support-needed', 'supportNeededId'),
-
-/* Users */
-    CollectionSchemaEntry(
-        UsersIsarSchema, (db) => db.usersIsars, 'syncable/users', 'userId'),
-    CollectionSchemaEntry(
-        UserAccessKeysIsarSchema,
-        (db) => db.userAccessKeysIsars,
-        'users/access-keys',
-        'userProfileAccessKeyId'),
-    CollectionSchemaEntry(UserProfilesIsarSchema, (db) => db.userProfilesIsars,
-        'user/profiles', 'userProfileId'),
-    CollectionSchemaEntry(
-        UserProfileAccessAllowanceIsarSchema,
-        (db) => db.userProfileAccessAllowanceIsars,
-        '',
-        'userProfileAccessKeyId'),
-
-/* TREE */
-    CollectionSchemaEntry(
-        TreeIsarSchema, (db) => db.treeIsars, 'trees', 'treeId'),
-    CollectionSchemaEntry(TreeLevelIsarSchema, (db) => db.treeLevelIsars,
-        'tree-levels', 'treeLevelId'),
-    CollectionSchemaEntry(
-        TreeRecordDetailTypeIsarSchema,
-        (db) => db.treeRecordDetailTypeIsars,
-        'tree-record-detail-types',
-        'treeRecordDetailTypeId'),
-    CollectionSchemaEntry(TreeRecordDetailIsarSchema,
-        (db) => db.treeRecordDetailIsars, 'tree-record-details', 'detailId'),
-    CollectionSchemaEntry(
-        TreeLevelDetailTypeIsarSchema,
-        (db) => db.treeLevelDetailTypeIsars,
-        'tree-level-detail-type',
-        'treeLevelDetailTypeId'),
-
-/*
- * ZCAPS
-*/
-    CollectionSchemaEntry( ZcapIsarSchema,
-        (db) => db.zcapIsars, 'zcaps', 'zcapId'),
-
+    /**
+     * ZCAPs
+     */
+    BuildingTypesIsarSchema,
+    ZcapIsarSchema,
+    DetailTypeCategoriesIsarSchema,
+    ZcapDetailTypeIsarSchema,
+    ZcapDetailsIsarSchema,
+    
+    /**
+     * Persons
+     */
+    DepartureDestinationIsarSchema,
+    PersonsIsarSchema,
+    SpecialNeedIsarSchema,
+    //TODO PersonSpecialNeeds
+    SupportNeededIsarSchema,
+    //TODO PersonSupportNeeded
+    RelationTypeIsarSchema,
+    //TODO Relations
+    
+    /**
+     * Incidents
+     */
+    IncidentTypesIsarSchema,
+    IncidentsIsarSchema,
+    IncidentZcapsIsarSchema,
+    //TODO IncidentZcapPersons
+    
+    /**
+     * Users
+     */
+    //TODO UserDataProfiles
+    //TODO UserDataProfileDetails
+    UserProfilesIsarSchema,
+    UserAccessKeysIsarSchema,
+    UserProfileAccessAllowanceIsarSchema,
+    UsersIsarSchema,
   ];
 
   static Future<void> setup() async {
@@ -135,14 +91,9 @@ class DatabaseService {
     await Directory(appDir).create(recursive: true);
 
     db = await Isar.open(
-      collectionSchemas.map((e) => e.schema).toList(),
+      schemas,
       directory: appDir,
       inspector: true,
     );
-  }
-
-  static IsarCollection<dynamic> getCollectionByEndpoint(String endpoint) {
-    final entry = collectionSchemas.firstWhere((e) => e.endpoint == endpoint);
-    return entry.collection(db); 
   }
 }

@@ -60,7 +60,7 @@ class StatusBar extends StatelessWidget {
                 return isOnline
                     ? InkWell(
                         onTap: () async {
-                          await syncServiceV3.synchronizeAll();
+                          await syncService.synchronizeAll();
                         },
                         child: Icon(
                           Icons.cloud_outlined,
@@ -90,7 +90,7 @@ class StatusBar extends StatelessWidget {
                                 context,
                                 'login_ok'.tr(),
                               );
-                              await syncServiceV3.synchronizeAll();
+                              await syncService.synchronizeAll();
                             }
                           } catch (e, stack) {
                             LogService.log(

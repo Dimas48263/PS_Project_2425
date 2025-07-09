@@ -60,7 +60,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              final success = await syncServiceV3.synchronizeAll();
+              final success = await syncService.synchronizeAll();
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
@@ -111,7 +111,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  () async => await syncServiceV3.synchronizeAll(),
+                  () async => await syncService.synchronizeAll(),
                   (treeLevel) => _addOrEditTreeLevel(treeLevel),
                   (treeLevel) async {
                     final confirm = await showDialog<bool>(

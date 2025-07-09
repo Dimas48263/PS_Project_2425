@@ -287,20 +287,6 @@ class SettingsScreen extends StatelessWidget {
                             );
                           },
                         ),
-                      /*if (allowances
-                          .canRead('user_access_settings_detail_per_zcap'))
-                        ListTile(
-                          title: Text(
-                              'screen_settings_zcap_building_details'.tr()),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ZcapDetailsScreen()),
-                            );
-                          },
-                        ),*/
                     ]),
                 ExpansionTile(
                     title: Text('screen_settings_people'.tr()),

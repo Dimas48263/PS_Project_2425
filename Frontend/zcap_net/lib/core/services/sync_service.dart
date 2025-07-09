@@ -1,144 +1,695 @@
-/*
 import 'dart:async';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:isar/isar.dart';
-import 'package:flutter/foundation.dart';
-import 'package:zcap_net_app/core/services/api_service.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type.dart';
-import 'package:zcap_net_app/features/settings/models/entity_types/entity_type_isar.dart';
+import 'package:zcap_net_app/core/services/app_config.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination.dart';
+import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/persons/persons.dart';
+import 'package:zcap_net_app/features/settings/models/people/persons/persons_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
+import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs.dart';
+import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/support/support_needed.dart';
+import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/users/users.dart';
+import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 
 class SyncService {
-  final Isar _isar;
-  final VoidCallback? _onSyncComplete;
-  late final StreamSubscription<ConnectivityResult> _subscription;
+  final Isar isar;
+  Timer? _syncTimer;
 
-  SyncService(this._isar, [this._onSyncComplete]);
+  SyncService(this.isar);
 
-  Future<bool> _isApiReachable() async {
+  Future<bool> isApiReachable() async {
     try {
-      print("OLD SyncService Tentando reconectar...");
+      LogService.log("inside sincService3 isAPIReachable\n");
+      LogService.log('SyncService tentando reconectar...');
       final response =
-          await ApiService.ping().timeout(const Duration(seconds: 5));
+          await apiService.ping().timeout(const Duration(seconds: 5));
+      LogService.log("ping() response status: ${response.statusCode}");
       return response.statusCode == 200;
-    } catch (_) {
+    } catch (e) {
+      LogService.log("isApiReachable() caught error: $e");
       return false;
     }
   }
 
   void startListening() {
-    Timer.periodic(const Duration(minutes: 1), (timer) async {
-      if (await _isApiReachable()) {
-        print("Reconectado. Verificando dados pendentes...");
+    _syncTimer = Timer.periodic(
+        Duration(seconds: AppConfig.instance.apiSyncIntervalSeconds),
+        (timer) async {
+      if (await isApiReachable()) {
+        LogService.log('Reconectado. Verificando dados pendentes.');
         await synchronizeAll();
+      } else {
+        LogService.log("Conexão sem sucesso!");
       }
     });
   }
 
-  Future<void> _syncPendingEntities() async {
-    final unsynced =
-        await _isar.entityTypeIsars.filter().isSyncedEqualTo(false).findAll();
+  void stopListening() {
+    _syncTimer?.cancel();
+    _syncTimer = null;
+  }
 
-    print(
-        '[Sync] Iniciando sincronização. ${unsynced.length} entidades não sincronizadas.');
+  Future<List<T>> getAllUnsynced<T extends IsarTable>(
+      IsarCollection<T> collection) async {
+    final all = await collection.where().findAll();
+    return all.where((e) => !e.isSynced).toList();
+  }
 
-    for (var local in unsynced) {
-      final entity = local.toEntity();
+  Future<void> syncAllPending<T extends IsarTable>(
+      IsarCollection<T> collection, String endpoint, String idName) async {
+    final unsynced = await getAllUnsynced(collection);
 
+    LogService.log(
+        '[Sync] Iniciando sincronização. ${unsynced.length} registos não sincronizados.');
+
+    await Future.wait(unsynced
+        .map((local) => synchronize(local, collection, endpoint, idName)));
+  }
+
+  Future<bool> synchronizeAll() async {
+    bool success = true;
+
+    for (var entry in syncEntries) {
       try {
-        if (entity.id <= 0) {
-          // Criação de novo registo na API
-          print('[Sync] Criando nova entidade: ${entity.name}');
-          final created =
-              await ApiService.post('entityTypes', entity.toJsonInput());
-
-          if (created['entityTypeId'] != null) {
-            final newRecord = EntityTypeIsar.fromEntityType(
-              entity.copyWith(id: created['entityTypeId']),
-            ).copyWith(isSynced: true);
-
-            await _isar.writeTxn(() async {
-              await _isar.entityTypeIsars.delete(local.id);
-            });
-
-            await _isar.writeTxn(() async {
-              await _isar.entityTypeIsars.put(newRecord);
-            });
-            print('[Sync] Criado e guardado localmente: ${newRecord.name}');
-          }
-        } else {
-          // Atualização na API
-          print(
-              '[Sync] Atualizando entidade existente: ${entity.name} (id: ${entity.id})');
-          await ApiService.put(
-              'entityTypes/${entity.id}', entity.toJsonInput());
-
-          local = local.copyWith(isSynced: true);
-          await _isar.writeTxn(() async {
-            await _isar.entityTypeIsars.put(local);
-          });
-          print('[Sync] Atualizado e marcado como sincronizado: ${local.name}');
-        }
-      } catch (e) {
-        print('[Sync] Falha ao sincronizar ${entity.name}: $e');
-        // Ignorar falhas — será refeito depois
+        await synchronizeEntry(entry);
+      } catch (e, stack) {
+        LogService.log(
+            '[Sync] Erro ao sincronizar entry ${entry.endpoint}: $e');
+        LogService.log('Stack: $stack');
+        success = false;
       }
+    }
+
+    return success;
+  }
+
+  void _reportRemaining(int count) {
+    if (count > 0) {
+      LogService.log(
+          '[Sync] Existem ainda $count registos locais por sincronizar. Aguardar nova tentativa...');
+    } else {
+      LogService.log('[Sync] Sincronizado com sucesso.');
     }
   }
 
-  void dispose() {
-    _subscription.cancel();
+  Future<void> synchronize<T extends IsarTable>(
+    T entity,
+    IsarCollection<T> collection,
+    String endpoint,
+    String idName,
+  ) async {
+    final apiEntity = entity.toEntity();
+    try {
+      final dataToSend = await apiEntity.toJsonInputAsync();
+      if (apiEntity.remoteId <= 0) {
+        LogService.log(
+            '[Sync] Criando nova entidade: endpoint $endpoint, dados $dataToSend');
+        final created = await apiService.post(endpoint, dataToSend);
+        if (created[idName] != null) {
+          final newRecord = entity.setEntityIdAndSync(
+            remoteId: created[idName],
+            isSynced: true,
+          ) as T;
+          await isar.writeTxn(() async {
+            await collection.put(newRecord);
+          });
+          LogService.log('[Sync] Criado e guardado localmente');
+        } else {
+          throw Exception('Resposta da API não contém o ID esperado.');
+        }
+      } else {
+        LogService.log(
+            '[Sync] Atualizando entidade existente: (id: ${apiEntity.remoteId}), dados: $dataToSend');
+        await apiService.put('$endpoint/${apiEntity.remoteId}', dataToSend);
+
+        final newRecord = entity.setEntityIdAndSync(isSynced: true) as T;
+        await isar.writeTxn(() async {
+          await collection.put(newRecord);
+        });
+        LogService.log('[Sync] Atualizado e marcado como sincronizado');
+      }
+    } catch (e, stack) {
+      LogService.log(
+          '[Sync] Falha ao sincronizar registro ID local ${entity.id}: $e');
+      LogService.log('Stack: $stack');
+
+      final errorRecord = entity.setEntityIdAndSync(isSynced: false) as T;
+
+      await isar.writeTxn(() async {
+        await collection.put(errorRecord);
+      });
+    }
   }
 
-  Future<void> syncNow() async {
-    await _syncPendingEntities();
-  }
+  Future<void> updateLocalData<TIsar extends IsarTable, TApi extends ApiTable>(
+    IsarCollection<TIsar> collection,
+    String endpoint,
+    TApi Function(Map<String, dynamic>) fromJson,
+    Future<TIsar> Function(TApi) toIsar,
+    Future<TIsar?> Function(IsarCollection<TIsar>, int) findByRemoteId, {
+    Future<void> Function(TIsar)? saveLinksAfterPut, // <--- função opcional
+  }) async {
+    final all = await collection.where().findAll();
+    final unsynced = all.where((e) => !e.isSynced).toList();
 
-  Future<void> synchronizeAll() async {
-    await _syncPendingEntities();
-
-    final remaining =
-        await _isar.entityTypeIsars.filter().isSyncedEqualTo(false).findAll();
-
-    if (remaining.isNotEmpty) {
-      print(
-          '[Sync] Existem ainda ${remaining.length} registos locais por sincronizar. Aguardar nova tentativa...');
+    if (unsynced.isNotEmpty) {
+      LogService.log(
+          '[Sync] Existem ainda ${unsynced.length} registos locais por sincronizar. Não é possivel atualizar os dados locais. Aguardar nova tentativa...');
       return;
     }
 
-    await _syncWithRemoteData();
-    _onSyncComplete?.call();
-  }
+    LogService.log(
+      '[Sync] Inciando atualização dos dados locais. Endpoint: $endpoint',
+    );
+    final apiData =
+        await apiService.getList(endpoint, (json) => fromJson(json));
 
-  Future<void> _syncWithRemoteData() async {
-    try {
-      final remoteList = await ApiService.getList(
-          'entityTypes', (json) => EntityType.fromJson(json));
+    final ids = [];
 
-      final localList = await _isar.entityTypeIsars.where().findAll();
-
-      final remoteIds = remoteList.map((e) => e.id).toSet();
-
-      for (final local in localList) {
-        if (!remoteIds.contains(local.id)) {
-          await _isar.writeTxn(() async {
-            await _isar.entityTypeIsars.delete(local.id);
+    for (var item in apiData) {
+      final oldLocal = await findByRemoteId(collection, item.remoteId);
+      ids.add(item.remoteId);
+      if (oldLocal != null) {
+        if (item.lastUpdatedAt == oldLocal.lastUpdatedAt) continue;
+        if (item.lastUpdatedAt.isAfter(oldLocal.lastUpdatedAt)) {
+          await oldLocal.updateFromApiEntity(item);
+          await isar.writeTxn(() async {
+            await collection.put(oldLocal);
+            if (saveLinksAfterPut != null) {
+              await saveLinksAfterPut(oldLocal);
+            }
           });
         }
-      }
-
-      for (final remoteEntity in remoteList) {
-        final localEntity = EntityTypeIsar.fromEntityType(remoteEntity)
-          ..isSynced = true;
-
-        await _isar.writeTxn(() async {
-          await _isar.entityTypeIsars.put(localEntity);
+      } else {
+        final newLocal = await toIsar(item);
+        await isar.writeTxn(() async {
+          await collection.put(newLocal);
+          if (saveLinksAfterPut != null) {
+            await saveLinksAfterPut(newLocal);
+          }
         });
       }
-
-      print('[Sync] Sincronização completa com dados remotos.');
-    } catch (e) {
-      print('[Sync] Erro ao sincronizar com dados remotos: $e');
     }
+    // Apaga todos os elementos que nao estao na api
+    for (var local in await collection.where().findAll()) {
+      if (!ids.contains(local.remoteId)) {
+        await isar.writeTxn(() async {
+          await collection.delete(local.id);
+        });
+      }
+    }
+    LogService.log(
+      '[Sync] Dados locais atualizados com sucesso.',
+    );
+  }
+
+  Future<void> synchronizeEntry<TIsar extends IsarTable, TApi extends ApiTable>(
+    SyncEntry<TIsar, TApi> entry,
+  ) async {
+    final collection = entry.getCollection(isar);
+    await syncAllPending(collection, entry.endpoint, entry.idName);
+    final remaining = await getAllUnsynced(collection);
+    _reportRemaining(remaining.length);
+    await updateLocalData<TIsar, TApi>(
+      collection,
+      entry.endpoint,
+      entry.fromJson,
+      entry.toIsar,
+      entry.findByRemoteId,
+      saveLinksAfterPut: entry.saveLinksAfterPut,
+    );
   }
 }
-*/
+
+class SyncEntry<TIsar extends IsarTable, TApi extends ApiTable> {
+  final String endpoint;
+  final IsarCollection<TIsar> Function(Isar isar) getCollection;
+  final String idName;
+  TApi Function(Map<String, dynamic>) fromJson;
+  Future<TIsar> Function(TApi) toIsar;
+  Future<TIsar?> Function(IsarCollection<TIsar>, int) findByRemoteId;
+  Future<void> Function(TIsar)? saveLinksAfterPut;
+
+  SyncEntry({
+    required this.endpoint,
+    required this.getCollection,
+    required this.idName,
+    required this.fromJson,
+    required this.toIsar,
+    required this.findByRemoteId,
+    this.saveLinksAfterPut,
+  });
+}
+
+final List<SyncEntry> syncEntries = [
+/**
+ * Tree 
+ */
+  SyncEntry<TreeLevelIsar, TreeLevel>(
+      endpoint: 'tree-levels',
+      getCollection: (isar) => isar.treeLevelIsars,
+      idName: 'treeLevelId',
+      fromJson: TreeLevel.fromJson,
+      toIsar: (ApiTable treeLevel) async =>
+          TreeLevelIsar.toRemote(treeLevel as TreeLevel),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeLevelIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<TreeIsar, Tree>(
+      endpoint: 'trees',
+      getCollection: (isar) => isar.treeIsars,
+      idName: 'treeRecordId',
+      fromJson: Tree.fromJson,
+      toIsar: (ApiTable tree) async => await TreeIsar.toRemote(tree as Tree),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> tree) async {
+        final treeIsar = tree as TreeIsar;
+        await treeIsar.treeLevel.save();
+        await treeIsar.parent.save();
+      }),
+  SyncEntry<TreeRecordDetailTypeIsar, TreeRecordDetailType>(
+      endpoint: 'tree-record-detail-types',
+      getCollection: (isar) => isar.treeRecordDetailTypeIsars,
+      idName: 'treeRecordDetailTypeId',
+      fromJson: TreeRecordDetailType.fromJson,
+      toIsar: (ApiTable detailType) async =>
+          TreeRecordDetailTypeIsar.toRemote(detailType as TreeRecordDetailType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeRecordDetailTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<TreeRecordDetailIsar, TreeRecordDetail>(
+      endpoint: 'tree-record-details',
+      getCollection: (isar) => isar.treeRecordDetailIsars,
+      idName: 'detailId',
+      fromJson: TreeRecordDetail.fromJson,
+      toIsar: (ApiTable detail) async =>
+          await TreeRecordDetailIsar.toRemote(detail as TreeRecordDetail),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeRecordDetailIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> detail) async {
+        final detailIsar = detail as TreeRecordDetailIsar;
+        await detailIsar.detailType.save();
+        await detailIsar.tree.save();
+      }),
+  SyncEntry<TreeLevelDetailTypeIsar, TreeLevelDetailType>(
+      endpoint: 'tree-level-detail-type',
+      getCollection: (isar) => isar.treeLevelDetailTypeIsars,
+      idName: 'detailId',
+      fromJson: TreeLevelDetailType.fromJson,
+      toIsar: (ApiTable tldt) async =>
+          await TreeLevelDetailTypeIsar.toRemote(tldt as TreeLevelDetailType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<TreeLevelDetailTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> tldt) async {
+        final tldtIsar = tldt as TreeLevelDetailTypeIsar;
+        await tldtIsar.detailType.save();
+        await tldtIsar.treeLevel.save();
+      }),
+  /**
+       * Entities
+       */
+  SyncEntry<EntityTypeIsar, EntityType>(
+      endpoint: 'entityTypes',
+      getCollection: (isar) => isar.entityTypeIsars,
+      idName: 'entityTypeId',
+      fromJson: EntityType.fromJson,
+      toIsar: (ApiTable entityType) async =>
+          EntityTypeIsar.toRemote(entityType as EntityType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<EntityTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<EntitiesIsar, Entity>(
+      endpoint: 'entities',
+      getCollection: (isar) => isar.entitiesIsars,
+      idName: 'entityId',
+      fromJson: Entity.fromJson,
+      toIsar: (ApiTable entity) async =>
+          EntitiesIsar.fromEntity(entity as Entity),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<EntitiesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> entity) async {
+        final entityIsar = entity as EntitiesIsar;
+        await entityIsar.entityType.save();
+      }),
+
+  /**
+ * ZCAPS
+ */
+  SyncEntry<BuildingTypesIsar, BuildingType>(
+      endpoint: 'buildingTypes',
+      getCollection: (isar) => isar.buildingTypesIsars,
+      idName: 'buildingTypeId',
+      fromJson: BuildingType.fromJson,
+      toIsar: (ApiTable buildingType) async =>
+          BuildingTypesIsar.toRemote(buildingType as BuildingType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<BuildingTypesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<ZcapIsar, Zcap>(
+      endpoint: 'zcaps',
+      getCollection: (isar) => isar.zcapIsars,
+      idName: 'zcapId',
+      fromJson: Zcap.fromJson,
+      toIsar: (ApiTable zcap) async => ZcapIsar.toRemote(zcap as Zcap),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<ZcapIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+        final zcapIsar = isarTable as ZcapIsar;
+        await zcapIsar.buildingType.save();
+        await zcapIsar.tree.save();
+        await zcapIsar.zcapEntity.save();
+      }),
+  SyncEntry<DetailTypeCategoriesIsar, DetailTypeCategories>(
+      endpoint: 'detail-type-categories',
+      getCollection: (isar) => isar.detailTypeCategoriesIsars,
+      idName: 'detailTypeCategoryId',
+      fromJson: DetailTypeCategories.fromJson,
+      toIsar: (ApiTable category) async =>
+          DetailTypeCategoriesIsar.fromEntity(category as DetailTypeCategories),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<DetailTypeCategoriesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<ZcapDetailTypeIsar, ZcapDetailType>(
+      endpoint: 'zcap-detail-types',
+      getCollection: (isar) => isar.zcapDetailTypeIsars,
+      idName: 'zcapDetailTypeId',
+      fromJson: ZcapDetailType.fromJson,
+      toIsar: (ApiTable category) async =>
+          ZcapDetailTypeIsar.toRemote(category as ZcapDetailType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<ZcapDetailTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+        final zcapDetailTypeIsar = isarTable as ZcapDetailTypeIsar;
+        await zcapDetailTypeIsar.detailTypeCategory.save();
+      }),
+  SyncEntry<ZcapDetailsIsar, ZcapDetails>(
+      endpoint: 'zcap-details',
+      getCollection: (isar) => isar.zcapDetailsIsars,
+      idName: 'zcapDetailId',
+      fromJson: ZcapDetails.fromJson,
+      toIsar: (ApiTable detail) async =>
+          ZcapDetailsIsar.toRemote(detail as ZcapDetails),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<ZcapDetailsIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+        final zcapDetailIsar = isarTable as ZcapDetailsIsar;
+        await zcapDetailIsar.zcap.save();
+        await zcapDetailIsar.zcapDetailType.save();
+      }),
+  /**
+   * Persons
+   */
+  SyncEntry<DepartureDestinationIsar, DepartureDestination>(
+      endpoint: 'departure-destinations',
+      getCollection: (isar) => isar.departureDestinationIsars,
+      idName: 'departureDestinationId',
+      fromJson: DepartureDestination.fromJson,
+      toIsar: (ApiTable depatureDestination) async =>
+          DepartureDestinationIsar.toRemote(
+              depatureDestination as DepartureDestination),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<DepartureDestinationIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<PersonsIsar, Persons>(
+      endpoint: 'persons',
+      getCollection: (isar) => isar.personsIsars,
+      idName: 'personId',
+      fromJson: Persons.fromJson,
+      toIsar: (ApiTable person) async =>
+          PersonsIsar.toRemote(
+              person as Persons),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<PersonsIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> person) async {
+        final personIsar = person as PersonsIsar;
+        await personIsar.countryCode.save();
+        await personIsar.placeOfResidence.save();
+        if (personIsar.nationality.value != null) {
+          await personIsar.nationality.save();
+        } else {
+          await personIsar.nationality.reset();
+        }
+        if (personIsar.departureDestination.value != null) {
+          await personIsar.departureDestination.save();
+        } else {
+          await personIsar.departureDestination.reset();
+        }
+      }),
+  SyncEntry<SpecialNeedIsar, SpecialNeed>(
+      endpoint: 'special-needs',
+      getCollection: (isar) => isar.specialNeedIsars,
+      idName: 'specialNeedId',
+      fromJson: SpecialNeed.fromJson,
+      toIsar: (ApiTable specialNeed) async =>
+          SpecialNeedIsar.toRemote(specialNeed as SpecialNeed),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<SpecialNeedIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  //TODO PersonSpecialNeeds
+  SyncEntry<SupportNeededIsar, SupportNeeded>(
+      endpoint: 'support-needed',
+      getCollection: (isar) => isar.supportNeededIsars,
+      idName: 'supportNeededId',
+      fromJson: SupportNeeded.fromJson,
+      toIsar: (ApiTable supportNeeded) async =>
+          SupportNeededIsar.toRemote(supportNeeded as SupportNeeded),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<SupportNeededIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  //TODO PersonSupportNeeded
+  SyncEntry<RelationTypeIsar, RelationType>(
+      endpoint: 'relation-type',
+      getCollection: (isar) => isar.relationTypeIsars,
+      idName: 'relationTypeId',
+      fromJson: RelationType.fromJson,
+      toIsar: (ApiTable relationType) async =>
+          RelationTypeIsar.toRemote(relationType as RelationType),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<RelationTypeIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  //TODO Relation
+
+/**
+ * Incidents
+ */
+  SyncEntry<IncidentTypesIsar, IncidentTypes>(
+      endpoint: 'incident-types',
+      getCollection: (isar) => isar.incidentTypesIsars,
+      idName: 'incidentTypeId',
+      fromJson: IncidentTypes.fromJson,
+      toIsar: (ApiTable incidentType) async =>
+          IncidentTypesIsar.toRemote(incidentType as IncidentTypes),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<IncidentTypesIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<IncidentsIsar, Incidents>(
+      endpoint: 'incidents',
+      getCollection: (isar) => isar.incidentsIsars,
+      idName: 'incidentId',
+      fromJson: Incidents.fromJson,
+      toIsar: (ApiTable incident) async =>
+          IncidentsIsar.toRemote(incident as Incidents),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<IncidentsIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> incident) async {
+        final incidentIsar = incident as IncidentsIsar;
+        await incidentIsar.incidentType.save();
+      }),
+  SyncEntry<IncidentZcapsIsar, IncidentZcaps>(
+      endpoint: 'incident-zcaps',
+      getCollection: (isar) => isar.incidentZcapsIsars,
+      idName: 'incidentZcapId',
+      fromJson: IncidentZcaps.fromJson,
+      toIsar: (ApiTable incidentZcap) async =>
+          IncidentZcapsIsar.toRemote(incidentZcap as IncidentZcaps),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<IncidentZcapsIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> incidentZcap) async {
+        final incidentZcapIsar = incidentZcap as IncidentZcapsIsar;
+        await incidentZcapIsar.incident.save();
+        await incidentZcapIsar.zcap.save();
+        await incidentZcapIsar.entity.save();
+      }),
+  //TODO incidentZcapPersons
+
+
+/**
+ * User tables
+ */
+  //TODO userDataProfiles
+  //TODO userDataProfileDetails
+  SyncEntry<UserProfilesIsar, UserProfile>(
+    endpoint: 'users/profiles',
+    getCollection: (isar) => isar.userProfilesIsars,
+    idName: 'userProfileId',
+    fromJson: UserProfile.fromJson,
+    toIsar: (ApiTable userProfile) async =>
+        UserProfilesIsar.toRemote(userProfile as UserProfile),
+    findByRemoteId:
+        (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+            (collection as IsarCollection<UserProfilesIsar>)
+                .where()
+                .remoteIdEqualTo(remoteId)
+                .findFirst(),
+  ),
+  SyncEntry<UserAccessKeysIsar, UserAccessKeys>(
+      endpoint: 'users/access-keys',
+      getCollection: (isar) => isar.userAccessKeysIsars,
+      idName: 'userProfileAccessKeyId',
+      fromJson: UserAccessKeys.fromJson,
+      toIsar: (ApiTable accessKeys) async =>
+          UserAccessKeysIsar.toRemote(accessKeys as UserAccessKeys),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<UserAccessKeysIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
+  SyncEntry<UserProfileAccessAllowanceIsar, UserProfileAccessAllowance>(
+      endpoint: 'users/profiles/allowances',
+      getCollection: (isar) => isar.userProfileAccessAllowanceIsars,
+      idName: 'userProfileAccessKeyId',
+      fromJson: UserProfileAccessAllowance.fromJson,
+      toIsar: (ApiTable allowances) async =>
+          UserProfileAccessAllowanceIsar.toRemote(
+              allowances as UserProfileAccessAllowance),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<UserProfileAccessAllowanceIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+        final allowancesIsar = isarTable as UserProfileAccessAllowanceIsar;
+        await allowancesIsar.userProfile.save();
+      }),
+  SyncEntry<UsersIsar, Users>(
+    endpoint: 'syncable/users',
+    getCollection: (isar) => isar.usersIsars,
+    idName: 'userId',
+    fromJson: Users.fromJson,
+    toIsar: (ApiTable users) async => UsersIsar.toRemote(users as Users),
+    findByRemoteId:
+        (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+            (collection as IsarCollection<UsersIsar>)
+                .where()
+                .remoteIdEqualTo(remoteId)
+                .findFirst(),
+    saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
+      final userProfile = isarTable as UsersIsar;
+      await userProfile.userProfile.save();
+    },
+  ),
+];

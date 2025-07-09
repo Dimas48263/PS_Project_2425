@@ -59,7 +59,7 @@ class _TreeRecordDetailTypesScreenState
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              final success = await syncServiceV3.synchronizeAll();
+              final success = await syncService.synchronizeAll();
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
@@ -98,7 +98,7 @@ class _TreeRecordDetailTypesScreenState
               : buildListView(
                   filteredList,
                   getLabelsList(filteredList),
-                  () async => await syncServiceV3.synchronizeAll(),
+                  () async => await syncService.synchronizeAll(),
                   (detailType) => _addOrEditTreerRecordDetailType(detailType),
                   (detailType) async {
                     final confirm = await showDialog<bool>(

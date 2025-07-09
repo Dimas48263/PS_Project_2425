@@ -30,7 +30,7 @@ void main() async {
 
   final session = SessionManager();
 
-  syncServiceV3.startListening();
+  syncService.startListening();
 
   runApp(
     EasyLocalization(

@@ -9,7 +9,7 @@ class CustomUnsyncedIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () async {
-        await syncServiceV3.synchronizeAll();
+        await syncService.synchronizeAll();
         //await SyncServiceManager().syncNow();
       },
       icon: const Icon(

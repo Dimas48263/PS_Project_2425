@@ -86,7 +86,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
           IconButton(
             icon: const Icon(Icons.sync),
             onPressed: () async {
-              final success = await syncServiceV3.synchronizeAll();
+              final success = await syncService.synchronizeAll();
               if (success) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
@@ -140,7 +140,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
               ? const CircularProgressIndicator()
               : buildListViewV2<TreeRecordDetailIsar>(
                   getLabelsListV2(filteredList),
-                  () async => await syncServiceV3.synchronizeAll(),
+                  () async => await syncService.synchronizeAll(),
                   (detail) => _addOrEditDetail(detail),
                   (detail) async {
                     final confirm = await showDialog<bool>(
