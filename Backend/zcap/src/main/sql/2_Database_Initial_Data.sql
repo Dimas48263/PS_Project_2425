@@ -382,6 +382,7 @@ INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_zcap_detail_type', N'Menu item Zcap Detail Type in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_detail_per_zcap', N'Menu item Zcap Detail in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_people_relation_types', N'Menu item People Relation in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_people_departure_destinations', N'Menu item People Departure Destination in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_special_need_types', N'Menu item People Special Needs in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_settings_support_need_types', N'Menu item People Support Needs in Settings Screen', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT [dbo].[userProfileAccessKeys] ([accessKey], [description], [createdAt], [lastUpdatedAt]) VALUES ( N'user_access_password_change', N'Menu option to allow user to change password', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -475,6 +476,8 @@ BEGIN
 	INSERT [dbo].[userProfileAccessAllowance] ([userProfileAccessAllowanceId], [userProfileId], [userProfileAccessKeyId], [accessType], [createdAt], [lastUpdatedAt]) VALUES (82, 4, 19, 0, CAST(N'2025-06-29T16:51:05.027' AS DateTime), CAST(N'2025-06-29T19:11:18.940' AS DateTime))
 	INSERT [dbo].[userProfileAccessAllowance] ([userProfileAccessAllowanceId], [userProfileId], [userProfileAccessKeyId], [accessType], [createdAt], [lastUpdatedAt]) VALUES (83, 4, 20, 0, CAST(N'2025-06-29T16:51:05.027' AS DateTime), CAST(N'2025-06-29T19:11:18.940' AS DateTime))
 	INSERT [dbo].[userProfileAccessAllowance] ([userProfileAccessAllowanceId], [userProfileId], [userProfileAccessKeyId], [accessType], [createdAt], [lastUpdatedAt]) VALUES (84, 4, 21, 0, CAST(N'2025-06-29T16:51:05.027' AS DateTime), CAST(N'2025-06-29T19:11:18.940' AS DateTime))
+	INSERT [dbo].[userProfileAccessAllowance] ([userProfileAccessAllowanceId], [userProfileId], [userProfileAccessKeyId], [accessType], [createdAt], [lastUpdatedAt]) VALUES (85, 1, 22, 0, CAST(N'2025-06-29T16:51:05.027' AS DateTime), CAST(N'2025-06-29T17:44:27.003' AS DateTime))
+	INSERT [dbo].[userProfileAccessAllowance] ([userProfileAccessAllowanceId], [userProfileId], [userProfileAccessKeyId], [accessType], [createdAt], [lastUpdatedAt]) VALUES (86, 2, 22, 1, CAST(N'2025-06-29T16:51:05.027' AS DateTime), CAST(N'2025-06-29T17:55:27.377' AS DateTime))
 	SET IDENTITY_INSERT [dbo].[userProfileAccessAllowance] OFF
 END
 

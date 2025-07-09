@@ -8,6 +8,6 @@ data class DepartureDestinationOutputModel(
     val name: String,
     val startDate: LocalDate,
     val endDate: LocalDate?,
-    val createAt: LocalDateTime,
+    val createdAt: LocalDateTime,
     val lastUpdatedAt: LocalDateTime
 )

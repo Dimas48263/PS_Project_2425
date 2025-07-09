@@ -6,6 +6,7 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
 import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
 import 'package:zcap_net_app/features/settings/screens/incidents/incident_types/incident_type_screen.dart';
+import 'package:zcap_net_app/features/settings/screens/people/departure_destination/departure_destination_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/needs/special_needs_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/relation_type/relation_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/support/special_needs_screen.dart';
@@ -307,6 +308,19 @@ class SettingsScreen extends StatelessWidget {
                     childrenPadding:
                         EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     children: [
+                      if (allowances.canRead(
+                          'user_access_settings_people_departure_destinations'))
+                        ListTile(
+                          title: Text('screen_settings_departure_destinations'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const DepartureDestinationScreen()),
+                            );
+                          },
+                        ),
                       if (allowances.canRead(
                           'user_access_settings_people_relation_types'))
                         ListTile(

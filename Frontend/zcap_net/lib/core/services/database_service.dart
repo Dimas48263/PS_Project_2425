@@ -4,7 +4,9 @@ import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
@@ -64,6 +66,8 @@ class DatabaseService {
         (db) => db.incidentTypesIsars, 'incident-types', 'incidentTypeId'),
     CollectionSchemaEntry(IncidentsIsarSchema,
         (db) => db.incidentsIsars, 'incidents', 'incidentId'),
+    CollectionSchemaEntry(IncidentZcapsIsarSchema,
+        (db) => db.incidentZcapsIsars, 'incident-zcaps', 'incidentZcapId'),
 
 /* Support Tables */
     CollectionSchemaEntry(
@@ -72,6 +76,8 @@ class DatabaseService {
         'entity-types', 'entityTypeId'),
 
 /* Persons */
+    CollectionSchemaEntry(DepartureDestinationIsarSchema, (db) => db.departureDestinationIsars,
+        'departure-destinations', 'departureDestinationId'),
     CollectionSchemaEntry(RelationTypeIsarSchema, (db) => db.relationTypeIsars,
         'relation-type', 'relationTypeId'),
     CollectionSchemaEntry(SpecialNeedIsarSchema, (db) => db.specialNeedIsars,
@@ -134,6 +140,6 @@ class DatabaseService {
 
   static IsarCollection<dynamic> getCollectionByEndpoint(String endpoint) {
     final entry = collectionSchemas.firstWhere((e) => e.endpoint == endpoint);
-    return entry.collection(db); // só agora se acede ao `db`
+    return entry.collection(db); 
   }
 }

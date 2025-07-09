@@ -5,8 +5,12 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination.dart';
+import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs.dart';
@@ -392,6 +396,25 @@ final List<SyncEntry> syncEntries = [
         final incidentIsar = incident as IncidentsIsar;
         await incidentIsar.incidentType.save();
       }),
+    SyncEntry<IncidentZcapsIsar, IncidentZcaps>(
+      endpoint: 'incident-zcaps',
+      getCollection: (isar) => isar.incidentZcapsIsars,
+      idName: 'incidentZcapId',
+      fromJson: IncidentZcaps.fromJson,
+      toIsar: (ApiTable incidentZcap) async =>
+          IncidentZcapsIsar.toRemote(incidentZcap as IncidentZcaps),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<IncidentZcapsIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> incidentZcap) async {
+        final incidentZcapIsar = incidentZcap as IncidentZcapsIsar;
+        await incidentZcapIsar.incident.save();
+        await incidentZcapIsar.zcap.save();
+        await incidentZcapIsar.entity.save();
+      }),
 
   /**
        * Support Tables
@@ -426,6 +449,19 @@ final List<SyncEntry> syncEntries = [
         final entityIsar = entity as EntitiesIsar;
         await entityIsar.entityType.save();
       }),
+  SyncEntry<DepartureDestinationIsar, DepartureDestination>(
+      endpoint: 'departure-destinations',
+      getCollection: (isar) => isar.departureDestinationIsars,
+      idName: 'departureDestinationId',
+      fromJson: DepartureDestination.fromJson,
+      toIsar: (ApiTable depatureDestination) async =>
+          DepartureDestinationIsar.toRemote(depatureDestination as DepartureDestination),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<DepartureDestinationIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst()),
   SyncEntry<RelationTypeIsar, RelationType>(
       endpoint: 'relation-type',
       getCollection: (isar) => isar.relationTypeIsars,
