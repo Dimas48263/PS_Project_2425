@@ -63,7 +63,7 @@ class UserDataProfilesController(
      * POST adding a new profile to the system table
      */
     @PostMapping
-    fun addUserProfile(@RequestBody userDataProfile: UserDataProfileInputModel): ResponseEntity<Any> =
+    fun addUserDataProfile(@RequestBody userDataProfile: UserDataProfileInputModel): ResponseEntity<Any> =
         when (val result = userDataProfileService.addUserDataProfile(userDataProfile)) {
             is Success -> ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -78,7 +78,7 @@ class UserDataProfilesController(
      * PUT updating an existing user data profile
      */
     @PutMapping("{userDataProfileId}")
-    fun updateUserProfile(
+    fun updateUserDataProfile(
         @PathVariable userDataProfileId: Long,
         @RequestBody userDataProfile: UserDataProfileInputModel
     ): ResponseEntity<out Any> =
@@ -98,7 +98,7 @@ class UserDataProfilesController(
      * GET all DataProfileDetails
      */
     @GetMapping("{dataProfileId}/details")
-    fun getAllProfileDetails(@PathVariable dataProfileId: Long): ResponseEntity<List<UserDataProfileDetailOutputModel>> {
+    fun getAllUserDateProfileDetails(@PathVariable dataProfileId: Long): ResponseEntity<List<UserDataProfileDetailOutputModel>> {
         val details = userDataProfileDetailService.getAllDetailsForProfile(dataProfileId)
         return ResponseEntity.status(HttpStatus.OK).body(details)
     }
@@ -107,7 +107,7 @@ class UserDataProfilesController(
      * POST new DataProfileDetail
      */
     @PostMapping("detail")
-    fun addDetail(@RequestBody detail: UserDataProfileDetailInputModel): ResponseEntity<Any> =
+    fun addUserDataProfileDetail(@RequestBody detail: UserDataProfileDetailInputModel): ResponseEntity<Any> =
         when (val result = userDataProfileDetailService.addDetail(detail)) {
             is Success -> ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -117,21 +117,20 @@ class UserDataProfilesController(
             is Failure -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insert failed")
         }
 
-    //TODO: DELETE DataProfileDetail
-    @DeleteMapping("{dataProfileId}/detail/{treeRecordId}")
-    fun deleteDetail(
-        @PathVariable profileId: Long,
+    @DeleteMapping("{userDataProfileId}/detail/{treeRecordId}")
+    fun deleteUserDataProfileDetail(
+        @PathVariable userDataProfileId: Long,
         @PathVariable treeRecordId: Long
     ): ResponseEntity<Any> {
         val input = UserDataProfileDetailInputModel(
-            userDataProfileId = profileId,
+            userDataProfileId = userDataProfileId,
             treeRecordId = treeRecordId,
         )
         return when (
             val result = userDataProfileDetailService.deleteDetailById(input)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-            is Failure -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Not found")
+            is Failure -> ResponseEntity.status(result.value.httpStatus).body(result.value.toString())
         }
     }
 }

@@ -7,6 +7,7 @@ import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfile
 import pt.isel.ps.zcap.domain.users.userProfile.UserProfile
 import pt.isel.ps.zcap.repository.dto.users.*
 import pt.isel.ps.zcap.repository.models.users.UserRepository
+import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileDetailRepository
 import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.failure

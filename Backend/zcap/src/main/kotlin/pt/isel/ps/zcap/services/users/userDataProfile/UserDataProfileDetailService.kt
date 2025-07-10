@@ -1,5 +1,6 @@
 package pt.isel.ps.zcap.services.users.userDataProfile
 
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfileDetail
 import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfileDetailId
@@ -33,21 +34,19 @@ class UserDataProfileDetailService(
 
     fun addDetail(input: UserDataProfileDetailInputModel): Either<ServiceErrors, UserDataProfileDetailOutputModel> {
 
-        val userDataProfile = userDataProfileRepository.findById(input.userDataProfileId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+        val userDataProfile = userDataProfileRepository.findById(input.userDataProfileId).getOrNull() ?: return failure(
+            ServiceErrors.RecordNotFound
+        )
 
-        val treeRecord = treeRepository.findById(input.treeRecordId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+        val treeRecord =
+            treeRepository.findById(input.treeRecordId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
 
         val detail = UserDataProfileDetail(
             userDataProfileDetailId = UserDataProfileDetailId(
-                userDataProfileId = input.userDataProfileId,
-                treeRecordId = input.treeRecordId
-            ),
-            userDataProfile = userDataProfile,
-            treeRecord = treeRecord
+                userDataProfileId = input.userDataProfileId, treeRecordId = input.treeRecordId
+            ), userDataProfile = userDataProfile, treeRecord = treeRecord
         )
-        println("Detail: $detail")
+//        println("Detail: $detail")
         return try {
             val saved = userDataProfileDetailRepository.save(detail)
             success(
@@ -66,15 +65,16 @@ class UserDataProfileDetailService(
 
     fun deleteDetailById(input: UserDataProfileDetailInputModel): Either<ServiceErrors, Unit> {
         val id = UserDataProfileDetailId(
-            userDataProfileId = input.userDataProfileId,
-            treeRecordId = input.treeRecordId
+            userDataProfileId = input.userDataProfileId, treeRecordId = input.treeRecordId
         )
 
-        return if (!userDataProfileDetailRepository.existsById(id)) {
-            failure(ServiceErrors.RecordNotFound)
-        } else {
-            userDataProfileDetailRepository.deleteById(id)
+        val detail = userDataProfileDetailRepository.findByIdOrNull(id) ?: return failure(ServiceErrors.RecordNotFound)
+
+        return try {
+            userDataProfileDetailRepository.delete(detail)
             success(Unit)
+        } catch (ex: Exception) {
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 }

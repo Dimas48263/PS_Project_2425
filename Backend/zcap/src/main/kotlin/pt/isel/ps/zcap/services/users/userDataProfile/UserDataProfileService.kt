@@ -5,6 +5,7 @@ import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfile
 import pt.isel.ps.zcap.repository.dto.users.userDataProfile.UserDataProfileDetailOutputModel
 import pt.isel.ps.zcap.repository.dto.users.userDataProfile.UserDataProfileInputModel
 import pt.isel.ps.zcap.repository.dto.users.userDataProfile.UserDataProfileOutputModel
+import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileDetailRepository
 import pt.isel.ps.zcap.repository.models.users.userDataProfile.UserDataProfileRepository
 import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors
@@ -15,7 +16,10 @@ import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
 
 @Service
-class UserDataProfileService(private val userDataProfileRepository: UserDataProfileRepository) {
+class UserDataProfileService(
+    private val userDataProfileRepository: UserDataProfileRepository,
+    private val userDataProfileDetailRepository: UserDataProfileDetailRepository
+) {
 
     fun getAllUserDataProfiles(): List<UserDataProfileOutputModel> {
         val userDataProfiles = userDataProfileRepository.findAll()
@@ -40,9 +44,8 @@ class UserDataProfileService(private val userDataProfileRepository: UserDataProf
         )
             return failure(ServiceErrors.InvalidDataInput)
 
-        val dataProfile = toUserDataProfile(newDataProfile)
         return try {
-            success(toOutputModel(userDataProfileRepository.save(dataProfile)))
+            success(toOutputModel(userDataProfileRepository.save(toUserDataProfile(newDataProfile))))
         } catch (ex: Exception) {
             failure(ServiceErrors.InsertFailed)
         }
@@ -76,7 +79,8 @@ class UserDataProfileService(private val userDataProfileRepository: UserDataProf
         }
     }
 
-    fun internalGetUserDataProfileById(userDataProfileId: Long): UserDataProfile? = userDataProfileRepository.findById(userDataProfileId).getOrNull()
+    fun internalGetUserDataProfileById(userDataProfileId: Long): UserDataProfile? =
+        userDataProfileRepository.findById(userDataProfileId).getOrNull()
 
     // Conversion from InputModel to domain Model
     private fun toUserDataProfile(inputData: UserDataProfileInputModel): UserDataProfile = UserDataProfile(
@@ -87,9 +91,11 @@ class UserDataProfileService(private val userDataProfileRepository: UserDataProf
     )
 
     // Conversion from domain Model to OutputModel
-    fun toOutputModel(profile: UserDataProfile): UserDataProfileOutputModel {
+    fun toOutputModel(
+        profile: UserDataProfile,
+    ): UserDataProfileOutputModel {
 
-        val details = profile.details.map {
+        val profileDetails = userDataProfileDetailRepository.findByUserDataProfileId(profile.userDataProfileId).map {
             UserDataProfileDetailOutputModel(
                 userDataProfileId = it.userDataProfile.userDataProfileId,
                 treeRecordId = it.treeRecord.treeRecordId,
@@ -97,10 +103,11 @@ class UserDataProfileService(private val userDataProfileRepository: UserDataProf
                 treeName = it.treeRecord.name,
             )
         }
+
         return UserDataProfileOutputModel(
             userDataProfileId = profile.userDataProfileId,
             name = profile.name,
-            userDataProfileDetail = details,
+            userDataProfileDetail = profileDetails,
             startDate = profile.startDate,
             endDate = profile.endDate,
             createdAt = profile.createdAt,
