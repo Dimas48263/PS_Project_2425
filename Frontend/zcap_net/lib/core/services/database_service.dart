@@ -3,6 +3,7 @@ import 'package:isar/isar.dart';
 import 'package:path/path.dart' as p;
 import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_zcap_persons/incident_zcap_persons_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
@@ -73,7 +74,7 @@ class DatabaseService {
     IncidentTypesIsarSchema,
     IncidentsIsarSchema,
     IncidentZcapsIsarSchema,
-    //TODO IncidentZcapPersons
+    IncidentZcapPersonsIsarSchema,
     
     /**
      * Users
