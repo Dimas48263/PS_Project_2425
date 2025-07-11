@@ -545,6 +545,7 @@ CREATE TABLE incidentTypes (
 CREATE TABLE incidents (
 	[incidentId]			BIGINT		IDENTITY(1,1) PRIMARY KEY,
 	[incidentTypeId]		BIGINT		NOT NULL REFERENCES incidentTypes(incidentTypeId),
+	[treeRecordId]          BIGINT      NOT NULL REFERENCES tree(treeRecordId),
 	[startDate]				DATE		NOT NULL,
     [endDate]				DATE		NULL,
     [createdAt]				DATETIME	NOT NULL,

@@ -100,7 +100,7 @@ class IncidentController(
             ),
             ApiResponse(
                 responseCode = "404",
-                description = "Tipo de incidente com id ### não foi encontrado.", content = [Content(
+                description = "Tipo de incidente/elemento da árvore com id ### não foi encontrado.", content = [Content(
                     mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class)
                 )]
             ),
@@ -119,6 +119,8 @@ class IncidentController(
             is Failure -> when (incident.value) {
                 is ServiceErrors.IncidentTypeNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Incident Type", input.incidentTypeId))
+                is ServiceErrors.TreeNotFound ->
+                    throw EntityNotFoundException(notFoundMessage("Tree", input.treeRecordId))
                 is ServiceErrors.InvalidDataInput ->
                     throw InvalidDataException(invalidDataErrorMessage)
                 is ServiceErrors.UpdateFailed ->
@@ -145,7 +147,7 @@ class IncidentController(
             ),
             ApiResponse(
                 responseCode = "404",
-                description = "Incidente/Tipo de incidente com id ### não foi encontrado.", content = [Content(
+                description = "Incidente/Tipo de incidente/elemento da árvore com id ### não foi encontrado.", content = [Content(
                     mediaType = "application/json", schema = Schema(implementation = ErrorResponse::class)
                 )]
             ),
@@ -169,6 +171,8 @@ class IncidentController(
                     throw EntityNotFoundException(notFoundMessage("Incident", id))
                 is ServiceErrors.IncidentTypeNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Incident Type", input.incidentTypeId))
+                is ServiceErrors.TreeNotFound ->
+                    throw EntityNotFoundException(notFoundMessage("Tree", input.treeRecordId))
                 is ServiceErrors.InvalidDataInput ->
                     throw InvalidDataException(invalidDataErrorMessage)
                 is ServiceErrors.UpdateFailed ->

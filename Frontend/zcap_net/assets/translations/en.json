@@ -44,6 +44,7 @@
   "fill_data": "Please, insert a {field}",
   "fill_mandatory_details_error": "Please, fill mandatory details.",
   "help": "Help",
+  "ïncident": "Incident",
   "invalid_latitude": "Invalid Latitude",
   "invalid_longitude": "Invalid Longitude",
   "invalid_data": "Invalid data",

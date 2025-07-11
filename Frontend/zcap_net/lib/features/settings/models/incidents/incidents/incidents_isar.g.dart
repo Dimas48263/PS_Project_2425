@@ -100,6 +100,12 @@ const IncidentsIsarSchema = CollectionSchema(
       name: r'incidentType',
       target: r'IncidentTypesIsar',
       single: true,
+    ),
+    r'treeRecord': LinkSchema(
+      id: -1100412824248193270,
+      name: r'treeRecord',
+      target: r'TreeIsar',
+      single: true,
     )
   },
   embeddedSchemas: {},
@@ -178,7 +184,7 @@ Id _incidentsIsarGetId(IncidentsIsar object) {
 }
 
 List<IsarLinkBase<dynamic>> _incidentsIsarGetLinks(IncidentsIsar object) {
-  return [object.incidentType];
+  return [object.incidentType, object.treeRecord];
 }
 
 void _incidentsIsarAttach(
@@ -186,6 +192,8 @@ void _incidentsIsarAttach(
   object.id = id;
   object.incidentType.attach(
       col, col.isar.collection<IncidentTypesIsar>(), r'incidentType', id);
+  object.treeRecord
+      .attach(col, col.isar.collection<TreeIsar>(), r'treeRecord', id);
 }
 
 extension IncidentsIsarQueryWhereSort
@@ -1012,6 +1020,20 @@ extension IncidentsIsarQueryLinks
       incidentTypeIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.linkLength(r'incidentType', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<IncidentsIsar, IncidentsIsar, QAfterFilterCondition> treeRecord(
+      FilterQuery<TreeIsar> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'treeRecord');
+    });
+  }
+
+  QueryBuilder<IncidentsIsar, IncidentsIsar, QAfterFilterCondition>
+      treeRecordIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'treeRecord', 0, true, 0, true);
     });
   }
 }

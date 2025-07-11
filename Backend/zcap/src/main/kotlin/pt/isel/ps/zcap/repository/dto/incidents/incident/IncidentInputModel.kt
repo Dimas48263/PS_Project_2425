@@ -4,6 +4,7 @@ import java.time.LocalDate
 
 data class IncidentInputModel(
     val incidentTypeId: Long,
+    val treeRecordId: Long,
     val startDate: LocalDate,
     val endDate: LocalDate?
 )

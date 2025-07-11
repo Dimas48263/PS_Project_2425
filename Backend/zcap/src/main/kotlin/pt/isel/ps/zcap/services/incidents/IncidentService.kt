@@ -8,6 +8,7 @@ import pt.isel.ps.zcap.repository.dto.incidents.incident.IncidentOutputModel
 import pt.isel.ps.zcap.repository.dto.incidents.incident.toOutputModel
 import pt.isel.ps.zcap.repository.models.incidents.IncidentRepository
 import pt.isel.ps.zcap.repository.models.incidents.IncidentTypeRepository
+import pt.isel.ps.zcap.repository.models.trees.TreeRepository
 import pt.isel.ps.zcap.services.Either
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.failure
@@ -19,7 +20,8 @@ import kotlin.jvm.optionals.getOrNull
 @Component
 class IncidentService(
     val repo: IncidentRepository,
-    val incidentTypeRepo: IncidentTypeRepository
+    val incidentTypeRepo: IncidentTypeRepository,
+    val treeRepo: TreeRepository
 ) {
     fun getAllIncident(): List<IncidentOutputModel> =
         repo.findAll().map { it.toOutputModel() }
@@ -33,10 +35,13 @@ class IncidentService(
     fun saveIncident(input: IncidentInputModel): Either<ServiceErrors, IncidentOutputModel> {
         val incidentType = incidentTypeRepo.findById(input.incidentTypeId).getOrNull()
             ?: return failure(ServiceErrors.IncidentTypeNotFound)
+        val tree = treeRepo.findById(input.treeRecordId).getOrNull()
+            ?: return failure(ServiceErrors.TreeNotFound)
         if (input.startDate.isAfter(input.endDate ?: input.startDate))
             return failure(ServiceErrors.InvalidDataInput)
         val newIncident = Incident(
             incidentType = incidentType,
+            treeRecord = tree,
             startDate = input.startDate,
             endDate = input.endDate
         )
@@ -56,10 +61,13 @@ class IncidentService(
             ?: return failure(ServiceErrors.RecordNotFound)
         val incidentType = incidentTypeRepo.findById(input.incidentTypeId).getOrNull()
             ?: return failure(ServiceErrors.IncidentTypeNotFound)
+        val tree = treeRepo.findById(input.treeRecordId).getOrNull()
+            ?: return failure(ServiceErrors.TreeNotFound)
         if (input.startDate.isAfter(input.endDate ?: input.startDate))
             return failure(ServiceErrors.InvalidDataInput)
         val newIncident = incident.copy(
             incidentType = incidentType,
+            treeRecord = tree,
             startDate = input.startDate,
             endDate = input.endDate,
             lastUpdatedAt = LocalDateTime.now()
