@@ -6,6 +6,7 @@ import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/about/about_screen.dart';
 import 'package:zcap_net_app/features/home/screens/change_password_screen.dart';
 import 'package:zcap_net_app/features/home/screens/help_screen.dart';
+import 'package:zcap_net_app/features/incidents_tree/incidents_tree_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
 import 'package:zcap_net_app/features/zcap_tree/zcap_tree_screen.dart';
 import 'package:zcap_net_app/widgets/custom_app_refrence_date_picker.dart';
@@ -89,7 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 leading: const Icon(Icons.report_problem_outlined),
                 title: Text('screen_incidents'.tr()),
                 onTap: () {
-                  // TODO: Navegar para o ecrã de Incidents
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (context) => IncidentsTreeScreen()));
                 },
               ),
             if (allowances.canRead('user_access_screen_settings'))

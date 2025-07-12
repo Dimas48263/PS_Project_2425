@@ -604,6 +604,7 @@ final List<SyncEntry> syncEntries = [
       saveLinksAfterPut: (IsarTable<ApiTable> incident) async {
         final incidentIsar = incident as IncidentsIsar;
         await incidentIsar.incidentType.save();
+        await incidentIsar.treeRecord.save();
       }),
   SyncEntry<IncidentZcapsIsar, IncidentZcaps>(
       endpoint: 'incident-zcaps',

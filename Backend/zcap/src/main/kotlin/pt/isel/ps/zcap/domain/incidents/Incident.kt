@@ -1,6 +1,7 @@
 package pt.isel.ps.zcap.domain.incidents
 
 import jakarta.persistence.*
+import pt.isel.ps.zcap.domain.tree.Tree
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -14,6 +15,10 @@ data class Incident(
     @ManyToOne
     @JoinColumn(name = "incidentTypeId")
     val incidentType: IncidentType = IncidentType(),
+
+    @ManyToOne
+    @JoinColumn(name = "treeRecordId")
+    val treeRecord: Tree = Tree(),
 
     val startDate: LocalDate = LocalDate.now(),
     val endDate: LocalDate? = null,

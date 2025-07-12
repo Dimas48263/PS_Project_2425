@@ -1,10 +1,12 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types.dart';
+import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
 
 class Incidents implements ApiTable {
   @override
   int remoteId;
   final IncidentTypes incidentType;
+  final Tree treeRecord;
   final DateTime startDate;
   final DateTime? endDate;
   final DateTime createdAt;
@@ -14,6 +16,7 @@ class Incidents implements ApiTable {
   Incidents(
       {required this.remoteId,
       required this.incidentType,
+      required this.treeRecord,
       required this.startDate,
       this.endDate,
       required this.createdAt,
@@ -23,6 +26,7 @@ class Incidents implements ApiTable {
     return Incidents(
       remoteId: json['incidentId'],
       incidentType: IncidentTypes.fromJson(json['incidentType']),
+      treeRecord: Tree.fromJson(json['treeRecord']),
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       createdAt: DateTime.parse(json['createdAt']),
@@ -34,6 +38,7 @@ class Incidents implements ApiTable {
   Map<String, dynamic> toJsonInput() {
     return {
       'incidentTypeId': incidentType.remoteId,
+      'treeRecordId': treeRecord.remoteId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
@@ -43,6 +48,7 @@ class Incidents implements ApiTable {
   Future<Map<String, dynamic>> toJsonInputAsync() async {
     return {
       'incidentTypeId': incidentType.remoteId,
+      'treeRecordId': treeRecord.remoteId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
@@ -51,6 +57,7 @@ class Incidents implements ApiTable {
   Incidents copyWith(
       {int? remoteId,
       IncidentTypes? incidentType,
+      Tree? treeRecord,
       DateTime? startDate,
       DateTime? endDate,
       DateTime? createdAt,
@@ -58,6 +65,7 @@ class Incidents implements ApiTable {
     return Incidents(
       remoteId: remoteId ?? this.remoteId,
       incidentType: incidentType ?? this.incidentType,
+      treeRecord: treeRecord ?? this.treeRecord,
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       createdAt: createdAt ?? this.createdAt,
