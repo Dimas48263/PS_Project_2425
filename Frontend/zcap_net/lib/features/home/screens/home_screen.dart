@@ -92,7 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (context) => IncidentsTreeScreen()));
-                  // TODO: Navegar para o ecrã de Incidents
                 },
               ),
             if (allowances.canRead('user_access_screen_settings'))

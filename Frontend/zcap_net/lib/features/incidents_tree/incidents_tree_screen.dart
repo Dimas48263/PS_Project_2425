@@ -8,10 +8,15 @@ import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/core/utils/app_colors.dart';
+import 'package:zcap_net_app/data/app_date_provider.dart';
+import 'package:zcap_net_app/features/incidents_tree/persons_screen.dart';
+import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
+import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
+import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/features/zcap_tree/tree_wrapper.dart';
 import 'package:zcap_net_app/widgets/confirm_dialog.dart';
 import 'package:zcap_net_app/widgets/custom_app_refrence_date_picker.dart';
@@ -33,6 +38,13 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
   List<IncidentsIsar> incidents = [];
   StreamSubscription? incidentsStream;
 
+  List<IncidentZcapsIsar> incidentsZcaps = [];
+  StreamSubscription? incidentsZcapsStream;
+
+  Map<int, List<IncidentZcapsIsar>> zcapsByIncident = {};
+
+  DateTime? _currentReferenceDate;
+
   String _searchTerm = '';
   final TextEditingController _searchController = TextEditingController();
 
@@ -46,18 +58,60 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
       incidents = data;
       await buildTree();
     });
+    incidentsZcapsStream = DatabaseService.db.incidentZcapsIsars
+        .buildQuery<IncidentZcapsIsar>()
+        .watch(fireImmediately: true)
+        .listen((data) async {
+      incidentsZcaps = data;
+      zcapsByIncident = {};
+      for (var iz in incidentsZcaps) {
+        await iz.zcap.load();
+        await iz.incident.load();
+        await iz.entity.load();
+        final list = zcapsByIncident[iz.incident.value!.id];
+        if (list == null) {
+          zcapsByIncident[iz.incident.value!.id] = [];
+        }
+        zcapsByIncident[iz.incident.value!.id]!.add(iz);
+      }
+      await buildTree();
+    });
+    _searchController.addListener(() {
+      setState(() {
+        _searchTerm = _searchController.text.toLowerCase();
+      });
+      buildTree();
+    });
 
     root = TreeNode<String>(data: 'screen_incidents'.tr());
   }
 
+  @override
+  void dispose() {
+    incidentsStream?.cancel();
+    incidentsZcapsStream?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
   Future<void> buildTree() async {
+    final referenceDate = context.read<AppReferenceDateProvider>();
     final isar = DatabaseService.db;
     final Map<int, List<IncidentsIsar>> incidentsByTree = {};
 
     for (final i in incidents) {
+      if (i.startDate.isAfter(referenceDate.endOfMonth) ||
+          (i.endDate != null &&
+              i.endDate!.isBefore(referenceDate.startOfMonth))) {
+        continue;
+      }
       await i.incidentType.load();
       await i.treeRecord.load();
 
+      if (_searchTerm.isNotEmpty &&
+          !i.incidentType.value!.name.toLowerCase().contains(_searchTerm)) {
+        continue;
+      }
       final treeId = i.treeRecord.value?.id;
       if (treeId != null) {
         incidentsByTree.putIfAbsent(treeId, () => []).add(i);
@@ -110,8 +164,12 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
       }
     }
 
-    for (var z in incidentsByTreeeList) {
-      node.add(TreeNode<dynamic>(data: z));
+    for (var i in incidentsByTreeeList) {
+      final incidentNode = TreeNode<IncidentsIsar>(data: i);
+      for (var iz in zcapsByIncident[i.id] ?? []) {
+        incidentNode.add(TreeNode<IncidentZcapsIsar>(data: iz));
+      }
+      node.add(incidentNode);
     }
 
     node.data = TreeWrapper(tree, totalIncidents);
@@ -128,6 +186,17 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
     }
     for (final child in node.children.values) {
       printAll(child as TreeNode<dynamic>, depth + 1);
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newReferenceDate =
+        context.watch<AppReferenceDateProvider>().referenceDate;
+    if (_currentReferenceDate != newReferenceDate) {
+      _currentReferenceDate = newReferenceDate;
+      buildTree();
     }
   }
 
@@ -176,7 +245,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       child: ListTile(
                         title: Text(
-                          '${(data.remoteId != null && data.remoteId! > 0) ? "[${data.remoteId}] " : ""}${data.incidentType.value!.name}',
+                          '${(data.remoteId != null && data.remoteId! > 0) ? "[${data.remoteId}] " : ""}${data.incidentType.value!.name} (${zcapsByIncident[data.id]?.length ?? 0})',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Row(
@@ -206,6 +275,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            ElevatedButton(onPressed: () {_addZcap(data);}, child: Text('${'add'.tr()} ZCAP')),
                             if (!data.isSynced) CustomUnsyncedIcon(),
                             IconButton(
                               onPressed: () {
@@ -236,6 +306,19 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                       ),
                     );
                   }
+                  if (data is IncidentZcapsIsar) {
+                    return Card(
+                      elevation: 2,
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      child: ListTile(
+                        title: Text(data.zcap.value!.name),
+                        trailing: ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => PersonsScreen(incidentZcapIsar: data)));
+                              }, child: Text('Persons')),
+                      ),
+                    );
+                  }
                   if (data is TreeWrapper) {
                     if (data.zcapCount <= 0) return const SizedBox.shrink();
                     return Card(
@@ -263,7 +346,8 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
         ));
   }
 
-  void _addOrEditIncident(BuildContext context, {IncidentsIsar? incident}) async {
+  void _addOrEditIncident(BuildContext context,
+      {IncidentsIsar? incident}) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     IncidentTypesIsar? incidentType = incident?.incidentType.value;
@@ -294,7 +378,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
             .or()
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
-    
+
     final availableTrees = await DatabaseService.db.treeIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
@@ -315,9 +399,8 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
               title: Text(incident == null
                   ? '${'new'.tr()} ${'incident'.tr()}'
                   : '${'edit'.tr()} ${'incident'.tr()}'),
-              content: buildForm(
-                  formKey, context, [], startDate, endDate,
-                  (value) {
+              content:
+                  buildForm(formKey, context, [], startDate, endDate, (value) {
                 setState(() => startDate = value);
                 setModalState(() {}); // Atualiza o dialog
               }, (value) {
@@ -347,8 +430,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                       ? availableTrees
                       : availableTrees
                           .where((t) =>
-                              t.treeLevel.value!.levelId ==
-                              treeLevel!.levelId)
+                              t.treeLevel.value!.levelId == treeLevel!.levelId)
                           .toList(),
                   selectedItem: treeRecord,
                   onSelected: (TreeIsar? value) {
@@ -357,9 +439,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                     });
                   },
                   validator: (value) {
-                    return value == null
-                        ? 'required_field'.tr()
-                        : null;
+                    return value == null ? 'required_field'.tr() : null;
                   },
                 ),
                 customDropdownSearch<IncidentTypesIsar>(
@@ -373,21 +453,20 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                     });
                   },
                   validator: (value) {
-                    return value == null
-                        ? 'required_field'.tr()
-                        : null;
+                    return value == null ? 'required_field'.tr() : null;
                   },
                 )
               ]),
               actions: [
                 TextButton(
-                  child: Text(
-                      allowances.canWrite('user_access_settings_tree_elements') //TODO
-                          ? 'cancel'.tr()
-                          : 'close'.tr()),
+                  child: Text(allowances
+                          .canWrite('user_access_settings_tree_elements') //TODO
+                      ? 'cancel'.tr()
+                      : 'close'.tr()),
                   onPressed: () => Navigator.pop(context),
                 ),
-                if (allowances.canWrite('user_access_settings_tree_elements')) //TODO
+                if (allowances
+                    .canWrite('user_access_settings_tree_elements')) //TODO
                   TextButton(
                     child: Text('save'.tr()),
                     onPressed: () async {
@@ -403,7 +482,8 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                           newIncident.createdAt = incident?.createdAt ?? now;
                           newIncident.lastUpdatedAt = now;
                           newIncident.isSynced = false;
-                          await DatabaseService.db.incidentsIsars.put(newIncident);
+                          await DatabaseService.db.incidentsIsars
+                              .put(newIncident);
                           await newIncident.incidentType.save();
                           await newIncident.treeRecord.save();
                         });
@@ -416,4 +496,105 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
           });
         });
   }
+
+  void _addZcap(IncidentsIsar incident) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final formKey = GlobalKey<FormState>();
+    final allZcaps = await DatabaseService.db.zcapIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+    final zcapsAlreadyInIncident = zcapsByIncident[incident.id]?.map((e) => e.zcap.value!.id).toList();
+    final availableZcaps = zcapsAlreadyInIncident == null ? allZcaps : allZcaps.where((z) => !zcapsAlreadyInIncident.contains(z.id)).toList();
+    ZcapIsar? selectedZcap;
+
+    final availableEntities = await DatabaseService.db.entitiesIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+    EntitiesIsar? selectedEntity;
+
+    showDialog(context: context, builder: (context) {
+      final allowances = context.watch<UserAllowancesProvider>();
+
+          return StatefulBuilder(builder: (context, setModalState) {
+            return AlertDialog(
+              title: Text('${'add'.tr()} ZCAP'),
+              content: Form(
+                key: formKey, 
+                child: Column(children: [
+                  customDropdownSearch<ZcapIsar>(
+                    itemLabelBuilder: (item) => item.name,
+                    items: availableZcaps, 
+                    selectedItem: selectedZcap, 
+                    onSelected: (zcap) => setModalState(() => selectedZcap = zcap), 
+                    validator: (value) => value == null ? 'required_field'.tr() : null,
+                    label: 'ZCAP'
+                  ),
+                  customDropdownSearch<EntitiesIsar>(
+                    itemLabelBuilder: (item) => item.name,
+                    items: availableEntities, 
+                    selectedItem: selectedEntity, 
+                    onSelected: (entity) => setModalState(() =>  selectedEntity= entity), 
+                    validator: (value) => value == null ? 'required_field'.tr() : null,
+                    label: 'screen_entity'.tr()
+                  ),
+                ],)),
+              actions: [
+                TextButton(
+                  child: Text(allowances
+                          .canWrite('user_access_settings_tree_elements') //TODO
+                      ? 'cancel'.tr()
+                      : 'close'.tr()),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                if (allowances
+                    .canWrite('user_access_settings_tree_elements')) //TODO
+                  TextButton(
+                    child: Text('save'.tr()),
+                    onPressed: () async {
+                      if (formKey.currentState!.validate()) {
+                        final navigator = Navigator.of(context);
+                        final now = DateTime.now();
+                        await DatabaseService.db.writeTxn(() async {
+                          final newIncidentZcap = IncidentZcapsIsar();
+                          newIncidentZcap.remoteId = 0;
+                          newIncidentZcap.incident.value = incident;
+                          newIncidentZcap.zcap.value = selectedZcap;
+                          newIncidentZcap.entity.value = selectedEntity;
+                          newIncidentZcap.startDate = now;
+                          newIncidentZcap.endDate = null;
+                          newIncidentZcap.createdAt = now;
+                          newIncidentZcap.lastUpdatedAt = now;
+                          newIncidentZcap.isSynced = false;
+                          await DatabaseService.db.incidentZcapsIsars
+                              .put(newIncidentZcap);
+                          await newIncidentZcap.incident.save();
+                          await newIncidentZcap.zcap.save();
+                          await newIncidentZcap.entity.save();
+                        });
+                        navigator.pop();
+                      }
+                    },
+                  ),
+              ],
+            );
+          });
+    });
+  }
 }
+
+
+
+              

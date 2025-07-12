@@ -10,8 +10,10 @@ Widget customDropdownSearch<T>(
     String? label,
     bool justLabel = false,
     final String Function(T)? itemLabelBuilder,
-    bool enabled = true}) {
+    bool enabled = true,
+    bool isVisible = false}) {
   return DropdownSearch<T>(
+    clearButtonProps: ClearButtonProps(isVisible: isVisible),
     enabled: enabled,
     items: items,
     selectedItem: selectedItem,
