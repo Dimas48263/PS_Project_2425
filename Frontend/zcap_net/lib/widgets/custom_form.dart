@@ -105,6 +105,7 @@ Widget customDatesFormField({
             onLongPress: () {
               if (onLongPress != null) {
                 state.didChange(null);
+                onDateChanged(null);
                 onLongPress();
               }
             },
@@ -117,6 +118,7 @@ Widget customDatesFormField({
               );
               if (picked != null) {
                 state.didChange(picked);
+                onDateChanged(picked);
               }
             },
             child: Padding(

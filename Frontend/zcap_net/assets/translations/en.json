@@ -89,6 +89,8 @@
   "password": "Password",
   "password_changed": "Password changed",
   "password_confirmation": "Password confirmation",
+  "person": "Person",
+  "persons_from_zcap": "Persons from ZCAP {zcapName}",
   "profile": "Profile",
   "required_field": "Required field",
   "required_login": "Required login",

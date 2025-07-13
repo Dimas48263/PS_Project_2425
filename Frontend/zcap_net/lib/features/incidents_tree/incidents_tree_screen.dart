@@ -207,6 +207,21 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
           title: Text('screen_incidents'.tr()),
           actions: [
             AppReferenceDateWidget(),
+            IconButton(
+              icon: const Icon(Icons.sync),
+              onPressed: () async {
+                final success = await syncService.synchronizeAll();
+                if (success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('service_sync_ok'.tr())),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('service_sync_error'.tr())),
+                  );
+                }
+              },
+            ),
           ],
         ),
         body: Column(
@@ -275,7 +290,11 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ElevatedButton(onPressed: () {_addZcap(data);}, child: Text('${'add'.tr()} ZCAP')),
+                            ElevatedButton(
+                                onPressed: () {
+                                  _addZcap(data);
+                                },
+                                child: Text('${'add'.tr()} ZCAP')),
                             if (!data.isSynced) CustomUnsyncedIcon(),
                             IconButton(
                               onPressed: () {
@@ -311,12 +330,42 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                       elevation: 2,
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       child: ListTile(
-                        title: Text(data.zcap.value!.name),
-                        trailing: ElevatedButton(
-                            onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => PersonsScreen(incidentZcapIsar: data)));
-                              }, child: Text('Persons')),
-                      ),
+                          title: Text(data.zcap.value!.name),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => PersonsScreen(
+                                                incidentZcapIsar: data)));
+                                  },
+                                  child: Text('screen_settings_people'.tr())),
+                              if (!data.isSynced) CustomUnsyncedIcon(),
+                              IconButton(
+                                onPressed: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => ConfirmDialog(
+                                      title: 'confirm_delete'.tr(),
+                                      content: 'confirm_delete_message'.tr(),
+                                    ),
+                                  );
+                                  if (confirm == true) {
+                                    await DatabaseService.db.writeTxn(() async {
+                                      await DatabaseService
+                                          .db.incidentZcapsIsars
+                                          .delete(data.id);
+                                    });
+                                  }
+                                },
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                              ),
+                            ],
+                          )),
                     );
                   }
                   if (data is TreeWrapper) {
@@ -510,8 +559,13 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
             .or()
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
-    final zcapsAlreadyInIncident = zcapsByIncident[incident.id]?.map((e) => e.zcap.value!.id).toList();
-    final availableZcaps = zcapsAlreadyInIncident == null ? allZcaps : allZcaps.where((z) => !zcapsAlreadyInIncident.contains(z.id)).toList();
+    final zcapsAlreadyInIncident =
+        zcapsByIncident[incident.id]?.map((e) => e.zcap.value!.id).toList();
+    final availableZcaps = zcapsAlreadyInIncident == null
+        ? allZcaps
+        : allZcaps
+            .where((z) => !zcapsAlreadyInIncident.contains(z.id))
+            .toList();
     ZcapIsar? selectedZcap;
 
     final availableEntities = await DatabaseService.db.entitiesIsars
@@ -525,32 +579,38 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
         .findAll();
     EntitiesIsar? selectedEntity;
 
-    showDialog(context: context, builder: (context) {
-      final allowances = context.watch<UserAllowancesProvider>();
+    showDialog(
+        context: context,
+        builder: (context) {
+          final allowances = context.watch<UserAllowancesProvider>();
 
           return StatefulBuilder(builder: (context, setModalState) {
             return AlertDialog(
               title: Text('${'add'.tr()} ZCAP'),
               content: Form(
-                key: formKey, 
-                child: Column(children: [
-                  customDropdownSearch<ZcapIsar>(
-                    itemLabelBuilder: (item) => item.name,
-                    items: availableZcaps, 
-                    selectedItem: selectedZcap, 
-                    onSelected: (zcap) => setModalState(() => selectedZcap = zcap), 
-                    validator: (value) => value == null ? 'required_field'.tr() : null,
-                    label: 'ZCAP'
-                  ),
-                  customDropdownSearch<EntitiesIsar>(
-                    itemLabelBuilder: (item) => item.name,
-                    items: availableEntities, 
-                    selectedItem: selectedEntity, 
-                    onSelected: (entity) => setModalState(() =>  selectedEntity= entity), 
-                    validator: (value) => value == null ? 'required_field'.tr() : null,
-                    label: 'screen_entity'.tr()
-                  ),
-                ],)),
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      customDropdownSearch<ZcapIsar>(
+                          itemLabelBuilder: (item) => item.name,
+                          items: availableZcaps,
+                          selectedItem: selectedZcap,
+                          onSelected: (zcap) =>
+                              setModalState(() => selectedZcap = zcap),
+                          validator: (value) =>
+                              value == null ? 'required_field'.tr() : null,
+                          label: 'ZCAP'),
+                      customDropdownSearch<EntitiesIsar>(
+                          itemLabelBuilder: (item) => item.name,
+                          items: availableEntities,
+                          selectedItem: selectedEntity,
+                          onSelected: (entity) =>
+                              setModalState(() => selectedEntity = entity),
+                          validator: (value) =>
+                              value == null ? 'required_field'.tr() : null,
+                          label: 'screen_entity'.tr()),
+                    ],
+                  )),
               actions: [
                 TextButton(
                   child: Text(allowances
@@ -591,10 +651,6 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
               ],
             );
           });
-    });
+        });
   }
 }
-
-
-
-              

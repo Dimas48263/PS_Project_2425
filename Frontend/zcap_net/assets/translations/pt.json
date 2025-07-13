@@ -89,6 +89,8 @@
   "password": "Senha",
   "password_changed": "Password alterada",
   "password_confirmation": "Confirme a Password",
+  "person": "Pessoa",
+  "persons_from_zcap": "Pessoas da ZCAP {zcapName}",
   "profile": "Perfil",
   "required_field": "Campo necessário",
   "required_login": "Autenticação necessária",

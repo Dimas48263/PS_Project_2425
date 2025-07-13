@@ -50,7 +50,7 @@ const PersonsIsarSchema = CollectionSchema(
     r'destinationContact': PropertySchema(
       id: 6,
       name: r'destinationContact',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'entryDateTime': PropertySchema(
       id: 7,
@@ -75,7 +75,7 @@ const PersonsIsarSchema = CollectionSchema(
     r'niss': PropertySchema(
       id: 11,
       name: r'niss',
-      type: IsarType.long,
+      type: IsarType.string,
     ),
     r'remoteId': PropertySchema(
       id: 12,
@@ -149,7 +149,19 @@ int _personsIsarEstimateSize(
     }
   }
   bytesCount += 3 + object.contact.length * 3;
+  {
+    final value = object.destinationContact;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.name.length * 3;
+  {
+    final value = object.niss;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   return bytesCount;
 }
 
@@ -165,12 +177,12 @@ void _personsIsarSerialize(
   writer.writeString(offsets[3], object.contact);
   writer.writeDateTime(offsets[4], object.createdAt);
   writer.writeDateTime(offsets[5], object.departureDateTime);
-  writer.writeLong(offsets[6], object.destinationContact);
+  writer.writeString(offsets[6], object.destinationContact);
   writer.writeDateTime(offsets[7], object.entryDateTime);
   writer.writeBool(offsets[8], object.isSynced);
   writer.writeDateTime(offsets[9], object.lastUpdatedAt);
   writer.writeString(offsets[10], object.name);
-  writer.writeLong(offsets[11], object.niss);
+  writer.writeString(offsets[11], object.niss);
   writer.writeLong(offsets[12], object.remoteId);
 }
 
@@ -187,13 +199,13 @@ PersonsIsar _personsIsarDeserialize(
   object.contact = reader.readString(offsets[3]);
   object.createdAt = reader.readDateTime(offsets[4]);
   object.departureDateTime = reader.readDateTimeOrNull(offsets[5]);
-  object.destinationContact = reader.readLongOrNull(offsets[6]);
+  object.destinationContact = reader.readStringOrNull(offsets[6]);
   object.entryDateTime = reader.readDateTime(offsets[7]);
   object.id = id;
   object.isSynced = reader.readBool(offsets[8]);
   object.lastUpdatedAt = reader.readDateTime(offsets[9]);
   object.name = reader.readString(offsets[10]);
-  object.niss = reader.readLongOrNull(offsets[11]);
+  object.niss = reader.readStringOrNull(offsets[11]);
   object.remoteId = reader.readLongOrNull(offsets[12]);
   return object;
 }
@@ -218,7 +230,7 @@ P _personsIsarDeserializeProp<P>(
     case 5:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 6:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 7:
       return (reader.readDateTime(offset)) as P;
     case 8:
@@ -228,7 +240,7 @@ P _personsIsarDeserializeProp<P>(
     case 10:
       return (reader.readString(offset)) as P;
     case 11:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 12:
       return (reader.readLongOrNull(offset)) as P;
     default:
@@ -1026,49 +1038,58 @@ extension PersonsIsarQueryFilter
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
-      destinationContactEqualTo(int? value) {
+      destinationContactEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'destinationContact',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
       destinationContactGreaterThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'destinationContact',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
       destinationContactLessThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'destinationContact',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
       destinationContactBetween(
-    int? lower,
-    int? upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1077,6 +1098,77 @@ extension PersonsIsarQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      destinationContactStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'destinationContact',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      destinationContactEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'destinationContact',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      destinationContactContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'destinationContact',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      destinationContactMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'destinationContact',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      destinationContactIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'destinationContact',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      destinationContactIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'destinationContact',
+        value: '',
       ));
     });
   }
@@ -1405,46 +1497,54 @@ extension PersonsIsarQueryFilter
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissEqualTo(
-      int? value) {
+    String? value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'niss',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissGreaterThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'niss',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissLessThan(
-    int? value, {
+    String? value, {
     bool include = false,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'niss',
         value: value,
+        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissBetween(
-    int? lower,
-    int? upper, {
+    String? lower,
+    String? upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1453,6 +1553,76 @@ extension PersonsIsarQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'niss',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'niss',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'niss',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'niss',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> nissIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'niss',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      nissIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'niss',
+        value: '',
       ));
     });
   }
@@ -1977,9 +2147,10 @@ extension PersonsIsarQueryWhereDistinct
   }
 
   QueryBuilder<PersonsIsar, PersonsIsar, QDistinct>
-      distinctByDestinationContact() {
+      distinctByDestinationContact({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'destinationContact');
+      return query.addDistinctBy(r'destinationContact',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -2008,9 +2179,10 @@ extension PersonsIsarQueryWhereDistinct
     });
   }
 
-  QueryBuilder<PersonsIsar, PersonsIsar, QDistinct> distinctByNiss() {
+  QueryBuilder<PersonsIsar, PersonsIsar, QDistinct> distinctByNiss(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'niss');
+      return query.addDistinctBy(r'niss', caseSensitive: caseSensitive);
     });
   }
 
@@ -2066,7 +2238,7 @@ extension PersonsIsarQueryProperty
     });
   }
 
-  QueryBuilder<PersonsIsar, int?, QQueryOperations>
+  QueryBuilder<PersonsIsar, String?, QQueryOperations>
       destinationContactProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'destinationContact');
@@ -2099,7 +2271,7 @@ extension PersonsIsarQueryProperty
     });
   }
 
-  QueryBuilder<PersonsIsar, int?, QQueryOperations> nissProperty() {
+  QueryBuilder<PersonsIsar, String?, QQueryOperations> nissProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'niss');
     });

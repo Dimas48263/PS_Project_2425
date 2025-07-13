@@ -47,7 +47,9 @@ class PersonService(
         }
         if(personInput.name.isBlank() ||
             personInput.entryDateTime.isAfter(personInput.departureDateTime ?: personInput.entryDateTime) ||
-            (personInput.address != null  && personInput.address.isBlank()))
+            (personInput.address != null  && personInput.address.isBlank()) ||
+            (personInput.niss != null && personInput.niss.isBlank()) ||
+            (personInput.destinationContact != null && personInput.destinationContact.isBlank()))
             return failure(ServiceErrors.InvalidDataInput)
         val newPerson = Person(
             name = personInput.name,
@@ -89,7 +91,9 @@ class PersonService(
         }
         if(personInput.name.isBlank() ||
             personInput.entryDateTime.isAfter(personInput.departureDateTime ?: personInput.entryDateTime) ||
-            (personInput.address != null  && personInput.address.isBlank()))
+            (personInput.address != null  && personInput.address.isBlank()) ||
+            (personInput.niss != null && personInput.niss.isBlank()) ||
+            (personInput.destinationContact != null && personInput.destinationContact.isBlank()))
             return failure(ServiceErrors.InvalidDataInput)
         val newPerson = person.copy(
             name = personInput.name,
