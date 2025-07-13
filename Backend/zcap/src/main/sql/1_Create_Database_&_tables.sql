@@ -428,9 +428,9 @@ CREATE TABLE persons (
 	[birthDate]					DATE 			NULL,
 	[nationalityId] 			BIGINT 			NULL REFERENCES treeRecordDetails(detailId),
 	[address]					NVARCHAR(255)	NULL,
-	[NISS]						INT 			NULL,
+	[NISS]						NVARCHAR(255) 	NULL,
 	[departureDestinationId] 	BIGINT 			NULL REFERENCES departureDestination(departureDestinationId),
-	[destinationContact]		INT 			NULL,
+	[destinationContact]		NVARCHAR(255) 	NULL,
 	[createdAt]					DATETIME NOT NULL,
     [lastUpdatedAt]				DATETIME NOT NULL
 )

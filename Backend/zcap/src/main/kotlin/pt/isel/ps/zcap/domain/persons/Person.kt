@@ -34,13 +34,13 @@ data class Person(
     val nationality: TreeRecordDetail? = null,
 
     val address: String? = null,
-    val niss: Int? = null,
+    val niss: String? = null,
 
     @ManyToOne
     @JoinColumn(name = "departureDestinationId")
     val departureDestination: DepartureDestination? = null,
 
-    val destinationContact: Int? = null,
+    val destinationContact: String? = null,
 
     @OneToMany(mappedBy = "person")
     val specialNeeds: List<PersonSpecialNeed> = emptyList(),

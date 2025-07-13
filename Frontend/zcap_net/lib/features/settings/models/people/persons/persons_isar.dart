@@ -28,10 +28,10 @@ class PersonsIsar implements IsarTable<Persons> {
   DateTime? birthDate;
   IsarLink<TreeRecordDetailIsar> nationality = IsarLink<TreeRecordDetailIsar>();
   String? address;
-  int? niss;
+  String? niss;
   IsarLink<DepartureDestinationIsar> departureDestination =
       IsarLink<DepartureDestinationIsar>();
-  int? destinationContact;
+  String? destinationContact;
 
   DateTime createdAt = DateTime.now();
   @override

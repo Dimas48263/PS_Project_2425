@@ -31,6 +31,10 @@ class PersonsScreen extends StatefulWidget {
 
 class _PersonsScreenState extends State<PersonsScreen> {
   late IncidentZcapsIsar incidentZcapIsar;
+
+  List<IncidentZcapPersonsIsar> incidentZcapPersons = [];
+  StreamSubscription? incidentZcapPersonsStream;
+
   List<PersonsIsar> persons = [];
   StreamSubscription? personsStream;
 
@@ -47,19 +51,17 @@ class _PersonsScreenState extends State<PersonsScreen> {
         .buildQuery<PersonsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
-      for (var element in data) {
-        if (!element.countryCode.isLoaded) await element.countryCode.load();
-        if (!element.placeOfResidence.isLoaded) {
-          await element.placeOfResidence.load();
-        }
-        if (!element.nationality.isLoaded) await element.nationality.load();
-        if (!element.departureDestination.isLoaded) {
-          await element.departureDestination.load();
-        }
-      }
       setState(() {
-        persons = data;
-        _isLoading = false;
+        updateValues(null);
+      });
+    });
+
+    incidentZcapPersonsStream = DatabaseService.db.incidentZcapPersonsIsars
+        .buildQuery<IncidentZcapPersonsIsar>()
+        .watch(fireImmediately: true)
+        .listen((data) async {
+      setState(() {
+        updateValues(data);
       });
     });
     _searchController.addListener(() {
@@ -69,8 +71,23 @@ class _PersonsScreenState extends State<PersonsScreen> {
     });
   }
 
+  void updateValues(List<IncidentZcapPersonsIsar>? data) {
+    setState(() {
+      if (data != null) incidentZcapPersons = data;
+      persons = [];
+      persons = incidentZcapPersons
+          .where((e) =>
+              e.incidentZcap.value!.zcap.value!.id ==
+              incidentZcapIsar.zcap.value!.id)
+          .map((e) => e.person.value!)
+          .toList();
+      _isLoading = false;
+    });
+  }
+
   @override
   void dispose() {
+    incidentZcapPersonsStream?.cancel();
     personsStream?.cancel();
     _searchController.dispose();
     super.dispose();
@@ -80,7 +97,8 @@ class _PersonsScreenState extends State<PersonsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('screen_settings_people'.tr()),
+        title: Text('persons_from_zcap'
+            .tr(namedArgs: {'zcapName': incidentZcapIsar.zcap.value!.name})),
         actions: [
           IconButton(
             icon: const Icon(Icons.sync),
@@ -90,6 +108,15 @@ class _PersonsScreenState extends State<PersonsScreen> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_ok'.tr())),
                 );
+                final updatedData = await DatabaseService
+                    .db.incidentZcapPersonsIsars
+                    .filter()
+                    .incidentZcap((q) => q.idEqualTo(incidentZcapIsar.id))
+                    .findAll();
+
+                setState(() {
+                  updateValues(updatedData);
+                });
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('service_sync_error'.tr())),
@@ -130,7 +157,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                   () async => await syncService.synchronizeAll(),
                   (person) {
                     _addOrEditPerson(person);
-                  }, 
+                  },
                   (person) async {
                     final confirm = await showDialog<bool>(
                       context: context,
@@ -141,6 +168,13 @@ class _PersonsScreenState extends State<PersonsScreen> {
                     );
                     if (confirm == true) {
                       await DatabaseService.db.writeTxn(() async {
+                        final incidentZcapPersonFromPerson = incidentZcapPersons
+                            .where((e) => e.person.value!.id == person.id)
+                            .toList();
+                        for (var izp in incidentZcapPersonFromPerson) {
+                          await DatabaseService.db.incidentZcapPersonsIsars
+                              .delete(izp.id);
+                        }
                         await DatabaseService.db.personsIsars.delete(person.id);
                       });
                     }
@@ -162,6 +196,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
   }
 
   void _addOrEditPerson(PersonsIsar? person) async {
+    print('personId: ${person?.id}');
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final formKey = GlobalKey<FormState>();
@@ -207,7 +242,8 @@ class _PersonsScreenState extends State<PersonsScreen> {
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
 
-    final availableDepartureDestinations = await DatabaseService.db.departureDestinationIsars
+    final availableDepartureDestinations = await DatabaseService
+        .db.departureDestinationIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -216,7 +252,6 @@ class _PersonsScreenState extends State<PersonsScreen> {
             .or()
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
-
 
     final nameController = TextEditingController(text: person?.name ?? '');
     final ageController =
@@ -232,12 +267,11 @@ class _PersonsScreenState extends State<PersonsScreen> {
     TreeRecordDetailIsar? nationality = person?.nationality.value;
     final addressController =
         TextEditingController(text: person?.address ?? '');
-    final nissController =
-        TextEditingController(text: person?.niss == null ? '' : person!.niss.toString());
+    final nissController = TextEditingController(text: person?.niss ?? '');
     DepartureDestinationIsar? departureDestination =
         person?.departureDestination.value;
     final destinationContactController =
-        TextEditingController(text: person?.contact ?? '');
+        TextEditingController(text: person?.destinationContact ?? '');
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
@@ -272,8 +306,10 @@ class _PersonsScreenState extends State<PersonsScreen> {
             if (value == null || value.isEmpty) {
               return null;
             }
-            if (int.tryParse(value) == null) {
-              return 'wrong_format'.tr();
+            for (var c in value.characters) {
+              if (int.tryParse(c) == null) {
+                return 'wrong_format'.tr();
+              }
             }
             return null;
           }),
@@ -294,7 +330,8 @@ class _PersonsScreenState extends State<PersonsScreen> {
             DateInputConfig(
               label: 'entry_date'.tr(),
               date: entryDateTime,
-              onDateChanged: (value) => setState(() => entryDateTime = value),
+              onDateChanged: (value) =>
+                  setModalState(() => entryDateTime = value),
               validator: (value) {
                 if (value == null) {
                   return 'fill_data'.tr(namedArgs: {
@@ -308,20 +345,20 @@ class _PersonsScreenState extends State<PersonsScreen> {
               label: 'departure_date'.tr(),
               date: departureDateTime,
               onDateChanged: (value) =>
-                  setState(() => departureDateTime = value),
+                  setModalState(() => departureDateTime = value),
               onLongPress: () => setModalState(() => departureDateTime = null),
             ),
             DateInputConfig(
               label: 'birth_date'.tr(),
               date: birthDate,
-              onDateChanged: (value) => setState(() => birthDate = value),
+              onDateChanged: (value) => setModalState(() => birthDate = value),
               onLongPress: () => setModalState(() => departureDateTime = null),
             ),
           ];
           return AlertDialog(
             title: Text(person == null
-                ? '${'new'.tr()} ${'screen_settings_people'.tr()}'
-                : '${'edit'.tr()} ${'screen_settings_people'.tr()}'),
+                ? '${'add'.tr()} ${'person'.tr()}'
+                : '${'edit'.tr()} ${'person'.tr()}'),
             content: buildFormWithoutDates(
                 formKey,
                 context,
@@ -349,11 +386,10 @@ class _PersonsScreenState extends State<PersonsScreen> {
                       itemLabelBuilder: (item) => item.name,
                       items: availableTreeLevels,
                       selectedItem: treeLevel,
-                      onSelected: (value) =>
-                          setModalState(() {
+                      onSelected: (value) => setModalState(() {
                             treeLevel = value;
                             placeOfResidence = null;
-                      }),
+                          }),
                       validator: (value) {
                         if (value == null) {
                           return 'fill_data'.tr(namedArgs: {
@@ -367,7 +403,12 @@ class _PersonsScreenState extends State<PersonsScreen> {
                       justLabel: true,
                       label: '${'tree'.tr()}*',
                       itemLabelBuilder: (item) => item.name,
-                      items: treeLevel == null ? [] : availableTrees.where((e) => e.treeLevel.value!.id == treeLevel!.id).toList(),
+                      items: treeLevel == null
+                          ? []
+                          : availableTrees
+                              .where(
+                                  (e) => e.treeLevel.value!.id == treeLevel!.id)
+                              .toList(),
                       selectedItem: placeOfResidence,
                       onSelected: (value) =>
                           setModalState(() => placeOfResidence = value),
@@ -403,13 +444,14 @@ class _PersonsScreenState extends State<PersonsScreen> {
                 dates),
             actions: [
               TextButton(
-                child: Text(
-                    allowances.canWrite('user_access_settings_tree_elements') //TODO
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                child: Text(allowances
+                        .canWrite('user_access_settings_tree_elements') //TODO
+                    ? 'cancel'.tr()
+                    : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite('user_access_settings_tree_elements')) //TODO
+              if (allowances
+                  .canWrite('user_access_settings_tree_elements')) //TODO
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {
@@ -428,10 +470,18 @@ class _PersonsScreenState extends State<PersonsScreen> {
                         newPerson.departureDateTime = departureDateTime;
                         newPerson.birthDate = birthDate;
                         newPerson.nationality.value = nationality;
-                        newPerson.address = addressController.text;
-                        newPerson.niss = nissController.text == '' ? null : int.parse(nissController.text);
-                        newPerson.departureDestination.value = departureDestination;
-                        newPerson.destinationContact = destinationContactController.text == '' ? null : int.parse(destinationContactController.text);
+                        newPerson.address = addressController.text == ''
+                            ? null
+                            : addressController.text;
+                        newPerson.niss = nissController.text == ''
+                            ? null
+                            : nissController.text;
+                        newPerson.departureDestination.value =
+                            departureDestination;
+                        newPerson.destinationContact =
+                            destinationContactController.text == ''
+                                ? null
+                                : destinationContactController.text;
                         newPerson.createdAt = person?.createdAt ?? now;
                         newPerson.lastUpdatedAt = now;
                         newPerson.isSynced = false;
@@ -448,21 +498,26 @@ class _PersonsScreenState extends State<PersonsScreen> {
                         } else {
                           await newPerson.departureDestination.reset();
                         }
-                        
-                        final newIncidentZcapPerson = IncidentZcapPersonsIsar();
-                        newIncidentZcapPerson.remoteId = 0;
-                        newIncidentZcapPerson.incidentZcap.value = incidentZcapIsar;
-                        newIncidentZcapPerson.person.value = newPerson;
-                        newIncidentZcapPerson.startDate = now;
-                        newIncidentZcapPerson.endDate = null;
-                        newIncidentZcapPerson.createdAt = now;
-                        newIncidentZcapPerson.lastUpdatedAt = now;
-                        newIncidentZcapPerson.isSynced = false;
-                        await DatabaseService.db.incidentZcapPersonsIsars.put(newIncidentZcapPerson);
-                        await newIncidentZcapPerson.incidentZcap.save();
-                        await newIncidentZcapPerson.person.save();
+
+                        if (person == null) {
+                          final newIncidentZcapPerson =
+                              IncidentZcapPersonsIsar();
+                          newIncidentZcapPerson.remoteId = 0;
+                          newIncidentZcapPerson.incidentZcap.value =
+                              incidentZcapIsar;
+                          newIncidentZcapPerson.person.value = newPerson;
+                          newIncidentZcapPerson.startDate = now;
+                          newIncidentZcapPerson.endDate = null;
+                          newIncidentZcapPerson.createdAt = now;
+                          newIncidentZcapPerson.lastUpdatedAt = now;
+                          newIncidentZcapPerson.isSynced = false;
+                          await DatabaseService.db.incidentZcapPersonsIsars
+                              .put(newIncidentZcapPerson);
+                          await newIncidentZcapPerson.incidentZcap.save();
+                          await newIncidentZcapPerson.person.save();
+                        }
                       });
-                      
+
                       navigator.pop();
                     }
                   },

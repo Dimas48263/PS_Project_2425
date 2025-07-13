@@ -16,9 +16,9 @@ class Persons implements ApiTable {
   DateTime? birthDate;
   TreeRecordDetail? nationality;
   String? address;
-  int? niss;
+  String? niss;
   DepartureDestination? departureDestination;
-  int? destinationContact;
+  String? destinationContact;
 
   final DateTime createdAt;
   @override
@@ -121,9 +121,9 @@ class Persons implements ApiTable {
     DateTime? birthDate,
     TreeRecordDetail? nationality,
     String? address,
-    int? niss,
+    String? niss,
     DepartureDestination? departureDestination,
-    int? destinationContact,
+    String? destinationContact,
     DateTime? createdAt,
     DateTime? lastUpdatedAt,
   }) {
