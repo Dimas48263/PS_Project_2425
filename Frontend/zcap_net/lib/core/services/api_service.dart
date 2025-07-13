@@ -117,7 +117,7 @@ class ApiService {
       headers: _headers(),
     );
 
-    if (response.statusCode != 200) {
+    if (response.statusCode != 204) {
       final errorMsg = 'Erro DELETE: ${response.statusCode} - ${response.body}';
       LogService.log(errorMsg);
       throw Exception(errorMsg);

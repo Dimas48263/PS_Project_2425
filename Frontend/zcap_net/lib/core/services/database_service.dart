@@ -11,6 +11,8 @@ import 'package:zcap_net_app/features/settings/models/people/persons/persons_isa
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
@@ -79,8 +81,8 @@ class DatabaseService {
     /**
      * Users
      */
-    //TODO UserDataProfiles
-    //TODO UserDataProfileDetails
+    UserDataProfilesIsarSchema,
+    UserDataProfileAllowanceIsarSchema,
     UserProfilesIsarSchema,
     UserAccessKeysIsarSchema,
     UserProfileAccessAllowanceIsarSchema,

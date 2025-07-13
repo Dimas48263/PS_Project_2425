@@ -97,8 +97,17 @@ class UserDataProfilesController(
     /**
      * GET all DataProfileDetails
      */
+    @GetMapping("details")
+    fun getUserDataProfileDetails(): ResponseEntity<List<UserDataProfileDetailOutputModel>> {
+        val details = userDataProfileDetailService.getAllProfilesDetails()
+        return ResponseEntity.status(HttpStatus.OK).body(details)
+    }
+
+    /**
+     * GET all DataProfileDetails for a specific profile
+     */
     @GetMapping("{dataProfileId}/details")
-    fun getAllUserDateProfileDetails(@PathVariable dataProfileId: Long): ResponseEntity<List<UserDataProfileDetailOutputModel>> {
+    fun getUserDataProfileDetailsById(@PathVariable dataProfileId: Long): ResponseEntity<List<UserDataProfileDetailOutputModel>> {
         val details = userDataProfileDetailService.getAllDetailsForProfile(dataProfileId)
         return ResponseEntity.status(HttpStatus.OK).body(details)
     }

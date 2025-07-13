@@ -13,12 +13,20 @@ class UserDataProfileAllowanceIsar {
   @Index()
   late int treeRecordId;
 
+  bool isNew = true;
+  bool markedForDelete = false;
+
   UserDataProfileAllowanceIsar();
 
-  factory UserDataProfileAllowanceIsar.fromEntity(UserDataProfileAllowance entity) {
+  factory UserDataProfileAllowanceIsar.fromEntity(
+    UserDataProfileAllowance entity, {
+    bool fromApi = false,
+  }) {
     return UserDataProfileAllowanceIsar()
       ..userDataProfileId = entity.userDataProfileId
-      ..treeRecordId = entity.treeRecordId;
+      ..treeRecordId = entity.treeRecordId
+      ..isNew = !fromApi
+      ..markedForDelete = false;
   }
 
   UserDataProfileAllowance toEntity() {
@@ -35,6 +43,8 @@ class UserDataProfileAllowanceIsar {
     return UserDataProfileAllowanceIsar()
       ..id = id
       ..userDataProfileId = userDataProfileId ?? this.userDataProfileId
-      ..treeRecordId = treeRecordId ?? this.treeRecordId;
+      ..treeRecordId = treeRecordId ?? this.treeRecordId
+      ..isNew = isNew
+      ..markedForDelete = markedForDelete;
   }
 }

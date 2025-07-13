@@ -22,6 +22,19 @@ class UserDataProfileDetailService(
     private val treeRepository: TreeRepository,
 ) {
 
+
+    fun getAllProfilesDetails(): List<UserDataProfileDetailOutputModel> {
+        val userProfiles = userDataProfileDetailRepository.findAll()
+        return userProfiles.map {
+            UserDataProfileDetailOutputModel(
+                userDataProfileId = it.userDataProfileDetailId.userDataProfileId,
+                treeRecordId = it.userDataProfileDetailId.treeRecordId,
+                treeLevelName = it.treeRecord.treeLevel.name,
+                treeName = it.treeRecord.name
+            )
+        }
+    }
+
     fun getAllDetailsForProfile(profileId: Long): List<UserDataProfileDetailOutputModel> =
         userDataProfileDetailRepository.findByUserDataProfileId(profileId).map {
             UserDataProfileDetailOutputModel(

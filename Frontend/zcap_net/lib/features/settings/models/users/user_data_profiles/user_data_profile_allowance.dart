@@ -1,4 +1,5 @@
 
+
 class UserDataProfileAllowance {
   final int userDataProfileId;
   final int treeRecordId;

@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
 
 class UserDataProfile implements ApiTable {
@@ -15,30 +15,23 @@ class UserDataProfile implements ApiTable {
   final DateTime lastUpdatedAt;
   bool isSynced;
 
-  final List<UserDataProfileAllowance> userDataProfileAllowances;
-
   UserDataProfile({
     required this.remoteId,
     required this.name,
     required this.startDate,
     this.endDate,
-    this.userDataProfileAllowances = const [],
     required this.createdAt,
     required this.lastUpdatedAt,
     this.isSynced = true,
   });
 
   factory UserDataProfile.fromJson(Map<String, dynamic> json) {
+    LogService.log('JSON: $json');
     final profile = UserDataProfile(
       remoteId: json['userDataProfileId'],
       name: json['name'],
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
-      userDataProfileAllowances:
-          (json['userDataProfileDetail'] as List<dynamic>?)
-                  ?.map((e) => UserDataProfileAllowance.fromJson(e))
-                  .toList() ??
-              [],
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),

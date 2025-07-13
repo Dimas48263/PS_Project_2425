@@ -18,13 +18,23 @@ const UserDataProfileAllowanceIsarSchema = CollectionSchema(
   name: r'UserDataProfileAllowanceIsar',
   id: 776019211892892305,
   properties: {
-    r'treeRecordId': PropertySchema(
+    r'isNew': PropertySchema(
       id: 0,
+      name: r'isNew',
+      type: IsarType.bool,
+    ),
+    r'markedForDelete': PropertySchema(
+      id: 1,
+      name: r'markedForDelete',
+      type: IsarType.bool,
+    ),
+    r'treeRecordId': PropertySchema(
+      id: 2,
       name: r'treeRecordId',
       type: IsarType.long,
     ),
     r'userDataProfileId': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'userDataProfileId',
       type: IsarType.long,
     )
@@ -85,8 +95,10 @@ void _userDataProfileAllowanceIsarSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeLong(offsets[0], object.treeRecordId);
-  writer.writeLong(offsets[1], object.userDataProfileId);
+  writer.writeBool(offsets[0], object.isNew);
+  writer.writeBool(offsets[1], object.markedForDelete);
+  writer.writeLong(offsets[2], object.treeRecordId);
+  writer.writeLong(offsets[3], object.userDataProfileId);
 }
 
 UserDataProfileAllowanceIsar _userDataProfileAllowanceIsarDeserialize(
@@ -97,8 +109,10 @@ UserDataProfileAllowanceIsar _userDataProfileAllowanceIsarDeserialize(
 ) {
   final object = UserDataProfileAllowanceIsar();
   object.id = id;
-  object.treeRecordId = reader.readLong(offsets[0]);
-  object.userDataProfileId = reader.readLong(offsets[1]);
+  object.isNew = reader.readBool(offsets[0]);
+  object.markedForDelete = reader.readBool(offsets[1]);
+  object.treeRecordId = reader.readLong(offsets[2]);
+  object.userDataProfileId = reader.readLong(offsets[3]);
   return object;
 }
 
@@ -110,8 +124,12 @@ P _userDataProfileAllowanceIsarDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLong(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 1:
+      return (reader.readBool(offset)) as P;
+    case 2:
+      return (reader.readLong(offset)) as P;
+    case 3:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -478,6 +496,26 @@ extension UserDataProfileAllowanceIsarQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterFilterCondition> isNewEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isNew',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterFilterCondition> markedForDeleteEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'markedForDelete',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
       QAfterFilterCondition> treeRecordIdEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -603,6 +641,34 @@ extension UserDataProfileAllowanceIsarQueryLinks on QueryBuilder<
 extension UserDataProfileAllowanceIsarQuerySortBy on QueryBuilder<
     UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar, QSortBy> {
   QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> sortByIsNew() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNew', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> sortByIsNewDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNew', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> sortByMarkedForDelete() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'markedForDelete', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> sortByMarkedForDeleteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'markedForDelete', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
       QAfterSortBy> sortByTreeRecordId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'treeRecordId', Sort.asc);
@@ -648,6 +714,34 @@ extension UserDataProfileAllowanceIsarQuerySortThenBy on QueryBuilder<
   }
 
   QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> thenByIsNew() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNew', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> thenByIsNewDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNew', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> thenByMarkedForDelete() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'markedForDelete', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> thenByMarkedForDeleteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'markedForDelete', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
       QAfterSortBy> thenByTreeRecordId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'treeRecordId', Sort.asc);
@@ -679,6 +773,20 @@ extension UserDataProfileAllowanceIsarQuerySortThenBy on QueryBuilder<
 extension UserDataProfileAllowanceIsarQueryWhereDistinct on QueryBuilder<
     UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar, QDistinct> {
   QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QDistinct> distinctByIsNew() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isNew');
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QDistinct> distinctByMarkedForDelete() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'markedForDelete');
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
       QDistinct> distinctByTreeRecordId() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'treeRecordId');
@@ -701,6 +809,20 @@ extension UserDataProfileAllowanceIsarQueryProperty on QueryBuilder<
       idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, bool, QQueryOperations>
+      isNewProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isNew');
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, bool, QQueryOperations>
+      markedForDeleteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'markedForDelete');
     });
   }
 

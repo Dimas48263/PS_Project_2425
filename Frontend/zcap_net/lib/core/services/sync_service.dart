@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
+import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/core/services/user/user_data_allowances_sync_service.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_zcap_persons/incident_zcap_persons.dart';
@@ -21,6 +23,8 @@ import 'package:zcap_net_app/features/settings/models/people/special_needs/speci
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
@@ -121,6 +125,14 @@ class SyncService {
         LogService.log('Stack: $stack');
         success = false;
       }
+    }
+
+    try {
+      await UserDataProfileAllowanceSyncService().sync();
+    } catch (e, stack) {
+      LogService.log('[Sync] Erro ao sincronizar UserDataProfileAllowances: $e');
+      LogService.log('Stack: $stack');
+      success = false;
     }
 
     return success;
@@ -506,8 +518,7 @@ final List<SyncEntry> syncEntries = [
       idName: 'personId',
       fromJson: Persons.fromJson,
       toIsar: (ApiTable person) async =>
-          PersonsIsar.toRemote(
-              person as Persons),
+          PersonsIsar.toRemote(person as Persons),
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<PersonsIsar>)
@@ -631,7 +642,8 @@ final List<SyncEntry> syncEntries = [
       idName: 'incidentZcapPersonId',
       fromJson: IncidentZcapPersons.fromJson,
       toIsar: (ApiTable incidentZcapPerson) async =>
-          IncidentZcapPersonsIsar.toRemote(incidentZcapPerson as IncidentZcapPersons),
+          IncidentZcapPersonsIsar.toRemote(
+              incidentZcapPerson as IncidentZcapPersons),
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<IncidentZcapPersonsIsar>)
@@ -639,17 +651,29 @@ final List<SyncEntry> syncEntries = [
                   .remoteIdEqualTo(remoteId)
                   .findFirst(),
       saveLinksAfterPut: (IsarTable<ApiTable> incidentZcapPerson) async {
-        final incidentZcapPersonIsar = incidentZcapPerson as IncidentZcapPersonsIsar;
+        final incidentZcapPersonIsar =
+            incidentZcapPerson as IncidentZcapPersonsIsar;
         await incidentZcapPersonIsar.incidentZcap.save();
         await incidentZcapPersonIsar.person.save();
       }),
 
-
 /**
  * User tables
  */
-  //TODO userDataProfiles
-  //TODO userDataProfileDetails
+  SyncEntry<UserDataProfilesIsar, UserDataProfile>(
+    endpoint: 'users/dataprofiles',
+    getCollection: (isar) => isar.userDataProfilesIsars,
+    idName: 'userDataProfileId',
+    fromJson: UserDataProfile.fromJson,
+    toIsar: (ApiTable userDataProfile) async =>
+        UserDataProfilesIsar.toRemote(userDataProfile as UserDataProfile),
+    findByRemoteId:
+        (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+            (collection as IsarCollection<UserDataProfilesIsar>)
+                .where()
+                .remoteIdEqualTo(remoteId)
+                .findFirst(),
+  ),
   SyncEntry<UserProfilesIsar, UserProfile>(
     endpoint: 'users/profiles',
     getCollection: (isar) => isar.userProfilesIsars,
