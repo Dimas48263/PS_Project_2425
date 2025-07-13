@@ -71,7 +71,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: _addOrEditBuildingType,
+                onIconPressed: _addOrEditBuildingType,
               ),
               const SizedBox(height: 16),
               Expanded(

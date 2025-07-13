@@ -2,7 +2,9 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
 import 'package:isar/isar.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
 
+//TODO: check/test CRUD
 class UserDataProfileAllowanceSyncService {
   Future<void> sync() async {
     final remoteDataAllowances =
@@ -30,8 +32,14 @@ class UserDataProfileAllowanceSyncService {
         remoteDataMap.add(key);
 
         if (!localDataMap.containsKey(key)) {
+            final localUserProfile = await isarDb.userDataProfilesIsars
+              .filter()
+              .remoteIdEqualTo(remoteAllowance.userDataProfileId)
+              .findFirst();
+
           final isarItem = UserDataProfileAllowanceIsar.fromEntity(
               remoteAllowance,
+              localProfileId: localUserProfile?.id ?? 0,
               fromApi: true);
           await isarDb.userDataProfileAllowanceIsars.put(isarItem);
         }
@@ -56,7 +64,7 @@ class UserDataProfileAllowanceSyncService {
     for (final newAllowance in newAllowances) {
       try {
         await apiService.post(
-          'users/dataprofiles/${newAllowance.userDataProfileId}/detail',
+          'users/dataprofiles/detail',
           newAllowance.toEntity().toJson(),
         );
 

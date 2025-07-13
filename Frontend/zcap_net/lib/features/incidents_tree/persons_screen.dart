@@ -117,7 +117,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
             onSearchChanged: (value) => setState(() {
               _searchTerm = value.toLowerCase();
             }),
-            onAddPressed: () {
+            onIconPressed: () {
               _addOrEditPerson(null);
             },
           ),

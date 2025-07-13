@@ -72,7 +72,7 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: _addOrEditSpecialNeed,
+                onIconPressed: _addOrEditSpecialNeed,
               ),
               const SizedBox(height: 16),
               Expanded(

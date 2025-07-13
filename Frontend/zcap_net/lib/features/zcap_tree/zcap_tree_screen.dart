@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/data/app_date_provider.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
@@ -52,7 +51,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
       buildTree();
     });
 
-    zcapsStream = DatabaseService.db.zcapIsars
+    zcapsStream = isarDb.zcapIsars
         .buildQuery<ZcapIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
@@ -61,7 +60,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
       await buildTree();
     });
 
-    detailsStream = DatabaseService.db.zcapDetailsIsars
+    detailsStream = isarDb.zcapDetailsIsars
         .buildQuery<ZcapDetailsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
@@ -84,7 +83,6 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
   Future<void> buildTree() async {
     final referenceDate =
         context.read<AppReferenceDateProvider>();
-    final isar = DatabaseService.db;
 
     for (final z in zcaps) {
       await z.tree.load();
@@ -109,7 +107,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
       }
     }
 
-    final allTrees = await isar.treeIsars.where().findAll();
+    final allTrees = await isarDb.treeIsars.where().findAll();
     for (final t in allTrees) {
       await t.parent.load();
     }
@@ -201,7 +199,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
               onSearchChanged: (value) => setState(() {
                 _searchTerm = value.toLowerCase();
               }),
-              onAddPressed: () => _addOrEditZcap(context),
+              onIconPressed: () => _addOrEditZcap(context),
             ),
           ),
           const SizedBox(height: 16),
@@ -317,8 +315,8 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
                                   ),
                                 );
                                 if (confirm == true) {
-                                  await DatabaseService.db.writeTxn(() async {
-                                    await DatabaseService.db.zcapIsars
+                                  await isarDb.writeTxn(() async {
+                                    await isarDb.zcapIsars
                                         .delete(data.id);
                                   });
                                 }
@@ -378,7 +376,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
   DateTime selectedStartDate = zcap?.startDate ?? DateTime.now();
   DateTime? selectedEndDate = zcap?.endDate;
 
-  final availableBuildingTypes = await DatabaseService.db.buildingTypesIsars
+  final availableBuildingTypes = await isarDb.buildingTypesIsars
       .filter()
       .startDateLessThan(today.add(const Duration(days: 1)))
       .and()
@@ -388,7 +386,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
           .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
       .findAll();
 
-  final availableEntities = await DatabaseService.db.entitiesIsars
+  final availableEntities = await isarDb.entitiesIsars
       .filter()
       .startDateLessThan(today.add(const Duration(days: 1)))
       .and()
@@ -398,7 +396,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
           .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
       .findAll();
 
-  final availableCategories = await DatabaseService.db.detailTypeCategoriesIsars
+  final availableCategories = await isarDb.detailTypeCategoriesIsars
       .filter()
       .startDateLessThan(today.add(const Duration(days: 1)))
       .and()
@@ -408,7 +406,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
           .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
       .findAll();
 
-  final availableDetailTypes = await DatabaseService.db.zcapDetailTypeIsars
+  final availableDetailTypes = await isarDb.zcapDetailTypeIsars
       .filter()
       .startDateLessThan(today.add(const Duration(days: 1)))
       .and()
@@ -420,7 +418,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
 
   List<ZcapDetailsIsar> zcapDetails = [];
   if (zcap != null) {
-    zcapDetails = await DatabaseService.db.zcapDetailsIsars
+    zcapDetails = await isarDb.zcapDetailsIsars
         .filter()
         .zcap((q) => q.idEqualTo(zcap.id))
         .findAll();
@@ -658,8 +656,8 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
                       if (zcap == null) {
                         editedZcap.createdAt = now;
                       }
-                      DatabaseService.db.writeTxn(() async {
-                        await DatabaseService.db.zcapIsars.put(editedZcap);
+                      isarDb.writeTxn(() async {
+                        await isarDb.zcapIsars.put(editedZcap);
                         await editedZcap.buildingType.save();
                         await editedZcap.zcapEntity.save();
                         await editedZcap.tree.save();
@@ -667,7 +665,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
                           final detail = zcapDetailsMap[m];
                           if (detail != null) {
                             detail.zcap.value = editedZcap;
-                            await DatabaseService.db.zcapDetailsIsars
+                            await isarDb.zcapDetailsIsars
                                 .put(detail);
                             await detail.zcap.save();
                             await detail.zcapDetailType.save();

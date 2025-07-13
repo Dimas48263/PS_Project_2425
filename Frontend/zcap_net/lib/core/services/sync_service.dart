@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/core/services/user/user_data_allowances_sync_service.dart';

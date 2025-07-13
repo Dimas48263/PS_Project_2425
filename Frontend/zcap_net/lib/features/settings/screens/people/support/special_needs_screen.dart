@@ -72,7 +72,7 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: _addOrEditSupportNeeded,
+                onIconPressed: _addOrEditSupportNeeded,
               ),
               const SizedBox(height: 16),
               Expanded(

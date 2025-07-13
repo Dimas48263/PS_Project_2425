@@ -92,7 +92,7 @@ class _DetailTypeCategoriesScreenState
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
                   }),
-              onAddPressed: () => _addOrEditDetailTypeCategory(null)),
+              onIconPressed: () => _addOrEditDetailTypeCategory(null)),
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()

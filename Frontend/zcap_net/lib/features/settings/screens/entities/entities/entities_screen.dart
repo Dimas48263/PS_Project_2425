@@ -76,7 +76,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                     onSearchChanged: (value) => setState(() {
                       _searchTerm = value.toLowerCase();
                     }),
-                    onAddPressed: _addOrEditEntity,
+                    onIconPressed: _addOrEditEntity,
                   ),
                   const SizedBox(height: 16),
                   Expanded(

@@ -100,7 +100,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                     onSearchChanged: (value) => setState(() {
                       _searchTerm = value.toLowerCase();
                     }),
-                    onAddPressed: _addOrEditZcap,
+                    onIconPressed: _addOrEditZcap,
                   ),
                   const SizedBox(height: 16),
                   Expanded(

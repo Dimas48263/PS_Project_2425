@@ -72,7 +72,7 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: _addOrEditRelationType,
+                onIconPressed: _addOrEditRelationType,
               ),
               const SizedBox(height: 16),
               Expanded(

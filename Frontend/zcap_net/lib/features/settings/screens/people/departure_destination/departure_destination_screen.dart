@@ -88,7 +88,7 @@ class _DepartureDestinationScreenState
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
                   }),
-              onAddPressed: () => _addOrEditDepartureDestination(null)),
+              onIconPressed: () => _addOrEditDepartureDestination(null)),
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()

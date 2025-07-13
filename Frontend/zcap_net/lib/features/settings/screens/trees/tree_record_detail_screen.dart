@@ -125,7 +125,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
                   }),
-              onAddPressed: () => _addOrEditDetail(null),
+              onIconPressed: () => _addOrEditDetail(null),
               dropDownFilter: customDropdownSearch(
                   items: searchKeys,
                   selectedItem: selectedSearchOption,

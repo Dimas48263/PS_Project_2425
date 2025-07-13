@@ -8,6 +8,9 @@ class UserDataProfileAllowanceIsar {
   Id id = Isar.autoIncrement;
 
   @Index()
+  late int localProfileId;
+
+  @Index()
   late int userDataProfileId;
 
   @Index()
@@ -20,9 +23,11 @@ class UserDataProfileAllowanceIsar {
 
   factory UserDataProfileAllowanceIsar.fromEntity(
     UserDataProfileAllowance entity, {
+    required int localProfileId,
     bool fromApi = false,
   }) {
     return UserDataProfileAllowanceIsar()
+      ..localProfileId = localProfileId
       ..userDataProfileId = entity.userDataProfileId
       ..treeRecordId = entity.treeRecordId
       ..isNew = !fromApi
@@ -42,6 +47,7 @@ class UserDataProfileAllowanceIsar {
   }) {
     return UserDataProfileAllowanceIsar()
       ..id = id
+      ..localProfileId = localProfileId
       ..userDataProfileId = userDataProfileId ?? this.userDataProfileId
       ..treeRecordId = treeRecordId ?? this.treeRecordId
       ..isNew = isNew

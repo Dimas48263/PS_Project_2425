@@ -96,7 +96,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
                   }),
-              onAddPressed: () => _addOrEditTreeLevel(null),
+              onIconPressed: () => _addOrEditTreeLevel(null),
               dropDownFilter: customDropdownSearch(
                   items: ['name'.tr(), 'level'.tr()],
                   selectedItem: _isSearchingByName ? 'name'.tr() : 'level'.tr(),

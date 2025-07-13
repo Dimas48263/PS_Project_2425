@@ -218,7 +218,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: () => _addOrEditIncident(context),
+                onIconPressed: () => _addOrEditIncident(context),
               ),
             ),
             const SizedBox(height: 16),

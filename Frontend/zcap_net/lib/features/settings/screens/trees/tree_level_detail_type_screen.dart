@@ -104,7 +104,7 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
             onSearchChanged: (value) => setState(() {
               _searchTerm = value.toLowerCase();
             }),
-            onAddPressed: () => _addOrEditTreeLevelDetailType(null),
+            onIconPressed: () => _addOrEditTreeLevelDetailType(null),
             dropDownFilter: customDropdownSearch(
                 items: ['level'.tr(), 'screen_detail_type'.tr()],
                 selectedItem: _isSearchingBylevel

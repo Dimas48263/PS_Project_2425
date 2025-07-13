@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
@@ -30,7 +29,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
   @override
   void initState() {
     super.initState();
-    userProfilesStream = DatabaseService.db.userProfilesIsars
+    userProfilesStream = isarDb.userProfilesIsars
         .buildQuery<UserProfilesIsar>()
         .watch(fireImmediately: true)
         .listen((data) {
@@ -75,7 +74,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: _addOrEditUserProfile,
+                onIconPressed: _addOrEditUserProfile,
               ),
               const SizedBox(height: 16),
               Expanded(
@@ -155,10 +154,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                         ),
                                       );
                                       if (confirm == true) {
-                                        await DatabaseService.db
-                                            .writeTxn(() async {
-                                          await DatabaseService
-                                              .db.userProfilesIsars
+                                        await isarDb.writeTxn(() async {
+                                          await isarDb.userProfilesIsars
                                               .delete(userProfile.id);
                                         });
                                       }
@@ -257,9 +254,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                         updatedProfile.lastUpdatedAt = DateTime.now();
                         updatedProfile.isSynced = false;
 
-                        await DatabaseService.db.writeTxn(() async {
-                          await DatabaseService.db.userProfilesIsars
-                              .put(updatedProfile);
+                        await isarDb.writeTxn(() async {
+                          await isarDb.userProfilesIsars.put(updatedProfile);
                         });
 
                         Navigator.of(context).pop();
@@ -275,8 +271,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
   }
 
   Future<void> _editUserAccessAllowances(UserProfilesIsar profile) async {
-    final originalAllowances = await DatabaseService
-        .db.userProfileAccessAllowanceIsars
+    final originalAllowances = await isarDb.userProfileAccessAllowanceIsars
         .filter()
         .userProfile((q) => q.idEqualTo(profile.id))
         .sortByKey()
@@ -319,18 +314,17 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                   TextButton(
                     child: Text('save'.tr()),
                     onPressed: () async {
-                      await DatabaseService.db.writeTxn(() async {
+                      await isarDb.writeTxn(() async {
                         for (final edited in editableAllowances) {
-                          await DatabaseService
-                              .db.userProfileAccessAllowanceIsars
+                          await isarDb.userProfileAccessAllowanceIsars
                               .put(edited);
                         }
                       });
 
                       profile.isSynced = false;
                       profile.lastUpdatedAt = DateTime.now();
-                      await DatabaseService.db.writeTxn(() async {
-                        await DatabaseService.db.userProfilesIsars.put(profile);
+                      await isarDb.writeTxn(() async {
+                        await isarDb.userProfilesIsars.put(profile);
                       });
                       Navigator.of(context).pop();
                     },

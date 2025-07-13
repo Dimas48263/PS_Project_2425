@@ -72,7 +72,7 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
                 }),
-                onAddPressed: _addOrEditIncidentType,
+                onIconPressed: _addOrEditIncidentType,
               ),
               const SizedBox(height: 16),
               Expanded(

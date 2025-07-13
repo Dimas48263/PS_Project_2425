@@ -23,18 +23,23 @@ const UserDataProfileAllowanceIsarSchema = CollectionSchema(
       name: r'isNew',
       type: IsarType.bool,
     ),
-    r'markedForDelete': PropertySchema(
+    r'localProfileId': PropertySchema(
       id: 1,
+      name: r'localProfileId',
+      type: IsarType.long,
+    ),
+    r'markedForDelete': PropertySchema(
+      id: 2,
       name: r'markedForDelete',
       type: IsarType.bool,
     ),
     r'treeRecordId': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'treeRecordId',
       type: IsarType.long,
     ),
     r'userDataProfileId': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'userDataProfileId',
       type: IsarType.long,
     )
@@ -45,6 +50,19 @@ const UserDataProfileAllowanceIsarSchema = CollectionSchema(
   deserializeProp: _userDataProfileAllowanceIsarDeserializeProp,
   idName: r'id',
   indexes: {
+    r'localProfileId': IndexSchema(
+      id: 1209869916345169155,
+      name: r'localProfileId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'localProfileId',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
     r'userDataProfileId': IndexSchema(
       id: 1869932270773762868,
       name: r'userDataProfileId',
@@ -96,9 +114,10 @@ void _userDataProfileAllowanceIsarSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeBool(offsets[0], object.isNew);
-  writer.writeBool(offsets[1], object.markedForDelete);
-  writer.writeLong(offsets[2], object.treeRecordId);
-  writer.writeLong(offsets[3], object.userDataProfileId);
+  writer.writeLong(offsets[1], object.localProfileId);
+  writer.writeBool(offsets[2], object.markedForDelete);
+  writer.writeLong(offsets[3], object.treeRecordId);
+  writer.writeLong(offsets[4], object.userDataProfileId);
 }
 
 UserDataProfileAllowanceIsar _userDataProfileAllowanceIsarDeserialize(
@@ -110,9 +129,10 @@ UserDataProfileAllowanceIsar _userDataProfileAllowanceIsarDeserialize(
   final object = UserDataProfileAllowanceIsar();
   object.id = id;
   object.isNew = reader.readBool(offsets[0]);
-  object.markedForDelete = reader.readBool(offsets[1]);
-  object.treeRecordId = reader.readLong(offsets[2]);
-  object.userDataProfileId = reader.readLong(offsets[3]);
+  object.localProfileId = reader.readLong(offsets[1]);
+  object.markedForDelete = reader.readBool(offsets[2]);
+  object.treeRecordId = reader.readLong(offsets[3]);
+  object.userDataProfileId = reader.readLong(offsets[4]);
   return object;
 }
 
@@ -126,10 +146,12 @@ P _userDataProfileAllowanceIsarDeserializeProp<P>(
     case 0:
       return (reader.readBool(offset)) as P;
     case 1:
-      return (reader.readBool(offset)) as P;
-    case 2:
       return (reader.readLong(offset)) as P;
+    case 2:
+      return (reader.readBool(offset)) as P;
     case 3:
+      return (reader.readLong(offset)) as P;
+    case 4:
       return (reader.readLong(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -156,6 +178,15 @@ extension UserDataProfileAllowanceIsarQueryWhereSort on QueryBuilder<
       QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterWhere> anyLocalProfileId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'localProfileId'),
+      );
     });
   }
 
@@ -243,6 +274,99 @@ extension UserDataProfileAllowanceIsarQueryWhere on QueryBuilder<
         lower: lowerId,
         includeLower: includeLower,
         upper: upperId,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterWhereClause> localProfileIdEqualTo(int localProfileId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'localProfileId',
+        value: [localProfileId],
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterWhereClause> localProfileIdNotEqualTo(int localProfileId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'localProfileId',
+              lower: [],
+              upper: [localProfileId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'localProfileId',
+              lower: [localProfileId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'localProfileId',
+              lower: [localProfileId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'localProfileId',
+              lower: [],
+              upper: [localProfileId],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterWhereClause> localProfileIdGreaterThan(
+    int localProfileId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'localProfileId',
+        lower: [localProfileId],
+        includeLower: include,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterWhereClause> localProfileIdLessThan(
+    int localProfileId, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'localProfileId',
+        lower: [],
+        upper: [localProfileId],
+        includeUpper: include,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterWhereClause> localProfileIdBetween(
+    int lowerLocalProfileId,
+    int upperLocalProfileId, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'localProfileId',
+        lower: [lowerLocalProfileId],
+        includeLower: includeLower,
+        upper: [upperLocalProfileId],
         includeUpper: includeUpper,
       ));
     });
@@ -506,6 +630,62 @@ extension UserDataProfileAllowanceIsarQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterFilterCondition> localProfileIdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'localProfileId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterFilterCondition> localProfileIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'localProfileId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterFilterCondition> localProfileIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'localProfileId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterFilterCondition> localProfileIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'localProfileId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
       QAfterFilterCondition> markedForDeleteEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -655,6 +835,20 @@ extension UserDataProfileAllowanceIsarQuerySortBy on QueryBuilder<
   }
 
   QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> sortByLocalProfileId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'localProfileId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> sortByLocalProfileIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'localProfileId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
       QAfterSortBy> sortByMarkedForDelete() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'markedForDelete', Sort.asc);
@@ -728,6 +922,20 @@ extension UserDataProfileAllowanceIsarQuerySortThenBy on QueryBuilder<
   }
 
   QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> thenByLocalProfileId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'localProfileId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QAfterSortBy> thenByLocalProfileIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'localProfileId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
       QAfterSortBy> thenByMarkedForDelete() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'markedForDelete', Sort.asc);
@@ -780,6 +988,13 @@ extension UserDataProfileAllowanceIsarQueryWhereDistinct on QueryBuilder<
   }
 
   QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
+      QDistinct> distinctByLocalProfileId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'localProfileId');
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, UserDataProfileAllowanceIsar,
       QDistinct> distinctByMarkedForDelete() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'markedForDelete');
@@ -816,6 +1031,13 @@ extension UserDataProfileAllowanceIsarQueryProperty on QueryBuilder<
       isNewProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isNew');
+    });
+  }
+
+  QueryBuilder<UserDataProfileAllowanceIsar, int, QQueryOperations>
+      localProfileIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'localProfileId');
     });
   }
 

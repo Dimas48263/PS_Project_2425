@@ -105,7 +105,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
                   }),
-              onAddPressed: () => _addOrEditZcapDetailType(null),
+              onIconPressed: () => _addOrEditZcapDetailType(null),
               dropDownFilter: customDropdownSearch(
                   items: [
                     'name'.tr(),

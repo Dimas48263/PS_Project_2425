@@ -76,7 +76,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     onSearchChanged: (value) => setState(() {
                       _searchTerm = value.toLowerCase();
                     }),
-                    onAddPressed: _addOrEditUser,
+                    onIconPressed: _addOrEditUser,
                   ),
                   const SizedBox(height: 16),
                   Expanded(

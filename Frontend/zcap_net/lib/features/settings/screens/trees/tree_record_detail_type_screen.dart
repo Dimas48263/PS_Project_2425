@@ -91,7 +91,7 @@ class _TreeRecordDetailTypesScreenState
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
                   }),
-              onAddPressed: () => _addOrEditTreerRecordDetailType(null)),
+              onIconPressed: () => _addOrEditTreerRecordDetailType(null)),
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
