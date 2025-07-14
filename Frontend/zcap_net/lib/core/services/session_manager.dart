@@ -7,8 +7,10 @@ class SessionManager {
   String? _userName;
   int? _remoteId;
   int? _userProfileRemoteId;
+  int? _userDataProfileRemoteId;
   int? _localUserId;
   int? _localUserProfileId;
+  int? _localUserDataProfileId;
 
   factory SessionManager() {
     return _instance;
@@ -20,8 +22,10 @@ class SessionManager {
   String? get userName => _userName;
   int? get remoteId => _remoteId;
   int? get userProfileRemoteId => _userProfileRemoteId;
+  int? get userDataProfileRemoteId => _userDataProfileRemoteId;
   int? get localUserId => _localUserId;
   int? get localUserProfileId => _localUserProfileId;
+  int? get localUserDataProfileId => _localUserDataProfileId;
 
   bool get isLoggedIn => userName != null;
   bool get isOnline => token != null;
@@ -48,8 +52,16 @@ class SessionManager {
     _userProfileRemoteId = userProfileRemoteId;
   }
 
+  void setUserDataProfileRemoteId(int userDataProfileRemoteId) {
+    _userDataProfileRemoteId = userDataProfileRemoteId;
+  }
+
   void setLocalUserProfileId(int id) {
     _localUserProfileId = id;
+  }
+
+  void setLocalUserDataProfileId(int id) {
+    _localUserDataProfileId = id;
   }
 
   void setUserName(String name) {
@@ -61,5 +73,8 @@ class SessionManager {
     _userName = null;
     _remoteId = null;
     isOnlineNotifier.value = false;
+
+    _localUserDataProfileId = null;
+    _localUserProfileId = null;
   }
 }

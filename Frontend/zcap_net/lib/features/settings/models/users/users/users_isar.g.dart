@@ -102,6 +102,12 @@ const UsersIsarSchema = CollectionSchema(
       name: r'userProfile',
       target: r'UserProfilesIsar',
       single: true,
+    ),
+    r'userDataProfile': LinkSchema(
+      id: -3093418032991608766,
+      name: r'userDataProfile',
+      target: r'UserDataProfilesIsar',
+      single: true,
     )
   },
   embeddedSchemas: {},
@@ -195,13 +201,15 @@ Id _usersIsarGetId(UsersIsar object) {
 }
 
 List<IsarLinkBase<dynamic>> _usersIsarGetLinks(UsersIsar object) {
-  return [object.userProfile];
+  return [object.userProfile, object.userDataProfile];
 }
 
 void _usersIsarAttach(IsarCollection<dynamic> col, Id id, UsersIsar object) {
   object.id = id;
   object.userProfile
       .attach(col, col.isar.collection<UserProfilesIsar>(), r'userProfile', id);
+  object.userDataProfile.attach(
+      col, col.isar.collection<UserDataProfilesIsar>(), r'userDataProfile', id);
 }
 
 extension UsersIsarByIndex on IsarCollection<UsersIsar> {
@@ -1329,6 +1337,20 @@ extension UsersIsarQueryLinks
       userProfileIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.linkLength(r'userProfile', 0, true, 0, true);
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterFilterCondition> userDataProfile(
+      FilterQuery<UserDataProfilesIsar> q) {
+    return QueryBuilder.apply(this, (query) {
+      return query.link(q, r'userDataProfile');
+    });
+  }
+
+  QueryBuilder<UsersIsar, UsersIsar, QAfterFilterCondition>
+      userDataProfileIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.linkLength(r'userDataProfile', 0, true, 0, true);
     });
   }
 }

@@ -45,6 +45,7 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
 
   @override
   UserProfile toEntity({
+    //TODO: needed? allowances not used
     List<UserProfileAccessAllowanceIsar> allowances = const [],
   }) {
     return UserProfile(

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/app_config.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
-import 'package:zcap_net_app/core/services/log_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 import 'package:zcap_net_app/shared/security_utils.dart';
 import 'session_manager.dart';
@@ -18,20 +18,42 @@ class AuthService {
         body: jsonEncode({'userName': lowerCaseUserName, 'password': password}),
       );
 
+      final data = jsonDecode(response.body);
+
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        LogService.log(
+            'auth_success'.tr(namedArgs: {username: lowerCaseUserName}));
 
-        final token = data['token'];
+        final remoteUserId = data['userId'];
 
-        LogService.log("Login online: $lowerCaseUserName");
-
-        SessionManager().setUserRemoteId(data['userId']);
+        SessionManager().setUserRemoteId(remoteUserId);
         SessionManager().setUserProfileRemoteId(data['userProfileId']);
-        SessionManager().setToken(token);
+        SessionManager().setUserDataProfileRemoteId(data['userDataProfileId']);
+        SessionManager().setToken(data['token']);
         SessionManager().setUserName(lowerCaseUserName);
+
+        var localUser = await isarDb.usersIsars
+            .filter()
+            .remoteIdEqualTo(remoteUserId)
+            .findFirst();
+
+        if (localUser == null) {
+          LogService.log('auth_success_no_local_user'.tr());
+
+          await syncService.synchronizeAll();
+
+          localUser = await isarDb.usersIsars
+              .filter()
+              .remoteIdEqualTo(remoteUserId)
+              .findFirst();
+        }
+
+        if (localUser != null) {
+          updateLocalIdsAndProfiles(localUser);
+        }
+
         return true;
       } else {
-        final data = jsonDecode(response.body);
         LogService.log(
             "Erro no acesso via API: ${data['error'] ?? "SEM DETALHE DO ERRO"}");
       }
@@ -51,7 +73,7 @@ class AuthService {
   }
 
   Future<bool> offlineLogin(String username, String password) async {
-    final user = await DatabaseService.db.usersIsars.getByUserName(username);
+    final user = await isarDb.usersIsars.getByUserName(username);
     LogService.log("A tentar login offline.");
 
     if (user == null) {
@@ -71,22 +93,36 @@ class AuthService {
       SessionManager().setLocalUserId(user.id);
     }
 
-    await user.userProfile.load();
-    final userProfile = user.userProfile.value;
-
-    if (userProfile == null) {
-      LogService.log("Perfil do utilizador local é null");
-      return false;
-    } else if (userProfile.remoteId != null) {
-      SessionManager().setUserProfileRemoteId(userProfile.remoteId!);
-    } else {
-      SessionManager().setLocalUserProfileId(userProfile.id);
-    }
+    updateLocalIdsAndProfiles(user);
 
     return true;
   }
 
   void logout() {
     SessionManager().clearSession();
+  }
+}
+
+Future<void> updateLocalIdsAndProfiles(UsersIsar user) async {
+  SessionManager().setLocalUserId(user.id);
+
+  await user.userProfile.load();
+  final profile = user.userProfile.value;
+
+  if (profile != null) {
+    SessionManager().setLocalUserProfileId(profile.id);
+    LogService.log("Local Profile Id = ${profile.id}");
+  } else {
+    LogService.log("Profile não encontrado para user local ${user.id}");
+  }
+
+  await user.userDataProfile.load();
+  final dataProfile = user.userDataProfile.value;
+
+  if (dataProfile != null) {
+    SessionManager().setLocalUserDataProfileId(dataProfile.id);
+    LogService.log("Local Data Profile Id = ${dataProfile.id}");
+  } else {
+    LogService.log("DataProfile não encontrado para o user local ${user.id}");
   }
 }

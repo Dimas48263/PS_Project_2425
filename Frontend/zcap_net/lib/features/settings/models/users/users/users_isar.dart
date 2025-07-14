@@ -1,6 +1,8 @@
 import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users.dart';
@@ -24,7 +26,7 @@ class UsersIsar implements IsarTable<Users> {
   String password = "";
 
   final userProfile = IsarLink<UserProfilesIsar>();
-  //TODO: final userDataProfile = IsarLink<UserDataProfilesIsar>();
+  final userDataProfile = IsarLink<UserDataProfilesIsar>();
 
   DateTime startDate = DateTime(DateTime.now().year, 1, 1);
   DateTime? endDate;
@@ -43,7 +45,7 @@ class UsersIsar implements IsarTable<Users> {
       ..name = name
       ..password = password
       ..userProfile.value = userProfile.value
-//      ..userDataProfile.value = userDataProfile.value
+      ..userDataProfile.value = userDataProfile.value
       ..startDate = startDate
       ..endDate = endDate
       ..createdAt = createdAt
@@ -61,7 +63,7 @@ class UsersIsar implements IsarTable<Users> {
       name: name,
       password: password,
       userProfile: userProfile.value!.toEntity(),
-//      userDataProfile: userDataProfile.value!.toEntity(),
+      userDataProfile: userDataProfile.value!.toEntity(),
       startDate: startDate,
       endDate: endDate,
       createdAt: createdAt,
@@ -83,9 +85,15 @@ class UsersIsar implements IsarTable<Users> {
     isSynced = true;
 
     final uProfile = await findOrBuildUserProfile(user.userProfile);
-    await DatabaseService.db.writeTxn(() async {
+    await isarDb.writeTxn(() async {
       userProfile.value = uProfile;
       await userProfile.save();
+    });
+
+    final uDataProfile = await findOrBuildUserDataProfile(user.userDataProfile);
+    await isarDb.writeTxn(() async {
+      userDataProfile.value = uDataProfile;
+      await userDataProfile.save();
     });
   }
 
@@ -93,7 +101,7 @@ class UsersIsar implements IsarTable<Users> {
       UserProfile profile) async {
     UserProfilesIsar? p;
 
-    p = await DatabaseService.db.userProfilesIsars
+    p = await isarDb.userProfilesIsars
         .filter()
         .remoteIdEqualTo(profile.remoteId)
         .findFirst();
@@ -101,26 +109,29 @@ class UsersIsar implements IsarTable<Users> {
     if (p != null) return p;
 
     final newProfile = UserProfilesIsar.fromEntityType(profile);
-    await DatabaseService.db.writeTxn(() async {
-      await DatabaseService.db.userProfilesIsars.put(newProfile);
+    await isarDb.writeTxn(() async {
+      await isarDb.userProfilesIsars.put(newProfile);
     });
     return newProfile;
   }
 
-/*  static Future<UserDataProfilesIsar> findOrBuildUserDataProfile(UserDataProfile profile) async {
-    var p = await DatabaseService.db.userDataProfilesIsars
+  static Future<UserDataProfilesIsar> findOrBuildUserDataProfile(
+      UserDataProfile profile) async {
+    UserDataProfilesIsar? p;
+
+    p = await isarDb.userDataProfilesIsars
         .filter()
         .remoteIdEqualTo(profile.remoteId)
         .findFirst();
 
     if (p != null) return p;
 
-    final newProfile = UserDataProfilesIsar.fromUserDataProfile(profile);
-    await DatabaseService.db.writeTxn(() async {
-      await DatabaseService.db.userDataProfilesIsars.put(newProfile);
+    final newProfile = UserDataProfilesIsar.fromEntityType(profile);
+    await isarDb.writeTxn(() async {
+      await isarDb.userDataProfilesIsars.put(newProfile);
     });
     return newProfile;
-  }*/
+  }
 
   static Future<UsersIsar> fromEntity(Users u) async {
     final user = UsersIsar()
@@ -135,7 +146,8 @@ class UsersIsar implements IsarTable<Users> {
       ..isSynced = true;
 
     user.userProfile.value = await findOrBuildUserProfile(u.userProfile);
-//    user.userDataProfile.value = await findOrBuildUserDataProfile(u.userDataProfile);
+    user.userDataProfile.value =
+        await findOrBuildUserDataProfile(u.userDataProfile);
 
     return user;
   }
@@ -154,22 +166,43 @@ class UsersIsar implements IsarTable<Users> {
 
     remote.userProfile.value = await getOrBuildUserProfile(user.userProfile);
 
+    remote.userDataProfile.value =
+        await getOrBuildUserDataProfile(user.userDataProfile);
+    
     return remote;
   }
 
   static Future<UserProfilesIsar> getOrBuildUserProfile(
       UserProfile userProfile) async {
-    UserProfilesIsar? userProfilesIsar = await DatabaseService
-        .db.userProfilesIsars
+    UserProfilesIsar? userProfilesIsar = await isarDb.userProfilesIsars
         .where()
         .remoteIdEqualTo(userProfile.remoteId)
         .findFirst();
+
     if (userProfilesIsar != null) return userProfilesIsar;
 
     UserProfilesIsar newUserProfile = UserProfilesIsar.toRemote(userProfile);
-    await DatabaseService.db.writeTxn(() async {
-      await DatabaseService.db.userProfilesIsars.put(newUserProfile);
+    await isarDb.writeTxn(() async {
+      await isarDb.userProfilesIsars.put(newUserProfile);
     });
     return newUserProfile;
+  }
+
+  static Future<UserDataProfilesIsar> getOrBuildUserDataProfile(
+      UserDataProfile userDataProfile) async {
+    UserDataProfilesIsar? userDataProfilesIsar = await isarDb
+        .userDataProfilesIsars
+        .where()
+        .remoteIdEqualTo(userDataProfile.remoteId)
+        .findFirst();
+
+    if (userDataProfilesIsar != null) return userDataProfilesIsar;
+
+    UserDataProfilesIsar newUserDataProfile =
+        UserDataProfilesIsar.toRemote(userDataProfile);
+    await isarDb.writeTxn(() async {
+      await isarDb.userDataProfilesIsars.put(newUserDataProfile);
+    });
+    return newUserDataProfile;
   }
 }

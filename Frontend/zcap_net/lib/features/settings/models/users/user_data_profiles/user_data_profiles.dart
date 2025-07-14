@@ -1,5 +1,4 @@
 import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
@@ -26,7 +25,7 @@ class UserDataProfile implements ApiTable {
   });
 
   factory UserDataProfile.fromJson(Map<String, dynamic> json) {
-    LogService.log('JSON: $json');
+    LogService.log('DataProfile JSON: $json');
     final profile = UserDataProfile(
       remoteId: json['userDataProfileId'],
       name: json['name'],
@@ -46,8 +45,8 @@ class UserDataProfile implements ApiTable {
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
-      'dataAllowances':
-          [], //no datallowances, need to use async version instead
+//      'dataAllowances':
+//          [], //no datallowances, need to use async version instead
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
@@ -55,16 +54,15 @@ class UserDataProfile implements ApiTable {
 
   @override
   Future<Map<String, dynamic>> toJsonInputAsync() async {
-    final dataAllowances = await DatabaseService
-        .db.userDataProfileAllowanceIsars
-        .filter()
-        .userDataProfileIdEqualTo(remoteId)
-        .findAll();
+//    final dataAllowances = await isarDb.userDataProfileAllowanceIsars
+//        .filter()
+//        .userDataProfileIdEqualTo(remoteId)
+//        .findAll();
 
     return {
       'name': name,
-      'dataAllowances':
-          dataAllowances.map((a) => a.toEntity().toJson()).toList(),
+//      'dataAllowances':
+//          dataAllowances.map((a) => a.toEntity().toJson()).toList(),
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };

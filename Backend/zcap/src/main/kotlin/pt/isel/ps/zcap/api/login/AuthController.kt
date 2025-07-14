@@ -37,6 +37,7 @@ class AuthController(
                 "userName" to validLogin.user.userName,
                 "name" to validLogin.user.name,
                 "userProfileId" to validLogin.user.userProfile.userProfileId,
+                "userDataProfileId" to validLogin.user.userDataProfile.userDataProfileId,
                 "message" to "Welcome, ${validLogin.user.name}!",
                 "token" to validLogin.token,
                 )

@@ -65,7 +65,6 @@ class SyncService {
 
   Future<bool> isApiReachable() async {
     try {
-      LogService.log("inside sincService3 isAPIReachable\n");
       LogService.log('SyncService tentando reconectar...');
       final response =
           await apiService.ping().timeout(const Duration(seconds: 5));
@@ -733,6 +732,7 @@ final List<SyncEntry> syncEntries = [
     saveLinksAfterPut: (IsarTable<ApiTable> isarTable) async {
       final userProfile = isarTable as UsersIsar;
       await userProfile.userProfile.save();
+      await userProfile.userDataProfile.save();
     },
   ),
 ];

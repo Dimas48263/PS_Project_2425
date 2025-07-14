@@ -9,6 +9,7 @@ import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/core/services/user/user_data_allowances_provider.dart';
 import 'package:zcap_net_app/data/app_date_provider.dart';
 import 'package:zcap_net_app/data/notifiers.dart';
 import 'package:zcap_net_app/features/home/screens/home_screen.dart';
@@ -40,6 +41,7 @@ void main() async {
       child: MultiProvider(
           providers: [
             ChangeNotifierProvider(create: (_) => UserAllowancesProvider()),
+            ChangeNotifierProvider(create: (_) => UserDataAllowancesProvider()),
             ChangeNotifierProvider(create: (_) => AppReferenceDateProvider()),
           ],
           child: MyApp(

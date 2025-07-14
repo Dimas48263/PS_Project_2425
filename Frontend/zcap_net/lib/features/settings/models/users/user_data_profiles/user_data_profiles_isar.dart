@@ -1,6 +1,5 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles.dart';
 
 part 'user_data_profiles_isar.g.dart';
@@ -44,9 +43,7 @@ class UserDataProfilesIsar implements IsarTable<UserDataProfile> {
   }
 
   @override
-  UserDataProfile toEntity({
-    List<UserDataProfileAllowanceIsar> dataAllowances = const [],
-  }) {
+  UserDataProfile toEntity() {
     return UserDataProfile(
       remoteId: remoteId ?? 0,
       name: name,

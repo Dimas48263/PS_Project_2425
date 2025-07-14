@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/session_manager.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/core/services/user/user_data_allowances_provider.dart';
 import 'package:zcap_net_app/features/about/about_screen.dart';
 import 'package:zcap_net_app/features/home/screens/help_screen.dart';
 import 'package:zcap_net_app/features/login/view_model/language_model.dart';
@@ -41,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _usernameController.text,
       _passwordController.text,
       allowancesProvider: context.read<UserAllowancesProvider>(),
+      dataProfileProvider: context.read<UserDataAllowancesProvider>(),
     );
 
     if (!mounted) return;

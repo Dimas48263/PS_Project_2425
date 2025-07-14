@@ -1,7 +1,6 @@
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
@@ -34,7 +33,7 @@ class _TreeItemPickerState extends State<TreeItemPicker> {
 
   Future<void> _loadData() async {
     final today = DateTime.now();
-    availableTreeLevels = await DatabaseService.db.treeLevelIsars
+    availableTreeLevels = await isarDb.treeLevelIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -48,7 +47,7 @@ class _TreeItemPickerState extends State<TreeItemPicker> {
       selectedTreeItem = widget.initialTree;
       selectedTreeLevel = selectedTreeItem!.treeLevel.value;
 
-      availableTreeItems = await DatabaseService.db.treeIsars
+      availableTreeItems = await isarDb.treeIsars
           .filter()
           .treeLevel((q) => q.idEqualTo(selectedTreeLevel!.id))
           .and()
@@ -71,7 +70,7 @@ class _TreeItemPickerState extends State<TreeItemPicker> {
     widget.onChanged(null);
 
     if (level != null) {
-      availableTreeItems = await DatabaseService.db.treeIsars
+      availableTreeItems = await isarDb.treeIsars
           .filter()
           .treeLevel((q) => q.idEqualTo(level.id))
           .and()

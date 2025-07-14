@@ -1,9 +1,9 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/auth_service.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
-import 'package:zcap_net_app/core/services/log_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/session_manager.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/core/services/user/user_data_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 
@@ -19,6 +19,7 @@ class LoginViewModel {
     String username,
     String password, {
     required UserAllowancesProvider allowancesProvider,
+    required UserDataAllowancesProvider dataProfileProvider,
   }) async {
     if (username.isEmpty || password.isEmpty) {
       LogService.log("Login atempt refused");
@@ -38,7 +39,7 @@ class LoginViewModel {
     final userProfileRemoteId = SessionManager().userProfileRemoteId;
     if (userProfileRemoteId == null) return false;
 
-    final profile = await DatabaseService.db.userProfilesIsars
+    final profile = await isarDb.userProfilesIsars
         .filter()
         .remoteIdEqualTo(userProfileRemoteId)
         .findFirst();
@@ -50,12 +51,21 @@ class LoginViewModel {
       return true;
     }
 
-    _accessAllowances = await DatabaseService.db.userProfileAccessAllowanceIsars
+    _accessAllowances = await isarDb.userProfileAccessAllowanceIsars
         .filter()
         .userProfile((q) => q.remoteIdEqualTo(userProfileRemoteId))
         .findAll();
 
     allowancesProvider.loadAccess(profile, _accessAllowances);
+
+
+    final dataProfileId = SessionManager().localUserDataProfileId;
+    if (dataProfileId != null) {
+      await dataProfileProvider.loadDataAccess(dataProfileId);
+      LogService.log('Lista de treeIds permitida: ${dataProfileProvider.allowedTreeIdsMap.toString()}');
+    } else {
+      LogService.log("UserDataProfile local ID não encontrado na sessão");
+    }
 
     return true;
   }

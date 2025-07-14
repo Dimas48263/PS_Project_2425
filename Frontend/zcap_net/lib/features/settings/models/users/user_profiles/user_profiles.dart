@@ -1,5 +1,5 @@
 import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
@@ -54,7 +54,7 @@ class UserProfile implements ApiTable {
 
   @override
   Future<Map<String, dynamic>> toJsonInputAsync() async {
-    final allowances = await DatabaseService.db.userProfileAccessAllowanceIsars
+    final allowances = await isarDb.userProfileAccessAllowanceIsars
         .filter()
         .userProfile((q) => q.remoteIdEqualTo(remoteId))
         .findAll();
