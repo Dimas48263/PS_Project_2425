@@ -8,6 +8,7 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class RelationTypeScreen extends StatefulWidget {
   const RelationTypeScreen({super.key});
@@ -61,6 +62,9 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_relation_types'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(

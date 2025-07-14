@@ -10,6 +10,7 @@ import 'package:zcap_net_app/widgets/confirm_dialog.dart';
 import 'package:zcap_net_app/widgets/custom_form.dart';
 import 'package:zcap_net_app/widgets/custom_list_view.dart';
 import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class DepartureDestinationScreen extends StatefulWidget {
@@ -53,21 +54,7 @@ class _DepartureDestinationScreenState
       appBar: AppBar(
         title: Text('screen_settings_departure_destinations'.tr()),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () async {
-              final success = await syncService.synchronizeAll();
-              if (success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_ok'.tr())),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_error'.tr())),
-                );
-              }
-            },
-          ),
+          SyncButton()
         ],
       ),
       body: _buildUI(),

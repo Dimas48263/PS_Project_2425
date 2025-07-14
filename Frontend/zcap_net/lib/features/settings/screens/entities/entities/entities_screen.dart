@@ -10,6 +10,7 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class EntitiesScreen extends StatefulWidget {
   const EntitiesScreen({super.key});
@@ -63,6 +64,9 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_entities'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(

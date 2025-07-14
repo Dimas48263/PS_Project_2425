@@ -8,6 +8,7 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class SpecialNeedsScreen extends StatefulWidget {
   const SpecialNeedsScreen({super.key});
@@ -61,6 +62,9 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_special_need_types'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(

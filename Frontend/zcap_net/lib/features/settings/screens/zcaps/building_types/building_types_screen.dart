@@ -7,6 +7,7 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class BuildingTypesScreen extends StatefulWidget {
   const BuildingTypesScreen({super.key});
@@ -60,6 +61,9 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_building_types'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(

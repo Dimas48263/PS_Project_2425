@@ -25,6 +25,7 @@ import 'package:zcap_net_app/widgets/custom_form.dart';
 import 'package:zcap_net_app/widgets/custom_label_value_text.dart';
 import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
 import 'package:zcap_net_app/widgets/custom_unsynced_icon.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class IncidentsTreeScreen extends StatefulWidget {
   const IncidentsTreeScreen({super.key});
@@ -207,21 +208,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
           title: Text('screen_incidents'.tr()),
           actions: [
             AppReferenceDateWidget(),
-            IconButton(
-              icon: const Icon(Icons.sync),
-              onPressed: () async {
-                final success = await syncService.synchronizeAll();
-                if (success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('service_sync_ok'.tr())),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('service_sync_error'.tr())),
-                  );
-                }
-              },
-            ),
+            SyncButton()
           ],
         ),
         body: Column(

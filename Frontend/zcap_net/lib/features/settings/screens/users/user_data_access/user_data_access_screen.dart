@@ -7,6 +7,7 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/screens/users/user_data_access/user_data_allowances_screen.dart';
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class UserDataAccessScreen extends StatefulWidget {
   const UserDataAccessScreen({super.key});
@@ -60,6 +61,9 @@ class _UserDataAccessScreenState extends State<UserDataAccessScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_user_access_data'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(

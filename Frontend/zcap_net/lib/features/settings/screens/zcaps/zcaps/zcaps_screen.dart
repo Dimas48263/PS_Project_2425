@@ -14,6 +14,7 @@ import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_de
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 import 'package:zcap_net_app/widgets/status_bar.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/tree_item_picker.dart';
 
 class ZcapsScreen extends StatefulWidget {
@@ -86,6 +87,9 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_zcaps'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: Stack(
         children: [

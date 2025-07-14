@@ -19,6 +19,7 @@ import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
 import 'package:zcap_net_app/widgets/custom_form.dart';
 import 'package:zcap_net_app/widgets/custom_list_view.dart';
 import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class PersonsScreen extends StatefulWidget {
@@ -51,18 +52,16 @@ class _PersonsScreenState extends State<PersonsScreen> {
         .buildQuery<PersonsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
-      setState(() {
-        updateValues(null);
-      });
+      final izp =
+          await DatabaseService.db.incidentZcapPersonsIsars.where().findAll();
+      updateValues(izp);
     });
 
     incidentZcapPersonsStream = DatabaseService.db.incidentZcapPersonsIsars
         .buildQuery<IncidentZcapPersonsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
-      setState(() {
-        updateValues(data);
-      });
+      updateValues(data);
     });
     _searchController.addListener(() {
       setState(() {
@@ -71,9 +70,9 @@ class _PersonsScreenState extends State<PersonsScreen> {
     });
   }
 
-  void updateValues(List<IncidentZcapPersonsIsar>? data) {
+  void updateValues(List<IncidentZcapPersonsIsar> data) {
     setState(() {
-      if (data != null) incidentZcapPersons = data;
+      incidentZcapPersons = data;
       persons = [];
       persons = incidentZcapPersons
           .where((e) =>
@@ -100,30 +99,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
         title: Text('persons_from_zcap'
             .tr(namedArgs: {'zcapName': incidentZcapIsar.zcap.value!.name})),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () async {
-              final success = await syncService.synchronizeAll();
-              if (success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_ok'.tr())),
-                );
-                final updatedData = await DatabaseService
-                    .db.incidentZcapPersonsIsars
-                    .filter()
-                    .incidentZcap((q) => q.idEqualTo(incidentZcapIsar.id))
-                    .findAll();
-
-                setState(() {
-                  updateValues(updatedData);
-                });
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_error'.tr())),
-                );
-              }
-            },
-          ),
+          SyncButton()
         ],
       ),
       body: _buildUI(),
@@ -190,6 +166,8 @@ class _PersonsScreenState extends State<PersonsScreen> {
     for (var person in filteredList) {
       labelsList.add([
         '${'name'.tr()}: ${person.name}',
+        '${'entry_date'.tr()}: ${person.entryDateTime.toLocal().toString().split(' ')[0]}',
+        if (person.departureDateTime != null) '${'departure_date'.tr()}: ${person.departureDateTime!.toLocal().toString().split(' ')[0]}'
       ]);
     }
     return labelsList;

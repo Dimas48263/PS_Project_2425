@@ -10,6 +10,7 @@ import 'package:zcap_net_app/features/settings/models/zcaps/data_types/data_type
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class ZcapDetailTypesScreen extends StatefulWidget {
@@ -37,8 +38,9 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
         .watch(fireImmediately: true)
         .listen((data) async {
       for (var item in data) {
-        if (!item.detailTypeCategory.isLoaded)
+        if (!item.detailTypeCategory.isLoaded) {
           await item.detailTypeCategory.load();
+        }
       }
       setState(() {
         zcapDetailTypes = data;
@@ -65,20 +67,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
       appBar: AppBar(
         title: Text('screen_settings_detail_types'.tr()),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () async {
-              await syncService.syncAllPending(
-                  DatabaseService.db.zcapDetailTypeIsars,
-                  'zcap-detail-types',
-                  'zcapDetailTypeId');
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_ok'.tr())),
-                );
-              }
-            },
-          ),
+          SyncButton()
         ],
       ),
       body: _buildUI(),

@@ -7,6 +7,7 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class DetailTypeCategoriesScreen extends StatefulWidget {
@@ -58,20 +59,7 @@ class _DetailTypeCategoriesScreenState
       appBar: AppBar(
         title: Text('screen_settings_detail_category'.tr()),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () async {
-              await syncService.syncAllPending(
-                  DatabaseService.db.detailTypeCategoriesIsars,
-                  'detail-type-categories',
-                  'detailTypeCategoryId');
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_ok'.tr())),
-                );
-              }
-            },
-          ),
+          SyncButton()
         ],
       ),
       body: _buildUI(),

@@ -8,6 +8,7 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class EntityTypesScreen extends StatefulWidget {
   const EntityTypesScreen({super.key});
@@ -61,6 +62,9 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_entity_types'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -94,29 +98,29 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: CustomLabelValueText(
-                                                label: 'start'.tr(),
-                                                value: entityType.startDate
-                                                    .toLocal()
-                                                    .toString()
-                                                    .split(' ')[0]),
-                                          ),
-                                          Expanded(
-                                            child: CustomLabelValueText(
-                                              label: 'end'.tr(),
-                                              value: entityType.endDate != null
-                                                  ? entityType.endDate!
-                                                      .toLocal()
-                                                      .toString()
-                                                      .split(' ')[0]
-                                                  : 'no_end_date'.tr(),
-                                            ),
-                                          ),
-                                        ],
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                            label: 'start'.tr(),
+                                            value: entityType.startDate
+                                                .toLocal()
+                                                .toString()
+                                                .split(' ')[0]),
                                       ),
+                                      Expanded(
+                                        child: CustomLabelValueText(
+                                          label: 'end'.tr(),
+                                          value: entityType.endDate != null
+                                              ? entityType.endDate!
+                                                  .toLocal()
+                                                  .toString()
+                                                  .split(' ')[0]
+                                              : 'no_end_date'.tr(),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ],
                               ),
                               trailing: Row(

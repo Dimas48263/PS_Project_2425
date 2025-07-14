@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'dart:async';
@@ -75,21 +76,7 @@ class _TreesScreenState extends State<TreesScreen> {
       appBar: AppBar(
         title: Text('tree'.tr()),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () async {
-              final success = await syncService.synchronizeAll();
-              if (success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_ok'.tr())),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_error'.tr())),
-                );
-              }
-            },
-          ),
+          SyncButton()
         ],
       ),
       body: _buildUI(),

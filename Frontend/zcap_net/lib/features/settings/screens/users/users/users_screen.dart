@@ -12,6 +12,7 @@ import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dar
 import 'package:zcap_net_app/features/settings/screens/users/users/user_service.dart';
 import 'package:zcap_net_app/shared/security_utils.dart';
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -64,6 +65,9 @@ class _UsersScreenState extends State<UsersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('users'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -153,13 +157,14 @@ class _UsersScreenState extends State<UsersScreen> {
                                   },
                                   icon: const Icon(Icons.edit),
                                 ),
-                                  if (allowances.canWrite('user_access_reset_passwords'))
-                                IconButton(
-                                  onPressed: () =>
-                                      _showResetPasswordDialog(context, user),
-                                  icon: const Icon(Icons.lock_reset),
-                                  tooltip: 'reset_password'.tr(),
-                                ),
+                                if (allowances
+                                    .canWrite('user_access_reset_passwords'))
+                                  IconButton(
+                                    onPressed: () =>
+                                        _showResetPasswordDialog(context, user),
+                                    icon: const Icon(Icons.lock_reset),
+                                    tooltip: 'reset_password'.tr(),
+                                  ),
                                 IconButton(
                                   onPressed: () async {
                                     final confirm = await showDialog<bool>(

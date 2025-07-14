@@ -10,6 +10,7 @@ import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_p
 import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_access_editor_screen.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class UserProfilesScreen extends StatefulWidget {
   const UserProfilesScreen({super.key});
@@ -63,6 +64,9 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_user_profiles'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(

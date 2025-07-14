@@ -7,6 +7,7 @@ import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/u
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
 import 'package:zcap_net_app/widgets/custom_ok_snack_bar.dart';
 import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class UserDataAllowancesScreen extends StatefulWidget {
   final UserDataProfilesIsar profile;
@@ -116,7 +117,9 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_data_alowances'.tr()),
-        actions: [],
+        actions: [
+          SyncButton()
+        ],
       ),
       body: Column(
         children: [

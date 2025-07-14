@@ -10,6 +10,7 @@ import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class TreeLevelDetailTypeScreen extends StatefulWidget {
   const TreeLevelDetailTypeScreen({super.key});
@@ -65,21 +66,7 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
       appBar: AppBar(
         title: Text('screen_settings_tree_level_detail_type'.tr()),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.sync),
-            onPressed: () async {
-              final success = await syncService.synchronizeAll();
-              if (success) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_ok'.tr())),
-                );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('service_sync_error'.tr())),
-                );
-              }
-            },
-          ),
+          SyncButton()
         ],
       ),
       body: _buildUI(),
