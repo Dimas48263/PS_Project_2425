@@ -16,9 +16,6 @@ import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_de
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/features/zcap_tree/tree_wrapper.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/custom_app_refrence_date_picker.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
-import 'package:zcap_net_app/widgets/tree_item_picker.dart';
 
 class ZcapTreeScreen extends StatefulWidget {
   const ZcapTreeScreen({super.key});

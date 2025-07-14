@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_zcap_persons/incident_zcap_persons_isar.dart';
@@ -48,16 +47,16 @@ class _PersonsScreenState extends State<PersonsScreen> {
     super.initState();
     incidentZcapIsar = widget.incidentZcapIsar;
 
-    personsStream = DatabaseService.db.personsIsars
+    personsStream = isarDb.personsIsars
         .buildQuery<PersonsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
       final izp =
-          await DatabaseService.db.incidentZcapPersonsIsars.where().findAll();
+          await isarDb.incidentZcapPersonsIsars.where().findAll();
       updateValues(izp);
     });
 
-    incidentZcapPersonsStream = DatabaseService.db.incidentZcapPersonsIsars
+    incidentZcapPersonsStream = isarDb.incidentZcapPersonsIsars
         .buildQuery<IncidentZcapPersonsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
@@ -143,15 +142,15 @@ class _PersonsScreenState extends State<PersonsScreen> {
                       ),
                     );
                     if (confirm == true) {
-                      await DatabaseService.db.writeTxn(() async {
+                      await isarDb.writeTxn(() async {
                         final incidentZcapPersonFromPerson = incidentZcapPersons
                             .where((e) => e.person.value!.id == person.id)
                             .toList();
                         for (var izp in incidentZcapPersonFromPerson) {
-                          await DatabaseService.db.incidentZcapPersonsIsars
+                          await isarDb.incidentZcapPersonsIsars
                               .delete(izp.id);
                         }
-                        await DatabaseService.db.personsIsars.delete(person.id);
+                        await isarDb.personsIsars.delete(person.id);
                       });
                     }
                   },
@@ -179,9 +178,8 @@ class _PersonsScreenState extends State<PersonsScreen> {
     final today = DateTime(now.year, now.month, now.day);
     final formKey = GlobalKey<FormState>();
     final allDetails =
-        await DatabaseService.db.treeRecordDetailIsars.where().findAll();
-    final countryCodeDetailType = await DatabaseService
-        .db.treeRecordDetailTypeIsars
+        await isarDb.treeRecordDetailIsars.where().findAll();
+    final countryCodeDetailType = await isarDb.treeRecordDetailTypeIsars
         .where()
         .remoteIdEqualTo(1)
         .findFirst();
@@ -190,8 +188,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
             element.detailType.value!.id == countryCodeDetailType!.id)
         .toList();
 
-    final nationalityDetailType = await DatabaseService
-        .db.treeRecordDetailTypeIsars
+    final nationalityDetailType = await isarDb.treeRecordDetailTypeIsars
         .where()
         .remoteIdEqualTo(2)
         .findFirst();
@@ -200,7 +197,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
             element.detailType.value!.id == nationalityDetailType!.id)
         .toList();
 
-    final availableTreeLevels = await DatabaseService.db.treeLevelIsars
+    final availableTreeLevels = await isarDb.treeLevelIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -210,7 +207,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
 
-    final availableTrees = await DatabaseService.db.treeIsars
+    final availableTrees = await isarDb.treeIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -220,8 +217,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
 
-    final availableDepartureDestinations = await DatabaseService
-        .db.departureDestinationIsars
+    final availableDepartureDestinations = await isarDb.departureDestinationIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -436,7 +432,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                     if (formKey.currentState!.validate()) {
                       final navigator = Navigator.of(context);
                       final now = DateTime.now();
-                      await DatabaseService.db.writeTxn(() async {
+                      await isarDb.writeTxn(() async {
                         final newPerson = person ?? PersonsIsar();
                         newPerson.remoteId = person?.remoteId ?? 0;
                         newPerson.name = nameController.text;
@@ -463,7 +459,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                         newPerson.createdAt = person?.createdAt ?? now;
                         newPerson.lastUpdatedAt = now;
                         newPerson.isSynced = false;
-                        await DatabaseService.db.personsIsars.put(newPerson);
+                        await isarDb.personsIsars.put(newPerson);
                         await newPerson.countryCode.save();
                         await newPerson.placeOfResidence.save();
                         if (newPerson.nationality.value != null) {
@@ -489,7 +485,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                           newIncidentZcapPerson.createdAt = now;
                           newIncidentZcapPerson.lastUpdatedAt = now;
                           newIncidentZcapPerson.isSynced = false;
-                          await DatabaseService.db.incidentZcapPersonsIsars
+                          await isarDb.incidentZcapPersonsIsars
                               .put(newIncidentZcapPerson);
                           await newIncidentZcapPerson.incidentZcap.save();
                           await newIncidentZcapPerson.person.save();

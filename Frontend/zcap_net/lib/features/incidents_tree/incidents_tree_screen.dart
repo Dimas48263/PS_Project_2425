@@ -4,7 +4,6 @@ import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/core/utils/app_colors.dart';
@@ -52,14 +51,14 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
   @override
   void initState() {
     super.initState();
-    incidentsStream = DatabaseService.db.incidentsIsars
+    incidentsStream = isarDb.incidentsIsars
         .buildQuery<IncidentsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
       incidents = data;
       await buildTree();
     });
-    incidentsZcapsStream = DatabaseService.db.incidentZcapsIsars
+    incidentsZcapsStream = isarDb.incidentZcapsIsars
         .buildQuery<IncidentZcapsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
@@ -97,7 +96,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
 
   Future<void> buildTree() async {
     final referenceDate = context.read<AppReferenceDateProvider>();
-    final isar = DatabaseService.db;
+    final isar = isarDb;
     final Map<int, List<IncidentsIsar>> incidentsByTree = {};
 
     for (final i in incidents) {
@@ -206,10 +205,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('screen_incidents'.tr()),
-          actions: [
-            AppReferenceDateWidget(),
-            SyncButton()
-          ],
+          actions: [AppReferenceDateWidget(), SyncButton()],
         ),
         body: Column(
           children: [
@@ -299,9 +295,8 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                                   ),
                                 );
                                 if (confirm == true) {
-                                  await DatabaseService.db.writeTxn(() async {
-                                    await DatabaseService.db.incidentsIsars
-                                        .delete(data.id);
+                                  await isarDb.writeTxn(() async {
+                                    await isarDb.incidentsIsars.delete(data.id);
                                   });
                                 }
                               },
@@ -341,9 +336,8 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                                     ),
                                   );
                                   if (confirm == true) {
-                                    await DatabaseService.db.writeTxn(() async {
-                                      await DatabaseService
-                                          .db.incidentZcapsIsars
+                                    await isarDb.writeTxn(() async {
+                                      await isarDb.incidentZcapsIsars
                                           .delete(data.id);
                                     });
                                   }
@@ -395,7 +389,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
 
     final formKey = GlobalKey<FormState>();
 
-    final availableIncidentTypes = await DatabaseService.db.incidentTypesIsars
+    final availableIncidentTypes = await isarDb.incidentTypesIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -405,7 +399,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
 
-    final availableTreeLevels = await DatabaseService.db.treeLevelIsars
+    final availableTreeLevels = await isarDb.treeLevelIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -415,7 +409,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
 
-    final availableTrees = await DatabaseService.db.treeIsars
+    final availableTrees = await isarDb.treeIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -508,7 +502,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                     onPressed: () async {
                       if (formKey.currentState!.validate()) {
                         final now = DateTime.now();
-                        await DatabaseService.db.writeTxn(() async {
+                        await isarDb.writeTxn(() async {
                           final newIncident = incident ?? IncidentsIsar();
                           newIncident.remoteId = incident?.remoteId ?? 0;
                           newIncident.incidentType.value = incidentType;
@@ -518,8 +512,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                           newIncident.createdAt = incident?.createdAt ?? now;
                           newIncident.lastUpdatedAt = now;
                           newIncident.isSynced = false;
-                          await DatabaseService.db.incidentsIsars
-                              .put(newIncident);
+                          await isarDb.incidentsIsars.put(newIncident);
                           await newIncident.incidentType.save();
                           await newIncident.treeRecord.save();
                         });
@@ -537,7 +530,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final formKey = GlobalKey<FormState>();
-    final allZcaps = await DatabaseService.db.zcapIsars
+    final allZcaps = await isarDb.zcapIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -555,7 +548,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
             .toList();
     ZcapIsar? selectedZcap;
 
-    final availableEntities = await DatabaseService.db.entitiesIsars
+    final availableEntities = await isarDb.entitiesIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -614,7 +607,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                       if (formKey.currentState!.validate()) {
                         final navigator = Navigator.of(context);
                         final now = DateTime.now();
-                        await DatabaseService.db.writeTxn(() async {
+                        await isarDb.writeTxn(() async {
                           final newIncidentZcap = IncidentZcapsIsar();
                           newIncidentZcap.remoteId = 0;
                           newIncidentZcap.incident.value = incident;
@@ -625,8 +618,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                           newIncidentZcap.createdAt = now;
                           newIncidentZcap.lastUpdatedAt = now;
                           newIncidentZcap.isSynced = false;
-                          await DatabaseService.db.incidentZcapsIsars
-                              .put(newIncidentZcap);
+                          await isarDb.incidentZcapsIsars.put(newIncidentZcap);
                           await newIncidentZcap.incident.save();
                           await newIncidentZcap.zcap.save();
                           await newIncidentZcap.entity.save();
