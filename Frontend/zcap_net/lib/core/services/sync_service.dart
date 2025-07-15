@@ -14,6 +14,10 @@ import 'package:zcap_net_app/features/settings/models/incidents/incidents/incide
 import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination.dart';
 import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/person_special_needs/person_special_needs.dart';
+import 'package:zcap_net_app/features/settings/models/people/person_special_needs/person_special_needs_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/person_support_needed/person_support_needed.dart';
+import 'package:zcap_net_app/features/settings/models/people/person_support_needed/person_support_needed_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/persons/persons.dart';
 import 'package:zcap_net_app/features/settings/models/people/persons/persons_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
@@ -128,7 +132,8 @@ class SyncService {
     try {
       await UserDataProfileAllowanceSyncService().sync();
     } catch (e, stack) {
-      LogService.log('[Sync] Erro ao sincronizar UserDataProfileAllowances: $e');
+      LogService.log(
+          '[Sync] Erro ao sincronizar UserDataProfileAllowances: $e');
       LogService.log('Stack: $stack');
       success = false;
     }
@@ -551,7 +556,25 @@ final List<SyncEntry> syncEntries = [
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
-  //TODO PersonSpecialNeeds
+  SyncEntry<PersonSpecialNeedsIsar, PersonSpecialNeeds>(
+      endpoint: 'person-special-needs',
+      getCollection: (isar) => isar.personSpecialNeedsIsars,
+      idName: 'personSpecialNeedId',
+      fromJson: PersonSpecialNeeds.fromJson,
+      toIsar: (ApiTable personSpecialNeed) async => PersonSpecialNeedsIsar
+          .toRemote(personSpecialNeed as PersonSpecialNeeds),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<PersonSpecialNeedsIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> personSpecialNeed) async {
+        final personSpecialNeedIsar =
+            personSpecialNeed as PersonSpecialNeedsIsar;
+        await personSpecialNeedIsar.person.save();
+        await personSpecialNeedIsar.specialNeed.save();
+      }),
   SyncEntry<SupportNeededIsar, SupportNeeded>(
       endpoint: 'support-needed',
       getCollection: (isar) => isar.supportNeededIsars,
@@ -565,7 +588,25 @@ final List<SyncEntry> syncEntries = [
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
-  //TODO PersonSupportNeeded
+  SyncEntry<PersonSupportNeededIsar, PersonSupportNeeded>(
+      endpoint: 'person-support-needed',
+      getCollection: (isar) => isar.personSupportNeededIsars,
+      idName: 'personSupportNeededId',
+      fromJson: PersonSupportNeeded.fromJson,
+      toIsar: (ApiTable personSupportNeeded) async => PersonSupportNeededIsar
+          .toRemote(personSupportNeeded as PersonSupportNeeded),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<PersonSupportNeededIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> personSupportNeeded) async {
+        final personSupportNeededIsar =
+            personSupportNeeded as PersonSupportNeededIsar;
+        await personSupportNeededIsar.person.save();
+        await personSupportNeededIsar.supportNeeded.save();
+      }),
   SyncEntry<RelationTypeIsar, RelationType>(
       endpoint: 'relation-type',
       getCollection: (isar) => isar.relationTypeIsars,
