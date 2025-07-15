@@ -8,6 +8,7 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class SupportNeededScreen extends StatefulWidget {
   const SupportNeededScreen({super.key});
@@ -61,6 +62,9 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_support_need_types'.tr()),
+        actions: [
+          SyncButton()
+        ],
       ),
       body: SafeArea(
         child: SizedBox.expand(

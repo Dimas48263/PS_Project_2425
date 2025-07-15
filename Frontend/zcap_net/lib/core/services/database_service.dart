@@ -7,6 +7,8 @@ import 'package:zcap_net_app/features/settings/models/incidents/incident_zcap_pe
 import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/person_special_needs/person_special_needs_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/person_support_needed/person_support_needed_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/persons/persons_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
@@ -64,9 +66,9 @@ class DatabaseService {
     DepartureDestinationIsarSchema,
     PersonsIsarSchema,
     SpecialNeedIsarSchema,
-    //TODO PersonSpecialNeeds
+    PersonSpecialNeedsIsarSchema,
     SupportNeededIsarSchema,
-    //TODO PersonSupportNeeded
+    PersonSupportNeededIsarSchema,
     RelationTypeIsarSchema,
     //TODO Relations
     
