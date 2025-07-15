@@ -26,6 +26,7 @@ class ZcapTreeScreen extends StatefulWidget {
 
 class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
   TreeNode<dynamic> root = TreeNode<dynamic>.root(data: 'screen_zcaps'.tr());
+  TreeViewController? _controller;
 
   String _searchTerm = '';
   final TextEditingController _searchController = TextEditingController();
@@ -79,8 +80,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
   }
 
   Future<void> buildTree() async {
-    final referenceDate =
-        context.read<AppReferenceDateProvider>();
+    final referenceDate = context.read<AppReferenceDateProvider>();
 
     for (final z in zcaps) {
       await z.tree.load();
@@ -91,7 +91,8 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
     for (var z in zcaps) {
       //App reference date validation
       if (z.startDate.isAfter(referenceDate.endOfMonth) ||
-          (z.endDate != null && z.endDate!.isBefore(referenceDate.startOfMonth))) {
+          (z.endDate != null &&
+              z.endDate!.isBefore(referenceDate.startOfMonth))) {
         continue;
       }
 
@@ -126,6 +127,10 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
 
     setState(() {
       root = rootNode;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _controller?.expandAllChildren(root);
     });
   }
 
@@ -184,10 +189,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_zcaps'.tr()),
-        actions: [
-          AppReferenceDateWidget(),
-          SyncButton()
-        ],
+        actions: [AppReferenceDateWidget(), SyncButton()],
       ),
       body: Column(
         children: [
@@ -206,12 +208,17 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: TreeView.simple(
+                showRootNode: true,
                 tree: root,
                 expansionIndicatorBuilder: (context, node) =>
                     ChevronIndicator.rightDown(tree: node),
                 indentation: const Indentation(
                   style: IndentStyle.squareJoint,
                 ),
+                onTreeReady: (controller) {
+                  _controller = controller;
+                  controller.expandAllChildren(root);
+                },
                 builder: (context, node) {
                   final data = node.data;
                   final level = node.level;
@@ -315,8 +322,7 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
                                 );
                                 if (confirm == true) {
                                   await isarDb.writeTxn(() async {
-                                    await isarDb.zcapIsars
-                                        .delete(data.id);
+                                    await isarDb.zcapIsars.delete(data.id);
                                   });
                                 }
                               },
@@ -664,8 +670,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
                           final detail = zcapDetailsMap[m];
                           if (detail != null) {
                             detail.zcap.value = editedZcap;
-                            await isarDb.zcapDetailsIsars
-                                .put(detail);
+                            await isarDb.zcapDetailsIsars.put(detail);
                             await detail.zcap.save();
                             await detail.zcapDetailType.save();
                           }

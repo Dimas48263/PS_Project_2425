@@ -34,6 +34,7 @@ class IncidentsTreeScreen extends StatefulWidget {
 }
 
 class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
+  TreeViewController? _controller;
   late TreeNode<dynamic> root;
   List<IncidentsIsar> incidents = [];
   StreamSubscription? incidentsStream;
@@ -225,10 +226,17 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
               padding: const EdgeInsets.all(12.0),
               child: TreeView.simple(
                 key: ValueKey(root),
+                showRootNode: true,
                 tree: root,
                 expansionIndicatorBuilder: (context, node) =>
                     ChevronIndicator.rightDown(tree: node),
                 indentation: const Indentation(style: IndentStyle.squareJoint),
+                onTreeReady: (controller) {
+                  _controller = controller;
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    _controller?.expandAllChildren(root);
+                  });
+                },
                 builder: (context, node) {
                   final data = node.data;
                   final level = node.level;
