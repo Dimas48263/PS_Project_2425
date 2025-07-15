@@ -5,10 +5,15 @@ import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/features/incidents_tree/special_needs_dialogs.dart';
+import 'package:zcap_net_app/features/incidents_tree/special_needs_dialogs.dart';
+import 'package:zcap_net_app/features/incidents_tree/support_needed_dialogs.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_zcap_persons/incident_zcap_persons_isar.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/person_special_needs/person_special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/persons/persons_isar.dart';
+import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
@@ -16,7 +21,6 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/
 import 'package:zcap_net_app/widgets/confirm_dialog.dart';
 import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
 import 'package:zcap_net_app/widgets/custom_form.dart';
-import 'package:zcap_net_app/widgets/custom_list_view.dart';
 import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
 import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
@@ -38,6 +42,9 @@ class _PersonsScreenState extends State<PersonsScreen> {
   List<PersonsIsar> persons = [];
   StreamSubscription? personsStream;
 
+  List<PersonSpecialNeedsIsar> personSpecialNeeds = [];
+  StreamSubscription? personSpecialNeedsStream;
+
   bool _isLoading = true;
   final _searchController = TextEditingController();
   String _searchTerm = '';
@@ -51,8 +58,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
         .buildQuery<PersonsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
-      final izp =
-          await isarDb.incidentZcapPersonsIsars.where().findAll();
+      final izp = await isarDb.incidentZcapPersonsIsars.where().findAll();
       updateValues(izp);
     });
 
@@ -61,6 +67,13 @@ class _PersonsScreenState extends State<PersonsScreen> {
         .watch(fireImmediately: true)
         .listen((data) async {
       updateValues(data);
+    });
+
+    personSpecialNeedsStream = isarDb.personSpecialNeedsIsars
+        .buildQuery<PersonSpecialNeedsIsar>()
+        .watch(fireImmediately: true)
+        .listen((data) async {
+      personSpecialNeeds = data;
     });
     _searchController.addListener(() {
       setState(() {
@@ -97,9 +110,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
       appBar: AppBar(
         title: Text('persons_from_zcap'
             .tr(namedArgs: {'zcapName': incidentZcapIsar.zcap.value!.name})),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -126,59 +137,103 @@ class _PersonsScreenState extends State<PersonsScreen> {
           const SizedBox(height: 10.0),
           _isLoading
               ? const CircularProgressIndicator()
-              : buildListView(
-                  filteredList,
-                  getLabelsList(filteredList),
-                  () async => await syncService.synchronizeAll(),
-                  (person) {
-                    _addOrEditPerson(person);
-                  },
-                  (person) async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => ConfirmDialog(
-                        title: 'confirm_delete'.tr(),
-                        content: 'confirm_delete_message'.tr(),
-                      ),
-                    );
-                    if (confirm == true) {
-                      await isarDb.writeTxn(() async {
-                        final incidentZcapPersonFromPerson = incidentZcapPersons
-                            .where((e) => e.person.value!.id == person.id)
-                            .toList();
-                        for (var izp in incidentZcapPersonFromPerson) {
-                          await isarDb.incidentZcapPersonsIsars
-                              .delete(izp.id);
-                        }
-                        await isarDb.personsIsars.delete(person.id);
-                      });
-                    }
-                  },
-                ),
+              : Expanded(
+                  child: ListView.builder(
+                      itemCount: filteredList.length,
+                      itemBuilder: (context, index) {
+                        final person = filteredList[index];
+
+                        return Card(
+                          child: ListTile(
+                            contentPadding: const EdgeInsets.only(left: 10.0),
+                            title: Text('${'name'.tr()}: ${person.name}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            subtitle: Column(
+                              children: [
+                                Row(children: [
+                                  Expanded(
+                                      child: Text(
+                                          '${'entry_date'.tr()}: ${person.entryDateTime.toLocal().toString().split(' ')[0]}')),
+                                  Expanded(
+                                      child: Text(
+                                          '${'departure_date'.tr()}: ${person.departureDateTime != null ? person.departureDateTime!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}'))
+                                ])
+                              ],
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                ElevatedButton(
+                                    onPressed: () => showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                             SupportNeedsDialogs(person: person)),
+                                    child: Text('support_needed'.tr())),
+                                ElevatedButton(
+                                    onPressed: () => showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                             SpecialNeedsDialogs(person: person)),
+                                    child: Text('special_needs'.tr())),
+                                if (!person.isSynced)
+                                  IconButton(
+                                    onPressed: () async =>
+                                        await syncService.synchronizeAll(),
+                                    icon: const Icon(Icons.sync_problem,
+                                        color: Colors.orange, size: 30),
+                                  ),
+                                IconButton(
+                                  icon: const Icon(Icons.edit),
+                                  onPressed: () {
+                                    _addOrEditPerson(person);
+                                  },
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => ConfirmDialog(
+                                        title: 'confirm_delete'.tr(),
+                                        content: 'confirm_delete_message'.tr(),
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      await isarDb.writeTxn(() async {
+                                        final incidentZcapPersonFromPerson =
+                                            incidentZcapPersons
+                                                .where((e) =>
+                                                    e.person.value!.id ==
+                                                    person.id)
+                                                .toList();
+                                        for (var izp
+                                            in incidentZcapPersonFromPerson) {
+                                          await isarDb.incidentZcapPersonsIsars
+                                              .delete(izp.id);
+                                        }
+                                        await isarDb.personsIsars
+                                            .delete(person.id);
+                                      });
+                                    }
+                                  },
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }))
         ],
       ),
     );
   }
 
-  List<List<String>> getLabelsList(List<PersonsIsar> filteredList) {
-    List<List<String>> labelsList = [];
-    for (var person in filteredList) {
-      labelsList.add([
-        '${'name'.tr()}: ${person.name}',
-        '${'entry_date'.tr()}: ${person.entryDateTime.toLocal().toString().split(' ')[0]}',
-        if (person.departureDateTime != null) '${'departure_date'.tr()}: ${person.departureDateTime!.toLocal().toString().split(' ')[0]}'
-      ]);
-    }
-    return labelsList;
-  }
-
   void _addOrEditPerson(PersonsIsar? person) async {
-    print('personId: ${person?.id}');
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final formKey = GlobalKey<FormState>();
-    final allDetails =
-        await isarDb.treeRecordDetailIsars.where().findAll();
+    final allDetails = await isarDb.treeRecordDetailIsars.where().findAll();
     final countryCodeDetailType = await isarDb.treeRecordDetailTypeIsars
         .where()
         .remoteIdEqualTo(1)
@@ -217,7 +272,8 @@ class _PersonsScreenState extends State<PersonsScreen> {
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
 
-    final availableDepartureDestinations = await isarDb.departureDestinationIsars
+    final availableDepartureDestinations = await isarDb
+        .departureDestinationIsars
         .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
@@ -493,6 +549,277 @@ class _PersonsScreenState extends State<PersonsScreen> {
                       });
 
                       navigator.pop();
+                    }
+                  },
+                ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  void showSpecialNeeds(
+    BuildContext context,
+    List<PersonSpecialNeedsIsar> specialNeeds,
+    PersonsIsar person,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setState) {
+          final specialNeedPersonMap = {
+            for (final s in specialNeeds) s.specialNeed.value!.id: s
+          };
+          return Dialog(
+            insetPadding: const EdgeInsets.all(16),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Container(
+              width: 320,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'special_needs'.tr(),
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  if (specialNeedPersonMap.isEmpty)
+                    Text('no_special_needs'.tr())
+                  else
+                    SizedBox(
+                      height: 200,
+                      child: ListView.builder(
+                        itemCount: specialNeedPersonMap.length,
+                        itemBuilder: (context, index) {
+                          final key =
+                              specialNeedPersonMap.keys.elementAt(index);
+                          final personSpecialNeed = specialNeedPersonMap[key]!;
+
+                          return Card(
+                            child: ListTile(
+                                contentPadding: const EdgeInsets.only(
+                                    left: 10.0, right: 10.0),
+                                title: Text(
+                                  personSpecialNeed.specialNeed.value!.name,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Text(
+                                  personSpecialNeed.description ??
+                                      'no_description'.tr(),
+                                ),
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (!personSpecialNeed.isSynced)
+                                      IconButton(
+                                        onPressed: () async {
+                                          await syncService.synchronizeAll();
+                                          final updatedList = await isarDb
+                                              .personSpecialNeedsIsars
+                                              .filter()
+                                              .person(
+                                                  (q) => q.idEqualTo(person.id))
+                                              .findAll();
+                                          setState(() {
+                                            specialNeeds = updatedList;
+                                          });
+                                        },
+                                        icon: const Icon(
+                                          Icons.sync_problem,
+                                          color: Colors.amberAccent,
+                                        ),
+                                      ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => ConfirmDialog(
+                                            title: 'confirm_delete'.tr(),
+                                            content:
+                                                'confirm_delete_message'.tr(),
+                                          ),
+                                        );
+                                        if (confirm == true) {
+                                          await isarDb.writeTxn(() async {
+                                            await isarDb.personSpecialNeedsIsars
+                                                .delete(personSpecialNeed.id);
+                                          });
+                                          final updatedList = await isarDb
+                                              .personSpecialNeedsIsars
+                                              .filter()
+                                              .person(
+                                                  (q) => q.idEqualTo(person.id))
+                                              .findAll();
+                                          setState(() {
+                                            specialNeeds = updatedList;
+                                          });
+                                        }
+                                      },
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                    ),
+                                  ],
+                                )),
+                          );
+                        },
+                      ),
+                    ),
+                  const SizedBox(height: 16),
+                  Builder(builder: (innerContext) {
+                    return ElevatedButton(
+                      onPressed: () async {
+                        final saved = await addOrEditSpecialNeed(
+                            null, person, innerContext);
+                        if (saved == true) {
+                          final updatedList = await isarDb
+                              .personSpecialNeedsIsars
+                              .filter()
+                              .person((q) => q.idEqualTo(person.id))
+                              .findAll();
+                          setState(() {
+                            specialNeeds = updatedList;
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        shape: const CircleBorder(),
+                        padding: const EdgeInsets.all(12),
+                        minimumSize: const Size(60.0, 60.0),
+                      ),
+                      child: const Icon(
+                        Icons.add,
+                        size: 40.0,
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  Future<bool?> addOrEditSpecialNeed(PersonSpecialNeedsIsar? personSpecialNeed,
+      PersonsIsar? person, BuildContext context) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final formKey = GlobalKey<FormState>();
+    final personController = personSpecialNeed?.person.value! ?? person;
+    SpecialNeedIsar? specialNeedController =
+        personSpecialNeed?.specialNeed.value!;
+    final descriptionController =
+        TextEditingController(text: personSpecialNeed?.description ?? '');
+    DateTime? startDate = personSpecialNeed?.startDate ?? DateTime.now();
+    DateTime? endDate = personSpecialNeed?.endDate;
+
+    List<TextControllersInputFormConfig> textControllersConfig = [
+      TextControllersInputFormConfig(
+          controller: descriptionController,
+          label: 'description'.tr(),
+          validator: (value) {
+            return null;
+          }),
+    ];
+
+    final availableSpecialNeeds = await isarDb.specialNeedIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        final allowances = context.watch<UserAllowancesProvider>();
+
+        return StatefulBuilder(builder: (context, setModalState) {
+          return AlertDialog(
+            title: Text(personSpecialNeed == null
+                ? '${'add'.tr()} ${'special_need'.tr()}'
+                : '${'edit'.tr()} ${'special_need'.tr()}'),
+            content: buildForm(
+                formKey, context, textControllersConfig, startDate, endDate,
+                (value) {
+              setState(() => startDate = value);
+              setModalState(() {}); // Atualiza o dialog
+            }, (value) {
+              setState(() => endDate = value);
+              setModalState(() {}); // Atualiza o dialog
+            }, () {
+              setModalState(() {
+                endDate = null;
+              });
+            }, [
+              customDropdownSearch(
+                  itemLabelBuilder: (specialNeed) => specialNeed.name,
+                  items: availableSpecialNeeds,
+                  selectedItem: specialNeedController,
+                  onSelected: (SpecialNeedIsar? value) {
+                    setModalState(() {
+                      specialNeedController = value;
+                    });
+                  },
+                  validator: (value) =>
+                      value == null ? 'required_field'.tr() : null,
+                  label: "${'special_need'.tr()}*")
+            ]),
+            actions: [
+              TextButton(
+                child: Text(allowances
+                        .canWrite('user_access_settings_tree_levels') //TODO
+                    ? 'cancel'.tr()
+                    : 'close'.tr()),
+                onPressed: () => Navigator.pop(context, false),
+              ),
+              if (allowances
+                  .canWrite('user_access_settings_tree_levels')) //TODO
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final now = DateTime.now();
+                      await isarDb.writeTxn(() async {
+                        final newPersonSpecialNeed =
+                            personSpecialNeed ?? PersonSpecialNeedsIsar();
+                        newPersonSpecialNeed.remoteId =
+                            personSpecialNeed?.remoteId ?? 0;
+                        newPersonSpecialNeed.person.value = personController;
+                        newPersonSpecialNeed.specialNeed.value =
+                            specialNeedController;
+                        newPersonSpecialNeed.description =
+                            descriptionController.text.isEmpty
+                                ? null
+                                : descriptionController.text;
+                        newPersonSpecialNeed.startDate = startDate ?? now;
+                        newPersonSpecialNeed.endDate = endDate;
+                        newPersonSpecialNeed.createdAt =
+                            personSpecialNeed?.createdAt ?? now;
+                        newPersonSpecialNeed.lastUpdatedAt = now;
+                        newPersonSpecialNeed.isSynced = false;
+                        await isarDb.personSpecialNeedsIsars
+                            .put(newPersonSpecialNeed);
+                        await newPersonSpecialNeed.person.save();
+                        await newPersonSpecialNeed.specialNeed.save();
+                      });
+                      // ignore: use_build_context_synchronously
+                      Navigator.pop(context, true);
                     }
                   },
                 ),
