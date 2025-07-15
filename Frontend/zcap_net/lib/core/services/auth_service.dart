@@ -49,7 +49,7 @@ class AuthService {
         }
 
         if (localUser != null) {
-          updateLocalIdsAndProfiles(localUser);
+          await updateLocalIdsAndProfiles(localUser);
         }
 
         return true;
@@ -89,11 +89,9 @@ class AuthService {
 
     if (user.remoteId != null) {
       SessionManager().setUserRemoteId(user.remoteId!);
-    } else {
-      SessionManager().setLocalUserId(user.id);
     }
 
-    updateLocalIdsAndProfiles(user);
+    await updateLocalIdsAndProfiles(user);
 
     return true;
   }

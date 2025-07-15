@@ -9,9 +9,6 @@ import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_p
 
 class LoginViewModel {
   final AuthService _authService = AuthService();
-  List<UserProfileAccessAllowanceIsar> _accessAllowances = [];
-  List<UserProfileAccessAllowanceIsar> get accessAllowances =>
-      _accessAllowances;
 
   LoginViewModel();
 
@@ -33,36 +30,37 @@ class LoginViewModel {
       return false;
     }
 
-    final remoteId = SessionManager().remoteId;
-    if (remoteId == null) return false;
+    final userProfileId = SessionManager().localUserProfileId;
+        LogService.log('userProfileId = $userProfileId');
+    
+    if (userProfileId != null) {
+      final profile = await isarDb.userProfilesIsars
+          .filter()
+          .idEqualTo(userProfileId)
+          .findFirst();
 
-    final userProfileRemoteId = SessionManager().userProfileRemoteId;
-    if (userProfileRemoteId == null) return false;
+      if (profile != null) {
+        final accessAllowances = await isarDb.userProfileAccessAllowanceIsars
+            .filter()
+            .userProfile((q) => q.idEqualTo(userProfileId))
+            .findAll();
 
-    final profile = await isarDb.userProfilesIsars
-        .filter()
-        .remoteIdEqualTo(userProfileRemoteId)
-        .findFirst();
-
-    if (profile == null) {
+        allowancesProvider.loadAccess(profile, accessAllowances);
+      }
+    } else {
       LogService.log(
           "No profiles locally, login advances with empty allowances");
       allowancesProvider.loadAccess(UserProfilesIsar(), []);
       return true;
     }
 
-    _accessAllowances = await isarDb.userProfileAccessAllowanceIsars
-        .filter()
-        .userProfile((q) => q.remoteIdEqualTo(userProfileRemoteId))
-        .findAll();
-
-    allowancesProvider.loadAccess(profile, _accessAllowances);
-
-
     final dataProfileId = SessionManager().localUserDataProfileId;
+            LogService.log('dataProfileId = $dataProfileId');
+
     if (dataProfileId != null) {
       await dataProfileProvider.loadDataAccess(dataProfileId);
-      LogService.log('Lista de treeIds permitida: ${dataProfileProvider.allowedTreeIdsMap.toString()}');
+      LogService.log(
+          'Lista de treeIds permitida: ${dataProfileProvider.allowedTreeIdsMap.toString()}');
     } else {
       LogService.log("UserDataProfile local ID não encontrado na sessão");
     }
