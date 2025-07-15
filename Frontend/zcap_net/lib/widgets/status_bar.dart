@@ -90,7 +90,9 @@ class StatusBar extends StatelessWidget {
                                 context,
                                 'login_ok'.tr(),
                               );
-                              await syncService.synchronizeAll();
+                              if (SessionManager().isOnline) {
+                                await syncService.synchronizeAll();
+                              }
                             }
                           } catch (e, stack) {
                             LogService.log(
@@ -98,7 +100,7 @@ class StatusBar extends StatelessWidget {
                             CustomNOkSnackBar.show(
                                 context,
                                 'service_sync_error'.tr(namedArgs: {
-                                  'error': e.toString(),
+                                  'error': '', //e.toString(),
                                 }));
                           }
                         },

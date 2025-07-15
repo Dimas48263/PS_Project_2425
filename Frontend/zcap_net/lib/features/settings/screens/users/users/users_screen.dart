@@ -4,15 +4,14 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
-import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
 import 'package:zcap_net_app/features/settings/screens/users/users/user_service.dart';
 import 'package:zcap_net_app/shared/security_utils.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class UsersScreen extends StatefulWidget {
   const UsersScreen({super.key});
@@ -31,7 +30,7 @@ class _UsersScreenState extends State<UsersScreen> {
   @override
   void initState() {
     super.initState();
-    usersStream = DatabaseService.db.usersIsars
+    usersStream = isarDb.usersIsars
         .buildQuery<UsersIsar>()
         .watch(fireImmediately: true)
         .listen((data) {
@@ -65,9 +64,7 @@ class _UsersScreenState extends State<UsersScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('users'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -96,25 +93,40 @@ class _UsersScreenState extends State<UsersScreen> {
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Row(children: [
+                                  CustomLabelValueText(
+                                      label: 'name'.tr(), value: user.name),
+                                ]),
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: CustomLabelValueText(
-                                          label: 'name'.tr(), value: user.name),
-                                    ),
+                                        child: FutureBuilder(
+                                      future: user.userProfile.load(),
+                                      builder: (context, snapshot) {
+                                        final userProfileName = snapshot
+                                                    .connectionState ==
+                                                ConnectionState.done
+                                            ? user.userProfile.value?.name ??
+                                                'unknown_profile'.tr()
+                                            : 'loading'.tr();
+                                        return CustomLabelValueText(
+                                            label: 'profile'.tr(),
+                                            value: userProfileName);
+                                      },
+                                    )),
                                     Expanded(
                                       child: FutureBuilder(
-                                        future: user.userProfile.load(),
+                                        future: user.userDataProfile.load(),
                                         builder: (context, snapshot) {
-                                          final userProfileName = snapshot
+                                          final userDataProfileName = snapshot
                                                       .connectionState ==
                                                   ConnectionState.done
-                                              ? user.userProfile.value?.name ??
+                                              ? user.userDataProfile.value?.name ??
                                                   'unknown_profile'.tr()
                                               : 'loading'.tr();
                                           return CustomLabelValueText(
-                                              label: 'profile'.tr(),
-                                              value: userProfileName);
+                                              label: 'data_profile'.tr(),
+                                              value: userDataProfileName);
                                         },
                                       ),
                                     ),
@@ -175,10 +187,8 @@ class _UsersScreenState extends State<UsersScreen> {
                                       ),
                                     );
                                     if (confirm == true) {
-                                      await DatabaseService.db
-                                          .writeTxn(() async {
-                                        await DatabaseService.db.usersIsars
-                                            .delete(user.id);
+                                      await isarDb.writeTxn(() async {
+                                        await isarDb.usersIsars.delete(user.id);
                                       });
                                     }
                                   },
@@ -201,7 +211,9 @@ class _UsersScreenState extends State<UsersScreen> {
 
   void _addOrEditUser({UsersIsar? user}) async {
     final availableUserProfiles =
-        await DatabaseService.db.userProfilesIsars.where().findAll();
+        await isarDb.userProfilesIsars.where().findAll();
+    final availableUserDataProfiles =
+        await isarDb.userDataProfilesIsars.where().findAll();
 
     final userNameController =
         TextEditingController(text: user?.userName ?? "");
@@ -209,6 +221,7 @@ class _UsersScreenState extends State<UsersScreen> {
     final passwordController = TextEditingController(text: "");
     final passwordConfirmationController = TextEditingController(text: "");
     UserProfilesIsar? userProfile = user?.userProfile.value;
+    UserDataProfilesIsar? userDataProfile = user?.userDataProfile.value;
     DateTime selectedStartDate = user?.startDate ?? DateTime.now();
     DateTime? selectedEndDate = user?.endDate;
 
@@ -295,6 +308,39 @@ class _UsersScreenState extends State<UsersScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
+                      DropdownSearch<UserDataProfilesIsar>(
+                        selectedItem: userDataProfile,
+                        popupProps: PopupProps.menu(
+                          showSearchBox: true,
+                          searchFieldProps: TextFieldProps(
+                            decoration: InputDecoration(
+                              labelText: 'search'.tr(),
+                            ),
+                          ),
+                        ),
+                        itemAsString: (UserDataProfilesIsar? e) =>
+                            e?.name ?? '',
+                        items: availableUserDataProfiles,
+                        onChanged: (UserDataProfilesIsar? value) {
+                          setModalState(() {
+                            userDataProfile = value;
+                          });
+                        },
+                        validator: (UserDataProfilesIsar? value) {
+                          if (value == null) {
+                            return 'required_field'.tr();
+                          }
+                          return null;
+                        },
+                        dropdownDecoratorProps: DropDownDecoratorProps(
+                          dropdownSearchDecoration: InputDecoration(
+                            labelText: 'user_data_profile'.tr(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 4),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
                       CustomDateRangePicker(
                         startDate: selectedStartDate,
                         endDate: selectedEndDate,
@@ -336,7 +382,7 @@ class _UsersScreenState extends State<UsersScreen> {
                           (user != null || passwordsMatch)) {
                         final now = DateTime.now();
 
-                        await DatabaseService.db.writeTxn(() async {
+                        await isarDb.writeTxn(() async {
                           final editedUser = user ?? UsersIsar();
 
                           editedUser.userName =
@@ -353,9 +399,11 @@ class _UsersScreenState extends State<UsersScreen> {
                           }
 
                           editedUser.userProfile.value = userProfile;
+                          editedUser.userDataProfile.value = userDataProfile;
 
-                          await DatabaseService.db.usersIsars.put(editedUser);
+                          await isarDb.usersIsars.put(editedUser);
                           await editedUser.userProfile.save();
+                          await editedUser.userDataProfile.save();
                         });
 
                         Navigator.pop(context);
@@ -423,12 +471,12 @@ class _UsersScreenState extends State<UsersScreen> {
                       return;
                     }
 
-                    await DatabaseService.db.writeTxn(() async {
+                    await isarDb.writeTxn(() async {
                       user.password =
                           hashPassword(passwordController.text.trim());
                       user.lastUpdatedAt = DateTime.now();
                       user.isSynced = false;
-                      await DatabaseService.db.usersIsars.put(user);
+                      await isarDb.usersIsars.put(user);
                     });
 
                     Navigator.pop(context);
