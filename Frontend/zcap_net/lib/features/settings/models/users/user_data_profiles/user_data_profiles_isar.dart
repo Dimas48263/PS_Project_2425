@@ -1,5 +1,7 @@
 import 'package:isar/isar.dart';
+import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles.dart';
 
 part 'user_data_profiles_isar.g.dart';
@@ -88,5 +90,21 @@ class UserDataProfilesIsar implements IsarTable<UserDataProfile> {
     createdAt = entity.createdAt;
     lastUpdatedAt = entity.lastUpdatedAt;
     isSynced = true;
+  }
+
+  Future<void> updateAllowances(int newRemoteId) async {
+    await isarDb.writeTxn(() async {
+      final toUpdate = await isarDb.userDataProfileAllowanceIsars
+          .filter()
+          .localProfileIdEqualTo(id)
+          .userDataProfileIdLessThan(0)
+          .findAll();
+
+      for (final item in toUpdate) {
+        item.userDataProfileId = newRemoteId;
+      }
+
+      await isarDb.userDataProfileAllowanceIsars.putAll(toUpdate);
+    });
   }
 }

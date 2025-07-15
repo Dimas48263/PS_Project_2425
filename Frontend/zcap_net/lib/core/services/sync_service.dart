@@ -4,62 +4,7 @@ import 'package:zcap_net_app/core/services/app_config.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/core/services/user/user_data_allowances_sync_service.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incident_zcap_persons/incident_zcap_persons.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incident_zcap_persons/incident_zcap_persons_isar.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
-import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination.dart';
-import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
-import 'package:zcap_net_app/features/settings/models/people/person_special_needs/person_special_needs.dart';
-import 'package:zcap_net_app/features/settings/models/people/person_special_needs/person_special_needs_isar.dart';
-import 'package:zcap_net_app/features/settings/models/people/person_support_needed/person_support_needed.dart';
-import 'package:zcap_net_app/features/settings/models/people/person_support_needed/person_support_needed_isar.dart';
-import 'package:zcap_net_app/features/settings/models/people/persons/persons.dart';
-import 'package:zcap_net_app/features/settings/models/people/persons/persons_isar.dart';
-import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
-import 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs.dart';
-import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
-import 'package:zcap_net_app/features/settings/models/people/support/support_needed.dart';
-import 'package:zcap_net_app/features/settings/models/people/support/support_needed_isar.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_access_keys/user_access_keys_isar.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';
-import 'package:zcap_net_app/features/settings/models/users/users/users.dart';
-import 'package:zcap_net_app/features/settings/models/users/users/users_isar.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_type.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
-import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
-import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
-import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type.dart';
-import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type.dart';
-import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree/tree.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details_isar.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
+import 'package:zcap_net_app/shared/models.dart';
 
 class SyncService {
   final Isar isar;
@@ -593,8 +538,9 @@ final List<SyncEntry> syncEntries = [
       getCollection: (isar) => isar.personSupportNeededIsars,
       idName: 'personSupportNeededId',
       fromJson: PersonSupportNeeded.fromJson,
-      toIsar: (ApiTable personSupportNeeded) async => PersonSupportNeededIsar
-          .toRemote(personSupportNeeded as PersonSupportNeeded),
+      toIsar: (ApiTable personSupportNeeded) async =>
+          PersonSupportNeededIsar.toRemote(
+              personSupportNeeded as PersonSupportNeeded),
       findByRemoteId:
           (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
               (collection as IsarCollection<PersonSupportNeededIsar>)
@@ -712,6 +658,9 @@ final List<SyncEntry> syncEntries = [
                 .where()
                 .remoteIdEqualTo(remoteId)
                 .findFirst(),
+    saveLinksAfterPut: (userProfile) async {
+      await userProfile.updateAllowances(userProfile.remoteId!);
+    },
   ),
   SyncEntry<UserProfilesIsar, UserProfile>(
     endpoint: 'users/profiles',

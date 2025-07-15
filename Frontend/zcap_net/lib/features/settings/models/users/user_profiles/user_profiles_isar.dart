@@ -1,6 +1,5 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
 
 part 'user_profiles_isar.g.dart';
@@ -44,10 +43,7 @@ class UserProfilesIsar implements IsarTable<UserProfile> {
   }
 
   @override
-  UserProfile toEntity({
-    //TODO: needed? allowances not used
-    List<UserProfileAccessAllowanceIsar> allowances = const [],
-  }) {
+  UserProfile toEntity() {
     return UserProfile(
       remoteId: remoteId ?? 0,
       name: name,

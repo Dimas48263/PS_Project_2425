@@ -1,7 +1,4 @@
-import 'package:isar/isar.dart';
-import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
 
 class UserDataProfile implements ApiTable {
   @override
@@ -25,7 +22,6 @@ class UserDataProfile implements ApiTable {
   });
 
   factory UserDataProfile.fromJson(Map<String, dynamic> json) {
-    LogService.log('DataProfile JSON: $json');
     final profile = UserDataProfile(
       remoteId: json['userDataProfileId'],
       name: json['name'],

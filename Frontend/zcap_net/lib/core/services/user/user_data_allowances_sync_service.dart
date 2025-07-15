@@ -4,7 +4,6 @@ import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/u
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
 
-//TODO: check/test CRUD
 class UserDataProfileAllowanceSyncService {
   Future<void> sync() async {
     final remoteDataAllowances =

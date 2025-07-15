@@ -100,7 +100,7 @@
   "required_login": "Autenticação necessária",
   "reset_password": "Redefinir password",
   "save": "Guardar",
-  "save_error": "Não é possível guardar",
+  "save_error": "Não foi possível guardar",
   "screen_building_type": "Tipo de Edificio",
   "screen_building_type_name": "Nome do Tipo de Edificio",
   "screen_data_alowances": "Arvore de acessos",

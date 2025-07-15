@@ -5,9 +5,7 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
-import 'package:zcap_net_app/widgets/custom_ok_snack_bar.dart';
-import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
+import 'package:zcap_net_app/shared/shared.dart';
 
 class UserDataAllowancesScreen extends StatefulWidget {
   final UserDataProfilesIsar profile;
@@ -117,9 +115,7 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_data_alowances'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: Column(
         children: [
@@ -176,7 +172,7 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
                   } else if (data is String) {
                     return Text(data);
                   } else {
-                    return const Text('Sem nome'); //TODO translation
+                    return Text('unknown'.tr());
                   }
                 },
               ),
@@ -188,32 +184,41 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
   }
 
   Future<void> _saveAllowances() async {
-    final profileId = widget.profile.id;
+    try {
+      final profileId = widget.profile.id;
 
-    await isarDb.writeTxn(() async {
-      await isarDb.userDataProfileAllowanceIsars
-          .filter()
-          .localProfileIdEqualTo(profileId)
-          .deleteAll();
+      await isarDb.writeTxn(() async {
+        await isarDb.userDataProfileAllowanceIsars
+            .filter()
+            .localProfileIdEqualTo(profileId)
+            .deleteAll();
 
-      final newAllowances = checkedTreeIds.map((treeId) {
-        return UserDataProfileAllowanceIsar()
-          ..localProfileId = profileId
-          ..userDataProfileId = widget.profile.remoteId ?? 0
-          ..treeRecordId = treeId
-          ..isNew = true
-          ..markedForDelete = false;
-      }).toList();
+        final newAllowances = checkedTreeIds.map((treeId) {
+          return UserDataProfileAllowanceIsar()
+            ..localProfileId = profileId
+            ..userDataProfileId = widget.profile.remoteId ?? -profileId
+            ..treeRecordId = treeId
+            ..isNew = true
+            ..markedForDelete = false;
+        }).toList();
 
-      await isarDb.userDataProfileAllowanceIsars.putAll(newAllowances);
+        await isarDb.userDataProfileAllowanceIsars.putAll(newAllowances);
 
-      final updatedProfile = widget.profile..isSynced = false;
-      await isarDb.userDataProfilesIsars.put(updatedProfile);
-    });
+        final updatedProfile = widget.profile..isSynced = false;
+        await isarDb.userDataProfilesIsars.put(updatedProfile);
+      });
 
-    if (mounted) {
-      CustomOkSnackBar.show(
-          context, 'Permissões guardadas com sucesso'); //TODO: translation
+      if (mounted) {
+        CustomOkSnackBar.show(context, 'success'.tr());
+      }
+    } catch (e, stack) {
+      LogService.log('Erro ao gravar permissões: $e\n$stack');
+      if (mounted) {
+        CustomNOkSnackBar.show(
+          context,
+          'save_error'.tr(),
+        );
+      }
     }
   }
 }
