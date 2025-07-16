@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Manual do Utilizador ZCAPNet</title>
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: sans-serif;
+      background-color: #f5f5f5;
+      color: #333;
+      line-height: 1.6;
+      padding-top: 80px;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 64px;
+      background-color: #00897b;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      z-index: 1000;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+
+	img {
+	  max-width: 80%;
+	  height: auto;
+	  display: block;
+	  margin: 1rem auto;
+	}
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 16px;
+      font-weight: 500;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    h1 {
+      color: #00695c;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      font-size: 28px;
+    }
+
+    h2 {
+      color: #00796b;
+      margin-top: 20px;
+      font-size: 22px;
+    }
+
+    p {
+      margin-bottom: 16px;
+    }
+
+    strong {
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        height: auto;
+        align-items: flex-start;
+        padding: 10px;
+      }
+
+      nav a {
+        margin-left: 0;
+        margin-right: 16px;
+        display: inline-block;
+        margin-top: 8px;
+      }
+
+      .header-left {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+	}
+	  .status-table {
+    margin: 2em auto;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+    text-align: center;
+    font-family: sans-serif;
+  }
+
+  .status-table caption {
+    caption-side: top;
+    font-weight: bold;
+    font-size: 1.1em;
+    padding: 0.5em;
+    color: #00796b; /* Teal */
+  }
+
+  .status-table th,
+  .status-table td {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+  }
+
+  .status-table img {
+    width: 50px;
+    height: 50px;
+  
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <!--<img src="logo.png" alt="Logotipo ZCAPNet">-->
+    <span style="font-size: 20px; font-weight: 500;">Manual do Utilizador - ZCAPNet</span>
+  </div>
+  <nav>
+    <a href="#inicio">Inicio</a>
+    <a href="#Zcaps">Zcaps</a>
+    <a href="#incidentes">Incidentes</a>
+    <a href="#configuracao">Configuração</a>
+	<a href="#utilizadores">Utilizadores</a>
+    <a href="#sobre">Sobre o ZCAPNet</a>
+  </nav>
+</header>
+
+<main>
+  <h1 id="inicio">Introdução</h1>
+
+  <p>O alojamento temporário de emergência é uma valência do apoio psicossocial em emergência, essencial para proporcionar
+    ao cidadão individual e às famílias um local seguro para permanecerem, antes, durante e após um acidente grave ou catástrofe,
+    onde são igualmente asseguradas as suas necessidades básicas, bem como apoio psicossocial de emergência.</p>
+
+  <p>Esse alojamento temporário é designado por <strong>Zona de Concentração e Apoio à População (ZCAP)</strong> e a 
+    aplicação <strong>ZCAPNet - Sistema de apoio à Proteção Cívil</strong>, foi criada para permitir o levantamento, registo e gestão
+    dos espaços disponíveis antes da sua necessidade e, aquando da ocorrência de um acidente grave ou catástrofe, seja possível
+    a utilização dessa informação para registo do acolhimento e respetivo apoio prestado.</p>
+
+  <p>Embora a arquitetura global do sistema seja a de permitir a centralização dos dados num único ponto (servidor),
+    cada aplicação pode ser utilizada e funcionar autonomamente, sem conectividade com a rede, e enviar os dados posteriormente
+    para a unidade central.</p>
+
+  <p>Aconselha-se os novos utilizadores do <strong>ZCAPNet</strong> a ler este manual, visto ser uma aplicação específica para um 
+    determinado nicho de mercado, com as suas próprias especificidades.</p>
+
+  <h1>Como utilizar o manual</h1>
+  <p>Este manual encontra-se organizado de uma forma simples, clara e objetiva, de modo a que o utilizador tire o máximo partido 
+    do mesmo. Pretende-se que, após a leitura do manual, consiga perceber todas as funcionalidades do <strong>ZCAPNet</strong> e os seus objetivos.</p>
+
+  <h2>Principais características funcionais do ZCAPNet</h2>
+
+  <ul style="margin-left: 2rem; padding-left: 1rem; list-style-type: disc;">
+	<li><strong>Registo e gestão de ZCAPs</strong> - Levantamento das características dos espaços disponíveis para acolhimento.</li>
+	<li><strong>Registo e gestão de Incidentes</strong> - Abertura de ZCAPs durante a ocorrência de um acidente grave ou catástrofe.</li>
+	<li><strong>Registo e gestão de Pessoas acolhidas</strong> - Acolhimento e tratamento de dados da população acolhida no contexto de um Incidente.</li>
+	<li><strong>Funcionamento <i>offline-first</i></strong> - Garantia de operabilidade em contexto de ausência de rede.</li>
+	<li><strong>Sincronização</strong> - Receção e envio de dados de e para o sistema central para reporte e coordenação.</li>
+  </ul>
+
+  <h2>Outras características:</h2>
+  
+  <ul style="margin-left: 2rem; padding-left: 1rem; list-style-type: disc;">
+    <li>Suporte Multi-lingua</li>
+    <li>Gestão de utilizadores por perfil e acesso a dados</li>
+    <li>Modelação fléxível da árvore hierárquica do sistema</li>  
+    <li>Modelação flexível dos formulários das ZCAPs (detalhes dos espaços)</li>
+    <li>Modelação flexível dos formulários de acolhimento (dados recolhidos, necessidades especiais, tipos de apoio)</li>
+  </ul>
+
+  <h1>ZCAPNet - Sistema de apoio à Proteção Cívil</h1>
+  <h2>Indice</h2>
+
+  <h2>Entrar no ZCAPNet</h2>
+  <p>O ecrã de entrada da aplicação disponibiliza as opções:</p>
+  
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Ajuda</strong> - Acesso ao manual da aplicação.</li>
+    <li><strong>Acerca de</strong> - Informação acreca do sistema, projeto e autores.</li>
+    <li><strong>Dados de acesso</strong> - Introduza o nome de utilizador e palavra passe previamente fornecida.</li>
+    <li><strong>Idioma</strong> - Seleccione o idioma a utilizar.</li>
+    <li><strong>Entrar</strong> - Validar as credenciais e entrar no sistema.</li>
+  </ol>
+  
+  <p>Para aceder às restantes funcionalidades, introduza o nome de utilizador e palavra passe préviamente fornecida e pressione "Entar".</p>
+  <img src="../images/pt/entrar.png" />
+  </br><hr>
+
+  <h2>Menu principal</h2>
+  <p>No menu principal é onde o utilizador encontra as principais operações disponíveis para o seu perfil.</p>
+  <p>Dependendo do perfil do utilizador, algumas das opções podem não estar disponíveis ou serem apenas de consulta
+  (consultar Perfis de Utilizador).</p>
+    <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Menu lateral</strong> - Acesso às opções da aplicação (ver Menu lateral)</li>
+    <li><strong>Data do sistema</strong> - Data de referência do sistema, usado para filtrar informação nos menus de ZCAPs e Incidentes. Por defeito assume o mês atual. Para consultar dados de meses anteriores alterar a data.</li>
+    <li><strong>Modo dia/noite</strong> - Permite alternar entre o modo diurno e noturno.</li>
+    <li><strong>Indicador de estado e sincronização</strong> - Indica se a base de dados remota está disponível para receção e envio de atualizações.</p>
+		<table class="status-table">
+		  <caption>Estado</caption>
+		  <tr>
+		    <th>Online</th>
+		    <th>Offline</th>
+		  </tr>
+		    <td><img src="../images/cloud.svg"></td>
+		    <td><img src="../images/cloud_offline.svg"></td>
+		  <tr>
+		  </tr>
+		</table>
+		<p>Caso a base de dados remota esteja disponível, a sincronização acontecerá de forma automática e períodica (ver Instalação) mas a sincronização pode ser iniciada manualmente clicando no icone de estado. Se a base de dados remota estiver disponível, deve surgir novamente a solicitação da palavra passe do utilizador.</p></li>
+  </ol>
+  <img src="../images/pt/menu_principal.png" />
+  
+  <h2>ZCAPs</h2>
+  <p>ZCAPs</p>
+
+  <h2>Incidentes</h2>
+  <p>Incidentes</p>
+
+  <h2>Configurações</h2>
+  <p>Configurações</p>
+
+  <h3>Entrar no ZCAPNet</h3>
+  <p>Entrar no ZCAPNet</p>
+
+  <h2>Entrar no ZCAPNet</h2>
+  <p>Entrar no ZCAPNet</p>
+
+  <h2>Entrar no ZCAPNet</h2>
+  <p>Entrar no ZCAPNet</p>
+
+  <h2>Entrar no ZCAPNet</h2>
+  <p>Entrar no ZCAPNet</p>
+
+  <h1 id="sobre">ZCAPNet - Sistema de apoio à Proteção Cívil</h1>
+</main>
+
+</body>
+</html>
+
+
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>A</strong> - </li>
+    <li><strong>A</strong> - </li>
+    <li><strong>A</strong> - </li>
+    <li><strong>A</strong> - </li>
+    <li><strong>A</strong> - </li>
+  </ol>
