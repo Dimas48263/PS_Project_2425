@@ -100,8 +100,8 @@ END
 
 IF (SELECT COUNT(*) FROM treeRecordDetailTypes ) = 0
 BEGIN
-	INSERT treeRecordDetailTypes ([name], [unit], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Country Code', 'int', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT treeRecordDetailTypes ([name], [unit], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Nationality', 'string', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT treeRecordDetailTypes ([name], [unit], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Country Code', 'INT', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT treeRecordDetailTypes ([name], [unit], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Nationality', 'STRING', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM treeRecordDetails ) = 0

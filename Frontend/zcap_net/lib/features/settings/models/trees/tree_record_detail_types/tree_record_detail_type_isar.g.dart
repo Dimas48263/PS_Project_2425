@@ -56,7 +56,8 @@ const TreeRecordDetailTypeIsarSchema = CollectionSchema(
     r'unit': PropertySchema(
       id: 7,
       name: r'unit',
-      type: IsarType.string,
+      type: IsarType.byte,
+      enumMap: _TreeRecordDetailTypeIsarunitEnumValueMap,
     )
   },
   estimateSize: _treeRecordDetailTypeIsarEstimateSize,
@@ -120,7 +121,6 @@ int _treeRecordDetailTypeIsarEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.name.length * 3;
-  bytesCount += 3 + object.unit.length * 3;
   return bytesCount;
 }
 
@@ -137,7 +137,7 @@ void _treeRecordDetailTypeIsarSerialize(
   writer.writeString(offsets[4], object.name);
   writer.writeLong(offsets[5], object.remoteId);
   writer.writeDateTime(offsets[6], object.startDate);
-  writer.writeString(offsets[7], object.unit);
+  writer.writeByte(offsets[7], object.unit.index);
 }
 
 TreeRecordDetailTypeIsar _treeRecordDetailTypeIsarDeserialize(
@@ -155,7 +155,9 @@ TreeRecordDetailTypeIsar _treeRecordDetailTypeIsarDeserialize(
   object.name = reader.readString(offsets[4]);
   object.remoteId = reader.readLongOrNull(offsets[5]);
   object.startDate = reader.readDateTime(offsets[6]);
-  object.unit = reader.readString(offsets[7]);
+  object.unit = _TreeRecordDetailTypeIsarunitValueEnumMap[
+          reader.readByteOrNull(offsets[7])] ??
+      DataTypes.boolean;
   return object;
 }
 
@@ -181,11 +183,30 @@ P _treeRecordDetailTypeIsarDeserializeProp<P>(
     case 6:
       return (reader.readDateTime(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (_TreeRecordDetailTypeIsarunitValueEnumMap[
+              reader.readByteOrNull(offset)] ??
+          DataTypes.boolean) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
+
+const _TreeRecordDetailTypeIsarunitEnumValueMap = {
+  'boolean': 0,
+  'int': 1,
+  'string': 2,
+  'double': 3,
+  'char': 4,
+  'float': 5,
+};
+const _TreeRecordDetailTypeIsarunitValueEnumMap = {
+  0: DataTypes.boolean,
+  1: DataTypes.int,
+  2: DataTypes.string,
+  3: DataTypes.double,
+  4: DataTypes.char,
+  5: DataTypes.float,
+};
 
 Id _treeRecordDetailTypeIsarGetId(TreeRecordDetailTypeIsar object) {
   return object.id;
@@ -1155,58 +1176,49 @@ extension TreeRecordDetailTypeIsarQueryFilter on QueryBuilder<
   }
 
   QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
-      QAfterFilterCondition> unitEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      QAfterFilterCondition> unitEqualTo(DataTypes value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'unit',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
       QAfterFilterCondition> unitGreaterThan(
-    String value, {
+    DataTypes value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'unit',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
       QAfterFilterCondition> unitLessThan(
-    String value, {
+    DataTypes value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'unit',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
       QAfterFilterCondition> unitBetween(
-    String lower,
-    String upper, {
+    DataTypes lower,
+    DataTypes upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -1215,79 +1227,6 @@ extension TreeRecordDetailTypeIsarQueryFilter on QueryBuilder<
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
-      QAfterFilterCondition> unitStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
-      QAfterFilterCondition> unitEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
-          QAfterFilterCondition>
-      unitContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unit',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
-          QAfterFilterCondition>
-      unitMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unit',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
-      QAfterFilterCondition> unitIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unit',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar,
-      QAfterFilterCondition> unitIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unit',
-        value: '',
       ));
     });
   }
@@ -1595,9 +1534,9 @@ extension TreeRecordDetailTypeIsarQueryWhereDistinct on QueryBuilder<
   }
 
   QueryBuilder<TreeRecordDetailTypeIsar, TreeRecordDetailTypeIsar, QDistinct>
-      distinctByUnit({bool caseSensitive = true}) {
+      distinctByUnit() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'unit', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'unit');
     });
   }
 }
@@ -1659,7 +1598,7 @@ extension TreeRecordDetailTypeIsarQueryProperty on QueryBuilder<
     });
   }
 
-  QueryBuilder<TreeRecordDetailTypeIsar, String, QQueryOperations>
+  QueryBuilder<TreeRecordDetailTypeIsar, DataTypes, QQueryOperations>
       unitProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'unit');

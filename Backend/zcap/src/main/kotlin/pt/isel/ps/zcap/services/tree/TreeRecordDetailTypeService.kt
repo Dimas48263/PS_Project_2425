@@ -31,7 +31,6 @@ class TreeRecordDetailTypeService(
         treeRecordDetailTypeInput: TreeRecordDetailTypeInputModel
     ): Either<ServiceErrors, TreeRecordDetailTypeOutputModel> {
         if (treeRecordDetailTypeInput.name.isBlank() ||
-            treeRecordDetailTypeInput.unit.isBlank() ||
             treeRecordDetailTypeInput.startDate.isAfter(treeRecordDetailTypeInput.endDate ?: treeRecordDetailTypeInput.startDate)
             )
             return failure(ServiceErrors.InvalidDataInput)
@@ -50,7 +49,6 @@ class TreeRecordDetailTypeService(
             ?: return failure(ServiceErrors.RecordNotFound)
 
         if (treeRecordDetailTypeInput.name.isBlank() ||
-            treeRecordDetailTypeInput.unit.isBlank() ||
             treeRecordDetailTypeInput.startDate.isAfter(treeRecordDetailTypeInput.endDate ?: treeRecordDetailTypeInput.startDate))
             return failure(ServiceErrors.InvalidDataInput)
 

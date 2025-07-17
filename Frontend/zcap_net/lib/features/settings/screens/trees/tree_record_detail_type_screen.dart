@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/shared/data_types.dart';
+import 'package:zcap_net_app/shared/models.dart';
 import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
@@ -56,9 +59,7 @@ class _TreeRecordDetailTypesScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_detail_types'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -88,20 +89,20 @@ class _TreeRecordDetailTypesScreenState
                   () async => await syncService.synchronizeAll(),
                   (detailType) => _addOrEditTreerRecordDetailType(detailType),
                   (detailType) async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => ConfirmDialog(
-                        title: 'confirm_delete'.tr(),
-                        content: 'confirm_delete_message'.tr(),
-                      ),
-                    );
-                    if (confirm == true) {
-                      await DatabaseService.db.writeTxn(() async {
-                        await DatabaseService.db.treeRecordDetailTypeIsars
-                            .delete(detailType.id);
-                      });
-                    }
-                  }),
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => ConfirmDialog(
+                      title: 'confirm_delete'.tr(),
+                      content: 'confirm_delete_message'.tr(),
+                    ),
+                  );
+                  if (confirm == true) {
+                    await DatabaseService.db.writeTxn(() async {
+                      await DatabaseService.db.treeRecordDetailTypeIsars
+                          .delete(detailType.id);
+                    });
+                  }
+                }),
         ],
       ),
     );
@@ -110,16 +111,27 @@ class _TreeRecordDetailTypesScreenState
   void _addOrEditTreerRecordDetailType(
       TreeRecordDetailTypeIsar? detailType) async {
     final formKey = GlobalKey<FormState>();
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final availableTreeLevels = await isarDb.treeLevelIsars.filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+    final treeLevelDetailType = await isarDb.treeLevelDetailTypeIsars.filter().detailType((q) => q.idEqualTo(detailType?.id ?? 0)).findFirst();
+
     final nameController = TextEditingController(text: detailType?.name ?? '');
-    final unitController = TextEditingController(text: detailType?.unit ?? '');
+    DataTypes? unitController = detailType?.unit;
+    TreeLevelIsar? treeLevelController = treeLevelDetailType?.treeLevel.value;
     DateTime? startDate = detailType?.startDate ?? DateTime.now();
     DateTime? endDate = detailType?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
           controller: nameController, label: 'name'.tr()),
-      TextControllersInputFormConfig(
-          controller: unitController, label: 'unit'.tr()),
     ];
 
     showDialog(
@@ -144,7 +156,22 @@ class _TreeRecordDetailTypesScreenState
               setModalState(() {
                 endDate = null;
               });
-            }, []),
+            }, [
+              customDropdownSearch(
+                  itemLabelBuilder: (value) => value.label,
+                  label: 'data_type'.tr(),
+                  items: DataTypes.values,
+                  selectedItem: unitController,
+                  onSelected: (value) => setState(() => unitController = value),
+                  validator: (value) => value == null ? 'required_field'.tr() : null),
+              customDropdownSearch(
+                  itemLabelBuilder: (value) => value.name,
+                  label: 'level'.tr(),
+                  items: availableTreeLevels,
+                  selectedItem: treeLevelController,
+                  onSelected: (value) => setState(() => treeLevelController = value),
+                  validator: (value) => value == null ? 'required_field'.tr() : null),
+            ]),
             actions: [
               TextButton(
                 child: Text(allowances
@@ -164,12 +191,26 @@ class _TreeRecordDetailTypesScreenState
                             detailType ?? TreeRecordDetailTypeIsar();
                         newDetailType.remoteId = detailType?.remoteId ?? 0;
                         newDetailType.name = nameController.text;
-                        newDetailType.unit = unitController.text;
+                        newDetailType.unit = unitController!;
                         newDetailType.startDate = startDate ?? now;
                         newDetailType.endDate = endDate;
                         newDetailType.isSynced = false;
                         await DatabaseService.db.treeRecordDetailTypeIsars
                             .put(newDetailType);
+
+                        final newTreeLevelDetailType = treeLevelDetailType ?? TreeLevelDetailTypeIsar();
+                        newTreeLevelDetailType.remoteId = treeLevelDetailType?.remoteId ?? 0;
+                        newTreeLevelDetailType.detailType.value = newDetailType;
+                        newTreeLevelDetailType.treeLevel.value = treeLevelController!;
+                        newTreeLevelDetailType.startDate = startDate ?? now;
+                        newTreeLevelDetailType.endDate = endDate;
+                        newTreeLevelDetailType.createdAt = treeLevelDetailType?.createdAt ?? now;
+                        newTreeLevelDetailType.lastUpdatedAt = now;
+                        newTreeLevelDetailType.isSynced = false;
+                        await DatabaseService.db.treeLevelDetailTypeIsars
+                            .put(newTreeLevelDetailType);
+                        await newTreeLevelDetailType.detailType.save();
+                        await newTreeLevelDetailType.treeLevel.save();
                       });
                       Navigator.pop(context);
                     }

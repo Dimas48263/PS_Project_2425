@@ -170,6 +170,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                                         builder: (context) =>
                                              SupportNeedsDialogs(person: person)),
                                     child: Text('support_needed'.tr())),
+                                const SizedBox(width: 5),
                                 ElevatedButton(
                                     onPressed: () => showDialog(
                                         context: context,

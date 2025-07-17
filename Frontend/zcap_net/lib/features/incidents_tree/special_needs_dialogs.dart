@@ -110,6 +110,12 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
                                 },
                               ),
                             IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                addOrEditSpecialNeed(personSpecialNeed, null, context);
+                              },
+                            ),
+                            IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
                                 final confirm = await showDialog<bool>(
@@ -181,6 +187,8 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
         personSpecialNeed?.specialNeed.value!;
     final descriptionController =
         TextEditingController(text: personSpecialNeed?.description ?? '');
+    DateTime? startDate = personSpecialNeed?.startDate ?? DateTime.now();
+    DateTime? endDate = personSpecialNeed?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
@@ -207,8 +215,6 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
         final allowances = context.watch<UserAllowancesProvider>();
 
         return StatefulBuilder(builder: (context, setModalState) {
-          DateTime? startDate = personSpecialNeed?.startDate ?? DateTime.now();
-          DateTime? endDate = personSpecialNeed?.endDate;
           return AlertDialog(
             title: Text(personSpecialNeed == null
                 ? '${'add'.tr()} ${'special_need'.tr()}'

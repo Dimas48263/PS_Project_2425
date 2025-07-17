@@ -1,6 +1,7 @@
 package pt.isel.ps.zcap.domain.tree
 
 import jakarta.persistence.*
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -12,7 +13,9 @@ data class TreeRecordDetailType(
     val detailTypeId: Long = 0,
 
     val name: String = "",
-    val unit: String = "",
+
+    @Enumerated(EnumType.STRING)
+    val unit: DataTypes = DataTypes.STRING,
     val startDate: LocalDate = LocalDate.now(),
     val endDate: LocalDate? = null,
     val createdAt: LocalDateTime = LocalDateTime.now(),

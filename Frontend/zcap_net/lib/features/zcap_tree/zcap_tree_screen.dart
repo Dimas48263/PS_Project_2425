@@ -430,12 +430,14 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
   }
 
   Map<ZcapDetailTypeIsar, ZcapDetailsIsar?> zcapDetailsMap = {};
+  final mandatoryDetailTypes = availableDetailTypes.where((element) => element.isMandatory).toList();
 
   for (var availableDetailType in availableDetailTypes) {
     ZcapDetailsIsar? search;
     try {
       search = zcapDetails.firstWhere((element) =>
           element.zcapDetailType.value!.id == availableDetailType.id);
+      mandatoryDetailTypes.removeWhere((element) => element.id == availableDetailType.id);
     } catch (e) {
       search = null;
     }
@@ -448,7 +450,7 @@ void _addOrEditZcap(BuildContext context, {ZcapIsar? zcap}) async {
   showDialog(
       context: context,
       builder: (context) {
-        bool detailsFormValidated = false;
+        bool detailsFormValidated = mandatoryDetailTypes.isEmpty ? true : false;
         bool showDetailsError = false;
         return StatefulBuilder(
           builder: (buiderContext, setModalState) {
