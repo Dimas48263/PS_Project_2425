@@ -14,7 +14,6 @@ BEGIN
 	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (4, 'NUTS 3 - Sub-Região', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (5, 'Município', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (6, 'Freguesia', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT treeLevels ([levelId], [name], [description], [startDate], [createdAt], [lastUpdatedAt]) VALUES (7, 'Codigo Postal', '', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 
@@ -34,7 +33,7 @@ END
 
 IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 3 ) = 0
 BEGIN
-	-- INSERT NUTS 2
+	-- INSERT NUTS 2 - Regioes
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Norte', 3, 2, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Algarve', 3, 2, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Centro', 3, 2, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -48,7 +47,7 @@ END
 
 IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 4 ) = 0
 BEGIN
-	-- INSERT NUTS 3
+	-- INSERT NUTS 3 - Sub-Regioes
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alto Minho', 4, 5, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cávado', 4, 5, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ave', 4, 5, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -80,23 +79,331 @@ BEGIN
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Médio Tejo', 4, 11, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lezíria do Tejo', 4, 11, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	
-	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Região Autonoma dos Açores', 4, 12, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Região Autónoma dos Açores', 4, 12, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Região Autónoma da Madeira', 4, 13, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
+-- Municipios
 IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 5 ) = 0
 BEGIN
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Arcos de Valdevez', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Caminha', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Melgaço', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Monção', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Paredes de Coura', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ponte da Barca', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ponte de Lima', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Valença', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Viana do Castelo', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Nova de Cerveira', 5, 14, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Amares', 5, 15, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Barcelos', 5, 15, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Braga', 5, 15, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Esposende', 5, 15, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Terras de Bouro', 5, 15, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Verde', 5, 15, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cabeceiras de Basto', 5, 16, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Fafe', 5, 16, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Guimarães', 5, 16, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mondim de Basto', 5, 16, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Póvoa de Lanhoso', 5, 16, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vieira do Minho', 5, 16, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Nova de Famalicão', 5, 16, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vizela', 5, 16, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Arouca', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Espinho', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Gondomar', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Maia', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Matosinhos', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Oliveira de Azeméis', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Paredes', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Porto', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Póvoa de Varzim', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santa Maria da Feira', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santo Tirso', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São João da Madeira', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Trofa', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vale de Cambra', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Valongo', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila do Conde', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Nova de Gaia', 5, 17, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Boticas', 5, 18, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Chaves', 5, 18, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Montalegre', 5, 18, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ribeira de Pena', 5, 18, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Valpaços', 5, 18, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Pouca de Aguiar', 5, 18, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Amarante', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Baião', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Castelo de Paiva', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Celorico de Basto', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cinfães', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Felgueiras', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lousada', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Marco de Canaveses', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Paços de Ferreira', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Penafiel', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Resende', 5, 19, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alijó', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Armamar', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Carrazeda de Ansiães', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Freixo de Espada à Cinta', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lamego', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mesão Frio', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Moimenta da Beira', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Murça', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Penedono', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Peso da Régua', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sabrosa', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santa Marta de Penaguião', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São João da Pesqueira', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sernancelhe', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Tabuaço', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Tarouca', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Torre de Moncorvo', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Nova de Foz Côa', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Real ', 5, 20, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alfândega da Fé', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Bragança', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Macedo de Cavaleiros', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Miranda do Douro', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mirandela', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mogadouro', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Flor', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vimioso', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vinhais', 5, 21, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Albufeira', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alcoutim', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Aljezur', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Castro Marim', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Faro', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lagoa', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lagos', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Loulé', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Monchique', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Olhão', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Portimão', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São Brás de Alportel', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Silves', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Tavira', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila do Bispo', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Real de Santo António', 5, 22, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Águeda', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Albergaria-a-Velha', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Anadia', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Aveiro', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Estarreja', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ílhavo', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Murtosa', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Oliveira do Bairro', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ovar', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sever do Vouga', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vagos', 5, 23, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Arganil', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cantanhede', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Coimbra', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Condeixa-a-Nova', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Figueira da Foz', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Góis', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lousã', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mealhada', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mira', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Miranda do Corvo', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Montemor-o-Velho', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mortágua', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Oliveira do Hospital', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Pampilhosa da Serra', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Penacova', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Penela', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Soure', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Tábua', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Nova de Poiares', 5, 24, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alvaiázere', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ansião', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Batalha', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Castanheira de Pera', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Figueiró dos Vinhos', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Leiria', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Marinha Grande', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Pedrógão Grande', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Pombal', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Porto de Mós', 5, 25, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Aguiar da Beira', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Carregal do Sal', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Castro Daire', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mangualde', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Nelas', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Oliveira de Frades', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Penalva do Castelo', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santa Comba Dão', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São Pedro do Sul', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sátão', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Tondela (cidade)', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Nova de Paiva', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Viseu', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vouzela', 5, 26, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Castelo Branco', 5, 27, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Idanha-a-Nova', 5, 27, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Oleiros', 5, 27, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Penamacor', 5, 27, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Proença-a-Nova', 5, 27, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sertã', 5, 27, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila de Rei', 5, 27, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Velha de Ródão', 5, 27, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Almeida', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Belmonte', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Celorico da Beira', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Covilhã', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Figueira de Castelo Rodrigo', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Fornos de Algodres', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Fundão', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('GouveiaCentro da cidade da Covilhã', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Guarda', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Manteigas', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mêda', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Pinhel', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sabugal', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Seia', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Trancoso', 5, 28, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alcochete', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Almada', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Barreiro', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Moita', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Montijo', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Palmela', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Seixal', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sesimbra', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Setúbal', 5, 29, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Amadora', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cascais', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lisboa', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Loures', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mafra', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Odivelas', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Oeiras', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sintra', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Franca de Xira', 5, 30, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alcácer do Sal', 5, 31, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Grândola', 5, 31, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Odemira', 5, 31, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santiago do Cacém', 5, 31, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sines', 5, 31, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Aljustrel', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Almodôvar', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alvito', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Barrancos', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Beja', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Castro Verde', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cuba', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ferreira do Alentejo', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mértola', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Moura', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ourique', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Serpa', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vidigueira', 5, 32, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alter do Chão', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Arronches', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Avis', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Campo Maior', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Castelo de Vide', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Crato', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Elvas', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Fronteira', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Gavião', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Marvão', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Monforte', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Nisa', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ponte de Sor', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Portalegre', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sousel', 5, 33, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alandroal', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Arraiolos', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Borba', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Estremoz', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Évora', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Montemor-o-Novo', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mora', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mourão', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Portel', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Redondo', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Reguengos de Monsaraz', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vendas Novas', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Viana do Alentejo', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Viçosa', 5, 34, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alcobaça', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alenquer', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Arruda dos Vinhos', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Bombarral', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cadaval', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Caldas da Rainha', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lourinhã', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Nazaré', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Óbidos', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Peniche', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sobral de Monte Agraço', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Torres Vedras', 5, 35, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Abrantes', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alcanena', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Constância', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Entroncamento', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ferreira do Zêzere', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Mação', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ourém', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Sardoal', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Tomar', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Torres Novas', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Nova da Barquinha', 5, 36, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Almeirim', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Alpiarça', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Azambuja', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Benavente', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cartaxo', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Chamusca', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Coruche', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Golegã', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Rio Maior', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Salvaterra de Magos', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santarém', 5, 37, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Angra do Heroísmo', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Calheta', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Corvo', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Horta', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lagoa', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lajes das Flores', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Lajes do Pico', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Madalena', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Nordeste', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ponta Delgada', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Povoação', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Praia da Vitória', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ribeira Grande', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santa Cruz das Flores', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santa Cruz da Graciosa', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São Roque do Pico', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Velas', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila do Porto', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Vila Franca do Campo ', 5, 38, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Calheta', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Câmara de Lobos', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Funchal', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Machico', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ponta do Sol', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Porto Moniz', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Porto Santo', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Ribeira Brava', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santa Cruz', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Santana', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São Vicente', 5, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+
 END
 
-IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 6 ) = 0
-BEGIN
-	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São Brás de Alportel', 6, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-END
+-- Freguesias
+--IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 6 ) = 0
+--BEGIN
+--	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São Brás de Alportel', 6, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+--END
 
-IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 7 ) = 0
-BEGIN
-	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('8150-103', 7, 40, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-END
 
 IF (SELECT COUNT(*) FROM treeRecordDetailTypes ) = 0
 BEGIN
@@ -123,18 +430,18 @@ print 'Inserting Zcap Tables initial data:'
 IF (SELECT COUNT(*) FROM buildingTypes ) = 0
 BEGIN
 -- INSERT BUILDINGTYPES
-	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Escola', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Pavilhão Municipal', '20000101', CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
-	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Tenda', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Escola', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Pavilhão Municipal', '20000101', CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
+	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Tenda', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 
 IF (SELECT COUNT(*) FROM entityTypes ) = 0
 BEGIN
 -- INSERT ENTITYTYPES
-	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Bombeiros', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Polícia de Segurança Pública', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* ANEPC', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Bombeiros', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Polícia de Segurança Pública', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('ANEPC', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 --IF (SELECT COUNT(*) FROM datatypes ) = 0
@@ -150,7 +457,7 @@ END
 IF (SELECT COUNT(*) FROM entities ) = 0
 BEGIN
 -- INSERT ENTITIES
-	INSERT entities ([name], [entityTypeId], [email], [phone1], [phone2], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Bombeiros Voluntários de Odivelas', 1, 'email@domain.org', '219348290', NULL, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT entities ([name], [entityTypeId], [email], [phone1], [phone2], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Bombeiros Voluntários de Odivelas', 1, 'email@domain.org', '219348290', NULL, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM detailTypeCategories ) = 0
@@ -165,23 +472,23 @@ END
 IF (SELECT COUNT(*) FROM zcapDetailTypes ) = 0
 BEGIN
 -- INSERT ZCAPDETAILTYPES
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Área(m2)', 2, 'DOUBLE', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Acesso a veículos pesados', 2, 'BOOLEAN', 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade c/pernoita', 2, 'INT', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade s/pernoita', 2, 'INT', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Climatização', 2, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Cozinha', 3, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Capacidade de confeção refeições', 3, 'INT', 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('*TEST* Refeitório', 3, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Área(m2)', 2, 'DOUBLE', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Acesso a veículos pesados', 2, 'BOOLEAN', 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Capacidade c/pernoita', 2, 'INT', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Capacidade s/pernoita', 2, 'INT', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Climatização', 2, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cozinha', 3, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Capacidade de confeção refeições', 3, 'INT', 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Refeitório', 3, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM zcaps ) = 0
 BEGIN
 
 INSERT INTO [dbo].[zcaps] ([name],[buildingTypeId],[address],[treeRecordId],[latitude],[longitude],[entityId],[startDate],[createdAt],[lastUpdatedAt])
-		VALUES ('Escola Secundária de Odivelas', 1, 'Av. Prof. Dr. Augusto Abreu Lopes 23, 2675-300 Odivelas', 30, 38.794205, -9.179649, 1, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+		VALUES ('Escola Secundária de Odivelas', 1, 'Av. Prof. Dr. Augusto Abreu Lopes 23, 2675-300 Odivelas', 233, 38.794205, -9.179649, 1, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 INSERT INTO [dbo].[zcaps] ([name],[buildingTypeId],[address],[treeRecordId],[latitude],[longitude],[entityId],[startDate],[createdAt],[lastUpdatedAt])
-		VALUES ('Pavilhão Gimnodesportivo de Santa Cruz', 1, 'Caminho Francisco Freitas Branco, Machico', 38, 32.6890444, -16.7961675, 1, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+		VALUES ('Pavilhão Gimnodesportivo de Santa Cruz', 1, 'Caminho Francisco Freitas Branco, Machico', 345, 32.6890444, -16.7961675, 1, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM zcapDetails ) = 0
@@ -218,8 +525,8 @@ END
 IF (SELECT COUNT(*) FROM specialNeeds ) = 0
 BEGIN
 	INSERT INTO specialNeeds([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('gravidez', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Doença', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('medicamentos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
+	('Gravidez', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Doença', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('Medicamentos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
 END
 
 IF (SELECT COUNT(*) FROM personSpecialNeeds ) = 0
@@ -231,10 +538,10 @@ END
 IF (SELECT COUNT(*) FROM supportNeeded ) = 0
 BEGIN
 	INSERT INTO supportNeeded([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('alojamento', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Comida', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('vestuário', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Cuidados médicos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('apoio psicológico', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Procura de familiar', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	('Alojamento', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Refeição', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('Vestuário', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Cuidados médicos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Apoio psicológico', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Procura de familiar', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM personSupportNeeded ) = 0
@@ -247,16 +554,16 @@ END
 IF (SELECT COUNT(*) FROM relationType ) = 0
 BEGIN
 	INSERT INTO relationType ([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('mae', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('pai', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('filho', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('filha', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('irmão','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('irmã', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('tio','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('tia', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('primo', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('prima','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('avô', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('avó', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('neto','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('neta','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('sobrinho', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('sobrinha', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('conjuge', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('padrasto', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('madrasta', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	('Mãe', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Pai', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('Filho', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Filha', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Irmão','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Irmã', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('Tio','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Tia', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('Primo', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Prima','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('Avô', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Avó', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Neto','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Neta','20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('Sobrinho', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Sobrinha', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+	('Conjuge', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Padrasto', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
+	('Madrasta', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM relation ) = 0
@@ -318,11 +625,11 @@ END
 
 IF (SELECT COUNT(*) FROM incidents ) = 0
 BEGIN
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 9, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (2, 8, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (3, 10, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (4, 15, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (5, 11, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 233, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (2, 314, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (3, 299, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (4, 233, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (5, 346, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 END
 
 IF (SELECT COUNT(*) FROM incidentZcaps ) = 0
@@ -342,7 +649,7 @@ print 'Inserting User Tables initial data:'
 IF (SELECT COUNT(*) FROM userDataProfiles ) = 0
 BEGIN
 	INSERT userDataProfiles ([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('*TEST* Lisboa', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	(' Lisboa', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM userDataProfileDetails ) = 0
