@@ -26,6 +26,8 @@ import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
 import 'package:zcap_net_app/widgets/custom_unsynced_icon.dart';
 import 'package:zcap_net_app/widgets/sync_button.dart';
 
+import '../../shared/shared.dart';
+
 class IncidentsTreeScreen extends StatefulWidget {
   const IncidentsTreeScreen({super.key});
 
@@ -509,6 +511,13 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                     child: Text('save'.tr()),
                     onPressed: () async {
                       if (formKey.currentState!.validate()) {
+                        final isValid = DateUtilsService().validateStartEndDate(
+                          startDate: startDate,
+                          endDate: endDate,
+                          context: context,
+                        );
+                        if (!isValid) return;
+
                         final now = DateTime.now();
                         await isarDb.writeTxn(() async {
                           final newIncident = incident ?? IncidentsIsar();

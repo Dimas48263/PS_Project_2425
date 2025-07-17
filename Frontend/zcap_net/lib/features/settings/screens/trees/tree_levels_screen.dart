@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
@@ -57,9 +56,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_tree_levels'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -141,7 +138,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     final nameController = TextEditingController(text: treeLevel?.name ?? '');
     final descriptionController =
         TextEditingController(text: treeLevel?.description ?? '');
-    DateTime? startDate = treeLevel?.startDate ?? DateTime.now();
+    DateTime startDate = treeLevel?.startDate ?? DateTime.now();
     DateTime? endDate = treeLevel?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
@@ -199,7 +196,13 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                   child: Text('save'.tr()),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      final now = DateTime.now();
+                      final isValid = DateUtilsService().validateStartEndDate(
+                        startDate: startDate,
+                        endDate: endDate,
+                        context: context,
+                      );
+                      if (!isValid) return;
+
                       await DatabaseService.db.writeTxn(() async {
                         final newTreeLevel = treeLevel ?? TreeLevelIsar();
                         newTreeLevel.remoteId = treeLevel?.remoteId ?? 0;
@@ -210,7 +213,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                             descriptionController.text.isEmpty
                                 ? null
                                 : descriptionController.text;
-                        newTreeLevel.startDate = startDate ?? now;
+                        newTreeLevel.startDate = startDate;
                         newTreeLevel.endDate = endDate;
                         newTreeLevel.isSynced = false;
 

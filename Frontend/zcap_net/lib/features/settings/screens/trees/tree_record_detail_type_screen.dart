@@ -7,9 +7,7 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/shared/data_types.dart';
 import 'package:zcap_net_app/shared/models.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
 
 class TreeRecordDetailTypesScreen extends StatefulWidget {
@@ -113,7 +111,8 @@ class _TreeRecordDetailTypesScreenState
     final formKey = GlobalKey<FormState>();
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final availableTreeLevels = await isarDb.treeLevelIsars.filter()
+    final availableTreeLevels = await isarDb.treeLevelIsars
+        .filter()
         .startDateLessThan(today.add(const Duration(days: 1)))
         .and()
         .group((q) => q
@@ -121,12 +120,15 @@ class _TreeRecordDetailTypesScreenState
             .or()
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
-    final treeLevelDetailType = await isarDb.treeLevelDetailTypeIsars.filter().detailType((q) => q.idEqualTo(detailType?.id ?? 0)).findFirst();
+    final treeLevelDetailType = await isarDb.treeLevelDetailTypeIsars
+        .filter()
+        .detailType((q) => q.idEqualTo(detailType?.id ?? 0))
+        .findFirst();
 
     final nameController = TextEditingController(text: detailType?.name ?? '');
     DataTypes? unitController = detailType?.unit;
     TreeLevelIsar? treeLevelController = treeLevelDetailType?.treeLevel.value;
-    DateTime? startDate = detailType?.startDate ?? DateTime.now();
+    DateTime startDate = detailType?.startDate ?? DateTime.now();
     DateTime? endDate = detailType?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
@@ -163,14 +165,17 @@ class _TreeRecordDetailTypesScreenState
                   items: DataTypes.values,
                   selectedItem: unitController,
                   onSelected: (value) => setState(() => unitController = value),
-                  validator: (value) => value == null ? 'required_field'.tr() : null),
+                  validator: (value) =>
+                      value == null ? 'required_field'.tr() : null),
               customDropdownSearch(
                   itemLabelBuilder: (value) => value.name,
                   label: 'level'.tr(),
                   items: availableTreeLevels,
                   selectedItem: treeLevelController,
-                  onSelected: (value) => setState(() => treeLevelController = value),
-                  validator: (value) => value == null ? 'required_field'.tr() : null),
+                  onSelected: (value) =>
+                      setState(() => treeLevelController = value),
+                  validator: (value) =>
+                      value == null ? 'required_field'.tr() : null),
             ]),
             actions: [
               TextButton(
@@ -185,26 +190,36 @@ class _TreeRecordDetailTypesScreenState
                   child: Text('save'.tr()),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      final now = DateTime.now();
+                      final isValid = DateUtilsService().validateStartEndDate(
+                        startDate: startDate,
+                        endDate: endDate,
+                        context: context,
+                      );
+                      if (!isValid) return;
+
                       await DatabaseService.db.writeTxn(() async {
                         final newDetailType =
                             detailType ?? TreeRecordDetailTypeIsar();
                         newDetailType.remoteId = detailType?.remoteId ?? 0;
                         newDetailType.name = nameController.text;
                         newDetailType.unit = unitController!;
-                        newDetailType.startDate = startDate ?? now;
+                        newDetailType.startDate = startDate;
                         newDetailType.endDate = endDate;
                         newDetailType.isSynced = false;
                         await DatabaseService.db.treeRecordDetailTypeIsars
                             .put(newDetailType);
 
-                        final newTreeLevelDetailType = treeLevelDetailType ?? TreeLevelDetailTypeIsar();
-                        newTreeLevelDetailType.remoteId = treeLevelDetailType?.remoteId ?? 0;
+                        final newTreeLevelDetailType =
+                            treeLevelDetailType ?? TreeLevelDetailTypeIsar();
+                        newTreeLevelDetailType.remoteId =
+                            treeLevelDetailType?.remoteId ?? 0;
                         newTreeLevelDetailType.detailType.value = newDetailType;
-                        newTreeLevelDetailType.treeLevel.value = treeLevelController!;
-                        newTreeLevelDetailType.startDate = startDate ?? now;
+                        newTreeLevelDetailType.treeLevel.value =
+                            treeLevelController!;
+                        newTreeLevelDetailType.startDate = startDate;
                         newTreeLevelDetailType.endDate = endDate;
-                        newTreeLevelDetailType.createdAt = treeLevelDetailType?.createdAt ?? now;
+                        newTreeLevelDetailType.createdAt =
+                            treeLevelDetailType?.createdAt ?? now;
                         newTreeLevelDetailType.lastUpdatedAt = now;
                         newTreeLevelDetailType.isSynced = false;
                         await DatabaseService.db.treeLevelDetailTypeIsars

@@ -7,7 +7,6 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class DetailTypeCategoriesScreen extends StatefulWidget {
@@ -58,9 +57,7 @@ class _DetailTypeCategoriesScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_detail_category'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -91,20 +88,20 @@ class _DetailTypeCategoriesScreenState
                   (detailTypeCategory) =>
                       _addOrEditDetailTypeCategory(detailTypeCategory),
                   (detailTypeCategory) async {
-                    final confirm = await showDialog<bool>(
-                      context: context,
-                      builder: (context) => ConfirmDialog(
-                        title: 'confirm_delete'.tr(),
-                        content: 'confirm_delete_message'.tr(),
-                      ),
-                    );
-                    if (confirm == true) {
-                      await DatabaseService.db.writeTxn(() async {
-                        await DatabaseService.db.detailTypeCategoriesIsars
-                            .delete(detailTypeCategory.id);
-                      });
-                    }
-                  }),
+                  final confirm = await showDialog<bool>(
+                    context: context,
+                    builder: (context) => ConfirmDialog(
+                      title: 'confirm_delete'.tr(),
+                      content: 'confirm_delete_message'.tr(),
+                    ),
+                  );
+                  if (confirm == true) {
+                    await DatabaseService.db.writeTxn(() async {
+                      await DatabaseService.db.detailTypeCategoriesIsars
+                          .delete(detailTypeCategory.id);
+                    });
+                  }
+                }),
         ],
       ),
     );
@@ -128,7 +125,7 @@ class _DetailTypeCategoriesScreenState
     final formKey = GlobalKey<FormState>();
     final nameController =
         TextEditingController(text: detailTypeCategory?.name ?? '');
-    DateTime? startDate = detailTypeCategory?.startDate ?? DateTime.now();
+    DateTime startDate = detailTypeCategory?.startDate ?? DateTime.now();
     DateTime? endDate = detailTypeCategory?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
@@ -172,6 +169,13 @@ class _DetailTypeCategoriesScreenState
                   child: Text('save'.tr()),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
+                      final isValid = DateUtilsService().validateStartEndDate(
+                        startDate: startDate,
+                        endDate: endDate,
+                        context: context,
+                      );
+                      if (!isValid) return;
+                      
                       final now = DateTime.now();
                       await DatabaseService.db.writeTxn(() async {
                         final newDetailTypeCategory =
@@ -179,7 +183,7 @@ class _DetailTypeCategoriesScreenState
                         newDetailTypeCategory.remoteId =
                             detailTypeCategory?.remoteId ?? 0;
                         newDetailTypeCategory.name = nameController.text;
-                        newDetailTypeCategory.startDate = startDate ?? now;
+                        newDetailTypeCategory.startDate = startDate;
                         newDetailTypeCategory.endDate = endDate;
                         newDetailTypeCategory.createdAt =
                             detailTypeCategory?.createdAt ?? now;

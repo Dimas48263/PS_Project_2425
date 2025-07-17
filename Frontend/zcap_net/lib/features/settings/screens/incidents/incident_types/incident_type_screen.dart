@@ -8,7 +8,6 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class IncidentTypesScreen extends StatefulWidget {
   const IncidentTypesScreen({super.key});
@@ -62,9 +61,7 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_incident_types'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: SafeArea(
         child: SizedBox.expand(

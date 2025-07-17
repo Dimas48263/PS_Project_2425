@@ -13,6 +13,8 @@ import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
 import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
+import '../../../../../shared/shared.dart';
+
 class DepartureDestinationScreen extends StatefulWidget {
   const DepartureDestinationScreen({super.key});
 
@@ -53,9 +55,7 @@ class _DepartureDestinationScreenState
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_departure_destinations'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -83,7 +83,8 @@ class _DepartureDestinationScreenState
                   filteredList,
                   getLabelsList(filteredList),
                   () async => await syncService.synchronizeAll(),
-                  (departureDestination) => _addOrEditDepartureDestination(departureDestination),
+                  (departureDestination) =>
+                      _addOrEditDepartureDestination(departureDestination),
                   (departureDestination) async {
                     final confirm = await showDialog<bool>(
                       context: context,
@@ -105,7 +106,8 @@ class _DepartureDestinationScreenState
     );
   }
 
-  List<List<String>> getLabelsList(List<DepartureDestinationIsar> filteredList) {
+  List<List<String>> getLabelsList(
+      List<DepartureDestinationIsar> filteredList) {
     List<List<String>> labelsList = [];
     for (var departureDestination in filteredList) {
       labelsList.add([
@@ -117,10 +119,12 @@ class _DepartureDestinationScreenState
     return labelsList;
   }
 
-  void _addOrEditDepartureDestination(DepartureDestinationIsar? departureDestination) {
+  void _addOrEditDepartureDestination(
+      DepartureDestinationIsar? departureDestination) {
     final formKey = GlobalKey<FormState>();
-    final nameController = TextEditingController(text: departureDestination?.name ?? '');
-    DateTime? startDate = departureDestination?.startDate ?? DateTime.now();
+    final nameController =
+        TextEditingController(text: departureDestination?.name ?? '');
+    DateTime startDate = departureDestination?.startDate ?? DateTime.now();
     DateTime? endDate = departureDestination?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
@@ -153,21 +157,30 @@ class _DepartureDestinationScreenState
             }, []),
             actions: [
               TextButton(
-                child: Text(
-                    allowances.canWrite('user_access_settings_people_departure_destinations')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                child: Text(allowances.canWrite(
+                        'user_access_settings_people_departure_destinations')
+                    ? 'cancel'.tr()
+                    : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite('user_access_settings_people_departure_destinations'))
+              if (allowances.canWrite(
+                  'user_access_settings_people_departure_destinations'))
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
+                      final isValid = DateUtilsService().validateStartEndDate(
+                        startDate: startDate,
+                        endDate: endDate,
+                        context: context,
+                      );
+                      if (!isValid) return;
                       final now = DateTime.now();
                       await DatabaseService.db.writeTxn(() async {
-                        final newDepartureDestination = departureDestination ?? DepartureDestinationIsar();
-                        newDepartureDestination.remoteId = departureDestination?.remoteId ?? 0;
+                        final newDepartureDestination =
+                            departureDestination ?? DepartureDestinationIsar();
+                        newDepartureDestination.remoteId =
+                            departureDestination?.remoteId ?? 0;
                         newDepartureDestination.name = nameController.text;
                         newDepartureDestination.startDate = startDate ?? now;
                         newDepartureDestination.endDate = endDate;

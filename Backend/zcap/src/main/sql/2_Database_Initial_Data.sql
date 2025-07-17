@@ -625,11 +625,11 @@ END
 
 IF (SELECT COUNT(*) FROM incidents ) = 0
 BEGIN
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 233, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (2, 314, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (3, 299, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (4, 233, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
-	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (5, 346, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (1, 233, '20250711', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (2, 314, '20250623', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (3, 299, '20250606', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (4, 233, '20250502', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+	INSERT incidents([incidentTypeId], [treeRecordId], [startDate], [createdAt], [lastUpdatedAt]) VALUES (5, 346, '20250703', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 END
 
 IF (SELECT COUNT(*) FROM incidentZcaps ) = 0

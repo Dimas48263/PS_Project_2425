@@ -10,7 +10,6 @@ import 'package:zcap_net_app/shared/data_types.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class ZcapDetailTypesScreen extends StatefulWidget {
@@ -66,9 +65,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_detail_types'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -166,7 +163,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
         zcapDetailType?.detailTypeCategory.value;
     DataTypes? dataType = zcapDetailType?.dataType;
     bool? isMandatory = zcapDetailType?.isMandatory;
-    DateTime? startDate = zcapDetailType?.startDate ?? DateTime.now();
+    DateTime startDate = zcapDetailType?.startDate ?? DateTime.now();
     DateTime? endDate = zcapDetailType?.endDate;
     String? selectedItemLabel;
     if (isMandatory == true) {
@@ -254,6 +251,13 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                   onPressed: () async {
                     final navigator = Navigator.of(context);
                     if (formKey.currentState!.validate()) {
+                      final isValid = DateUtilsService().validateStartEndDate(
+                        startDate: startDate,
+                        endDate: endDate,
+                        context: context,
+                      );
+                      if (!isValid) return;
+
                       final now = DateTime.now();
                       await DatabaseService.db.writeTxn(() async {
                         final newZcapDetailType =
@@ -265,7 +269,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                             detailTypeCategory;
                         newZcapDetailType.dataType = dataType!;
                         newZcapDetailType.isMandatory = isMandatory!;
-                        newZcapDetailType.startDate = startDate ?? now;
+                        newZcapDetailType.startDate = startDate;
                         newZcapDetailType.endDate = endDate;
                         newZcapDetailType.createdAt =
                             zcapDetailType?.createdAt ?? now;

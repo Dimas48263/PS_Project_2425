@@ -8,7 +8,6 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entity_types/entity_type_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class EntityTypesScreen extends StatefulWidget {
   const EntityTypesScreen({super.key});
@@ -62,9 +61,7 @@ class _EntityTypesScreenState extends State<EntityTypesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_entity_types'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: SafeArea(
         child: SizedBox.expand(

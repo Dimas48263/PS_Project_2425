@@ -18,6 +18,8 @@ import 'package:zcap_net_app/widgets/custom_form.dart';
 import 'package:zcap_net_app/widgets/custom_list_view.dart';
 import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
 
+import '../../../../shared/shared.dart';
+
 class TreeRecordDetailsScreen extends StatefulWidget {
   const TreeRecordDetailsScreen({super.key});
 
@@ -83,9 +85,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_details'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -210,7 +210,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
     final valueController = TextEditingController(text: detail?.valueCol ?? '');
     TreeIsar? tree = detail?.tree.value;
     TreeRecordDetailTypeIsar? detailType = detail?.detailType.value;
-    DateTime? startDate = detail?.startDate ?? DateTime.now();
+    DateTime startDate = detail?.startDate ?? DateTime.now();
     DateTime? endDate = detail?.endDate;
 
     List<int> availableTreeLevelIds = detailType != null
@@ -295,14 +295,19 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                   child: Text('save'.tr()),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      final now = DateTime.now();
+                      final isValid = DateUtilsService().validateStartEndDate(
+                        startDate: startDate,
+                        endDate: endDate,
+                        context: context,
+                      );
+                      if (!isValid) return;
                       await DatabaseService.db.writeTxn(() async {
                         final newDetail = detail ?? TreeRecordDetailIsar();
                         newDetail.remoteId = detail?.remoteId ?? 0;
                         newDetail.valueCol = valueController.text;
                         newDetail.detailType.value = detailType;
                         newDetail.tree.value = tree;
-                        newDetail.startDate = startDate ?? now;
+                        newDetail.startDate = startDate;
                         newDetail.endDate = endDate;
                         newDetail.isSynced = false;
                         await DatabaseService.db.treeRecordDetailIsars

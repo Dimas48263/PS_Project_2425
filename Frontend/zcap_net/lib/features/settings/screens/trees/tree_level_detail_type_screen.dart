@@ -10,7 +10,6 @@ import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class TreeLevelDetailTypeScreen extends StatefulWidget {
   const TreeLevelDetailTypeScreen({super.key});
@@ -65,9 +64,7 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_tree_level_detail_type'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -165,7 +162,7 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
 
     TreeLevelIsar? treeLevel = t?.treeLevel.value;
     TreeRecordDetailTypeIsar? detailType = t?.detailType.value;
-    DateTime? startDate = t?.startDate ?? DateTime.now();
+    DateTime startDate = t?.startDate ?? DateTime.now();
     DateTime? endDate = t?.endDate;
 
     showDialog(
@@ -226,14 +223,21 @@ class _TreeLevelDetailTypeScreenState extends State<TreeLevelDetailTypeScreen> {
                   child: Text('save'.tr()),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      final now = DateTime.now();
+
+                      final isValid = DateUtilsService().validateStartEndDate(
+                        startDate: startDate,
+                        endDate: endDate,
+                        context: context,
+                      );
+                      if (!isValid) return;
+
                       await DatabaseService.db.writeTxn(() async {
                         final newTreeLevelDetailType =
                             t ?? TreeLevelDetailTypeIsar();
                         newTreeLevelDetailType.remoteId = t?.remoteId ?? 0;
                         newTreeLevelDetailType.detailType.value = detailType;
                         newTreeLevelDetailType.treeLevel.value = treeLevel;
-                        newTreeLevelDetailType.startDate = startDate ?? now;
+                        newTreeLevelDetailType.startDate = startDate;
                         newTreeLevelDetailType.endDate = endDate;
                         newTreeLevelDetailType.isSynced = false;
                         await DatabaseService.db.treeLevelDetailTypeIsars

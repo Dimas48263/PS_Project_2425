@@ -75,9 +75,7 @@ class _TreesScreenState extends State<TreesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('tree'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: _buildUI(),
     );
@@ -165,7 +163,7 @@ class _TreesScreenState extends State<TreesScreen> {
     final nameController = TextEditingController(text: tree?.name ?? '');
     TreeLevelIsar? treeLevel = tree?.treeLevel.value;
     TreeIsar? parent = tree?.parent.value;
-    DateTime? startDate = tree?.startDate ?? DateTime.now();
+    DateTime startDate = tree?.startDate ?? DateTime.now();
     DateTime? endDate = tree?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
@@ -246,14 +244,20 @@ class _TreesScreenState extends State<TreesScreen> {
                   child: Text('save'.tr()),
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      final now = DateTime.now();
+                      final isValid = DateUtilsService().validateStartEndDate(
+                        startDate: startDate,
+                        endDate: endDate,
+                        context: context,
+                      );
+                      if (!isValid) return;
+
                       await DatabaseService.db.writeTxn(() async {
                         final newTree = tree ?? TreeIsar();
                         newTree.remoteId = tree?.remoteId ?? 0;
                         newTree.name = nameController.text;
                         newTree.treeLevel.value = treeLevel;
                         newTree.parent.value = parent;
-                        newTree.startDate = startDate ?? now;
+                        newTree.startDate = startDate;
                         newTree.endDate = endDate;
                         newTree.isSynced = false;
                         await DatabaseService.db.treeIsars.put(newTree);
