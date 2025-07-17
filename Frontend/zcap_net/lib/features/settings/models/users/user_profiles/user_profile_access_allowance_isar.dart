@@ -1,7 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/acess_type.dart';
+import 'package:zcap_net_app/shared/acess_type.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles_isar.dart';

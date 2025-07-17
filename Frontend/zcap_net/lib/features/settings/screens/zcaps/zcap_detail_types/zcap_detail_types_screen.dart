@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/data_types/data_types.dart';
+import 'package:zcap_net_app/shared/data_types.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zcap_detail_type_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';

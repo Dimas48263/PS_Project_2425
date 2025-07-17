@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/acess_type.dart';
+import 'package:zcap_net_app/shared/acess_type.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profile_access_allowance_isar.dart';
 import 'package:zcap_net_app/widgets/custom_label_value_text.dart';
 

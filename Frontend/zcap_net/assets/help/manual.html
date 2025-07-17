@@ -10,7 +10,10 @@
       padding: 0;
       box-sizing: border-box;
     }
-
+	
+	p {
+	  text-align: justify;
+	}
     body {
       font-family: sans-serif;
       background-color: #f5f5f5;
@@ -107,7 +110,8 @@
         align-items: flex-start;
       }
 	}
-	  .status-table {
+	  
+  .status-table {
     margin: 2em auto;
     border: 1px solid #ccc;
     border-collapse: collapse;
@@ -132,7 +136,12 @@
   .status-table img {
     width: 50px;
     height: 50px;
+  }
   
+  .icon {
+    width: 50px;
+    height: 50px;
+  }
   </style>
 </head>
 <body>
@@ -144,16 +153,17 @@
   </div>
   <nav>
     <a href="#inicio">Inicio</a>
-    <a href="#Zcaps">Zcaps</a>
-    <a href="#incidentes">Incidentes</a>
-    <a href="#configuracao">Configuração</a>
-	<a href="#utilizadores">Utilizadores</a>
-    <a href="#sobre">Sobre o ZCAPNet</a>
+    <a href="#zcaps">Zcaps</a>
+    <a href="#incidents">Incidentes</a>
+    <a href="#config">Configuração</a>
+	<a href="#users">Utilizadores</a>
+    <a href="#about">Sobre o ZCAPNet</a>
   </nav>
 </header>
 
 <main>
-  <h1 id="inicio">Introdução</h1>
+<br id="inicio" />
+  <h1>Introdução</h1>
 
   <p>O alojamento temporário de emergência é uma valência do apoio psicossocial em emergência, essencial para proporcionar
     ao cidadão individual e às famílias um local seguro para permanecerem, antes, durante e após um acidente grave ou catástrofe,
@@ -194,31 +204,38 @@
     <li>Modelação flexível dos formulários das ZCAPs (detalhes dos espaços)</li>
     <li>Modelação flexível dos formulários de acolhimento (dados recolhidos, necessidades especiais, tipos de apoio)</li>
   </ul>
-
+  
+  </br><hr>
+  
   <h1>ZCAPNet - Sistema de apoio à Proteção Cívil</h1>
   <h2>Indice</h2>
+  <h1>TODO</h1>
+
 
   <h2>Entrar no ZCAPNet</h2>
+  <br />
   <p>O ecrã de entrada da aplicação disponibiliza as opções:</p>
   
   <ol style="margin-left: 2rem; padding-left: 1rem;">
     <li><strong>Ajuda</strong> - Acesso ao manual da aplicação.</li>
-    <li><strong>Acerca de</strong> - Informação acreca do sistema, projeto e autores.</li>
+    <li><strong>Acerca de</strong> - Informação sobre o sistema, projeto e autores.</li>
     <li><strong>Dados de acesso</strong> - Introduza o nome de utilizador e palavra passe previamente fornecida.</li>
     <li><strong>Idioma</strong> - Seleccione o idioma a utilizar.</li>
     <li><strong>Entrar</strong> - Validar as credenciais e entrar no sistema.</li>
   </ol>
   
   <p>Para aceder às restantes funcionalidades, introduza o nome de utilizador e palavra passe préviamente fornecida e pressione "Entar".</p>
-  <img src="../images/pt/entrar.png" />
+  <img src="./images/pt/login.png" />
+    <table><td><img src="./images/icons/danger.svg" style="width: 150; height: 150px;"></td><td><strong>Qualquer alteração realizada na aplicação, será visível apenas localmente até que os dados sejam sincronizados com a base de dados central e posteriormente distribuído para os restantes sistemas.</strong></td></table>
   </br><hr>
 
   <h2>Menu principal</h2>
+    <br />
   <p>No menu principal é onde o utilizador encontra as principais operações disponíveis para o seu perfil.</p>
   <p>Dependendo do perfil do utilizador, algumas das opções podem não estar disponíveis ou serem apenas de consulta
   (consultar Perfis de Utilizador).</p>
     <ol style="margin-left: 2rem; padding-left: 1rem;">
-    <li><strong>Menu lateral</strong> - Acesso às opções da aplicação (ver Menu lateral)</li>
+    <li><strong>Menu lateral</strong> - Acesso às opções da aplicação (ver <a href="#drawer_menu">Menu lateral</a>)</li>
     <li><strong>Data do sistema</strong> - Data de referência do sistema, usado para filtrar informação nos menus de ZCAPs e Incidentes. Por defeito assume o mês atual. Para consultar dados de meses anteriores alterar a data.</li>
     <li><strong>Modo dia/noite</strong> - Permite alternar entre o modo diurno e noturno.</li>
     <li><strong>Indicador de estado e sincronização</strong> - Indica se a base de dados remota está disponível para receção e envio de atualizações.</p>
@@ -228,37 +245,120 @@
 		    <th>Online</th>
 		    <th>Offline</th>
 		  </tr>
-		    <td><img src="../images/cloud.svg"></td>
-		    <td><img src="../images/cloud_offline.svg"></td>
+		    <td><img src="./images/icons/cloud.svg"></td>
+		    <td><img src="./images/icons/cloud_offline.svg"></td>
 		  <tr>
 		  </tr>
 		</table>
 		<p>Caso a base de dados remota esteja disponível, a sincronização acontecerá de forma automática e períodica (ver Instalação) mas a sincronização pode ser iniciada manualmente clicando no icone de estado. Se a base de dados remota estiver disponível, deve surgir novamente a solicitação da palavra passe do utilizador.</p></li>
   </ol>
-  <img src="../images/pt/menu_principal.png" />
+  <img src="./images/pt/main_menu.png" />
   
-  <h2>ZCAPs</h2>
-  <p>ZCAPs</p>
+  <h3 id="drawer_menu">Menu lateral</h3>
+  <p>O menu lateral disponibiliza acesso às opções e funcionalidades disponíveis ao utilizador:</p>
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Menu Principal</strong> - Regresso ao Menu Principal</li>
+    <li><strong>ZCAPS</strong> - Menu de gestão de Zonas de Concentração e Apoio à População (ver <a href="#zcaps">ZCAPS</a>)</li>
+    <li><strong>Incidentes</strong> - Menu de gestão de Incidentes (ver <a href="#incidents">Incidentes</a>)</li>
+    <li><strong>Configurações</strong> - Menu de acesso às configurações do ZCAPNet (ver <a href="#config">Configurações</a>)</li>
+    <li><strong>Ajuda</strong> - Consulta do manual do utilizador (este documento).</li>
+    <li><strong>Sobre</strong> - Informação sobre o sistema, projeto e autores.</li>
+    <li><strong>Alterar Password</strong> - Permite ao utilizador alterar a sua palavra passe.</li>
+    <li><strong>Sair</strong> - Terminar sessão/mudar de utilizador.</li>
+  </ol>
+  <img src="./images/pt/drawer_menu.png" />
+  
+  <h3>Alterar password</h3>
+  <p>Introduza a palavra passe atual e uma nova palavra passe, repetindo novamente no campo "Confirme a Password". Não está definido atualmente nenhuma politica de complexidade ou repetição de palavras-passe. Pressione "Guardar" para confirmar a alteração.</p>
+  <img src="./images/pt/change_password.png" />
 
+  <hr id="zcaps">
+  <h2>ZCAPs</h2>
+  <br />
+  <p>Uma das principais funcionalidades do sistema é a gestão das Zonas de Concentração e Apoio à População. O sistema foi concebido por forma a poder adaptar-se a uma realidade evolutiva o que significa que os exemplos fornecidos podem divergir da realidade no momento da consulta deste documento.</p>
+
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li>Regresso para o menu/ecrã anterior</li>
+    <li><strong>Pesquisa</strong> - Pesquisa pela designação de uma ZCAP mostrando todos a apenas os resultados da palavra inserida</li>
+    <li><strong>Data/Sincronização</strong> - Nesta zona encontram-se dois botões:
+		<table>
+		  <tr><td><img src="./images/icons/date_picker.svg" class="icon"></td><td><strong>Data</strong> - Permite seleccionar/alterar o mês de trabalho da aplicação. A lista de ZCAPs visível na lista é sempre as que se encontram ativas no mês seleccionado (data inicio anterior ao final do mês e data fim posterior ao inicio).</tr>
+		  <tr><td><img src="./images/icons/sync.svg" class="icon"></td><td><strong>Sincronização</strong> - Inicia o processo de envio/receção de dados com a base de dados central. (ver <a href="#sync">Sincronização</a>)</tr>
+		</table>
+	</li>
+    <li><strong>Novo</strong> - Adicionar uma nova ZCAP (ver <a href="#new_zcap">Novo/Editar ZCAP</a>)</li>
+    <li><strong>Árvore Hierarquica</strong> - A árvore hierarquica associada às ZCAPs permite associar uma ZCAP a qualquer um dos níveis existentes. O número de níveis e o seu significado depende da configuração de níveis (ver <a href="#config">Configuração</a>).</li>
+    <li><strong>ZCAP</strong> - Cartão resumo dos dados da ZCAP. Disponibiliza também as opções:</li>
+			<table>
+		  <tr><td><img src="./images/icons/geo.svg" class="icon"></td><td><strong>Localização</strong> - Mostra no mapa a licalização da ZCAP (requer informação de Latitude e Longitude)</tr>
+		  <tr><td><img src="./images/icons/sync_pending.svg" class="icon"></td><td><strong>Sincronização Pendente</strong> - Representa um registo modificado a aguardar sincronização. (ver <a href="#sync">Sincronização</a>)</tr>
+		  <tr><td><img src="./images/icons/edit.svg" class="icon"></td><td><strong>Editar</strong> - Editar dados da ZCAP seleccionada.</tr>
+		  <tr><td><img src="./images/icons/delete.svg" class="icon"></td><td><strong>Eliminar</strong> - Elimina o registo seleccionado na base de dados local. <strong>Atenção:</strong><u>Registos eliminados localmente mas existentes na base de dados central podem ser repostos após sincronização. Para deixar de ver uma ZCAP listada, usar as datas inicio/fim.</u></tr>
+
+		</table>
+  </ol>
+  <img src="./images/pt/zcap_screen.png" />
+  <br />
+  
+  <h3 id="new_zcap">Novo/Editar ZCAP</h3>
+  <p>Criar uma nova ZCAP ou editar uma existente é um processo semelhante. Preencha ou altere os dados do formulário conforme adequado.</p>
+    <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Lista de fixa de campos:</strong>
+	  <ul style="margin-left: 2rem; padding-left: 1rem;">
+		<li><strong>Nome</strong> - Designação da ZCAP.</li>
+		<li><strong>Entidade</strong> - Entidade responsável pela gestão da ZCAP. Lista de valores editável nas <a href="#config">configurações</a> do sistema.</li>
+		<li><strong>Tipologia</strong> - Tipo de edificio/equipamento. Lista de valores editável nas <a href="#config">configurações</a> do sistema.</li>
+		<li><strong>Nível da arvore</strong> - Nível da árvore onde será posicionada a árvore. Lista de valores editável nas <a href="#config">configurações</a> do sistema.</li>
+		<li><strong>Árvore</strong> - Valor do nível da árvore à qual pertencerá a ZCAP. Lista de valores editável nas <a href="#config">configurações</a> do sistema.</li>
+		<li><strong>Morada</strong> - Morada da ZCAP</li>
+		<li><strong>Latitude/Longitude</strong> - Coordenadas de georeferenciação da ZCAP no formato <strong><i>graus decimais</i></strong>.</li>
+		<li><strong>Data Inicio/Fim</strong> - Define o período de validade da ZCAP, a dafa fim não é obrigatória ficando o registo disponível para todas as datas posteriores à data inicio.<br/> As ZCAPS estarão disponíveis para utilização no intervalo de datas seleccionado.</li>
+	  </ul>
+	</li>
+    <li><strong>Abrir detalhes</strong> - Abre o formulário de preenchimento dos detalhes da ZCAP. Este formulário contém diferentes Categorias de detalhe e Detalhes, conforme a escolha da Tipologia. A definição da lista de detalhes é editável nas <a href="#config">configurações</a> do sistema.</li>
+    <li><strong>Cancelar/Guardar/Fechar</strong> - Dependendo do perfil de utilizador, as opções disponíveis são:
+	  <ul style="margin-left: 2rem; padding-left: 1rem;">
+	    <li><strong>Cancelar/Guardar</strong> - O utilizador tem permissões para editar e guardar registos.</li>
+		<li><strong>Fechar</strong> - O utilizador tem apenas permissões de consulta.</li>
+	  </ul>
+	</li>
+  </ol>
+  <img src="./images/pt/new_edit_zcap.png" />
+  <br/>
+
+  <h3>Detalhes da ZCAP</h3>
+  
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Categoria de detalhe</strong> - Os detalhes das ZCAPs estão divididos em categorias para simplificar a sua organização no ecrã e posterior utilização em ferramentas de análise.</li>
+    <li><strong>Detalhe</strong> - Cada detalhe pode receber um tipo de dados diferente, pode ser de preenchimento obrigatório ou não. Ver <a href="#config">configurações</a>.</li>
+    <li><strong>Cancelar/Guardar/Fechar</strong> - Dependendo do perfil de utilizador, as opções disponíveis são:
+	  <ul style="margin-left: 2rem; padding-left: 1rem;">
+	    <li><strong>Cancelar/Guardar</strong> - O utilizador tem permissões para editar e guardar registos.</li>
+		<li><strong>Fechar</strong> - O utilizador tem apenas permissões de consulta.</li>
+	  </ul>
+	</li>
+  </ol>
+  <img src="./images/pt/new_edit_zcap_details.png" />
+  
+  <hr id="incidents">
   <h2>Incidentes</h2>
   <p>Incidentes</p>
 
+  <hr id="config">
   <h2>Configurações</h2>
   <p>Configurações</p>
 
-  <h3>Entrar no ZCAPNet</h3>
-  <p>Entrar no ZCAPNet</p>
+  <hr>
+  <h2 id="help">Ajuda</h2>
+  <p>Ajuda</p>
 
-  <h2>Entrar no ZCAPNet</h2>
-  <p>Entrar no ZCAPNet</p>
-
-  <h2>Entrar no ZCAPNet</h2>
-  <p>Entrar no ZCAPNet</p>
-
-  <h2>Entrar no ZCAPNet</h2>
-  <p>Entrar no ZCAPNet</p>
-
-  <h1 id="sobre">ZCAPNet - Sistema de apoio à Proteção Cívil</h1>
+  <hr id="sync">
+  <h2>Sincronização</h2>
+  <p>Sincronização</p>
+  
+  <hr id="about">
+  <h2>Sobre</h2>
+  <p>Configurações</p>
 </main>
 
 </body>

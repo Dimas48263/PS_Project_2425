@@ -1,5 +1,5 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/data_types/data_types.dart';
+import 'package:zcap_net_app/shared/data_types.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/detail_type_categories/detail_type_categories.dart';
 
 class ZcapDetailType implements ApiTable {

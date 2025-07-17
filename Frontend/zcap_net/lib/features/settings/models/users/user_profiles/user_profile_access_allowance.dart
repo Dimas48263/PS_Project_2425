@@ -1,5 +1,5 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
-import 'package:zcap_net_app/features/settings/models/users/user_profiles/acess_type.dart';
+import 'package:zcap_net_app/shared/acess_type.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_profiles.dart';
 
 class UserProfileAccessAllowance implements ApiTable {
