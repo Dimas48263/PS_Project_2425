@@ -281,7 +281,7 @@ final List<SyncEntry> syncEntries = [
   SyncEntry<TreeRecordDetailTypeIsar, TreeRecordDetailType>(
       endpoint: 'tree-record-detail-types',
       getCollection: (isar) => isar.treeRecordDetailTypeIsars,
-      idName: 'treeRecordDetailTypeId',
+      idName: 'detailTypeId',
       fromJson: TreeRecordDetailType.fromJson,
       toIsar: (ApiTable detailType) async =>
           TreeRecordDetailTypeIsar.toRemote(detailType as TreeRecordDetailType),
@@ -312,7 +312,7 @@ final List<SyncEntry> syncEntries = [
   SyncEntry<TreeLevelDetailTypeIsar, TreeLevelDetailType>(
       endpoint: 'tree-level-detail-type',
       getCollection: (isar) => isar.treeLevelDetailTypeIsars,
-      idName: 'detailId',
+      idName: 'treeLevelDetailTypeId',
       fromJson: TreeLevelDetailType.fromJson,
       toIsar: (ApiTable tldt) async =>
           await TreeLevelDetailTypeIsar.toRemote(tldt as TreeLevelDetailType),

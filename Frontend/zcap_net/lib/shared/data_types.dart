@@ -1,3 +1,5 @@
+import 'package:easy_localization/easy_localization.dart';
+
 enum DataTypes {
   boolean,
   int,
@@ -23,6 +25,23 @@ enum DataTypes {
         return "'A'";
       case DataTypes.float:
         return '3.14';
+    }
+  }
+
+  String get label {
+    switch (this) {
+      case DataTypes.boolean:
+        return 'boolean_label'.tr();
+      case DataTypes.int:
+        return 'int_label'.tr();
+      case DataTypes.string:
+        return 'string_label'.tr();
+      case DataTypes.double:
+        return 'double_label'.tr();
+      case DataTypes.char:
+        return 'char_label'.tr();
+      case DataTypes.float:
+        return 'float_label'.tr();
     }
   }
 }

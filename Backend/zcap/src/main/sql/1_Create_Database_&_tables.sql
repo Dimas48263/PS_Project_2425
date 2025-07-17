@@ -227,7 +227,7 @@ IF NOT EXISTS(SELECT TOP 1 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = '
 CREATE TABLE treeRecordDetailTypes (
     [detailTypeId]	BIGINT IDENTITY(1,1) PRIMARY KEY,
     [name]			NVARCHAR(255) NOT NULL,											-- Nome do tipo de detalhe (ex: População, Área, PIB, etc.)
-    [unit]			NVARCHAR(50)  NULL,												-- Unidade de medida (ex: km², habitantes, €)
+    [unit]			NVARCHAR(255)  NULL,												-- Unidade de medida (ex: km², habitantes, €)
     [startDate]		DATE NOT NULL,
     [endDate]		DATE NULL,
     [createdAt]     DATETIME NOT NULL,

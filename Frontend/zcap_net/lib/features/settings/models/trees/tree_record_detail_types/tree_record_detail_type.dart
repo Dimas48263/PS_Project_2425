@@ -1,10 +1,11 @@
 import 'package:zcap_net_app/core/services/remote_table.dart';
+import 'package:zcap_net_app/shared/data_types.dart';
 
 class TreeRecordDetailType implements ApiTable {
   @override
   int remoteId;
   final String name;
-  final String unit;
+  final DataTypes unit;
   final DateTime startDate;
   final DateTime? endDate;
   final DateTime createdAt;
@@ -24,7 +25,7 @@ class TreeRecordDetailType implements ApiTable {
   Map<String, dynamic> toJsonInput() {
     return {
       'name': name,
-      'unit': unit,
+      'unit': unit.name,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
@@ -34,7 +35,7 @@ class TreeRecordDetailType implements ApiTable {
   Future<Map<String, dynamic>> toJsonInputAsync() async {
     return {
       'name': name,
-      'unit': unit,
+      'unit': unit.name,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
     };
@@ -44,7 +45,7 @@ class TreeRecordDetailType implements ApiTable {
     return TreeRecordDetailType(
       remoteId: json['detailTypeId'],
       name: json['name'],
-      unit: json['unit'],
+      unit: DataTypesExtension.fromString(json['unit'] as String),
       startDate: DateTime.parse(json['startDate']),
       endDate: json['endDate'] != null ? DateTime.parse(json['endDate']) : null,
       createdAt: json['createdAt'] != null
@@ -59,7 +60,7 @@ class TreeRecordDetailType implements ApiTable {
   TreeRecordDetailType copyWith({
     int? id,
     String? name,
-    String? unit,
+    DataTypes? unit,
     DateTime? startDate,
     DateTime? endDate,
     DateTime? createdAt,

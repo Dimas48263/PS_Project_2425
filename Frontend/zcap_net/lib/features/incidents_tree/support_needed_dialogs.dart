@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -111,6 +110,12 @@ class _SupportNeededDialogsState extends State<SupportNeedsDialogs> {
                                 },
                               ),
                             IconButton(
+                              icon: const Icon(Icons.edit),
+                              onPressed: () {
+                                addOrEditSupportNeeded(personSupportNeeded, null, context);
+                              },
+                            ),
+                            IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
                                 final confirm = await showDialog<bool>(
@@ -172,8 +177,10 @@ class _SupportNeededDialogsState extends State<SupportNeedsDialogs> {
     );
   }
 
-  Future<bool?> addOrEditSupportNeeded(PersonSupportNeededIsar? personSupportNedded,
-      PersonsIsar? person, BuildContext context) async {
+  Future<bool?> addOrEditSupportNeeded(
+      PersonSupportNeededIsar? personSupportNedded,
+      PersonsIsar? person,
+      BuildContext context) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final formKey = GlobalKey<FormState>();
@@ -182,6 +189,8 @@ class _SupportNeededDialogsState extends State<SupportNeedsDialogs> {
         personSupportNedded?.supportNeeded.value!;
     final descriptionController =
         TextEditingController(text: personSupportNedded?.description ?? '');
+    DateTime? startDate = personSupportNedded?.startDate ?? DateTime.now();
+    DateTime? endDate = personSupportNedded?.endDate;
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
@@ -208,8 +217,6 @@ class _SupportNeededDialogsState extends State<SupportNeedsDialogs> {
         final allowances = context.watch<UserAllowancesProvider>();
 
         return StatefulBuilder(builder: (context, setModalState) {
-          DateTime? startDate = personSupportNedded?.startDate ?? DateTime.now();
-          DateTime? endDate = personSupportNedded?.endDate;
           return AlertDialog(
             title: Text(personSupportNedded == null
                 ? '${'add'.tr()} ${'support_needed'.tr()}'

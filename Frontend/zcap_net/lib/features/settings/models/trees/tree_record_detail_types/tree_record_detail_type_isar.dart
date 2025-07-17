@@ -1,6 +1,7 @@
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type.dart';
+import 'package:zcap_net_app/shared/data_types.dart';
 
 part 'tree_record_detail_type_isar.g.dart';
 
@@ -13,7 +14,8 @@ class TreeRecordDetailTypeIsar implements IsarTable<TreeRecordDetailType> {
   @override
   int? remoteId;
   late String name;
-  late String unit;
+  @enumerated
+  late DataTypes unit;
   @Index()
   late DateTime startDate;
   @Index()

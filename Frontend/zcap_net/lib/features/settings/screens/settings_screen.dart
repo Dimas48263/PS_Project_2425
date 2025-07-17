@@ -95,7 +95,7 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-                if (allowances
+                /*if (allowances
                     .canRead('user_access_settings_tree_detail_association'))
                   ListTile(
                     title: Text('screen_settings_tree_level_detail_type'.tr()),
@@ -107,7 +107,7 @@ class SettingsScreen extends StatelessWidget {
                                 const TreeLevelDetailTypeScreen()),
                       );
                     },
-                  ),
+                  ),*/
                 if (allowances.canRead('user_access_screen_zcaps'))
                   ListTile(
                     leading: const Icon(Icons.maps_home_work_outlined),
