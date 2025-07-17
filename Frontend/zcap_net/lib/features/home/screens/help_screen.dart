@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:webview_windows/webview_windows.dart';
 
 class HelpScreen extends StatefulWidget {
   const HelpScreen({super.key});
@@ -11,41 +11,55 @@ class HelpScreen extends StatefulWidget {
 }
 
 class _HelpScreenState extends State<HelpScreen> {
-  String _markdownContent = '';
-   bool _isLoaded = false;
+  final WebviewController _controller = WebviewController();
+  bool _isWebViewReady = false;
+  String? _error;
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    if (!_isLoaded) {
-      _loadMarkdown();
-      _isLoaded = true;
-    }
+  void initState() {
+    super.initState();
+    _initWebView();
   }
 
-    Future<void> _loadMarkdown() async {
-    final langCode = context.locale.languageCode;
-    final path = 'assets/help/help.$langCode.md';
-
+  Future<void> _initWebView() async {
     try {
-      final content = await rootBundle.loadString(path);
-      setState(() => _markdownContent = content);
+      await _controller.initialize();
+
+      final langCode = Localizations.localeOf(context).languageCode;
+      final htmlContent = await rootBundle.loadString('assets/help/help.$langCode.html');
+
+      await _controller.loadStringContent(htmlContent);
+
+      setState(() {
+        _isWebViewReady = true;
+      });
     } catch (e) {
-      setState(() => _markdownContent = 'Error loading help file.');
+      setState(() {
+        _error = 'Erro ao carregar a ajuda: $e';
+      });
     }
   }
 
-    @override
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_error != null) {
+      return Scaffold(
+        appBar: AppBar(title: Text('help'.tr())),
+        body: Center(child: Text(_error!)),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(title: Text('help'.tr())),
-      body: _markdownContent.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : Markdown(
-              data: _markdownContent,
-              styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
-            ),
+      body: _isWebViewReady
+          ? Webview(_controller)
+          : const Center(child: CircularProgressIndicator()),
     );
   }
 }
