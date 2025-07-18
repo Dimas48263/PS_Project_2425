@@ -24,6 +24,9 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +56,9 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite =
+        allowances.canWrite('user_access_settings_people_relation_types');
     final filteredRelationTypes = relationTypes.where((relation) {
       final name = relation.name.toLowerCase();
       return name.contains(_searchTerm);
@@ -61,9 +67,7 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_relation_types'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -71,6 +75,7 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(children: [
               CustomSearchAndAddBar(
+                canWrite: canWrite,
                 controller: _searchController,
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
@@ -129,35 +134,45 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                                 children: [
                                   if (!relationType.isSynced)
                                     CustomUnsyncedIcon(),
-                                  IconButton(
-                                    onPressed: () {
-                                      _addOrEditRelationType(
-                                          relationType: relationType);
-                                    },
-                                    icon: const Icon(Icons.edit),
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      final confirm = await showDialog<bool>(
-                                        context: context,
-                                        builder: (context) => ConfirmDialog(
-                                          title: 'confirm_delete'.tr(),
-                                          content:
-                                              'confirm_delete_message'.tr(),
-                                        ),
-                                      );
-                                      if (confirm == true) {
-                                        await DatabaseService.db
-                                            .writeTxn(() async {
-                                          await DatabaseService
-                                              .db.relationTypeIsars
-                                              .delete(relationType.id);
-                                        });
-                                      }
-                                    },
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                  ),
+                                  if (canWrite) ...[
+                                    IconButton(
+                                      onPressed: () {
+                                        _addOrEditRelationType(
+                                            relationType: relationType);
+                                      },
+                                      icon: const Icon(Icons.edit),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => ConfirmDialog(
+                                            title: 'confirm_delete'.tr(),
+                                            content:
+                                                'confirm_delete_message'.tr(),
+                                          ),
+                                        );
+                                        if (confirm == true) {
+                                          await DatabaseService.db
+                                              .writeTxn(() async {
+                                            await DatabaseService
+                                                .db.relationTypeIsars
+                                                .delete(relationType.id);
+                                          });
+                                        }
+                                      },
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                    ),
+                                  ] else
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.info_outline,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () => _addOrEditRelationType(
+                                          relationType: relationType),
+                                    ),
                                 ],
                               ),
                             ),
@@ -185,8 +200,6 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setModalState) {
-              final allowances = context.watch<UserAllowancesProvider>();
-
               return AlertDialog(
                 title: Text(relationType != null
                     ? '${'edit'.tr()} ${'screen_relation_type'.tr()}'
@@ -198,6 +211,7 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextFormField(
+                          enabled: canWrite,
                           controller: nameController,
                           decoration: InputDecoration(
                               labelText: 'screen_relation_types_name'.tr()),
@@ -212,6 +226,7 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                           height: 12.0,
                         ),
                         CustomDateRangePicker(
+                          canWrite: canWrite,
                           startDate: selectedStartDate,
                           endDate: selectedEndDate,
                           onStartDateChanged: (newStart) {
@@ -231,14 +246,10 @@ class _RelationTypesScreenState extends State<RelationTypeScreen> {
                 ),
                 actions: [
                   TextButton(
-                    child: Text(allowances.canWrite(
-                            'user_access_settings_people_relation_types')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                    child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  if (allowances
-                      .canWrite('user_access_settings_people_relation_types'))
+                  if (canWrite)
                     TextButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate() &&

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:zcap_net_app/core/services/remote_table.dart';
 
 Widget buildListView<T extends IsarTable>(
-  List<T> list,
-  List<List<String>> labelsList,
-  Future<bool> Function() onSync,
-  void Function(T) onEdit,
-  Future<void> Function(T) onDelete,
-) {
+    List<T> list,
+    List<List<String>> labelsList,
+    Future<bool> Function() onSync,
+    void Function(T) onEdit,
+    Future<void> Function(T) onDelete,
+    {bool canWrite = true}) {
   return Expanded(
     child: ListView.builder(
       itemCount: list.length,
@@ -35,14 +35,22 @@ Widget buildListView<T extends IsarTable>(
                     icon: const Icon(Icons.sync_problem,
                         color: Colors.orange, size: 30),
                   ),
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => onEdit(item),
-                ),
-                IconButton(
-                  onPressed: () => onDelete(item),
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                ),
+                if (canWrite) ...[
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => onEdit(item),
+                  ),
+                  IconButton(
+                    onPressed: () => onDelete(item),
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                  ),
+                ]
+                else ...[
+                  IconButton(
+                    icon: const Icon(Icons.info_outline, color: Colors.blue,),
+                    onPressed: () => onEdit(item),
+                  ),
+                ],
               ],
             ),
           ),
@@ -65,7 +73,8 @@ Widget buildListViewV2<T extends IsarTable>(
     List<CustomElementListView> list,
     Future<bool> Function() onSync,
     void Function(T) onEdit,
-    Future<void> Function(T) onDelete) {
+    Future<void> Function(T) onDelete,
+    {bool canWrite = true}) {
   return Expanded(
     child: ListView.builder(
       itemCount: list.length,
@@ -104,14 +113,22 @@ Widget buildListViewV2<T extends IsarTable>(
                     icon: const Icon(Icons.sync_problem,
                         color: Colors.orange, size: 30),
                   ),
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () => onEdit(item.element as T),
-                ),
-                IconButton(
-                  onPressed: () => onDelete(item.element as T),
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                ),
+                if (canWrite) ...[
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () => onEdit(item.element as T),
+                  ),
+                  IconButton(
+                    onPressed: () => onDelete(item.element as T),
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                  ),
+                ]
+                else ...[
+                  IconButton(
+                    icon: const Icon(Icons.info_outline, color: Colors.blue,),
+                    onPressed: () => onEdit(item.element as T),
+                  ),
+                ],
               ],
             ),
           ),

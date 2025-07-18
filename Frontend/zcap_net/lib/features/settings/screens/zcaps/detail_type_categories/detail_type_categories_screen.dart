@@ -26,6 +26,9 @@ class _DetailTypeCategoriesScreenState
   final _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +57,8 @@ class _DetailTypeCategoriesScreenState
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_detail_category');
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_detail_category'.tr()),
@@ -73,6 +78,7 @@ class _DetailTypeCategoriesScreenState
       child: Column(
         children: [
           CustomSearchAndAddBar(
+              canWrite: canWrite,
               controller: _searchController,
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
@@ -82,6 +88,7 @@ class _DetailTypeCategoriesScreenState
           _isLoading
               ? const CircularProgressIndicator()
               : buildListView(
+                  canWrite: canWrite,
                   filteredList,
                   getLabelsList(filteredList),
                   () async => await syncService.synchronizeAll(),
@@ -136,8 +143,6 @@ class _DetailTypeCategoriesScreenState
     showDialog(
       context: context,
       builder: (context) {
-        final allowances = context.watch<UserAllowancesProvider>();
-
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title: Text(detailTypeCategory == null
@@ -155,16 +160,13 @@ class _DetailTypeCategoriesScreenState
               setModalState(() {
                 endDate = null;
               });
-            }, []),
+            }, [], canWrite: canWrite),
             actions: [
               TextButton(
-                child: Text(
-                    allowances.canWrite('user_access_settings_detail_category')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite('user_access_settings_detail_category'))
+              if (canWrite)
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {
@@ -175,7 +177,7 @@ class _DetailTypeCategoriesScreenState
                         context: context,
                       );
                       if (!isValid) return;
-                      
+
                       final now = DateTime.now();
                       await DatabaseService.db.writeTxn(() async {
                         final newDetailTypeCategory =

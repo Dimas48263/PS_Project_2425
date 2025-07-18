@@ -26,6 +26,9 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +58,8 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_entities');
     final filteredEntities = entities.where((entity) {
       final name = entity.name.toLowerCase();
       return name.contains(_searchTerm);
@@ -63,9 +68,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_entities'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -75,6 +78,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                 children: [
                   // Shared Custom Search and Add Bar
                   CustomSearchAndAddBar(
+                    canWrite: canWrite,
                     controller: _searchController,
                     onSearchChanged: (value) => setState(() {
                       _searchTerm = value.toLowerCase();
@@ -159,35 +163,47 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                                     children: [
                                       if (!entity.isSynced)
                                         CustomUnsyncedIcon(),
-                                      IconButton(
-                                        onPressed: () {
-                                          _addOrEditEntity(entity: entity);
-                                        },
-                                        icon: const Icon(Icons.edit),
-                                      ),
-                                      IconButton(
-                                        onPressed: () async {
-                                          final confirm =
-                                              await showDialog<bool>(
-                                            context: context,
-                                            builder: (context) => ConfirmDialog(
-                                              title: 'confirm_delete'.tr(),
-                                              content:
-                                                  'confirm_delete_message'.tr(),
-                                            ),
-                                          );
-                                          if (confirm == true) {
-                                            await DatabaseService.db
-                                                .writeTxn(() async {
-                                              await DatabaseService
-                                                  .db.entitiesIsars
-                                                  .delete(entity.id);
-                                            });
-                                          }
-                                        },
-                                        icon: const Icon(Icons.delete,
-                                            color: Colors.red),
-                                      ),
+                                      if (canWrite) ...[
+                                        IconButton(
+                                          onPressed: () {
+                                            _addOrEditEntity(entity: entity);
+                                          },
+                                          icon: const Icon(Icons.edit),
+                                        ),
+                                        IconButton(
+                                          onPressed: () async {
+                                            final confirm =
+                                                await showDialog<bool>(
+                                              context: context,
+                                              builder: (context) =>
+                                                  ConfirmDialog(
+                                                title: 'confirm_delete'.tr(),
+                                                content:
+                                                    'confirm_delete_message'
+                                                        .tr(),
+                                              ),
+                                            );
+                                            if (confirm == true) {
+                                              await DatabaseService.db
+                                                  .writeTxn(() async {
+                                                await DatabaseService
+                                                    .db.entitiesIsars
+                                                    .delete(entity.id);
+                                              });
+                                            }
+                                          },
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                        ),
+                                      ] else
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.info_outline,
+                                            color: Colors.blue,
+                                          ),
+                                          onPressed: () =>
+                                              _addOrEditEntity(entity: entity),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -228,7 +244,6 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        final allowances = context.watch<UserAllowancesProvider>();
         return StatefulBuilder(
           builder: (context, setModalState) {
             return AlertDialog(
@@ -242,6 +257,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextFormField(
+                        enabled: canWrite,
                         controller: nameController,
                         decoration: InputDecoration(
                             labelText: 'screen_entity_name'.tr()),
@@ -254,6 +270,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       ),
                       const SizedBox(height: 12),
                       DropdownSearch<EntityTypeIsar>(
+                        enabled: canWrite,
                         selectedItem: entityType,
                         popupProps: PopupProps.menu(
                           showSearchBox: true,
@@ -287,6 +304,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
+                        enabled: canWrite,
                         controller: emailController,
                         decoration: InputDecoration(labelText: 'email'.tr()),
                         validator: (value) {
@@ -302,6 +320,7 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
+                        enabled: canWrite,
                         controller: phone1Controller,
                         decoration: InputDecoration(labelText: 'contact'.tr()),
                         validator: (value) {
@@ -313,12 +332,14 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
                       ),
                       const SizedBox(height: 12),
                       TextField(
+                        enabled: canWrite,
                         controller: phone2Controller,
                         decoration: InputDecoration(
                             labelText: 'alternative_contact'.tr()),
                       ),
                       const SizedBox(height: 12),
                       CustomDateRangePicker(
+                        canWrite: canWrite,
                         startDate: selectedStartDate,
                         endDate: selectedEndDate,
                         onStartDateChanged: (newStart) {
@@ -338,13 +359,10 @@ class _EntitiesScreenState extends State<EntitiesScreen> {
               ),
               actions: [
                 TextButton(
-                  child: Text(
-                      allowances.canWrite('user_access_settings_entities')
-                          ? 'cancel'.tr()
-                          : 'close'.tr()),
+                  child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                   onPressed: () => Navigator.pop(context),
                 ),
-                if (allowances.canWrite('user_access_settings_entities'))
+                if (canWrite)
                   TextButton(
                     onPressed: () async {
                       if (formKey.currentState!.validate() &&

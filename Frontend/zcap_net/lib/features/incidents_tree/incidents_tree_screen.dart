@@ -6,7 +6,6 @@ import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
-import 'package:zcap_net_app/core/utils/app_colors.dart';
 import 'package:zcap_net_app/data/app_date_provider.dart';
 import 'package:zcap_net_app/features/incidents_tree/persons_screen.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
@@ -17,14 +16,6 @@ import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart'
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/features/zcap_tree/tree_wrapper.dart';
-import 'package:zcap_net_app/widgets/confirm_dialog.dart';
-import 'package:zcap_net_app/widgets/custom_app_refrence_date_picker.dart';
-import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
-import 'package:zcap_net_app/widgets/custom_form.dart';
-import 'package:zcap_net_app/widgets/custom_label_value_text.dart';
-import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
-import 'package:zcap_net_app/widgets/custom_unsynced_icon.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 
 import '../../shared/shared.dart';
 
@@ -50,6 +41,9 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
 
   String _searchTerm = '';
   final TextEditingController _searchController = TextEditingController();
+
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
 
   @override
   void initState() {
@@ -205,6 +199,8 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_screen_incidents');
     return Scaffold(
         appBar: AppBar(
           title: Text('screen_incidents'.tr()),
@@ -215,6 +211,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CustomSearchAndAddBar(
+                canWrite: canWrite,
                 controller: _searchController,
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
@@ -283,35 +280,48 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  _addZcap(data);
-                                },
-                                child: Text('${'add'.tr()} ZCAP')),
+                            if (canWrite)
+                              ElevatedButton(
+                                  onPressed: () {
+                                    _addZcap(data);
+                                  },
+                                  child: Text('${'add'.tr()} ZCAP')),
                             if (!data.isSynced) CustomUnsyncedIcon(),
-                            IconButton(
-                              onPressed: () {
-                                _addOrEditIncident(context, incident: data);
-                              },
-                              icon: const Icon(Icons.edit),
-                            ),
-                            IconButton(
-                              onPressed: () async {
-                                final confirm = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) => ConfirmDialog(
-                                    title: 'confirm_delete'.tr(),
-                                    content: 'confirm_delete_message'.tr(),
-                                  ),
-                                );
-                                if (confirm == true) {
-                                  await isarDb.writeTxn(() async {
-                                    await isarDb.incidentsIsars.delete(data.id);
-                                  });
-                                }
-                              },
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                            ),
+                            if (canWrite) ...[
+                              IconButton(
+                                onPressed: () {
+                                  _addOrEditIncident(context, incident: data);
+                                },
+                                icon: const Icon(Icons.edit),
+                              ),
+                              IconButton(
+                                onPressed: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => ConfirmDialog(
+                                      title: 'confirm_delete'.tr(),
+                                      content: 'confirm_delete_message'.tr(),
+                                    ),
+                                  );
+                                  if (confirm == true) {
+                                    await isarDb.writeTxn(() async {
+                                      await isarDb.incidentsIsars
+                                          .delete(data.id);
+                                    });
+                                  }
+                                },
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                              ),
+                            ] else
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.info_outline,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () =>
+                                    _addOrEditIncident(context, incident: data),
+                              ),
                           ],
                         ),
                       ),
@@ -326,35 +336,38 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => PersonsScreen(
-                                                incidentZcapIsar: data)));
-                                  },
-                                  child: Text('screen_settings_people'.tr())),
+                              if (allowances.canRead('user_access_add_people'))
+                                ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  PersonsScreen(
+                                                      incidentZcapIsar: data)));
+                                    },
+                                    child: Text('screen_settings_people'.tr())),
                               if (!data.isSynced) CustomUnsyncedIcon(),
-                              IconButton(
-                                onPressed: () async {
-                                  final confirm = await showDialog<bool>(
-                                    context: context,
-                                    builder: (context) => ConfirmDialog(
-                                      title: 'confirm_delete'.tr(),
-                                      content: 'confirm_delete_message'.tr(),
-                                    ),
-                                  );
-                                  if (confirm == true) {
-                                    await isarDb.writeTxn(() async {
-                                      await isarDb.incidentZcapsIsars
-                                          .delete(data.id);
-                                    });
-                                  }
-                                },
-                                icon:
-                                    const Icon(Icons.delete, color: Colors.red),
-                              ),
+                              if (allowances.canWrite('user_access_add_people'))
+                                IconButton(
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (context) => ConfirmDialog(
+                                        title: 'confirm_delete'.tr(),
+                                        content: 'confirm_delete_message'.tr(),
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      await isarDb.writeTxn(() async {
+                                        await isarDb.incidentZcapsIsars
+                                            .delete(data.id);
+                                      });
+                                    }
+                                  },
+                                  icon: const Icon(Icons.delete,
+                                      color: Colors.red),
+                                ),
                             ],
                           )),
                     );
@@ -432,8 +445,6 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
     showDialog(
         context: context,
         builder: (context) {
-          final allowances = context.watch<UserAllowancesProvider>();
-
           return StatefulBuilder(builder: (context, setModalState) {
             return AlertDialog(
               title: Text(incident == null
@@ -452,6 +463,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                 });
               }, [
                 customDropdownSearch<TreeLevelIsar>(
+                    enabled: canWrite,
                     items: availableTreeLevels,
                     selectedItem: treeLevel,
                     onSelected: (TreeLevelIsar? value) {
@@ -465,7 +477,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                     label: 'level'.tr()),
                 customDropdownSearch<TreeIsar>(
                   label: 'tree'.tr(),
-                  enabled: treeLevel != null,
+                  enabled: canWrite && treeLevel != null,
                   items: treeLevel == null
                       ? availableTrees
                       : availableTrees
@@ -483,6 +495,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                   },
                 ),
                 customDropdownSearch<IncidentTypesIsar>(
+                  enabled: canWrite,
                   itemLabelBuilder: (item) => item.name,
                   label: "screen_incident_type".tr(),
                   items: availableIncidentTypes,
@@ -499,14 +512,10 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
               ]),
               actions: [
                 TextButton(
-                  child: Text(allowances
-                          .canWrite('user_access_settings_tree_elements') //TODO
-                      ? 'cancel'.tr()
-                      : 'close'.tr()),
+                  child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                   onPressed: () => Navigator.pop(context),
                 ),
-                if (allowances
-                    .canWrite('user_access_settings_tree_elements')) //TODO
+                if (canWrite)
                   TextButton(
                     child: Text('save'.tr()),
                     onPressed: () async {
@@ -579,8 +588,6 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
     showDialog(
         context: context,
         builder: (context) {
-          final allowances = context.watch<UserAllowancesProvider>();
-
           return StatefulBuilder(builder: (context, setModalState) {
             return AlertDialog(
               title: Text('${'add'.tr()} ZCAP'),
@@ -610,40 +617,35 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                   )),
               actions: [
                 TextButton(
-                  child: Text(allowances
-                          .canWrite('user_access_settings_tree_elements') //TODO
-                      ? 'cancel'.tr()
-                      : 'close'.tr()),
+                  child: Text('cancel'.tr()),
                   onPressed: () => Navigator.pop(context),
                 ),
-                if (allowances
-                    .canWrite('user_access_settings_tree_elements')) //TODO
-                  TextButton(
-                    child: Text('save'.tr()),
-                    onPressed: () async {
-                      if (formKey.currentState!.validate()) {
-                        final navigator = Navigator.of(context);
-                        final now = DateTime.now();
-                        await isarDb.writeTxn(() async {
-                          final newIncidentZcap = IncidentZcapsIsar();
-                          newIncidentZcap.remoteId = 0;
-                          newIncidentZcap.incident.value = incident;
-                          newIncidentZcap.zcap.value = selectedZcap;
-                          newIncidentZcap.entity.value = selectedEntity;
-                          newIncidentZcap.startDate = now;
-                          newIncidentZcap.endDate = null;
-                          newIncidentZcap.createdAt = now;
-                          newIncidentZcap.lastUpdatedAt = now;
-                          newIncidentZcap.isSynced = false;
-                          await isarDb.incidentZcapsIsars.put(newIncidentZcap);
-                          await newIncidentZcap.incident.save();
-                          await newIncidentZcap.zcap.save();
-                          await newIncidentZcap.entity.save();
-                        });
-                        navigator.pop();
-                      }
-                    },
-                  ),
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final navigator = Navigator.of(context);
+                      final now = DateTime.now();
+                      await isarDb.writeTxn(() async {
+                        final newIncidentZcap = IncidentZcapsIsar();
+                        newIncidentZcap.remoteId = 0;
+                        newIncidentZcap.incident.value = incident;
+                        newIncidentZcap.zcap.value = selectedZcap;
+                        newIncidentZcap.entity.value = selectedEntity;
+                        newIncidentZcap.startDate = now;
+                        newIncidentZcap.endDate = null;
+                        newIncidentZcap.createdAt = now;
+                        newIncidentZcap.lastUpdatedAt = now;
+                        newIncidentZcap.isSynced = false;
+                        await isarDb.incidentZcapsIsars.put(newIncidentZcap);
+                        await newIncidentZcap.incident.save();
+                        await newIncidentZcap.zcap.save();
+                        await newIncidentZcap.entity.save();
+                      });
+                      navigator.pop();
+                    }
+                  },
+                ),
               ],
             );
           });

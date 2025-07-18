@@ -231,5 +231,6 @@
   "user_access_settings_detail_per_zcap": "Settings - Detail by ZCAP",
   "user_access_settings_people_relation_types": "Settings - People relation types",
   "user_access_settings_special_need_types": "Settings - People special need types",
-  "user_access_settings_support_need_types": "Settings - People support need types"
+  "user_access_settings_support_need_types": "Settings - People support need types",
+  "user_access_settings_people_departure_destinations": "Settings - Departure destinations"
 }

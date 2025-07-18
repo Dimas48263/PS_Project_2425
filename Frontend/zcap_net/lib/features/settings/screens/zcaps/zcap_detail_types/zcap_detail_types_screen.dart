@@ -29,6 +29,9 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
 
   bool _isSearchingByName = true;
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -62,6 +65,8 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_zcap_detail_type');
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_detail_types'.tr()),
@@ -87,6 +92,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
       child: Column(
         children: [
           CustomSearchAndAddBar(
+              canWrite: canWrite,
               controller: _searchController,
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
@@ -109,6 +115,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
           _isLoading
               ? const CircularProgressIndicator()
               : buildListView(
+                  canWrite: canWrite,
                   filteredList,
                   getLabelsList(filteredList),
                   () async => await syncService.synchronizeAll(),
@@ -203,6 +210,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
               });
             }, [
               customDropdownSearch<DetailTypeCategoriesIsar>(
+                  enabled: canWrite,
                   items: availableDetailTypeCategory,
                   selectedItem: detailTypeCategory,
                   onSelected: (DetailTypeCategoriesIsar? value) {
@@ -214,6 +222,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                       value == null ? 'required_field'.tr() : null,
                   label: 'screen_settings_detail_category_name'.tr()),
               customDropdownSearch<DataTypes>(
+                  enabled: canWrite,
                   itemLabelBuilder: (value) => value.label,
                   items: DataTypes.values,
                   selectedItem: dataType,
@@ -243,6 +252,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                           Checkbox(
                             value: field.value == true,
                             onChanged: (val) {
+                              if (!canWrite) return;
                               final newValue =
                                   field.value == true ? null : true;
                               field.didChange(newValue);
@@ -254,10 +264,11 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                           Checkbox(
                             value: field.value == false,
                             onChanged: (val) {
+                              if (!canWrite) return;
                               final newValue =
                                   field.value == false ? null : false;
                               field.didChange(newValue);
-                              isMandatory = newValue ;
+                              isMandatory = newValue;
                             },
                           ),
                           Text("false".tr()),
@@ -276,16 +287,13 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                   );
                 },
               ),
-            ]),
+            ], canWrite: canWrite),
             actions: [
               TextButton(
-                child: Text(
-                    allowances.canWrite('user_access_settings_zcap_detail_type')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite('user_access_settings_zcap_detail_type'))
+              if (canWrite)
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {

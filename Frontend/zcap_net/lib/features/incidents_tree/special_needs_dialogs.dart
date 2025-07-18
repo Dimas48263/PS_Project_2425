@@ -29,6 +29,9 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
   List<PersonSpecialNeedsIsar> list = [];
   StreamSubscription? _subscription;
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -52,6 +55,8 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_add_people');
     return Dialog(
       insetPadding: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -109,39 +114,51 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
                                   });
                                 },
                               ),
-                            IconButton(
-                              icon: const Icon(Icons.edit),
-                              onPressed: () {
-                                addOrEditSpecialNeed(personSpecialNeed, null, context);
-                              },
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () async {
-                                final confirm = await showDialog<bool>(
-                                  context: context,
-                                  builder: (context) => ConfirmDialog(
-                                    title: 'confirm_delete'.tr(),
-                                    content: 'confirm_delete_message'.tr(),
-                                  ),
-                                );
-                                if (confirm == true) {
-                                  await isarDb.writeTxn(() async {
-                                    await isarDb.personSpecialNeedsIsars
-                                        .delete(personSpecialNeed.id);
-                                  });
-                                  final updatedList = await isarDb
-                                      .personSpecialNeedsIsars
-                                      .filter()
-                                      .person(
-                                          (q) => q.idEqualTo(widget.person.id))
-                                      .findAll();
-                                  setState(() {
-                                    list = updatedList;
-                                  });
-                                }
-                              },
-                            ),
+                            if (canWrite) ...[
+                              IconButton(
+                                icon: const Icon(Icons.edit),
+                                onPressed: () {
+                                  addOrEditSpecialNeed(
+                                      personSpecialNeed, null, context);
+                                },
+                              ),
+                              IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () async {
+                                  final confirm = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => ConfirmDialog(
+                                      title: 'confirm_delete'.tr(),
+                                      content: 'confirm_delete_message'.tr(),
+                                    ),
+                                  );
+                                  if (confirm == true) {
+                                    await isarDb.writeTxn(() async {
+                                      await isarDb.personSpecialNeedsIsars
+                                          .delete(personSpecialNeed.id);
+                                    });
+                                    final updatedList = await isarDb
+                                        .personSpecialNeedsIsars
+                                        .filter()
+                                        .person((q) =>
+                                            q.idEqualTo(widget.person.id))
+                                        .findAll();
+                                    setState(() {
+                                      list = updatedList;
+                                    });
+                                  }
+                                },
+                              ),
+                            ] else
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.info_outline,
+                                  color: Colors.blue,
+                                ),
+                                onPressed: () => addOrEditSpecialNeed(
+                                    personSpecialNeed, null, context),
+                              ),
                           ],
                         ),
                       ),
@@ -150,26 +167,33 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
                 ),
               ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                final saved =
-                    await addOrEditSpecialNeed(null, widget.person, context);
-                if (saved == true) {
-                  final updatedList = await isarDb.personSpecialNeedsIsars
-                      .filter()
-                      .person((q) => q.idEqualTo(widget.person.id))
-                      .findAll();
-                  setState(() {
-                    list = updatedList;
-                  });
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(12),
-                minimumSize: const Size(60.0, 60.0),
+            if (canWrite) ...[
+              ElevatedButton(
+                onPressed: () async {
+                  final saved =
+                      await addOrEditSpecialNeed(null, widget.person, context);
+                  if (saved == true) {
+                    final updatedList = await isarDb.personSpecialNeedsIsars
+                        .filter()
+                        .person((q) => q.idEqualTo(widget.person.id))
+                        .findAll();
+                    setState(() {
+                      list = updatedList;
+                    });
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(12),
+                  minimumSize: const Size(60.0, 60.0),
+                ),
+                child: const Icon(Icons.add, size: 40.0),
               ),
-              child: const Icon(Icons.add, size: 40.0),
+              const SizedBox(height: 16),
+            ],
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('close'.tr()),
             ),
           ],
         ),
@@ -231,6 +255,7 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
               });
             }, [
               customDropdownSearch(
+                  enabled: canWrite,
                   itemLabelBuilder: (specialNeed) => specialNeed.name,
                   items: availableSpecialNeeds,
                   selectedItem: specialNeedController,
@@ -242,17 +267,13 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null,
                   label: "${'special_need'.tr()}*")
-            ]),
+            ], canWrite: canWrite),
             actions: [
               TextButton(
-                child: Text(allowances
-                        .canWrite('user_access_settings_tree_levels') //TODO
-                    ? 'cancel'.tr()
-                    : 'close'.tr()),
+                child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                 onPressed: () => Navigator.pop(context, false),
               ),
-              if (allowances
-                  .canWrite('user_access_settings_tree_levels')) //TODO
+              if (canWrite)
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {

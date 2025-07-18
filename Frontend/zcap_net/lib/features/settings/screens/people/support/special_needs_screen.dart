@@ -24,6 +24,9 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +56,8 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_support_need_types');
     final filteredSupportNeeded = supportNeeded.where((supportNeeded) {
       final name = supportNeeded.name.toLowerCase();
       return name.contains(_searchTerm);
@@ -61,9 +66,7 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_support_need_types'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -71,6 +74,7 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(children: [
               CustomSearchAndAddBar(
+                canWrite: canWrite,
                 controller: _searchController,
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
@@ -129,35 +133,45 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
                                 children: [
                                   if (!supportNeeded.isSynced)
                                     CustomUnsyncedIcon(),
-                                  IconButton(
-                                    onPressed: () {
-                                      _addOrEditSupportNeeded(
-                                          supportNeeded: supportNeeded);
-                                    },
-                                    icon: const Icon(Icons.edit),
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      final confirm = await showDialog<bool>(
-                                        context: context,
-                                        builder: (context) => ConfirmDialog(
-                                          title: 'confirm_delete'.tr(),
-                                          content:
-                                              'confirm_delete_message'.tr(),
-                                        ),
-                                      );
-                                      if (confirm == true) {
-                                        await DatabaseService.db
-                                            .writeTxn(() async {
-                                          await DatabaseService
-                                              .db.supportNeededIsars
-                                              .delete(supportNeeded.id);
-                                        });
-                                      }
-                                    },
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                  ),
+                                  if (canWrite) ...[
+                                    IconButton(
+                                      onPressed: () {
+                                        _addOrEditSupportNeeded(
+                                            supportNeeded: supportNeeded);
+                                      },
+                                      icon: const Icon(Icons.edit),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => ConfirmDialog(
+                                            title: 'confirm_delete'.tr(),
+                                            content:
+                                                'confirm_delete_message'.tr(),
+                                          ),
+                                        );
+                                        if (confirm == true) {
+                                          await DatabaseService.db
+                                              .writeTxn(() async {
+                                            await DatabaseService
+                                                .db.supportNeededIsars
+                                                .delete(supportNeeded.id);
+                                          });
+                                        }
+                                      },
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                    ),
+                                  ] else
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.info_outline,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () => _addOrEditSupportNeeded(
+                                          supportNeeded: supportNeeded),
+                                    ),
                                 ],
                               ),
                             ),
@@ -185,8 +199,6 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setModalState) {
-              final allowances = context.watch<UserAllowancesProvider>();
-
               return AlertDialog(
                 title: Text(supportNeeded != null
                     ? '${'edit'.tr()} ${'screen_support_needed_type'.tr()}'
@@ -198,6 +210,7 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextFormField(
+                          enabled: canWrite,
                           controller: nameController,
                           decoration: InputDecoration(
                               labelText: 'screen_support_needed_name'.tr()),
@@ -212,6 +225,7 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
                           height: 12.0,
                         ),
                         CustomDateRangePicker(
+                          canWrite: canWrite,
                           startDate: selectedStartDate,
                           endDate: selectedEndDate,
                           onStartDateChanged: (newStart) {
@@ -231,14 +245,10 @@ class _SupportNeededScreenState extends State<SupportNeededScreen> {
                 ),
                 actions: [
                   TextButton(
-                    child: Text(allowances
-                            .canWrite('user_access_settings_support_need_types')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                    child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  if (allowances
-                      .canWrite('user_access_settings_support_need_types'))
+                  if (canWrite)
                     TextButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate() &&

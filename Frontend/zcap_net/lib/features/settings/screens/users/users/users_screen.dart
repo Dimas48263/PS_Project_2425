@@ -27,6 +27,9 @@ class _UsersScreenState extends State<UsersScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -55,11 +58,12 @@ class _UsersScreenState extends State<UsersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_users');
     final filteredUsers = users.where((user) {
       final userName = user.userName.toLowerCase();
       return userName.contains(_searchTerm);
     }).toList();
-    final allowances = context.watch<UserAllowancesProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -73,6 +77,7 @@ class _UsersScreenState extends State<UsersScreen> {
               child: Column(
                 children: [
                   CustomSearchAndAddBar(
+                    canWrite: canWrite,
                     controller: _searchController,
                     onSearchChanged: (value) => setState(() {
                       _searchTerm = value.toLowerCase();
@@ -118,12 +123,13 @@ class _UsersScreenState extends State<UsersScreen> {
                                       child: FutureBuilder(
                                         future: user.userDataProfile.load(),
                                         builder: (context, snapshot) {
-                                          final userDataProfileName = snapshot
-                                                      .connectionState ==
-                                                  ConnectionState.done
-                                              ? user.userDataProfile.value?.name ??
-                                                  'unknown_profile'.tr()
-                                              : 'loading'.tr();
+                                          final userDataProfileName =
+                                              snapshot.connectionState ==
+                                                      ConnectionState.done
+                                                  ? user.userDataProfile.value
+                                                          ?.name ??
+                                                      'unknown_profile'.tr()
+                                                  : 'loading'.tr();
                                           return CustomLabelValueText(
                                               label: 'data_profile'.tr(),
                                               value: userDataProfileName);
@@ -163,12 +169,13 @@ class _UsersScreenState extends State<UsersScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 if (!user.isSynced) CustomUnsyncedIcon(),
-                                IconButton(
-                                  onPressed: () {
-                                    _addOrEditUser(user: user);
-                                  },
-                                  icon: const Icon(Icons.edit),
-                                ),
+                                if (canWrite)
+                                  IconButton(
+                                    onPressed: () {
+                                      _addOrEditUser(user: user);
+                                    },
+                                    icon: const Icon(Icons.edit),
+                                  ),
                                 if (allowances
                                     .canWrite('user_access_reset_passwords'))
                                   IconButton(
@@ -177,24 +184,35 @@ class _UsersScreenState extends State<UsersScreen> {
                                     icon: const Icon(Icons.lock_reset),
                                     tooltip: 'reset_password'.tr(),
                                   ),
-                                IconButton(
-                                  onPressed: () async {
-                                    final confirm = await showDialog<bool>(
-                                      context: context,
-                                      builder: (context) => ConfirmDialog(
-                                        title: 'confirm_delete'.tr(),
-                                        content: 'confirm_delete_message'.tr(),
-                                      ),
-                                    );
-                                    if (confirm == true) {
-                                      await isarDb.writeTxn(() async {
-                                        await isarDb.usersIsars.delete(user.id);
-                                      });
-                                    }
-                                  },
-                                  icon: const Icon(Icons.delete,
-                                      color: Colors.red),
-                                ),
+                                if (canWrite)
+                                  IconButton(
+                                    onPressed: () async {
+                                      final confirm = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) => ConfirmDialog(
+                                          title: 'confirm_delete'.tr(),
+                                          content:
+                                              'confirm_delete_message'.tr(),
+                                        ),
+                                      );
+                                      if (confirm == true) {
+                                        await isarDb.writeTxn(() async {
+                                          await isarDb.usersIsars
+                                              .delete(user.id);
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.delete,
+                                        color: Colors.red),
+                                  )
+                                else
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.info_outline,
+                                      color: Colors.blue,
+                                    ),
+                                    onPressed: () => _addOrEditUser(user: user),
+                                  ),
                               ],
                             ),
                           ),
@@ -246,6 +264,7 @@ class _UsersScreenState extends State<UsersScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextFormField(
+                        enabled: canWrite,
                         controller: userNameController,
                         decoration: InputDecoration(
                             labelText: 'screen_user_username'.tr()),
@@ -258,6 +277,7 @@ class _UsersScreenState extends State<UsersScreen> {
                       ),
                       const SizedBox(height: 12),
                       TextField(
+                        enabled: canWrite,
                         controller: nameController,
                         decoration: InputDecoration(labelText: 'name'.tr()),
                       ),
@@ -277,6 +297,7 @@ class _UsersScreenState extends State<UsersScreen> {
                         ),
                       const SizedBox(height: 12),
                       DropdownSearch<UserProfilesIsar>(
+                        enabled: canWrite,
                         selectedItem: userProfile,
                         popupProps: PopupProps.menu(
                           showSearchBox: true,
@@ -309,6 +330,7 @@ class _UsersScreenState extends State<UsersScreen> {
                       ),
                       const SizedBox(height: 12),
                       DropdownSearch<UserDataProfilesIsar>(
+                        enabled: canWrite,
                         selectedItem: userDataProfile,
                         popupProps: PopupProps.menu(
                           showSearchBox: true,
@@ -342,6 +364,7 @@ class _UsersScreenState extends State<UsersScreen> {
                       ),
                       const SizedBox(height: 12),
                       CustomDateRangePicker(
+                        canWrite: canWrite,
                         startDate: selectedStartDate,
                         endDate: selectedEndDate,
                         onStartDateChanged: (newStart) {
@@ -361,12 +384,10 @@ class _UsersScreenState extends State<UsersScreen> {
               ),
               actions: [
                 TextButton(
-                  child: Text(allowances.canWrite('user_access_settings_users')
-                      ? 'cancel'.tr()
-                      : 'close'.tr()),
+                  child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                   onPressed: () => Navigator.pop(context),
                 ),
-                if (allowances.canWrite('user_access_settings_users'))
+                if (canWrite)
                   TextButton(
                     onPressed: () async {
                       final isUniqueUserName =

@@ -8,6 +8,7 @@ import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
+import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 class IncidentTypesScreen extends StatefulWidget {
   const IncidentTypesScreen({super.key});
@@ -23,6 +24,9 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
   bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
+
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
 
   @override
   void initState() {
@@ -53,6 +57,9 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_incident_types');
+
     final filteredIncidentTypes = incidentTypes.where((entity) {
       final name = entity.name.toLowerCase();
       return name.contains(_searchTerm);
@@ -69,6 +76,7 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(children: [
               CustomSearchAndAddBar(
+                canWrite: canWrite,
                 controller: _searchController,
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
@@ -76,98 +84,48 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
                 onIconPressed: _addOrEditIncidentType,
               ),
               const SizedBox(height: 16),
-              Expanded(
-                child: _isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : ListView.builder(
-                        itemCount: filteredIncidentTypes.length,
-                        itemBuilder: (context, index) {
-                          final incidentType = filteredIncidentTypes[index];
-                          return Card(
-                            child: ListTile(
-                              contentPadding: EdgeInsets.only(
-                                left: 10.0,
-                              ),
-                              title: Text(
-                                '${incidentType.remoteId != null ? "[${incidentType.remoteId}] " : ""}${incidentType.name}',
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: CustomLabelValueText(
-                                            label: 'start'.tr(),
-                                            value: incidentType.startDate
-                                                .toLocal()
-                                                .toString()
-                                                .split(' ')[0]),
-                                      ),
-                                      Expanded(
-                                        child: CustomLabelValueText(
-                                          label: 'end'.tr(),
-                                          value: incidentType.endDate != null
-                                              ? incidentType.endDate!
-                                                  .toLocal()
-                                                  .toString()
-                                                  .split(' ')[0]
-                                              : 'no_end_date'.tr(),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  if (!incidentType.isSynced)
-                                    CustomUnsyncedIcon(),
-                                  IconButton(
-                                    onPressed: () {
-                                      _addOrEditIncidentType(
-                                          incidentType: incidentType);
-                                    },
-                                    icon: const Icon(Icons.edit),
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      final confirm = await showDialog<bool>(
-                                        context: context,
-                                        builder: (context) => ConfirmDialog(
-                                          title: 'confirm_delete'.tr(),
-                                          content:
-                                              'confirm_delete_message'.tr(),
-                                        ),
-                                      );
-                                      if (confirm == true) {
-                                        await DatabaseService.db
-                                            .writeTxn(() async {
-                                          await DatabaseService
-                                              .db.incidentTypesIsars
-                                              .delete(incidentType.id);
-                                        });
-                                      }
-                                    },
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-              )
+              _isLoading
+                  ? const CircularProgressIndicator()
+                  : buildListView(
+                      filteredIncidentTypes,
+                      getLabelsList(filteredIncidentTypes),
+                      () async => await syncService.synchronizeAll(),
+                      (incidentType) =>
+                          _addOrEditIncidentType(incidentType: incidentType),
+                      (incidentType) async {
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => ConfirmDialog(
+                            title: 'confirm_delete'.tr(),
+                            content: 'confirm_delete_message'.tr(),
+                          ),
+                        );
+                        if (confirm == true) {
+                          await DatabaseService.db.writeTxn(() async {
+                            await DatabaseService.db.incidentTypesIsars
+                                .delete(incidentType.id);
+                          });
+                        }
+                      },
+                      canWrite: canWrite,
+                    )
             ]),
           ),
         ),
       ),
     );
+  }
+
+  List<List<String>> getLabelsList(List<IncidentTypesIsar> filteredList) {
+    List<List<String>> labelsList = [];
+    for (var incidentType in filteredList) {
+      labelsList.add([
+        '${incidentType.remoteId != null ? "[${incidentType.remoteId}] " : ""}${incidentType.name}',
+        '${'start'.tr()}: ${incidentType.startDate.toLocal().toString().split(' ')[0]}',
+        '${'end'.tr()}: ${incidentType.endDate?.toLocal().toString().split(' ')[0] ?? 'no_end_date'.tr()}'
+      ]);
+    }
+    return labelsList;
   }
 
   void _addOrEditIncidentType({IncidentTypesIsar? incidentType}) async {
@@ -177,65 +135,38 @@ class _IncidentTypesScreenState extends State<IncidentTypesScreen> {
     DateTime? selectedEndDate = incidentType?.endDate;
     final formKey = GlobalKey<FormState>();
 
+    List<TextControllersInputFormConfig> textControllersConfig = [
+      TextControllersInputFormConfig(
+          controller: nameController, label: 'screen_entity_type_name'.tr())
+    ];
+
     showDialog(
         context: context,
         builder: (context) {
-          final allowances = context.watch<UserAllowancesProvider>();
-
           return StatefulBuilder(
             builder: (context, setModalState) {
               return AlertDialog(
                 title: Text(incidentType != null
                     ? '${'edit'.tr()} ${'screen_incident_type'.tr()}'
                     : '${'new'.tr()} ${'screen_incident_type'.tr()}'),
-                content: Form(
-                  key: formKey,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        TextFormField(
-                          controller: nameController,
-                          decoration: InputDecoration(
-                              labelText: 'screen_entity_type_name'.tr()),
-                          validator: (value) {
-                            if (value == null || value.trim().isEmpty) {
-                              return 'required_field'.tr();
-                            }
-                            return null;
-                          },
-                        ),
-                        const SizedBox(
-                          height: 12.0,
-                        ),
-                        CustomDateRangePicker(
-                          startDate: selectedStartDate,
-                          endDate: selectedEndDate,
-                          onStartDateChanged: (newStart) {
-                            setModalState(() {
-                              selectedStartDate = newStart;
-                            });
-                          },
-                          onEndDateChanged: (newEnd) {
-                            setModalState(() {
-                              selectedEndDate = newEnd;
-                            });
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                content: buildForm(formKey, context, textControllersConfig,
+                    selectedStartDate, selectedEndDate, (value) {
+                  setState(() => selectedStartDate = value);
+                  setModalState(() {}); // Atualiza o dialog
+                }, (value) {
+                  setState(() => selectedEndDate = value);
+                  setModalState(() {}); // Atualiza o dialog
+                }, () {
+                  setModalState(() {
+                    selectedEndDate = null;
+                  });
+                }, [], canWrite: canWrite),
                 actions: [
                   TextButton(
-                    child: Text(allowances
-                            .canWrite('user_access_settings_incident_types')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                    child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  if (allowances
-                      .canWrite('user_access_settings_incident_types'))
+                  if (canWrite)
                     TextButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate() &&
