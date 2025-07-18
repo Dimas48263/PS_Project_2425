@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/shared/data_types.dart';
 import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
@@ -168,8 +169,9 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       List<TreeRecordDetailIsar> filteredList) {
     List<CustomElementListView> labelsList = [];
     for (var tree in filteredList) {
+      final title = tree.detailType.value!.unit == DataTypes.boolean ? tree.valueCol == '1' ? 'true'.tr() : 'false'.tr() : tree.valueCol;
       labelsList.add(
-        CustomElementListView(tree, '[${tree.remoteId}] ${tree.valueCol}', [
+        CustomElementListView(tree, '[${tree.remoteId}] $title', [
           [
             '${'screen_detail_type'.tr()}: ${tree.detailType.value!.name}',
             '${'tree'.tr()}: ${tree.tree.value!.name}'
@@ -220,11 +222,6 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
             .toList()
         : [];
 
-    List<TextControllersInputFormConfig> textControllersConfig = [
-      TextControllersInputFormConfig(
-          controller: valueController, label: 'value'.tr()),
-    ];
-
     showDialog(
       context: context,
       builder: (context) {
@@ -234,54 +231,120 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
             title: Text(detail == null
                 ? '${'new'.tr()} ${'detail'.tr()}'
                 : '${'edit'.tr()} ${'detail'.tr()}'),
-            content: buildForm(
-                formKey, context, textControllersConfig, startDate, endDate,
-                (value) {
-              setState(() => startDate = value);
-              setModalState(() {}); // Atualiza o dialog
-            }, (value) {
-              setState(() => endDate = value);
-              setModalState(() {}); // Atualiza o dialog
-            }, () {
-              setModalState(() {
-                endDate = null;
-              });
-            }, [
-              customDropdownSearch<TreeRecordDetailTypeIsar>(
-                  label: 'screen_detail_type'.tr(),
-                  items: availableDetailTypes,
-                  selectedItem: detailType,
-                  onSelected: (TreeRecordDetailTypeIsar? value) {
-                    setModalState(() {
-                      detailType = value;
-                      tree = null;
-                      availableTreeLevelIds = treeLevelDetailTypes
-                          .where(
-                              (e) => e.detailType.value!.id == detailType!.id)
-                          .map((element) => element.treeLevel.value!.id)
-                          .toList();
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? 'required_field'.tr() : null),
-              customDropdownSearch<TreeIsar>(
-                  label: 'screen_settings_tree_elements'.tr(),
-                  enabled: detailType != null,
-                  items: detailType != null
-                      ? availableTrees
-                          .where((t) => availableTreeLevelIds
-                              .contains(t.treeLevel.value!.id))
-                          .toList()
-                      : [],
-                  selectedItem: tree,
-                  onSelected: (TreeIsar? value) {
-                    setModalState(() {
-                      tree = value;
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? 'required_field'.tr() : null),
-            ]),
+            content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    customDropdownSearch<TreeRecordDetailTypeIsar>(
+                        label: 'screen_detail_type'.tr(),
+                        items: availableDetailTypes,
+                        selectedItem: detailType,
+                        onSelected: (TreeRecordDetailTypeIsar? value) {
+                          setModalState(() {
+                            detailType = value;
+                            tree = null;
+                            availableTreeLevelIds = treeLevelDetailTypes
+                                .where((e) =>
+                                    e.detailType.value!.id == detailType!.id)
+                                .map((element) => element.treeLevel.value!.id)
+                                .toList();
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'required_field'.tr() : null),
+                    if (detailType != null) ...[
+                      if (detailType!.unit == DataTypes.boolean)
+                        FormField<bool>(
+                          initialValue: valueController.text != ''
+                              ? valueController.text == '1'
+                              : null,
+                          validator: (value) {
+                            if (value == null) return 'required_field'.tr();
+                            return null;
+                          },
+                          builder: (field) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('${'value'.tr()}*'),
+                                    Checkbox(
+                                      value: field.value == true,
+                                      onChanged: (val) {
+                                        final newValue =
+                                            field.value == true ? null : true;
+                                        field.didChange(newValue);
+                                        valueController.text =
+                                            newValue != null ? '1' : '';
+                                      },
+                                    ),
+                                    Text("true".tr()),
+                                    const SizedBox(width: 20),
+                                    Checkbox(
+                                      value: field.value == false,
+                                      onChanged: (val) {
+                                        final newValue =
+                                            field.value == false ? null : false;
+                                        field.didChange(newValue);
+                                        valueController.text =
+                                            newValue != null ? '0' : '';
+                                      },
+                                    ),
+                                    Text("false".tr()),
+                                  ],
+                                ),
+                                if (field.hasError)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 4),
+                                    child: Text(
+                                      field.errorText!,
+                                      style: const TextStyle(
+                                          color: Colors.red, fontSize: 12),
+                                    ),
+                                  )
+                              ],
+                            );
+                          },
+                        )
+                      else
+                        TextFormField(
+                          controller: valueController,
+                          decoration: InputDecoration(
+                            labelText: "${'value'.tr()}*",
+                            hintText:
+                                "${'example_abbreviation'.tr()} ${detailType!.unit.example}",
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'required_field'.tr();
+                            }
+                            if (detailType!.unit.validate(value)) return null;
+                            return 'wrong_format'.tr();
+                          },
+                        )
+                    ],
+                    customDropdownSearch<TreeIsar>(
+                        label: 'screen_settings_tree_elements'.tr(),
+                        enabled: detailType != null,
+                        items: detailType != null
+                            ? availableTrees
+                                .where((t) => availableTreeLevelIds
+                                    .contains(t.treeLevel.value!.id))
+                                .toList()
+                            : [],
+                        selectedItem: tree,
+                        onSelected: (TreeIsar? value) {
+                          setModalState(() {
+                            tree = value;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? 'required_field'.tr() : null),
+                  ],
+                )),
             actions: [
               TextButton(
                 child: Text(

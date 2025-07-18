@@ -12,7 +12,6 @@ import 'package:zcap_net_app/features/settings/screens/people/relation_type/rela
 import 'package:zcap_net_app/features/settings/screens/people/support/special_needs_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/zcaps/building_types/building_types_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/entities/entity_types/entity_type_screen.dart';
-import 'package:zcap_net_app/features/settings/screens/trees/tree_level_detail_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_levels_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_record_detail_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/trees/tree_record_detail_type_screen.dart';
@@ -95,19 +94,6 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-                /*if (allowances
-                    .canRead('user_access_settings_tree_detail_association'))
-                  ListTile(
-                    title: Text('screen_settings_tree_level_detail_type'.tr()),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                const TreeLevelDetailTypeScreen()),
-                      );
-                    },
-                  ),*/
                 if (allowances.canRead('user_access_screen_zcaps'))
                   ListTile(
                     leading: const Icon(Icons.maps_home_work_outlined),

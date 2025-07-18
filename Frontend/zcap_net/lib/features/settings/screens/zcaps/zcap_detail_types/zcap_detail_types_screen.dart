@@ -214,6 +214,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                       value == null ? 'required_field'.tr() : null,
                   label: 'screen_settings_detail_category_name'.tr()),
               customDropdownSearch<DataTypes>(
+                  itemLabelBuilder: (value) => value.label,
                   items: DataTypes.values,
                   selectedItem: dataType,
                   onSelected: (DataTypes? value) {
@@ -224,18 +225,57 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null,
                   label: 'data_type'.tr()),
-              customDropdownSearch<String>(
-                  items: ['is_mandatory'.tr(), 'is_optional'.tr()],
-                  selectedItem: selectedItemLabel,
-                  onSelected: (String? value) {
-                    setModalState(() {
-                      selectedItemLabel = value;
-                      isMandatory = selectedItemLabel == 'is_mandatory'.tr();
-                    });
-                  },
-                  validator: (value) =>
-                      value == null ? 'required_field'.tr() : null,
-                  label: 'mandatory_optional'.tr())
+              FormField<bool>(
+                initialValue: isMandatory,
+                validator: (value) {
+                  if (isMandatory == null) {
+                    return 'required_field'.tr();
+                  }
+                  return null;
+                },
+                builder: (field) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('${'is_mandatory'.tr()}?'),
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: field.value == true,
+                            onChanged: (val) {
+                              final newValue =
+                                  field.value == true ? null : true;
+                              field.didChange(newValue);
+                              isMandatory = newValue;
+                            },
+                          ),
+                          Text("true".tr()),
+                          const SizedBox(width: 20),
+                          Checkbox(
+                            value: field.value == false,
+                            onChanged: (val) {
+                              final newValue =
+                                  field.value == false ? null : false;
+                              field.didChange(newValue);
+                              isMandatory = newValue ;
+                            },
+                          ),
+                          Text("false".tr()),
+                        ],
+                      ),
+                      if (field.hasError)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            field.errorText!,
+                            style: const TextStyle(
+                                color: Colors.red, fontSize: 12),
+                          ),
+                        )
+                    ],
+                  );
+                },
+              ),
             ]),
             actions: [
               TextButton(

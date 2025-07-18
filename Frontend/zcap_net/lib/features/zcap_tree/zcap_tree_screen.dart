@@ -737,26 +737,6 @@ Future<void> showDetails(
   overlay.insert(overlayEntry);
 }
 
-bool validateValue(String type, String value) {
-  switch (type) {
-    case 'string':
-      if (value.isEmpty) return false;
-      return true;
-    case 'int':
-      return int.tryParse(value) != null;
-    case 'double':
-      return double.tryParse(value) != null;
-    case 'boolean':
-      return value == '0' || value == '1';
-    case 'char':
-      return value.length == 1;
-    case 'float':
-      return double.tryParse(value) != null;
-    default:
-      return true;
-  }
-}
-
 Future<Widget> detailsForm(
     List<DetailTypeCategoriesIsar> categories,
     VoidCallback onClose,
@@ -820,8 +800,7 @@ Future<Widget> detailsForm(
                               validator: (value) {
                                 if (!detailType.isMandatory) {
                                   if (value != null && value.isNotEmpty) {
-                                    if (validateValue(
-                                        detailType.dataType.name, value)) {
+                                    if (detailType.dataType.validate(value)) {
                                       return null;
                                     } else {
                                       return 'wrong_format'.tr();
@@ -832,8 +811,7 @@ Future<Widget> detailsForm(
                                   if (value == null || value.isEmpty) {
                                     return 'required_field'.tr();
                                   }
-                                  if (validateValue(
-                                      detailType.dataType.name, value)) {
+                                  if (detailType.dataType.validate(value)) {
                                     return null;
                                   }
                                   return 'wrong_format'.tr();

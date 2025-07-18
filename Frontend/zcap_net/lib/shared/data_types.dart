@@ -44,6 +44,22 @@ enum DataTypes {
         return 'float_label'.tr();
     }
   }
+
+  bool validate(String value) {
+    switch (this) {
+      case DataTypes.string:
+        return value.isNotEmpty;
+      case DataTypes.int:
+        return int.tryParseInt(value) != null;
+      case DataTypes.double:
+      case DataTypes.float:
+        return double.tryParseDouble(value) != null;
+      case DataTypes.boolean:
+        return value == '0' || value == '1';
+      case DataTypes.char:
+        return value.length == 1;
+    }
+  }
 }
 
 extension DataTypesExtension on DataTypes {
@@ -53,4 +69,8 @@ extension DataTypesExtension on DataTypes {
       orElse: () => DataTypes.string,
     );
   }
+  
+  tryParseInt(String value) => int.tryParse(value);
+  tryParseDouble(String value) => double.tryParse(value);
 }
+
