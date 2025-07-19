@@ -9,6 +9,7 @@ class CustomSearchAndAddBar extends StatefulWidget {
   final VoidCallback onIconPressed;
   final Widget? dropDownFilter;
   final IconData trailingIcon;
+  final bool canWrite;
 
   const CustomSearchAndAddBar({
     super.key,
@@ -17,6 +18,7 @@ class CustomSearchAndAddBar extends StatefulWidget {
     required this.onIconPressed,
     this.dropDownFilter,
     this.trailingIcon = Icons.add,
+    this.canWrite = true
   });
   @override
   State<CustomSearchAndAddBar> createState() => _CustomSearchAndAddBarState();
@@ -59,7 +61,7 @@ class _CustomSearchAndAddBarState extends State<CustomSearchAndAddBar> {
             child: widget.dropDownFilter!,
           ),
         const SizedBox(width: 8.0),
-        ElevatedButton(
+        if (widget.canWrite) ElevatedButton(
           onPressed: widget.onIconPressed,
           style: ElevatedButton.styleFrom(
             shape: const CircleBorder(),

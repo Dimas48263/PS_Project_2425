@@ -8,6 +8,7 @@ class CustomDateRangePicker extends StatelessWidget {
   final ValueChanged<DateTime> onStartDateChanged;
   final ValueChanged<DateTime?> onEndDateChanged;
   final DateUtilsService dateUtilsService;
+  final bool canWrite;
 
   const CustomDateRangePicker({
     super.key,
@@ -16,9 +17,11 @@ class CustomDateRangePicker extends StatelessWidget {
     required this.onStartDateChanged,
     required this.onEndDateChanged,
     this.dateUtilsService = const DateUtilsService(),
+    this.canWrite = true,
   });
 
   Future<void> _selectStartDate(BuildContext context) async {
+    if (!canWrite) return;
     final picked = await showDatePicker(
       context: context,
       initialDate: startDate,
@@ -39,6 +42,7 @@ class CustomDateRangePicker extends StatelessWidget {
   }
 
   Future<void> _selectEndDate(BuildContext context) async {
+    if (!canWrite) return;
     final picked = await showDatePicker(
       context: context,
       initialDate: endDate ?? DateTime.now(),

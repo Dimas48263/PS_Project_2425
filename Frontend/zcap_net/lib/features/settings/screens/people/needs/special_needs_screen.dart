@@ -24,6 +24,9 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +56,8 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_special_need_types');
     final filteredSpecialNeeds = specialNeeds.where((specialNeed) {
       final name = specialNeed.name.toLowerCase();
       return name.contains(_searchTerm);
@@ -61,9 +66,7 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_special_need_types'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -71,6 +74,7 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(children: [
               CustomSearchAndAddBar(
+                canWrite: canWrite,
                 controller: _searchController,
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
@@ -129,35 +133,45 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                                 children: [
                                   if (!specialNeed.isSynced)
                                     CustomUnsyncedIcon(),
-                                  IconButton(
-                                    onPressed: () {
-                                      _addOrEditSpecialNeed(
-                                          specialNeed: specialNeed);
-                                    },
-                                    icon: const Icon(Icons.edit),
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      final confirm = await showDialog<bool>(
-                                        context: context,
-                                        builder: (context) => ConfirmDialog(
-                                          title: 'confirm_delete'.tr(),
-                                          content:
-                                              'confirm_delete_message'.tr(),
-                                        ),
-                                      );
-                                      if (confirm == true) {
-                                        await DatabaseService.db
-                                            .writeTxn(() async {
-                                          await DatabaseService
-                                              .db.specialNeedIsars
-                                              .delete(specialNeed.id);
-                                        });
-                                      }
-                                    },
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                  ),
+                                  if (canWrite) ...[
+                                    IconButton(
+                                      onPressed: () {
+                                        _addOrEditSpecialNeed(
+                                            specialNeed: specialNeed);
+                                      },
+                                      icon: const Icon(Icons.edit),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => ConfirmDialog(
+                                            title: 'confirm_delete'.tr(),
+                                            content:
+                                                'confirm_delete_message'.tr(),
+                                          ),
+                                        );
+                                        if (confirm == true) {
+                                          await DatabaseService.db
+                                              .writeTxn(() async {
+                                            await DatabaseService
+                                                .db.specialNeedIsars
+                                                .delete(specialNeed.id);
+                                          });
+                                        }
+                                      },
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                    ),
+                                  ] else
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.info_outline,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () => _addOrEditSpecialNeed(
+                                          specialNeed: specialNeed),
+                                    ),
                                 ],
                               ),
                             ),
@@ -197,6 +211,7 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextFormField(
+                          enabled: canWrite,
                           controller: nameController,
                           decoration: InputDecoration(
                               labelText: 'screen_special_need_name'.tr()),
@@ -211,6 +226,7 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                           height: 12.0,
                         ),
                         CustomDateRangePicker(
+                          canWrite: canWrite,
                           startDate: selectedStartDate,
                           endDate: selectedEndDate,
                           onStartDateChanged: (newStart) {
@@ -230,14 +246,10 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
                 ),
                 actions: [
                   TextButton(
-                    child: Text(allowances
-                            .canWrite('user_access_settings_special_need_types')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                    child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  if (allowances
-                      .canWrite('user_access_settings_special_need_types'))
+                  if (canWrite)
                     TextButton(
                       onPressed: () async {
                         if (formKey.currentState!.validate() &&

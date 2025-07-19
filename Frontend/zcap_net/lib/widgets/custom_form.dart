@@ -9,13 +9,15 @@ Widget customDatesForm(
     DateTime? date,
     void Function(DateTime) onDateChanged,
     bool isStartDate,
-    void Function()? onLongPress) {
+    void Function()? onLongPress,
+    bool canWrite) {
   String title = isStartDate ? 'start'.tr() : 'end'.tr();
   return ListTile(
     title: Text(
         "$title: ${date != null ? date.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}"),
     trailing: const Icon(Icons.calendar_today),
     onTap: () async {
+      if (!canWrite) return;
       final picked = await showDatePicker(
         context: context,
         initialDate: date ?? DateTime.now(),
@@ -27,6 +29,7 @@ Widget customDatesForm(
       }
     },
     onLongPress: () {
+      if (!canWrite) return;
       if (onLongPress != null) {
         onLongPress();
       }
@@ -43,12 +46,14 @@ Widget buildForm(
     void Function(DateTime) onStartDateChanged,
     void Function(DateTime) onEndDateChanged,
     void Function()? onLongPress,
-    List<Widget> dropDownSearches) {
+    List<Widget> dropDownSearches,
+    {bool canWrite = true}) {
   return Form(
       key: formKey,
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         for (var config in textControllersConfig)
           TextFormField(
+              enabled: canWrite,
               controller: config.controller,
               decoration: InputDecoration(labelText: config.label),
               validator: (value) {
@@ -64,9 +69,9 @@ Widget buildForm(
               }),
         ...dropDownSearches,
         customDatesForm(
-            context, startDate, (date) => onStartDateChanged(date), true, null),
+            context, startDate, (date) => onStartDateChanged(date), true, null, canWrite),
         customDatesForm(context, endDate, (date) => onEndDateChanged(date),
-            false, onLongPress),
+            false, onLongPress, canWrite),
       ]));
 }
 
@@ -92,6 +97,7 @@ Widget customDatesFormField({
   required void Function(DateTime?) onDateChanged,
   String? Function(DateTime?)? validator,
   void Function()? onLongPress,
+  bool canWrite = true
 }) {
   return FormField<DateTime>(
     initialValue: date,
@@ -103,6 +109,7 @@ Widget customDatesFormField({
         children: [
           InkWell(
             onLongPress: () {
+              if (!canWrite) return;
               if (onLongPress != null) {
                 state.didChange(null);
                 onDateChanged(null);
@@ -110,6 +117,7 @@ Widget customDatesFormField({
               }
             },
             onTap: () async {
+              if (!canWrite) return;
               final picked = await showDatePicker(
                 context: context,
                 initialDate: state.value ?? DateTime.now(),
@@ -154,13 +162,15 @@ Widget buildFormWithoutDates(
     BuildContext context,
     List<TextControllersInputFormConfig> textControllersConfig,
     List<Widget> dropDownSearches,
-    List<DateInputConfig> dates) {
+    List<DateInputConfig> dates,
+    {bool canWrite = true}) {
   return Form(
       key: formKey,
       child: SingleChildScrollView(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
         for (var config in textControllersConfig)
-          TextFormField(
+          TextFormField(  
+              enabled: canWrite,
               controller: config.controller,
               decoration: InputDecoration(labelText: config.label),
               validator: (value) {
@@ -183,6 +193,7 @@ Widget buildFormWithoutDates(
               isStartDate: true,
               onDateChanged: date.onDateChanged,
               validator: date.validator,
-              onLongPress: date.onLongPress),
+              onLongPress: date.onLongPress,
+              canWrite: canWrite),
       ])));
 }

@@ -10,7 +10,6 @@ import 'package:zcap_net_app/features/settings/models/users/user_profiles/user_p
 import 'package:zcap_net_app/features/settings/screens/users/user_profiles/user_access_editor_screen.dart';
 
 import 'package:zcap_net_app/shared/shared.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 
 class UserProfilesScreen extends StatefulWidget {
   const UserProfilesScreen({super.key});
@@ -26,6 +25,9 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
   bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
   String _searchTerm = '';
+
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
 
   @override
   void initState() {
@@ -56,6 +58,8 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_user_profiles');
     final filteredUserProfiles = userProfiles.where((entity) {
       final name = entity.name.toLowerCase();
       return name.contains(_searchTerm);
@@ -64,9 +68,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_user_profiles'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: SafeArea(
         child: SizedBox.expand(
@@ -74,6 +76,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
             padding: const EdgeInsets.all(16.0),
             child: Column(children: [
               CustomSearchAndAddBar(
+                canWrite: canWrite,
                 controller: _searchController,
                 onSearchChanged: (value) => setState(() {
                   _searchTerm = value.toLowerCase();
@@ -140,33 +143,43 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                                   ),
                                   if (!userProfile.isSynced)
                                     CustomUnsyncedIcon(),
-                                  IconButton(
-                                    onPressed: () {
-                                      _addOrEditUserProfile(
-                                          userProfile: userProfile);
-                                    },
-                                    icon: const Icon(Icons.edit),
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      final confirm = await showDialog<bool>(
-                                        context: context,
-                                        builder: (context) => ConfirmDialog(
-                                          title: 'confirm_delete'.tr(),
-                                          content:
-                                              'confirm_delete_message'.tr(),
-                                        ),
-                                      );
-                                      if (confirm == true) {
-                                        await isarDb.writeTxn(() async {
-                                          await isarDb.userProfilesIsars
-                                              .delete(userProfile.id);
-                                        });
-                                      }
-                                    },
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red),
-                                  ),
+                                  if (canWrite) ...[
+                                    IconButton(
+                                      onPressed: () {
+                                        _addOrEditUserProfile(
+                                            userProfile: userProfile);
+                                      },
+                                      icon: const Icon(Icons.edit),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        final confirm = await showDialog<bool>(
+                                          context: context,
+                                          builder: (context) => ConfirmDialog(
+                                            title: 'confirm_delete'.tr(),
+                                            content:
+                                                'confirm_delete_message'.tr(),
+                                          ),
+                                        );
+                                        if (confirm == true) {
+                                          await isarDb.writeTxn(() async {
+                                            await isarDb.userProfilesIsars
+                                                .delete(userProfile.id);
+                                          });
+                                        }
+                                      },
+                                      icon: const Icon(Icons.delete,
+                                          color: Colors.red),
+                                    ),
+                                  ] else
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.info_outline,
+                                        color: Colors.blue,
+                                      ),
+                                      onPressed: () => _addOrEditUserProfile(
+                                          userProfile: userProfile),
+                                    ),
                                 ],
                               ),
                             ),
@@ -191,8 +204,6 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        final allowances = context.watch<UserAllowancesProvider>();
-
         return StatefulBuilder(
           builder: (context, setModalState) {
             return AlertDialog(
@@ -206,6 +217,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextFormField(
+                        enabled: canWrite,
                         controller: nameController,
                         decoration: InputDecoration(
                             labelText: 'screen_userProfile_name'.tr()),
@@ -218,6 +230,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                       ),
                       const SizedBox(height: 12.0),
                       CustomDateRangePicker(
+                        canWrite: canWrite,
                         startDate: selectedStartDate,
                         endDate: selectedEndDate,
                         onStartDateChanged: (newStart) {
@@ -237,13 +250,10 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
               ),
               actions: [
                 TextButton(
-                  child: Text(
-                      allowances.canWrite('user_access_settings_user_profiles')
-                          ? 'cancel'.tr()
-                          : 'close'.tr()),
+                  child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                   onPressed: () => Navigator.pop(context),
                 ),
-                if (allowances.canWrite('user_access_settings_user_profiles'))
+                if (canWrite)
                   TextButton(
                     child: Text('save'.tr()),
                     onPressed: () async {
@@ -287,7 +297,6 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
     await showDialog(
       context: context,
       builder: (_) {
-        final allowances = context.watch<UserAllowancesProvider>();
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -297,6 +306,7 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
                 width: double.maxFinite,
                 height: 400,
                 child: UserAccessEditor(
+                  canWrite: canWrite,
                   allowances: editableAllowances,
                   onChanged: (edited, newType) {
                     setState(() {
@@ -308,13 +318,10 @@ class _UserProfilesScreenState extends State<UserProfilesScreen> {
               ),
               actions: [
                 TextButton(
-                  child: Text(
-                      allowances.canWrite('user_access_settings_user_profiles')
-                          ? 'cancel'.tr()
-                          : 'close'.tr()),
+                  child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                   onPressed: () => Navigator.pop(context),
                 ),
-                if (allowances.canWrite('user_access_settings_user_profiles'))
+                if (canWrite)
                   TextButton(
                     child: Text('save'.tr()),
                     onPressed: () async {

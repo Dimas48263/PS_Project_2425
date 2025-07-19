@@ -7,18 +7,10 @@ import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/shared/data_types.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
-import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/treeLevelDetailType/tree_level_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_details/tree_record_detail_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
-import 'package:zcap_net_app/widgets/confirm_dialog.dart';
-import 'package:zcap_net_app/widgets/custom_dropdown_search.dart';
-import 'package:zcap_net_app/widgets/custom_form.dart';
-import 'package:zcap_net_app/widgets/custom_list_view.dart';
-import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
-
 import '../../../../shared/shared.dart';
 
 class TreeRecordDetailsScreen extends StatefulWidget {
@@ -41,6 +33,9 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
   late final List<String> searchKeys;
 
   String selectedSearchOption = 'value';
+
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
 
   @override
   void initState() {
@@ -83,6 +78,8 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_tree_details');
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_details'.tr()),
@@ -109,6 +106,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       child: Column(
         children: [
           CustomSearchAndAddBar(
+              canWrite: canWrite,
               controller: _searchController,
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
@@ -127,6 +125,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
           _isLoading
               ? const CircularProgressIndicator()
               : buildListViewV2<TreeRecordDetailIsar>(
+                  canWrite: canWrite,
                   getLabelsListV2(filteredList),
                   () async => await syncService.synchronizeAll(),
                   (detail) => _addOrEditDetail(detail),
@@ -169,7 +168,11 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       List<TreeRecordDetailIsar> filteredList) {
     List<CustomElementListView> labelsList = [];
     for (var tree in filteredList) {
-      final title = tree.detailType.value!.unit == DataTypes.boolean ? tree.valueCol == '1' ? 'true'.tr() : 'false'.tr() : tree.valueCol;
+      final title = tree.detailType.value!.unit == DataTypes.boolean
+          ? tree.valueCol == '1'
+              ? 'true'.tr()
+              : 'false'.tr()
+          : tree.valueCol;
       labelsList.add(
         CustomElementListView(tree, '[${tree.remoteId}] $title', [
           [
@@ -226,7 +229,6 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
-          final allowances = context.watch<UserAllowancesProvider>();
           return AlertDialog(
             title: Text(detail == null
                 ? '${'new'.tr()} ${'detail'.tr()}'
@@ -237,6 +239,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     customDropdownSearch<TreeRecordDetailTypeIsar>(
+                        enabled: canWrite,
                         label: 'screen_detail_type'.tr(),
                         items: availableDetailTypes,
                         selectedItem: detailType,
@@ -273,6 +276,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                                     Checkbox(
                                       value: field.value == true,
                                       onChanged: (val) {
+                                        if (!canWrite) return;
                                         final newValue =
                                             field.value == true ? null : true;
                                         field.didChange(newValue);
@@ -285,6 +289,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                                     Checkbox(
                                       value: field.value == false,
                                       onChanged: (val) {
+                                        if (!canWrite) return;
                                         final newValue =
                                             field.value == false ? null : false;
                                         field.didChange(newValue);
@@ -310,6 +315,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                         )
                       else
                         TextFormField(
+                          enabled: canWrite,
                           controller: valueController,
                           decoration: InputDecoration(
                             labelText: "${'value'.tr()}*",
@@ -328,7 +334,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                     ],
                     customDropdownSearch<TreeIsar>(
                         label: 'screen_settings_tree_elements'.tr(),
-                        enabled: detailType != null,
+                        enabled: canWrite && detailType != null,
                         items: detailType != null
                             ? availableTrees
                                 .where((t) => availableTreeLevelIds
@@ -347,13 +353,10 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                 )),
             actions: [
               TextButton(
-                child: Text(
-                    allowances.canWrite('user_access_settings_tree_details')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite('user_access_settings_tree_details'))
+              if (canWrite)
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {

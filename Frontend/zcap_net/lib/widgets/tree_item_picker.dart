@@ -8,11 +8,13 @@ import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_lev
 class TreeItemPicker extends StatefulWidget {
   final TreeIsar? initialTree;
   final Function(TreeIsar?) onChanged;
+  final bool canWrite;
 
   const TreeItemPicker({
     super.key,
     this.initialTree,
     required this.onChanged,
+    this.canWrite = true,
   });
 
   @override
@@ -99,6 +101,7 @@ class _TreeItemPickerState extends State<TreeItemPicker> {
       children: [
         Expanded(
           child: DropdownSearch<TreeLevelIsar>(
+            enabled: widget.canWrite,
             selectedItem: selectedTreeLevel,
             popupProps: PopupProps.menu(showSearchBox: true),
             itemAsString: (t) => t.name,
@@ -121,6 +124,7 @@ class _TreeItemPickerState extends State<TreeItemPicker> {
         if (availableTreeItems.isNotEmpty)
           Expanded(
             child: DropdownSearch<TreeIsar>(
+              enabled: widget.canWrite,
               selectedItem: selectedTreeItem,
               popupProps: PopupProps.menu(showSearchBox: true),
               itemAsString: (t) => t.name,

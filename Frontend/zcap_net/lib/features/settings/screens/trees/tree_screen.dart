@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'dart:async';
@@ -30,6 +29,9 @@ class _TreesScreenState extends State<TreesScreen> {
   late final List<String> searchKeys;
 
   String selectedSearchOption = 'name';
+
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
 
   @override
   void initState() {
@@ -72,6 +74,9 @@ class _TreesScreenState extends State<TreesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_tree_elements');
+
     return Scaffold(
       appBar: AppBar(
         title: Text('tree'.tr()),
@@ -99,6 +104,7 @@ class _TreesScreenState extends State<TreesScreen> {
       child: Column(
         children: [
           CustomSearchAndAddBar(
+            canWrite: canWrite,
             controller: _searchController,
             onSearchChanged: (value) => setState(() {
               _searchTerm = value.toLowerCase();
@@ -118,6 +124,7 @@ class _TreesScreenState extends State<TreesScreen> {
           _isLoading
               ? const CircularProgressIndicator()
               : buildListView(
+                  canWrite: canWrite,
                   filteredList,
                   getLabelsList(filteredList),
                   () async => await syncService.synchronizeAll(),
@@ -195,6 +202,7 @@ class _TreesScreenState extends State<TreesScreen> {
               });
             }, [
               customDropdownSearch<TreeLevelIsar>(
+                  enabled: canWrite,
                   items: availableTreeLevels,
                   selectedItem: treeLevel,
                   onSelected: (TreeLevelIsar? value) {
@@ -208,7 +216,8 @@ class _TreesScreenState extends State<TreesScreen> {
                   label: 'level'.tr()),
               customDropdownSearch<TreeIsar>(
                 label: 'parent'.tr(),
-                enabled: treeLevel != null && treeLevel!.levelId > 1,
+                enabled:
+                    canWrite && treeLevel != null && treeLevel!.levelId > 1,
                 items: treeLevel == null
                     ? trees
                     : trees
@@ -230,16 +239,13 @@ class _TreesScreenState extends State<TreesScreen> {
                       : null;
                 },
               )
-            ]),
+            ], canWrite: canWrite),
             actions: [
               TextButton(
-                child: Text(
-                    allowances.canWrite('user_access_settings_tree_elements')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite('user_access_settings_tree_elements'))
+              if (canWrite)
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {

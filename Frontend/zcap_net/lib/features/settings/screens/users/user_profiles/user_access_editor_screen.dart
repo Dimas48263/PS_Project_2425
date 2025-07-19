@@ -7,11 +7,13 @@ import 'package:zcap_net_app/widgets/custom_label_value_text.dart';
 class UserAccessEditor extends StatefulWidget {
   final List<UserProfileAccessAllowanceIsar> allowances;
   final void Function(UserProfileAccessAllowanceIsar, AccessType) onChanged;
+  final bool canWrite;
 
   const UserAccessEditor({
     super.key,
     required this.allowances,
     required this.onChanged,
+    this.canWrite = true,
   });
 
   @override
@@ -71,7 +73,7 @@ class _UserAccessEditorState extends State<UserAccessEditor> {
                     label: 'key'.tr(), value: allowance.key),
                 trailing: DropdownButton<AccessType>(
                   value: currentType,
-                  onChanged: (newValue) {
+                  onChanged: !widget.canWrite ? null : (newValue) {
                     if (newValue != null) {
                       setState(() {
                         allowance.accessTypeIndex =

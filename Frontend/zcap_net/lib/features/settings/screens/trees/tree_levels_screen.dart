@@ -25,6 +25,9 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
 
   bool _isSearchingByName = true;
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -53,6 +56,8 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_tree_levels');
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_tree_levels'.tr()),
@@ -76,6 +81,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
       child: Column(
         children: [
           CustomSearchAndAddBar(
+              canWrite: canWrite,
               controller: _searchController,
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
@@ -112,6 +118,7 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
                       });
                     }
                   },
+                  canWrite: canWrite,
                 ),
         ],
       ),
@@ -163,8 +170,6 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        final allowances = context.watch<UserAllowancesProvider>();
-
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title: Text(treeLevel == null
@@ -182,16 +187,13 @@ class _TreeLevelsScreenState extends State<TreeLevelsScreen> {
               setModalState(() {
                 endDate = null;
               });
-            }, []),
+            }, [], canWrite: canWrite),
             actions: [
               TextButton(
-                child: Text(
-                    allowances.canWrite('user_access_settings_tree_levels')
-                        ? 'cancel'.tr()
-                        : 'close'.tr()),
+                child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite('user_access_settings_tree_levels'))
+              if (canWrite)
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {

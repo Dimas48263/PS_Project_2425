@@ -6,11 +6,6 @@ import 'package:zcap_net_app/core/services/database_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
-import 'package:zcap_net_app/widgets/confirm_dialog.dart';
-import 'package:zcap_net_app/widgets/custom_form.dart';
-import 'package:zcap_net_app/widgets/custom_list_view.dart';
-import 'package:zcap_net_app/widgets/custom_search_and_add_bar.dart';
-import 'package:zcap_net_app/widgets/sync_button.dart';
 import 'package:zcap_net_app/widgets/text_controllers_input_form.dart';
 
 import '../../../../../shared/shared.dart';
@@ -30,6 +25,9 @@ class _DepartureDestinationScreenState
   bool _isLoading = true;
   final _searchController = TextEditingController();
   String _searchTerm = '';
+
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
 
   @override
   void initState() {
@@ -52,6 +50,9 @@ class _DepartureDestinationScreenState
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances
+        .canWrite('user_access_settings_people_departure_destinations');
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_departure_destinations'.tr()),
@@ -71,6 +72,7 @@ class _DepartureDestinationScreenState
       child: Column(
         children: [
           CustomSearchAndAddBar(
+              canWrite: canWrite,
               controller: _searchController,
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
@@ -80,6 +82,7 @@ class _DepartureDestinationScreenState
           _isLoading
               ? const CircularProgressIndicator()
               : buildListView(
+                  canWrite: canWrite,
                   filteredList,
                   getLabelsList(filteredList),
                   () async => await syncService.synchronizeAll(),
@@ -135,8 +138,6 @@ class _DepartureDestinationScreenState
     showDialog(
       context: context,
       builder: (context) {
-        final allowances = context.watch<UserAllowancesProvider>();
-
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title: Text(departureDestination == null
@@ -154,17 +155,13 @@ class _DepartureDestinationScreenState
               setModalState(() {
                 endDate = null;
               });
-            }, []),
+            }, [], canWrite: canWrite),
             actions: [
               TextButton(
-                child: Text(allowances.canWrite(
-                        'user_access_settings_people_departure_destinations')
-                    ? 'cancel'.tr()
-                    : 'close'.tr()),
+                child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite(
-                  'user_access_settings_people_departure_destinations'))
+              if (canWrite)
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {

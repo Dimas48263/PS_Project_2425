@@ -5,11 +5,13 @@ import 'package:zcap_net_app/shared/shared.dart';
 class CustomLocationInputField extends StatefulWidget {
   final TextEditingController latitudeController;
   final TextEditingController longitudeController;
+  final bool canWrite;
 
   const CustomLocationInputField({
     super.key,
     required this.latitudeController,
     required this.longitudeController,
+    this.canWrite = true,
   });
 
   @override
@@ -45,6 +47,7 @@ class _CustomLocationInputFieldState extends State<CustomLocationInputField> {
           children: [
             Expanded(
               child: TextFormField(
+                enabled: widget.canWrite,
                 controller: widget.latitudeController,
                 decoration: InputDecoration(labelText: 'latitude'.tr()),
                 keyboardType:
@@ -62,6 +65,7 @@ class _CustomLocationInputFieldState extends State<CustomLocationInputField> {
             const SizedBox(width: 8),
             Expanded(
               child: TextFormField(
+                enabled: widget.canWrite,
                 controller: widget.longitudeController,
                 decoration: InputDecoration(labelText: 'longitude'.tr()),
                 keyboardType:

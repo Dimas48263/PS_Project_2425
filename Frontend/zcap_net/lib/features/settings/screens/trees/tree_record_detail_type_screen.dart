@@ -27,6 +27,9 @@ class _TreeRecordDetailTypesScreenState
   final _searchController = TextEditingController();
   String _searchTerm = '';
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
@@ -54,6 +57,8 @@ class _TreeRecordDetailTypesScreenState
 
   @override
   Widget build(BuildContext context) {
+    allowances = context.watch<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_tree_detail_types');
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_settings_detail_types'.tr()),
@@ -73,6 +78,7 @@ class _TreeRecordDetailTypesScreenState
       child: Column(
         children: [
           CustomSearchAndAddBar(
+              canWrite: canWrite,
               controller: _searchController,
               onSearchChanged: (value) => setState(() {
                     _searchTerm = value.toLowerCase();
@@ -82,6 +88,7 @@ class _TreeRecordDetailTypesScreenState
           _isLoading
               ? const CircularProgressIndicator()
               : buildListView(
+                  canWrite: canWrite,
                   filteredList,
                   getLabelsList(filteredList),
                   () async => await syncService.synchronizeAll(),
@@ -140,8 +147,6 @@ class _TreeRecordDetailTypesScreenState
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
-          final allowances = context.watch<UserAllowancesProvider>();
-
           return AlertDialog(
             title: Text(detailType == null
                 ? '${'new'.tr()} ${'screen_detail_type'.tr()}'
@@ -160,6 +165,7 @@ class _TreeRecordDetailTypesScreenState
               });
             }, [
               customDropdownSearch(
+                  enabled: canWrite,
                   itemLabelBuilder: (value) => value.label,
                   label: 'data_type'.tr(),
                   items: DataTypes.values,
@@ -168,6 +174,7 @@ class _TreeRecordDetailTypesScreenState
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null),
               customDropdownSearch(
+                  enabled: canWrite,
                   itemLabelBuilder: (value) => value.name,
                   label: 'level'.tr(),
                   items: availableTreeLevels,
@@ -176,16 +183,13 @@ class _TreeRecordDetailTypesScreenState
                       setState(() => treeLevelController = value),
                   validator: (value) =>
                       value == null ? 'required_field'.tr() : null),
-            ]),
+            ], canWrite: canWrite),
             actions: [
               TextButton(
-                child: Text(allowances
-                        .canWrite('user_access_settings_tree_detail_types')
-                    ? 'cancel'.tr()
-                    : 'close'.tr()),
+                child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                 onPressed: () => Navigator.pop(context),
               ),
-              if (allowances.canWrite('user_access_settings_tree_detail_types'))
+              if (canWrite)
                 TextButton(
                   child: Text('save'.tr()),
                   onPressed: () async {

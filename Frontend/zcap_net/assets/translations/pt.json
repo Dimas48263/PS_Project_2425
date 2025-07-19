@@ -232,5 +232,6 @@
   "user_access_settings_detail_per_zcap": "Configurações - Detalhe por Edificio/ZCAP",
   "user_access_settings_people_relation_types": "Configurações - Graus de parentesco",
   "user_access_settings_special_need_types": "Configurações - Tipos de Necessidades Especiais",
-  "user_access_settings_support_need_types": "Configurações - Tipos de Apoio"
+  "user_access_settings_support_need_types": "Configurações - Tipos de Apoio",
+  "user_access_settings_people_departure_destinations": "Configurações - Destinos de Partidas"
 }
