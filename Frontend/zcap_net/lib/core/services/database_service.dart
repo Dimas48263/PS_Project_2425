@@ -43,7 +43,7 @@ class DatabaseService {
     SupportNeededIsarSchema,
     PersonSupportNeededIsarSchema,
     RelationTypeIsarSchema,
-    //TODO Relations
+    RelationsIsarSchema,
     
     /**
      * Incidents

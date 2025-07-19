@@ -565,7 +565,25 @@ final List<SyncEntry> syncEntries = [
                   .where()
                   .remoteIdEqualTo(remoteId)
                   .findFirst()),
-  //TODO Relation
+  SyncEntry<RelationsIsar, Relations>(
+      endpoint: 'relations',
+      getCollection: (isar) => isar.relationsIsars,
+      idName: 'relationId',
+      fromJson: Relations.fromJson,
+      toIsar: (ApiTable relation) async =>
+          RelationsIsar.toRemote(relation as Relations),
+      findByRemoteId:
+          (IsarCollection<IsarTable<ApiTable>> collection, remoteId) async =>
+              (collection as IsarCollection<RelationsIsar>)
+                  .where()
+                  .remoteIdEqualTo(remoteId)
+                  .findFirst(),
+      saveLinksAfterPut: (IsarTable<ApiTable> relation) async {
+        final relationIsar = relation as RelationsIsar;
+        await relationIsar.relationType.save();
+        await relationIsar.person1.save();
+        await relationIsar.person2.save();
+      }),
 
 /**
  * Incidents

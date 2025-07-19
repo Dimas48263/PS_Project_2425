@@ -519,6 +519,8 @@ CREATE TABLE relation (
     [personId1]			BIGINT NOT NULL REFERENCES persons(personId),
     [personId2]			BIGINT NOT NULL REFERENCES persons(personId),
     [relationTypeId]	BIGINT NOT NULL REFERENCES relationType(relationTypeId),
+    [createdAt]			DATETIME NOT NULL,
+    [lastUpdatedAt]		DATETIME NOT NULL,
     --CONSTRAINT unique_relation UNIQUE (personId1, personId2, relationTypeId), 
 	CONSTRAINT chk_no_self_relation CHECK (personId1 <> personId2)
 )

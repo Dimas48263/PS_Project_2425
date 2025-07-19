@@ -1,6 +1,7 @@
 package pt.isel.ps.zcap.domain.persons
 
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "relation")
@@ -19,5 +20,8 @@ data class Relation(
 
     @ManyToOne
     @JoinColumn(name = "relationTypeId")
-    val relationType: RelationType = RelationType()
+    val relationType: RelationType = RelationType(),
+
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val lastUpdatedAt: LocalDateTime = LocalDateTime.now()
 )
