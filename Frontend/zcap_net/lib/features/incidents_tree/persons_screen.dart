@@ -5,6 +5,7 @@ import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/features/incidents_tree/family_members_dialogs.dart';
 import 'package:zcap_net_app/features/incidents_tree/special_needs_dialogs.dart';
 import 'package:zcap_net_app/features/incidents_tree/support_needed_dialogs.dart';
 import 'package:zcap_net_app/features/settings/models/incidents/incident_zcap_persons/incident_zcap_persons_isar.dart';
@@ -199,6 +200,14 @@ class _PersonsScreenState extends State<PersonsScreen> {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                ElevatedButton(
+                                    onPressed: () => showDialog(
+                                        context: context,
+                                        builder: (_) => FamilyMembersDialogs(
+                                            person: person,
+                                            personsInZcap: persons)),
+                                    child: Text('family_members'.tr())),
+                                const SizedBox(width: 5),
                                 if (canWrite &&
                                     person.departureDateTime == null) ...[
                                   ElevatedButton(

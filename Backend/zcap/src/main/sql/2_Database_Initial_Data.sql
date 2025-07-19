@@ -786,8 +786,8 @@ END
 
 IF (SELECT COUNT(*) FROM relation ) = 0
 BEGIN
-	INSERT INTO relation(personId1, personId2, relationTypeId) VALUES
-	(1, 2, 5)
+	INSERT INTO relation(personId1, personId2, relationTypeId, [createdAt], [lastUpdatedAt]) VALUES
+	(1, 2, 5,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP), (2, 1, 5,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
 END
 /* 3 - Person Tables initial data END */
 

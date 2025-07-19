@@ -61,7 +61,9 @@ class PersonService(
             address = personInput.address,
             niss = personInput.niss,
             departureDestination = departureDestination,
-            destinationContact = personInput.destinationContact
+            destinationContact = personInput.destinationContact,
+            createdAt = LocalDateTime.now(),
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(personRepository.save(newPerson).toOutputModel())

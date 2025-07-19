@@ -236,8 +236,6 @@ class _SpecialNeedsDialogsState extends State<SpecialNeedsDialogs> {
     return await showDialog<bool>(
       context: context,
       builder: (context) {
-        final allowances = context.watch<UserAllowancesProvider>();
-
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(
             title: Text(personSpecialNeed == null

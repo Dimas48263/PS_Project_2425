@@ -15,6 +15,7 @@ import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.failure
 import pt.isel.ps.zcap.services.success
 import java.sql.Timestamp
+import java.time.LocalDateTime
 import kotlin.jvm.optionals.getOrNull
 
 @Component
@@ -51,7 +52,9 @@ class RelationService(
         val newRelation = Relation(
             person1 = person1,
             person2 = person2,
-            relationType = relationType
+            relationType = relationType,
+            createdAt = LocalDateTime.now(),
+            lastUpdatedAt = LocalDateTime.now()
         )
         return try {
             success(repository.save(newRelation).toOutputModel())
@@ -82,6 +85,8 @@ class RelationService(
             relationId,
             person1.toOutputModel(),
             person2.toOutputModel(),
-            relationType.toOutputModel()
+            relationType.toOutputModel(),
+            createdAt,
+            lastUpdatedAt
         )
 }

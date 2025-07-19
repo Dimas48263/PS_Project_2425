@@ -27,6 +27,8 @@ export 'package:zcap_net_app/features/settings/models/people/persons/persons.dar
 export 'package:zcap_net_app/features/settings/models/people/persons/persons_isar.dart';
 export 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type.dart';
 export 'package:zcap_net_app/features/settings/models/people/relation_type/relation_type_isar.dart';
+export 'package:zcap_net_app/features/settings/models/people/relations/relations.dart';
+export 'package:zcap_net_app/features/settings/models/people/relations/relations_isar.dart';
 export 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs.dart';
 export 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 export 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination.dart';
