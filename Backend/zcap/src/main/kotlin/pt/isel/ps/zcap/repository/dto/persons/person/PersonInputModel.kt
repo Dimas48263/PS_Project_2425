@@ -7,7 +7,6 @@ data class PersonInputModel(
     val name: String,
     val age: Int,
     val contact: String,
-    val countryCodeId: Long,
     val placeOfResidenceId: Long,
     val entryDateTime: LocalDateTime,
     val departureDateTime: LocalDateTime?,

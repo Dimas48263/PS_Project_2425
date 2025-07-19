@@ -9,7 +9,6 @@ class Persons implements ApiTable {
   final String name;
   final int age;
   final String contact;
-  final TreeRecordDetail countryCode;
   final Tree placeOfResidence;
   final DateTime entryDateTime;
   DateTime? departureDateTime;
@@ -29,7 +28,6 @@ class Persons implements ApiTable {
     required this.name,
     required this.age,
     required this.contact,
-    required this.countryCode,
     required this.placeOfResidence,
     required this.entryDateTime,
     this.departureDateTime,
@@ -49,7 +47,6 @@ class Persons implements ApiTable {
       name: json['name'],
       age: json['age'],
       contact: json['contact'],
-      countryCode: TreeRecordDetail.fromJson(json['countryCode']),
       placeOfResidence: Tree.fromJson(json['placeOfResidence']),
       entryDateTime: DateTime.parse(json['entryDateTime']),
       departureDateTime: json['departureDateTime'] != null
@@ -77,7 +74,6 @@ class Persons implements ApiTable {
       'name': name,
       'age': age,
       'contact': contact,
-      'countryCodeId': countryCode.remoteId,
       'placeOfResidenceId': placeOfResidence.remoteId,
       'entryDateTime': entryDateTime.toIso8601String(),
       'departureDateTime': departureDateTime?.toIso8601String(),
@@ -96,7 +92,6 @@ class Persons implements ApiTable {
       'name': name,
       'age': age,
       'contact': contact,
-      'countryCodeId': countryCode.remoteId,
       'placeOfResidenceId': placeOfResidence.remoteId,
       'entryDateTime': entryDateTime.toIso8601String(),
       'departureDateTime': departureDateTime?.toIso8601String(),
@@ -114,7 +109,6 @@ class Persons implements ApiTable {
     String? name,
     int? age,
     String? contact,
-    TreeRecordDetail? countryCode,
     Tree? placeOfResidence,
     DateTime? entryDateTime,
     DateTime? departureDateTime,
@@ -132,7 +126,6 @@ class Persons implements ApiTable {
       name: name ?? this.name,
       age: age ?? this.age,
       contact: contact ?? this.contact,
-      countryCode: countryCode ?? this.countryCode,
       placeOfResidence: placeOfResidence ?? this.placeOfResidence,
       entryDateTime: entryDateTime ?? this.entryDateTime,
       departureDateTime: departureDateTime ?? this.departureDateTime,

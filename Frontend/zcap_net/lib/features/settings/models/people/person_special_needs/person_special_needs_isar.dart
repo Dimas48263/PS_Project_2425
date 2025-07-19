@@ -46,7 +46,6 @@ class PersonSpecialNeedsIsar extends IsarTable<PersonSpecialNeeds> {
     final newPerson = await PersonsIsar.toRemote(personInput);
     await DatabaseService.db.writeTxn(() async {
       await DatabaseService.db.personsIsars.put(newPerson);
-      await newPerson.countryCode.save();
       await newPerson.placeOfResidence.save();
       if (personInput.nationality != null) {
         await newPerson.nationality.save();

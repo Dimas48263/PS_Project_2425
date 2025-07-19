@@ -18,10 +18,6 @@ data class Person(
     val contact: String = "",
 
     @ManyToOne
-    @JoinColumn(name = "countryCodeId")
-    val countryCode: TreeRecordDetail = TreeRecordDetail(),
-
-    @ManyToOne
     @JoinColumn(name = "placeOfResidence")
     val placeOfResidence: Tree = Tree(),
 

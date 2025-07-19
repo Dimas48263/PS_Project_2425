@@ -117,14 +117,12 @@ class PersonController(
         when (val person = service.savePerson(personInput)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(person.value)
             is Failure -> when(person.value) {
-                is ServiceErrors.CountryCodeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Country Code", personInput.countryCodeId))
                 is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", personInput.countryCodeId))
+                    throw EntityNotFoundException(notFoundMessage("Tree", personInput.placeOfResidenceId))
                 is ServiceErrors.NationalityNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Nationality", personInput.countryCodeId))
+                    throw EntityNotFoundException(notFoundMessage("Nationality", personInput.nationalityId))
                 is ServiceErrors.DepartureDestinationNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Departure Destination", personInput.countryCodeId))
+                    throw EntityNotFoundException(notFoundMessage("Departure Destination", personInput.departureDestinationId))
                 is ServiceErrors.InvalidDataInput ->
                     throw InvalidDataException(invalidDataErrorMessage)
                 is ServiceErrors.UpdateFailed ->
@@ -175,14 +173,12 @@ class PersonController(
             is Failure -> when(person.value) {
                 is ServiceErrors.RecordNotFound ->
                     throw EntityNotFoundException(notFoundMessage("Person", id))
-                is ServiceErrors.CountryCodeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Country Code", personInput.countryCodeId))
                 is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", personInput.countryCodeId))
+                    throw EntityNotFoundException(notFoundMessage("Tree", personInput.placeOfResidenceId))
                 is ServiceErrors.NationalityNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Nationality", personInput.countryCodeId))
+                    throw EntityNotFoundException(notFoundMessage("Nationality", personInput.nationalityId))
                 is ServiceErrors.DepartureDestinationNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Departure Destination", personInput.countryCodeId))
+                    throw EntityNotFoundException(notFoundMessage("Departure Destination", personInput.departureDestinationId))
                 is ServiceErrors.InvalidDataInput ->
                     throw InvalidDataException(invalidDataErrorMessage)
                 is ServiceErrors.UpdateFailed ->

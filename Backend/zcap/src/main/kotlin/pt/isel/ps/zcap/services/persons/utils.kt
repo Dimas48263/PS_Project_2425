@@ -27,7 +27,6 @@ fun Person.toOutputModel(): PersonOutputModel =
         name,
         age,
         contact,
-        countryCode.toOutputModel(),
         placeOfResidence.toOutputModel(),
         entryDatetime,
         departureDatetime,

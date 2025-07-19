@@ -104,12 +104,6 @@ const PersonsIsarSchema = CollectionSchema(
     )
   },
   links: {
-    r'countryCode': LinkSchema(
-      id: -694855718960766040,
-      name: r'countryCode',
-      target: r'TreeRecordDetailIsar',
-      single: true,
-    ),
     r'placeOfResidence': LinkSchema(
       id: 5225100608581877681,
       name: r'placeOfResidence',
@@ -254,7 +248,6 @@ Id _personsIsarGetId(PersonsIsar object) {
 
 List<IsarLinkBase<dynamic>> _personsIsarGetLinks(PersonsIsar object) {
   return [
-    object.countryCode,
     object.placeOfResidence,
     object.nationality,
     object.departureDestination
@@ -264,8 +257,6 @@ List<IsarLinkBase<dynamic>> _personsIsarGetLinks(PersonsIsar object) {
 void _personsIsarAttach(
     IsarCollection<dynamic> col, Id id, PersonsIsar object) {
   object.id = id;
-  object.countryCode.attach(
-      col, col.isar.collection<TreeRecordDetailIsar>(), r'countryCode', id);
   object.placeOfResidence
       .attach(col, col.isar.collection<TreeIsar>(), r'placeOfResidence', id);
   object.nationality.attach(
@@ -1706,20 +1697,6 @@ extension PersonsIsarQueryObject
 
 extension PersonsIsarQueryLinks
     on QueryBuilder<PersonsIsar, PersonsIsar, QFilterCondition> {
-  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition> countryCode(
-      FilterQuery<TreeRecordDetailIsar> q) {
-    return QueryBuilder.apply(this, (query) {
-      return query.link(q, r'countryCode');
-    });
-  }
-
-  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
-      countryCodeIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.linkLength(r'countryCode', 0, true, 0, true);
-    });
-  }
-
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
       placeOfResidence(FilterQuery<TreeIsar> q) {
     return QueryBuilder.apply(this, (query) {
