@@ -13,7 +13,6 @@ data class PersonOutputModel(
     val name: String,
     val age: Int,
     val contact: String,
-    val countryCode: TreeRecordDetailOutputModel,
     val placeOfResidence: TreeOutputModel,
     val entryDateTime: LocalDateTime,
     val departureDateTime: LocalDateTime?,

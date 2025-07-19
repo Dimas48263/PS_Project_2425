@@ -475,7 +475,6 @@ final List<SyncEntry> syncEntries = [
                   .findFirst(),
       saveLinksAfterPut: (IsarTable<ApiTable> person) async {
         final personIsar = person as PersonsIsar;
-        await personIsar.countryCode.save();
         await personIsar.placeOfResidence.save();
         if (personIsar.nationality.value != null) {
           await personIsar.nationality.save();

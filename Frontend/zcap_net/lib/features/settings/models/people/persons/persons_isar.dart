@@ -21,7 +21,6 @@ class PersonsIsar implements IsarTable<Persons> {
   late String name;
   late int age;
   late String contact;
-  IsarLink<TreeRecordDetailIsar> countryCode = IsarLink<TreeRecordDetailIsar>();
   IsarLink<TreeIsar> placeOfResidence = IsarLink<TreeIsar>();
   late DateTime entryDateTime;
   DateTime? departureDateTime;
@@ -100,7 +99,6 @@ class PersonsIsar implements IsarTable<Persons> {
     ..name = persons.name
     ..age = persons.age
     ..contact = persons.contact
-    ..countryCode.value = await findOrBuildTreeRecordDetail(persons.countryCode)
     ..placeOfResidence.value = await findOrBuildTree(persons.placeOfResidence)
     ..entryDateTime = persons.entryDateTime
     ..departureDateTime = persons.departureDateTime
@@ -126,7 +124,6 @@ class PersonsIsar implements IsarTable<Persons> {
       ..name = name
       ..age = age
       ..contact = contact
-      ..countryCode.value = countryCode.value
       ..placeOfResidence.value = placeOfResidence.value
       ..entryDateTime = entryDateTime
       ..departureDateTime = departureDateTime
@@ -147,7 +144,6 @@ class PersonsIsar implements IsarTable<Persons> {
       name: name,
       age: age,
       contact: contact,
-      countryCode: countryCode.value!.toEntity(),
       placeOfResidence: placeOfResidence.value!.toEntity(),
       entryDateTime: entryDateTime,
       departureDateTime: departureDateTime,
@@ -166,7 +162,6 @@ class PersonsIsar implements IsarTable<Persons> {
     name = person.name;
     age = person.age;
     contact = person.contact;
-    countryCode.value = await findOrBuildTreeRecordDetail(person.countryCode);
     placeOfResidence.value = await findOrBuildTree(person.placeOfResidence);
     entryDateTime = person.entryDateTime;
     departureDateTime = person.departureDateTime;

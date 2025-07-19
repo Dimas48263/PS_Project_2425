@@ -16,6 +16,7 @@ import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart'
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/features/zcap_tree/tree_wrapper.dart';
+import 'package:zcap_net_app/shared/models.dart';
 
 import '../../shared/shared.dart';
 
@@ -34,6 +35,9 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
 
   List<IncidentZcapsIsar> incidentsZcaps = [];
   StreamSubscription? incidentsZcapsStream;
+
+  List<IncidentZcapPersonsIsar> incidentZcapPersons = [];
+  StreamSubscription? incidentZcapPersonsStream;
 
   Map<int, List<IncidentZcapsIsar>> zcapsByIncident = {};
 
@@ -73,6 +77,13 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
       }
       await buildTree();
     });
+    incidentZcapPersonsStream = isarDb.incidentZcapPersonsIsars
+        .buildQuery<IncidentZcapPersonsIsar>()
+        .watch(fireImmediately: true)
+        .listen((data) async {
+          incidentZcapPersons = data;
+          await buildTree();
+        });
     _searchController.addListener(() {
       setState(() {
         _searchTerm = _searchController.text.toLowerCase();
@@ -87,6 +98,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
   void dispose() {
     incidentsStream?.cancel();
     incidentsZcapsStream?.cancel();
+    incidentZcapPersonsStream?.cancel();
     _searchController.dispose();
     super.dispose();
   }
@@ -328,6 +340,12 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                     );
                   }
                   if (data is IncidentZcapsIsar) {
+                    final numberOfPersons = incidentZcapPersons
+                        .where((e) =>
+                            e.incidentZcap.value!.zcap.value!.id ==
+                            data.zcap.value!.id)
+                        .map((e) => e.person.value!)
+                        .toList();
                     return Card(
                       elevation: 2,
                       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -346,7 +364,8 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                                                   PersonsScreen(
                                                       incidentZcapIsar: data)));
                                     },
-                                    child: Text('screen_settings_people'.tr())),
+                                    child: Text(
+                                        '${'screen_settings_people'.tr()} (${numberOfPersons.length})')),
                               if (!data.isSynced) CustomUnsyncedIcon(),
                               if (allowances.canWrite('user_access_add_people'))
                                 IconButton(

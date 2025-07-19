@@ -12,7 +12,6 @@ import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/i
 import 'package:zcap_net_app/features/settings/models/people/departure_destination/departure_destination_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/person_special_needs/person_special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/people/persons/persons_isar.dart';
-import 'package:zcap_net_app/features/settings/models/people/special_needs/special_needs_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree_record_detail_types/tree_record_detail_type_isar.dart';
@@ -136,7 +135,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
               _searchTerm = value.toLowerCase();
             }),
             onIconPressed: () {
-              _addOrEditPerson(null);
+              _addPerson();
             },
           ),
           const SizedBox(height: 10.0),
@@ -151,24 +150,62 @@ class _PersonsScreenState extends State<PersonsScreen> {
                         return Card(
                           child: ListTile(
                             contentPadding: const EdgeInsets.only(left: 10.0),
-                            title: Text('${'name'.tr()}: ${person.name}',
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
+                            title: Row(
+                              children: [
+                                Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                    color: person.departureDateTime == null
+                                        ? Colors.green
+                                        : Colors.red,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Text('${'name'.tr()}: ${person.name}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold)),
+                              ],
+                            ),
                             subtitle: Column(
                               children: [
-                                Row(children: [
-                                  Expanded(
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child:
+                                          Text('${'age'.tr()}: ${person.age}'),
+                                    ),
+                                    Expanded(
                                       child: Text(
-                                          '${'entry_date'.tr()}: ${person.entryDateTime.toLocal().toString().split(' ')[0]}')),
-                                  Expanded(
+                                          '${'contact'.tr()}: ${person.contact}'),
+                                    )
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Expanded(
                                       child: Text(
-                                          '${'departure_date'.tr()}: ${person.departureDateTime != null ? person.departureDateTime!.toLocal().toString().split(' ')[0] : 'no_end_date'.tr()}'))
-                                ])
+                                          '${'entry_date'.tr()}: ${DateFormat('yyyy-MM-dd HH:mm').format(person.entryDateTime.toLocal())}'),
+                                    ),
+                                    Expanded(
+                                      child: Text(
+                                          '${'departure_date'.tr()}: ${person.departureDateTime != null ? DateFormat('yyyy-MM-dd HH:mm').format(person.departureDateTime!.toLocal()) : 'no_end_date'.tr()}'),
+                                    )
+                                  ],
+                                ),
                               ],
                             ),
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
+                                if (canWrite &&
+                                    person.departureDateTime == null) ...[
+                                  ElevatedButton(
+                                      onPressed: () => _exitForm(person),
+                                      child: Text('exit'.tr())),
+                                  const SizedBox(width: 5),
+                                ],
                                 ElevatedButton(
                                     onPressed: () => showDialog(
                                         context: context,
@@ -195,7 +232,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                                   IconButton(
                                     icon: const Icon(Icons.edit),
                                     onPressed: () {
-                                      _addOrEditPerson(person);
+                                      _editPerson(person);
                                     },
                                   ),
                                   IconButton(
@@ -236,7 +273,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                                       Icons.info_outline,
                                       color: Colors.blue,
                                     ),
-                                    onPressed: () => _addOrEditPerson(person),
+                                    onPressed: () => _editPerson(person),
                                   ),
                               ],
                             ),
@@ -248,23 +285,304 @@ class _PersonsScreenState extends State<PersonsScreen> {
     );
   }
 
-  void _addOrEditPerson(PersonsIsar? person) async {
+  void _exitForm(PersonsIsar person) async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final formKey = GlobalKey<FormState>();
+    final destinationContactController = TextEditingController(text: '');
+    DepartureDestinationIsar? selectedDepartureDestination;
+    DateTime? departureDateTime = now;
+
+    final availableDepartureDestinations = await isarDb
+        .departureDestinationIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setModalState) {
+            return AlertDialog(
+              title: Text('exit'.tr()),
+              content: buildFormWithoutDates(
+                  chooseTime: true,
+                  canWrite: canWrite,
+                  formKey,
+                  context,
+                  [
+                    TextControllersInputFormConfig(
+                      controller: destinationContactController,
+                      label: '${'contact'.tr()}*',
+                      validator: (value) => null,
+                    ),
+                  ],
+                  [
+                    customDropdownSearch<DepartureDestinationIsar>(
+                        enabled: canWrite,
+                        justLabel: true,
+                        label: 'screen_settings_departure_destinations'.tr(),
+                        itemLabelBuilder: (item) => item.name,
+                        items: availableDepartureDestinations,
+                        selectedItem: selectedDepartureDestination,
+                        onSelected: (value) => setModalState(
+                            () => selectedDepartureDestination = value),
+                        validator: (value) {
+                          if (value == null) {
+                            return 'required_field'.tr();
+                          }
+                          return null;
+                        }),
+                  ],
+                  [
+                    DateInputConfig(
+                      label: 'departure_date'.tr(),
+                      date: departureDateTime,
+                      onDateChanged: (value) =>
+                          setModalState(() => departureDateTime = value),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'fill_data'.tr(namedArgs: {
+                            'field': 'departure_date'.tr(),
+                          });
+                        }
+                        return null;
+                      },
+                    ),
+                  ]),
+              actions: [
+                TextButton(
+                  child: Text('cancel'.tr()),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final navigator = Navigator.of(context);
+                      final now = DateTime.now();
+                      await isarDb.writeTxn(() async {
+                        final newPerson = person;
+                        newPerson.destinationContact =
+                            destinationContactController.text == ''
+                                ? null
+                                : destinationContactController.text;
+                        newPerson.departureDestination.value =
+                            selectedDepartureDestination;
+                        newPerson.departureDateTime = departureDateTime;
+                        newPerson.lastUpdatedAt = now;
+                        newPerson.isSynced = false;
+                        await isarDb.personsIsars.put(newPerson);
+                        await newPerson.departureDestination.save();
+                      });
+
+                      navigator.pop();
+                    }
+                  },
+                ),
+              ],
+            );
+          });
+        });
+  }
+
+  void _addPerson() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final formKey = GlobalKey<FormState>();
+    final nameController = TextEditingController(text: '');
+    final ageController = TextEditingController(text: '');
+    final contactController = TextEditingController(text: '');
+    TreeIsar? placeOfResidence;
+    DateTime? entryDateTime = now;
+
+    TreeLevelIsar? selectedTreeLevel;
+
+    final availableTreeLevels = await isarDb.treeLevelIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+
+    final availableTrees = await isarDb.treeIsars
+        .filter()
+        .startDateLessThan(today.add(const Duration(days: 1)))
+        .and()
+        .group((q) => q
+            .endDateIsNull()
+            .or()
+            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
+        .findAll();
+
+    List<TextControllersInputFormConfig> textControllersConfig = [
+      TextControllersInputFormConfig(
+          controller: nameController, label: '${'name'.tr()}*'),
+      TextControllersInputFormConfig(
+          controller: ageController,
+          label: '${'age'.tr()}*',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'fill_data'.tr(namedArgs: {
+                'field': 'age'.tr(),
+              });
+            }
+            if (int.tryParse(value) == null) {
+              return 'wrong_format'.tr();
+            }
+            return null;
+          }),
+      TextControllersInputFormConfig(
+        controller: contactController,
+        label: '${'contact'.tr()}*',
+      ),
+    ];
+
+    showDialog(
+        context: context,
+        builder: (context) {
+          return StatefulBuilder(builder: (context, setModalState) {
+            return AlertDialog(
+              title: Text('${'add'.tr()} ${'person'.tr()}'),
+              content: buildFormWithoutDates(
+                  chooseTime: true,
+                  canWrite: canWrite,
+                  formKey,
+                  context,
+                  textControllersConfig,
+                  [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: customDropdownSearch<TreeLevelIsar>(
+                              isVisible: true,
+                              enabled: canWrite,
+                              justLabel: true,
+                              label: 'level'.tr(),
+                              itemLabelBuilder: (item) => item.name,
+                              items: availableTreeLevels,
+                              selectedItem: selectedTreeLevel,
+                              onSelected: (value) => setModalState(() {
+                                    selectedTreeLevel = value;
+                                    placeOfResidence = null;
+                                  }),
+                              validator: (value) => null),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: customDropdownSearch<TreeIsar>(
+                              enabled: canWrite,
+                              justLabel: true,
+                              label: '${'place_of_residence'.tr()}*',
+                              itemLabelBuilder: (item) => item.name,
+                              items: selectedTreeLevel == null
+                                  ? availableTrees
+                                  : availableTrees
+                                      .where((e) =>
+                                          e.treeLevel.value!.id ==
+                                          selectedTreeLevel!.id)
+                                      .toList(),
+                              selectedItem: placeOfResidence,
+                              onSelected: (value) => setModalState(() {
+                                    placeOfResidence = value;
+                                    selectedTreeLevel = value!.treeLevel.value;
+                                  }),
+                              validator: (value) {
+                                if (value == null) {
+                                  return 'fill_data'.tr(namedArgs: {
+                                    'field': 'tree'.tr(),
+                                  });
+                                }
+                                return null;
+                              }),
+                        )
+                      ],
+                    )
+                  ],
+                  [
+                    DateInputConfig(
+                      label: 'entry_date'.tr(),
+                      date: entryDateTime,
+                      onDateChanged: (value) =>
+                          setModalState(() => entryDateTime = value),
+                      validator: (value) {
+                        if (value == null) {
+                          return 'fill_data'.tr(namedArgs: {
+                            'field': 'entry_date'.tr(),
+                          });
+                        }
+                        return null;
+                      },
+                    ),
+                  ]),
+              actions: [
+                TextButton(
+                  child: Text('cancel'.tr()),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                TextButton(
+                  child: Text('save'.tr()),
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      final navigator = Navigator.of(context);
+                      final now = DateTime.now();
+                      await isarDb.writeTxn(() async {
+                        final newPerson = PersonsIsar();
+                        newPerson.remoteId = 0;
+                        newPerson.name = nameController.text;
+                        newPerson.age = int.parse(ageController.text);
+                        newPerson.contact = contactController.text;
+                        newPerson.placeOfResidence.value = placeOfResidence;
+                        newPerson.entryDateTime = entryDateTime ?? now;
+                        newPerson.createdAt = now;
+                        newPerson.lastUpdatedAt = now;
+                        newPerson.isSynced = false;
+                        await isarDb.personsIsars.put(newPerson);
+                        await newPerson.placeOfResidence.save();
+
+                        final newIncidentZcapPerson = IncidentZcapPersonsIsar();
+                        newIncidentZcapPerson.remoteId = 0;
+                        newIncidentZcapPerson.incidentZcap.value =
+                            incidentZcapIsar;
+                        newIncidentZcapPerson.person.value = newPerson;
+                        newIncidentZcapPerson.startDate = now;
+                        newIncidentZcapPerson.endDate = null;
+                        newIncidentZcapPerson.createdAt = now;
+                        newIncidentZcapPerson.lastUpdatedAt = now;
+                        newIncidentZcapPerson.isSynced = false;
+                        await isarDb.incidentZcapPersonsIsars
+                            .put(newIncidentZcapPerson);
+                        await newIncidentZcapPerson.incidentZcap.save();
+                        await newIncidentZcapPerson.person.save();
+                      });
+
+                      navigator.pop();
+                    }
+                  },
+                ),
+              ],
+            );
+          });
+        });
+  }
+
+  void _editPerson(PersonsIsar person) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final formKey = GlobalKey<FormState>();
     final allDetails = await isarDb.treeRecordDetailIsars.where().findAll();
-    final countryCodeDetailType = await isarDb.treeRecordDetailTypeIsars
-        .where()
-        .remoteIdEqualTo(1)
-        .findFirst();
-    final availableCountryCodes = allDetails
-        .where((element) =>
-            element.detailType.value!.id == countryCodeDetailType!.id)
-        .toList();
 
     final nationalityDetailType = await isarDb.treeRecordDetailTypeIsars
         .where()
-        .remoteIdEqualTo(2)
+        .remoteIdEqualTo(1)
         .findFirst();
     final availableNationalities = allDetails
         .where((element) =>
@@ -291,36 +609,17 @@ class _PersonsScreenState extends State<PersonsScreen> {
             .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
         .findAll();
 
-    final availableDepartureDestinations = await isarDb
-        .departureDestinationIsars
-        .filter()
-        .startDateLessThan(today.add(const Duration(days: 1)))
-        .and()
-        .group((q) => q
-            .endDateIsNull()
-            .or()
-            .endDateGreaterThan(today.subtract(const Duration(seconds: 1))))
-        .findAll();
-
-    final nameController = TextEditingController(text: person?.name ?? '');
-    final ageController =
-        TextEditingController(text: person?.age.toString() ?? '');
-    final contactController =
-        TextEditingController(text: person?.contact ?? '');
-    TreeRecordDetailIsar? countryCode = person?.countryCode.value;
-    TreeIsar? placeOfResidence = person?.placeOfResidence.value;
+    final nameController = TextEditingController(text: person.name);
+    final ageController = TextEditingController(text: person.age.toString());
+    final contactController = TextEditingController(text: person.contact);
+    TreeIsar? placeOfResidence = person.placeOfResidence.value;
     TreeLevelIsar? treeLevel = placeOfResidence?.treeLevel.value;
-    DateTime? entryDateTime = person?.entryDateTime ?? DateTime.now();
-    DateTime? departureDateTime = person?.departureDateTime;
-    DateTime? birthDate = person?.birthDate;
-    TreeRecordDetailIsar? nationality = person?.nationality.value;
-    final addressController =
-        TextEditingController(text: person?.address ?? '');
-    final nissController = TextEditingController(text: person?.niss ?? '');
-    DepartureDestinationIsar? departureDestination =
-        person?.departureDestination.value;
+    DateTime? birthDate = person.birthDate;
+    TreeRecordDetailIsar? nationality = person.nationality.value;
+    final addressController = TextEditingController(text: person.address);
+    final nissController = TextEditingController(text: person.niss);
     final destinationContactController =
-        TextEditingController(text: person?.destinationContact ?? '');
+        TextEditingController(text: person.destinationContact);
 
     List<TextControllersInputFormConfig> textControllersConfig = [
       TextControllersInputFormConfig(
@@ -340,9 +639,16 @@ class _PersonsScreenState extends State<PersonsScreen> {
             return null;
           }),
       TextControllersInputFormConfig(
-        controller: contactController,
-        label: '${'contact'.tr()}*',
-      ),
+          controller: contactController,
+          label: '${'contact'.tr()}*',
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'fill_data'.tr(namedArgs: {
+                'field': 'contact'.tr(),
+              });
+            }
+            return null;
+          }),
       TextControllersInputFormConfig(
         controller: addressController,
         label: 'address'.tr(),
@@ -362,11 +668,12 @@ class _PersonsScreenState extends State<PersonsScreen> {
             }
             return null;
           }),
-      TextControllersInputFormConfig(
-        controller: destinationContactController,
-        label: 'destination_contact'.tr(),
-        validator: (value) => null,
-      ),
+      if (person.departureDateTime != null)
+        TextControllersInputFormConfig(
+          controller: destinationContactController,
+          label: 'destination_contact'.tr(),
+          validator: (value) => null,
+        ),
     ];
 
     showDialog(
@@ -375,101 +682,66 @@ class _PersonsScreenState extends State<PersonsScreen> {
         return StatefulBuilder(builder: (context, setModalState) {
           List<DateInputConfig> dates = [
             DateInputConfig(
-              label: 'entry_date'.tr(),
-              date: entryDateTime,
-              onDateChanged: (value) =>
-                  setModalState(() => entryDateTime = value),
-              validator: (value) {
-                if (value == null) {
-                  return 'fill_data'.tr(namedArgs: {
-                    'field': 'entry_date'.tr(),
-                  });
-                }
-                return null;
-              },
-            ),
-            DateInputConfig(
-              label: 'departure_date'.tr(),
-              date: departureDateTime,
-              onDateChanged: (value) =>
-                  setModalState(() => departureDateTime = value),
-              onLongPress: () => setModalState(() => departureDateTime = null),
-            ),
-            DateInputConfig(
               label: 'birth_date'.tr(),
               date: birthDate,
               onDateChanged: (value) => setModalState(() => birthDate = value),
-              onLongPress: () => setModalState(() => departureDateTime = null),
+              onLongPress: () => setModalState(() => birthDate = null),
             ),
           ];
           return AlertDialog(
-            title: Text(person == null
-                ? '${'add'.tr()} ${'person'.tr()}'
-                : '${'edit'.tr()} ${'person'.tr()}'),
+            title: Text('${'edit'.tr()} ${'person'.tr()}'),
             content: buildFormWithoutDates(
                 canWrite: canWrite,
                 formKey,
                 context,
                 textControllersConfig,
                 [
-                  customDropdownSearch<TreeRecordDetailIsar>(
-                      enabled: canWrite,
-                      justLabel: true,
-                      label: '${'country_code'.tr()}*',
-                      itemLabelBuilder: (item) => item.valueCol,
-                      items: availableCountryCodes,
-                      selectedItem: countryCode,
-                      onSelected: (value) =>
-                          setModalState(() => countryCode = value),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'fill_data'.tr(namedArgs: {
-                            'field': 'country_code'.tr(),
-                          });
-                        }
-                        return null;
-                      }),
-                  customDropdownSearch<TreeLevelIsar>(
-                      enabled: canWrite,
-                      justLabel: true,
-                      label: '${'level'.tr()}*',
-                      itemLabelBuilder: (item) => item.name,
-                      items: availableTreeLevels,
-                      selectedItem: treeLevel,
-                      onSelected: (value) => setModalState(() {
-                            treeLevel = value;
-                            placeOfResidence = null;
-                          }),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'fill_data'.tr(namedArgs: {
-                            'field': 'level'.tr(),
-                          });
-                        }
-                        return null;
-                      }),
-                  customDropdownSearch<TreeIsar>(
-                      enabled: canWrite && treeLevel != null,
-                      justLabel: true,
-                      label: '${'tree'.tr()}*',
-                      itemLabelBuilder: (item) => item.name,
-                      items: treeLevel == null
-                          ? []
-                          : availableTrees
-                              .where(
-                                  (e) => e.treeLevel.value!.id == treeLevel!.id)
-                              .toList(),
-                      selectedItem: placeOfResidence,
-                      onSelected: (value) =>
-                          setModalState(() => placeOfResidence = value),
-                      validator: (value) {
-                        if (value == null) {
-                          return 'fill_data'.tr(namedArgs: {
-                            'field': 'tree'.tr(),
-                          });
-                        }
-                        return null;
-                      }),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: customDropdownSearch<TreeLevelIsar>(
+                            isVisible: true,
+                            enabled: canWrite,
+                            justLabel: true,
+                            label: 'level'.tr(),
+                            itemLabelBuilder: (item) => item.name,
+                            items: availableTreeLevels,
+                            selectedItem: treeLevel,
+                            onSelected: (value) => setModalState(() {
+                                  treeLevel = value;
+                                  placeOfResidence = null;
+                                }),
+                            validator: (value) => null),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: customDropdownSearch<TreeIsar>(
+                            enabled: canWrite,
+                            justLabel: true,
+                            label: '${'place_of_residence'.tr()}*',
+                            itemLabelBuilder: (item) => item.name,
+                            items: treeLevel == null
+                                ? availableTrees
+                                : availableTrees
+                                    .where((e) =>
+                                        e.treeLevel.value!.id == treeLevel!.id)
+                                    .toList(),
+                            selectedItem: placeOfResidence,
+                            onSelected: (value) => setModalState(() {
+                                  placeOfResidence = value;
+                                  treeLevel = value!.treeLevel.value;
+                                }),
+                            validator: (value) {
+                              if (value == null) {
+                                return 'fill_data'.tr(namedArgs: {
+                                  'field': 'tree'.tr(),
+                                });
+                              }
+                              return null;
+                            }),
+                      )
+                    ],
+                  ),
                   customDropdownSearch<TreeRecordDetailIsar>(
                       enabled: canWrite,
                       isVisible: true,
@@ -480,17 +752,6 @@ class _PersonsScreenState extends State<PersonsScreen> {
                       selectedItem: nationality,
                       onSelected: (value) =>
                           setModalState(() => nationality = value),
-                      validator: (value) => null),
-                  customDropdownSearch<DepartureDestinationIsar>(
-                      enabled: canWrite,
-                      isVisible: true,
-                      justLabel: true,
-                      label: 'screen_settings_departure_destinations'.tr(),
-                      itemLabelBuilder: (item) => item.name,
-                      items: availableDepartureDestinations,
-                      selectedItem: departureDestination,
-                      onSelected: (value) =>
-                          setModalState(() => departureDestination = value),
                       validator: (value) => null),
                 ],
                 dates),
@@ -507,15 +768,11 @@ class _PersonsScreenState extends State<PersonsScreen> {
                       final navigator = Navigator.of(context);
                       final now = DateTime.now();
                       await isarDb.writeTxn(() async {
-                        final newPerson = person ?? PersonsIsar();
-                        newPerson.remoteId = person?.remoteId ?? 0;
+                        final newPerson = person;
                         newPerson.name = nameController.text;
                         newPerson.age = int.parse(ageController.text);
                         newPerson.contact = contactController.text;
-                        newPerson.countryCode.value = countryCode;
                         newPerson.placeOfResidence.value = placeOfResidence;
-                        newPerson.entryDateTime = entryDateTime ?? now;
-                        newPerson.departureDateTime = departureDateTime;
                         newPerson.birthDate = birthDate;
                         newPerson.nationality.value = nationality;
                         newPerson.address = addressController.text == ''
@@ -524,45 +781,18 @@ class _PersonsScreenState extends State<PersonsScreen> {
                         newPerson.niss = nissController.text == ''
                             ? null
                             : nissController.text;
-                        newPerson.departureDestination.value =
-                            departureDestination;
                         newPerson.destinationContact =
                             destinationContactController.text == ''
                                 ? null
                                 : destinationContactController.text;
-                        newPerson.createdAt = person?.createdAt ?? now;
                         newPerson.lastUpdatedAt = now;
                         newPerson.isSynced = false;
                         await isarDb.personsIsars.put(newPerson);
-                        await newPerson.countryCode.save();
                         await newPerson.placeOfResidence.save();
                         if (newPerson.nationality.value != null) {
                           await newPerson.nationality.save();
                         } else {
                           await newPerson.nationality.reset();
-                        }
-                        if (newPerson.departureDestination.value != null) {
-                          await newPerson.departureDestination.save();
-                        } else {
-                          await newPerson.departureDestination.reset();
-                        }
-
-                        if (person == null) {
-                          final newIncidentZcapPerson =
-                              IncidentZcapPersonsIsar();
-                          newIncidentZcapPerson.remoteId = 0;
-                          newIncidentZcapPerson.incidentZcap.value =
-                              incidentZcapIsar;
-                          newIncidentZcapPerson.person.value = newPerson;
-                          newIncidentZcapPerson.startDate = now;
-                          newIncidentZcapPerson.endDate = null;
-                          newIncidentZcapPerson.createdAt = now;
-                          newIncidentZcapPerson.lastUpdatedAt = now;
-                          newIncidentZcapPerson.isSynced = false;
-                          await isarDb.incidentZcapPersonsIsars
-                              .put(newIncidentZcapPerson);
-                          await newIncidentZcapPerson.incidentZcap.save();
-                          await newIncidentZcapPerson.person.save();
                         }
                       });
 

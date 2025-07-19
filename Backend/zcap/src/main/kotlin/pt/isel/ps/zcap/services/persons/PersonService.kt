@@ -33,8 +33,6 @@ class PersonService(
     }
 
     fun savePerson(personInput: PersonInputModel): Either<ServiceErrors, PersonOutputModel> {
-        val countryCode = treeRecordDetailRepository.findById(personInput.countryCodeId).getOrNull()
-            ?: return failure(ServiceErrors.CountryCodeNotFound)
         val placeOfResidence = treeRepository.findById(personInput.placeOfResidenceId).getOrNull()
             ?: return failure(ServiceErrors.TreeNotFound)
         val nationality = personInput.nationalityId?.let {
@@ -55,7 +53,6 @@ class PersonService(
             name = personInput.name,
             age = personInput.age,
             contact = personInput.contact,
-            countryCode = countryCode,
             placeOfResidence = placeOfResidence,
             entryDatetime = personInput.entryDateTime,
             departureDatetime = personInput.departureDateTime,
@@ -77,8 +74,6 @@ class PersonService(
     fun updatePersonById(id: Long, personInput: PersonInputModel): Either<ServiceErrors, PersonOutputModel> {
         val person = personRepository.findById(id).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
-        val countryCode = treeRecordDetailRepository.findById(personInput.countryCodeId).getOrNull()
-            ?: return failure(ServiceErrors.CountryCodeNotFound)
         val placeOfResidence = treeRepository.findById(personInput.placeOfResidenceId).getOrNull()
             ?: return failure(ServiceErrors.TreeNotFound)
         val nationality = personInput.nationalityId?.let {
@@ -99,7 +94,6 @@ class PersonService(
             name = personInput.name,
             age = personInput.age,
             contact = personInput.contact,
-            countryCode = countryCode,
             placeOfResidence = placeOfResidence,
             entryDatetime = personInput.entryDateTime,
             departureDatetime = personInput.departureDateTime,

@@ -249,8 +249,6 @@ class _UsersScreenState extends State<UsersScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        final allowances = context.watch<UserAllowancesProvider>();
-
         return StatefulBuilder(
           builder: (context, setModalState) {
             return AlertDialog(

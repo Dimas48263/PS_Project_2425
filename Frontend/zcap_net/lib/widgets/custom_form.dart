@@ -68,8 +68,8 @@ Widget buildForm(
                 return null;
               }),
         ...dropDownSearches,
-        customDatesForm(
-            context, startDate, (date) => onStartDateChanged(date), true, null, canWrite),
+        customDatesForm(context, startDate, (date) => onStartDateChanged(date),
+            true, null, canWrite),
         customDatesForm(context, endDate, (date) => onEndDateChanged(date),
             false, onLongPress, canWrite),
       ]));
@@ -97,7 +97,8 @@ Widget customDatesFormField({
   required void Function(DateTime?) onDateChanged,
   String? Function(DateTime?)? validator,
   void Function()? onLongPress,
-  bool canWrite = true
+  bool canWrite = true,
+  bool chooseTime = false,
 }) {
   return FormField<DateTime>(
     initialValue: date,
@@ -118,13 +119,31 @@ Widget customDatesFormField({
             },
             onTap: () async {
               if (!canWrite) return;
-              final picked = await showDatePicker(
+              DateTime? picked = await showDatePicker(
                 context: context,
                 initialDate: state.value ?? DateTime.now(),
                 firstDate: DateTime(1900),
                 lastDate: DateTime(2100),
               );
               if (picked != null) {
+                TimeOfDay? pickedTime;
+                if (chooseTime) {
+                  pickedTime = await showTimePicker(
+                    context: context,
+                    initialTime: state.value != null
+                        ? TimeOfDay.fromDateTime(state.value!)
+                        : TimeOfDay.now(),
+                  );
+                }
+                if (pickedTime != null) {
+                  picked = DateTime(
+                    picked.year,
+                    picked.month,
+                    picked.day,
+                    pickedTime.hour,
+                    pickedTime.minute,
+                  );
+                }
                 state.didChange(picked);
                 onDateChanged(picked);
               }
@@ -163,13 +182,14 @@ Widget buildFormWithoutDates(
     List<TextControllersInputFormConfig> textControllersConfig,
     List<Widget> dropDownSearches,
     List<DateInputConfig> dates,
-    {bool canWrite = true}) {
+    {bool canWrite = true,
+    bool chooseTime = false}) {
   return Form(
       key: formKey,
       child: SingleChildScrollView(
           child: Column(mainAxisSize: MainAxisSize.min, children: [
         for (var config in textControllersConfig)
-          TextFormField(  
+          TextFormField(
               enabled: canWrite,
               controller: config.controller,
               decoration: InputDecoration(labelText: config.label),
@@ -194,6 +214,7 @@ Widget buildFormWithoutDates(
               onDateChanged: date.onDateChanged,
               validator: date.validator,
               onLongPress: date.onLongPress,
-              canWrite: canWrite),
+              canWrite: canWrite,
+              chooseTime: chooseTime),
       ])));
 }

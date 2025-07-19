@@ -421,7 +421,6 @@ CREATE TABLE persons (
 	[name]						NVARCHAR(255)	NOT NULL,
 	[age] 					    INT 			NOT NULL,
 	[contact]  					NVARCHAR(255) 	NOT NULL,
-	[countryCodeId]  			BIGINT 			NOT NULL REFERENCES treeRecordDetails(detailId),
 	[placeOfResidence]  		BIGINT 			NOT NULL REFERENCES tree(treeRecordId),		
 	[entryDatetime]				DATETIME 		NOT NULL,
 	[departureDatetime]			DATETIME 		NULL,
