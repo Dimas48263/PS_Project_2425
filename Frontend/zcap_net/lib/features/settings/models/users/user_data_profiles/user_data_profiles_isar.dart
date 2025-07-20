@@ -93,18 +93,16 @@ class UserDataProfilesIsar implements IsarTable<UserDataProfile> {
   }
 
   Future<void> updateAllowances(int newRemoteId) async {
-    await isarDb.writeTxn(() async {
-      final toUpdate = await isarDb.userDataProfileAllowanceIsars
-          .filter()
-          .localProfileIdEqualTo(id)
-          .userDataProfileIdLessThan(0)
-          .findAll();
+    final toUpdate = await isarDb.userDataProfileAllowanceIsars
+        .filter()
+        .localProfileIdEqualTo(id)
+        .userDataProfileIdLessThan(0)
+        .findAll();
 
-      for (final item in toUpdate) {
-        item.userDataProfileId = newRemoteId;
-      }
+    for (final item in toUpdate) {
+      item.userDataProfileId = newRemoteId;
+    }
 
-      await isarDb.userDataProfileAllowanceIsars.putAll(toUpdate);
-    });
+    await isarDb.userDataProfileAllowanceIsars.putAll(toUpdate);
   }
 }

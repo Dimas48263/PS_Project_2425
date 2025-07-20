@@ -675,8 +675,9 @@ final List<SyncEntry> syncEntries = [
                 .where()
                 .remoteIdEqualTo(remoteId)
                 .findFirst(),
-    saveLinksAfterPut: (userProfile) async {
-      await userProfile.updateAllowances(userProfile.remoteId!);
+    saveLinksAfterPut: (IsarTable<ApiTable> userProfile) async {
+      final userProfileIsar = userProfile as UserDataProfilesIsar;
+      await userProfileIsar.updateAllowances(userProfile.remoteId!);
     },
   ),
   SyncEntry<UserProfilesIsar, UserProfile>(
