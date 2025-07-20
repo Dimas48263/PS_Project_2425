@@ -120,7 +120,8 @@ class UserService(
             ?: return failure(ServiceErrors.InvalidDataInput)
 
         if (user.name.isBlank()
-            || user.startDate.isAfter(user.endDate ?: user.startDate)
+            || user.startDate.isAfter(user.endDate ?: user.startDate) ||
+            existingUser.lastUpdatedAt.isAfter(user.lastUpdatedAt)
         ) {
             return failure(ServiceErrors.InvalidDataInput)
         }
@@ -132,7 +133,8 @@ class UserService(
             userDataProfile = userDataProfile,
             startDate = user.startDate,
             endDate = user.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = user.createdAt,
+            lastUpdatedAt = user.lastUpdatedAt
         )
 
         return try {
@@ -193,7 +195,8 @@ class UserService(
             userDataProfile = userDataProfile,
             startDate = inputData.startDate,
             endDate = inputData.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = inputData.createdAt,
+            lastUpdatedAt = inputData.lastUpdatedAt
         )
 
     // Conversion from domain Model to OutputModel

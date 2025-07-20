@@ -13,6 +13,8 @@ data class EntitiesInputModel(
     val phone2: String?,
     val startDate: LocalDate,
     val endDate: LocalDate?,
+    val createdAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime
 )
 
 // Conversion from InputModel to domain Model
@@ -24,7 +26,8 @@ fun EntitiesInputModel.toEntity(entityType: EntityType): Entities = Entities(
     phone2 = phone2,
     startDate = startDate,
     endDate = endDate,
-    lastUpdatedAt = LocalDateTime.now()
+    createdAt = createdAt,
+    lastUpdatedAt = lastUpdatedAt
 )
 
 

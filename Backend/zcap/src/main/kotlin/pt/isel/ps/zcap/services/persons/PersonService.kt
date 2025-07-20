@@ -62,8 +62,8 @@ class PersonService(
             niss = personInput.niss,
             departureDestination = departureDestination,
             destinationContact = personInput.destinationContact,
-            createdAt = LocalDateTime.now(),
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = personInput.createdAt,
+            lastUpdatedAt = personInput.lastUpdatedAt
         )
         return try {
             success(personRepository.save(newPerson).toOutputModel())
@@ -90,7 +90,8 @@ class PersonService(
             personInput.entryDateTime.isAfter(personInput.departureDateTime ?: personInput.entryDateTime) ||
             (personInput.address != null  && personInput.address.isBlank()) ||
             (personInput.niss != null && personInput.niss.isBlank()) ||
-            (personInput.destinationContact != null && personInput.destinationContact.isBlank()))
+            (personInput.destinationContact != null && personInput.destinationContact.isBlank()) ||
+            person.lastUpdatedAt.isAfter(personInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newPerson = person.copy(
             name = personInput.name,
@@ -105,7 +106,8 @@ class PersonService(
             niss = personInput.niss,
             departureDestination = departureDestination,
             destinationContact = personInput.destinationContact,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = personInput.createdAt,
+            lastUpdatedAt = personInput.lastUpdatedAt
         )
         return try {
             success(personRepository.save(newPerson).toOutputModel())

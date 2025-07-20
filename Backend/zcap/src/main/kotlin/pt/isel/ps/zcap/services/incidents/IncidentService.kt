@@ -43,7 +43,9 @@ class IncidentService(
             incidentType = incidentType,
             treeRecord = tree,
             startDate = input.startDate,
-            endDate = input.endDate
+            endDate = input.endDate,
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
         return try {
             success(repo.save(newIncident).toOutputModel())
@@ -63,14 +65,16 @@ class IncidentService(
             ?: return failure(ServiceErrors.IncidentTypeNotFound)
         val tree = treeRepo.findById(input.treeRecordId).getOrNull()
             ?: return failure(ServiceErrors.TreeNotFound)
-        if (input.startDate.isAfter(input.endDate ?: input.startDate))
+        if (input.startDate.isAfter(input.endDate ?: input.startDate) ||
+            incident.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newIncident = incident.copy(
             incidentType = incidentType,
             treeRecord = tree,
             startDate = input.startDate,
             endDate = input.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
         return try {
             success(repo.save(newIncident).toOutputModel())

@@ -49,7 +49,8 @@ class TreeRecordDetailTypeService(
             ?: return failure(ServiceErrors.RecordNotFound)
 
         if (treeRecordDetailTypeInput.name.isBlank() ||
-            treeRecordDetailTypeInput.startDate.isAfter(treeRecordDetailTypeInput.endDate ?: treeRecordDetailTypeInput.startDate))
+            treeRecordDetailTypeInput.startDate.isAfter(treeRecordDetailTypeInput.endDate ?: treeRecordDetailTypeInput.startDate) ||
+            trdt.lastUpdatedAt.isAfter(treeRecordDetailTypeInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newTrdt = trdt.copy(
@@ -57,7 +58,8 @@ class TreeRecordDetailTypeService(
             unit = treeRecordDetailTypeInput.unit,
             startDate = treeRecordDetailTypeInput.startDate,
             endDate = treeRecordDetailTypeInput.endDate ?: trdt.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = treeRecordDetailTypeInput.createdAt,
+            lastUpdatedAt = treeRecordDetailTypeInput.lastUpdatedAt
         )
         return try {
             success(repo.save(newTrdt).toOutputModel())
@@ -85,7 +87,9 @@ class TreeRecordDetailTypeService(
             name = name,
             unit = unit,
             startDate = startDate,
-            endDate = endDate
+            endDate = endDate,
+            createdAt = createdAt,
+            lastUpdatedAt = lastUpdatedAt
         )
     fun TreeRecordDetailType.toOutputModel(): TreeRecordDetailTypeOutputModel =
         TreeRecordDetailTypeOutputModel(

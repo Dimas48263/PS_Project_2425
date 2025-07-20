@@ -37,8 +37,8 @@ class DetailTypeCategoryService(
             name = inputModel.name,
             startDate = inputModel.startDate,
             endDate = inputModel.endDate,
-            createdAt = LocalDateTime.now(),
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = inputModel.createdAt,
+            lastUpdatedAt = inputModel.lastUpdatedAt
         )
         return try {
             success(repo.save(newDetailTypeCategory).toOutputModel())
@@ -55,14 +55,16 @@ class DetailTypeCategoryService(
         val detailTypeCategory = repo.findById(id).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
 
-        if (inputModel.name.isBlank() || inputModel.startDate.isAfter(inputModel.endDate ?: inputModel.startDate))
+        if (inputModel.name.isBlank() || inputModel.startDate.isAfter(inputModel.endDate ?: inputModel.startDate) ||
+            detailTypeCategory.lastUpdatedAt.isAfter(inputModel.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newDetailTypeCategory = detailTypeCategory.copy(
             name = inputModel.name,
             startDate = inputModel.startDate,
             endDate = inputModel.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = inputModel.createdAt,
+            lastUpdatedAt = inputModel.lastUpdatedAt
         )
         return try {
             success(repo.save(newDetailTypeCategory).toOutputModel())

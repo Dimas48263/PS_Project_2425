@@ -46,7 +46,9 @@ class PersonSpecialNeeds implements ApiTable {
       'specialNeedId': specialNeed.remoteId,
       'description': description,
       'startDate': startDate.toIso8601String(),
-      'endDate': endDate?.toIso8601String()
+      'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -58,7 +60,9 @@ class PersonSpecialNeeds implements ApiTable {
       'specialNeedId': specialNeed.remoteId,
       'description': description,
       'startDate': startDate.toIso8601String(),
-      'endDate': endDate?.toIso8601String()
+      'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 

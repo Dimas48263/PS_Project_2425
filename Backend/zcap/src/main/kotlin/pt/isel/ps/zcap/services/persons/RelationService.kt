@@ -53,8 +53,8 @@ class RelationService(
             person1 = person1,
             person2 = person2,
             relationType = relationType,
-            createdAt = LocalDateTime.now(),
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = relationInput.createdAt,
+            lastUpdatedAt = relationInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newRelation).toOutputModel())

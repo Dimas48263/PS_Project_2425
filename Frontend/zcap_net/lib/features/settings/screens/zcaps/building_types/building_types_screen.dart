@@ -258,7 +258,7 @@ class _BuildingTypesScreenState extends State<BuildingTypesScreen> {
                           await DatabaseService.db.writeTxn(() async {
                             final editedBuildingType =
                                 buildingType ?? BuildingTypesIsar();
-
+                            editedBuildingType.remoteId = buildingType?.remoteId ?? 0;
                             editedBuildingType.name =
                                 nameController.text.trim();
                             editedBuildingType.startDate = selectedStartDate;

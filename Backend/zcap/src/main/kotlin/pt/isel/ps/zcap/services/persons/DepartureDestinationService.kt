@@ -37,7 +37,9 @@ class DepartureDestinationService(
         val newDepartureDestination = DepartureDestination(
             name = departureDestinationInput.name,
             startDate = departureDestinationInput.startDate,
-            endDate = departureDestinationInput.endDate
+            endDate = departureDestinationInput.endDate,
+            createdAt = departureDestinationInput.createdAt,
+            lastUpdatedAt = departureDestinationInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newDepartureDestination).toOutputModel())
@@ -55,14 +57,16 @@ class DepartureDestinationService(
             ?: return failure(ServiceErrors.RecordNotFound)
 
         if (departureDestinationInput.name.isBlank() ||
-            departureDestinationInput.startDate.isAfter(departureDestinationInput.endDate ?: departureDestinationInput.startDate))
+            departureDestinationInput.startDate.isAfter(departureDestinationInput.endDate ?: departureDestinationInput.startDate) ||
+            departureDestination.lastUpdatedAt.isAfter(departureDestinationInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newDepartureDestination = departureDestination.copy(
             name = departureDestinationInput.name,
             startDate = departureDestinationInput.startDate,
             endDate = departureDestinationInput.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = departureDestinationInput.createdAt,
+            lastUpdatedAt = departureDestinationInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newDepartureDestination).toOutputModel())

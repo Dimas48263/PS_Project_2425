@@ -47,7 +47,9 @@ class PersonSupportNeededService(
             supportNeeded = supportNeeded,
             description = personSupportNeededInput.description,
             startDate = personSupportNeededInput.startDate,
-            endDate = personSupportNeededInput.endDate
+            endDate = personSupportNeededInput.endDate,
+            createdAt = personSupportNeededInput.createdAt,
+            lastUpdatedAt = personSupportNeededInput.lastUpdatedAt
         )
 
         return try {
@@ -69,7 +71,8 @@ class PersonSupportNeededService(
         val supportNeeded = supportNeededRepository.findById(personSupportNeededInput.supportNeededId).getOrNull()
             ?: return failure(ServiceErrors.SupportNeededNotFound)
         if (personSupportNeededInput.description?.isBlank() == true ||
-            personSupportNeededInput.startDate.isAfter(personSupportNeededInput.endDate ?: personSupportNeededInput.startDate))
+            personSupportNeededInput.startDate.isAfter(personSupportNeededInput.endDate ?: personSupportNeededInput.startDate) ||
+            personSupportNeeded.lastUpdatedAt.isAfter(personSupportNeededInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newPersonSupportNeeded = personSupportNeeded.copy(
@@ -78,7 +81,8 @@ class PersonSupportNeededService(
             description = personSupportNeededInput.description,
             startDate = personSupportNeededInput.startDate,
             endDate = personSupportNeededInput.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = personSupportNeededInput.createdAt,
+            lastUpdatedAt = personSupportNeededInput.lastUpdatedAt
         )
 
         return try {

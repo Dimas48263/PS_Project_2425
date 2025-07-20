@@ -34,7 +34,9 @@ class SpecialNeedService(
         val newSpecialNeed = SpecialNeed(
             name = specialNeedInput.name,
             startDate = specialNeedInput.startDate,
-            endDate = specialNeedInput.endDate
+            endDate = specialNeedInput.endDate,
+            createdAt = specialNeedInput.createdAt,
+            lastUpdatedAt = specialNeedInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newSpecialNeed).toOutputModel())
@@ -51,13 +53,15 @@ class SpecialNeedService(
         val specialNeed = repository.findById(id).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
         if (specialNeedInput.name.isBlank() ||
-            specialNeedInput.startDate.isAfter(specialNeedInput.endDate ?: specialNeedInput.startDate))
+            specialNeedInput.startDate.isAfter(specialNeedInput.endDate ?: specialNeedInput.startDate) ||
+            specialNeed.lastUpdatedAt.isAfter(specialNeedInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newSpecialNeed = specialNeed.copy(
             name = specialNeedInput.name,
             startDate = specialNeedInput.startDate,
             endDate = specialNeedInput.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = specialNeedInput.createdAt,
+            lastUpdatedAt = specialNeedInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newSpecialNeed).toOutputModel())

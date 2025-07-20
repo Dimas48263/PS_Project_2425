@@ -58,7 +58,9 @@ class UserProfileService(
                 UserProfile(
                     name = newProfile.name,
                     startDate = newProfile.startDate,
-                    endDate = newProfile.endDate
+                    endDate = newProfile.endDate,
+                    createdAt = newProfile.createdAt,
+                    lastUpdatedAt = newProfile.lastUpdatedAt
                 )
             )
 
@@ -84,20 +86,21 @@ class UserProfileService(
     fun updateUserProfile(
         userProfileId: Long, updatedProfile: UserProfileInputModel
     ): Either<ServiceErrors, UserProfileOutputModel> {
+        val oldProfile =
+            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
 
         if (updatedProfile.name.isBlank() || updatedProfile.startDate.isAfter(
                 updatedProfile.endDate ?: updatedProfile.startDate
-            )
+            ) ||
+            oldProfile.lastUpdatedAt.isAfter(updatedProfile.lastUpdatedAt)
         ) return failure(ServiceErrors.InvalidDataInput)
-
-        val oldProfile =
-            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
 
         val newProfile = oldProfile.copy(
             name = updatedProfile.name,
             startDate = updatedProfile.startDate,
             endDate = updatedProfile.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = updatedProfile.createdAt,
+            lastUpdatedAt = updatedProfile.lastUpdatedAt
         )
 
         return try {

@@ -57,7 +57,8 @@ class TreeService(
         }
 
         if (treeUpdate.name.isBlank() ||
-            treeUpdate.startDate.isAfter(treeUpdate.endDate ?: treeUpdate.startDate))
+            treeUpdate.startDate.isAfter(treeUpdate.endDate ?: treeUpdate.startDate) ||
+            tree.lastUpdatedAt.isAfter(treeUpdate.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newTree = tree.copy(
@@ -66,7 +67,8 @@ class TreeService(
             parent = parent ?: tree.parent,
             startDate = treeUpdate.startDate,
             endDate = treeUpdate.endDate ?: tree.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = treeUpdate.createdAt,
+            lastUpdatedAt = treeUpdate.lastUpdatedAt
         )
         return try {
             success(repo.save(newTree).toOutputModel())
@@ -128,6 +130,8 @@ class TreeService(
         parent = parent,
         startDate = this.startDate,
         endDate = this.endDate,
+        createdAt = createdAt,
+        lastUpdatedAt = lastUpdatedAt
     )
 }
 

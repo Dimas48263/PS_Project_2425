@@ -38,7 +38,9 @@ class UserProfileAccessKeysService(
             val accessKey = userProfileAccessKeysRepository.save(
                 UserProfileAccessKeys(
                     accessKey = newKey.accessKey,
-                    description = newKey.description
+                    description = newKey.description,
+                    createdAt = newKey.createdAt,
+                    lastUpdatedAt = newKey.lastUpdatedAt
                 )
             )
             success(toOutputModel(accessKey))
@@ -54,12 +56,16 @@ class UserProfileAccessKeysService(
         val oldKey = userProfileAccessKeysRepository.findById(userProfileAccessKeyId).orElse(null)
             ?: return failure(ServiceErrors.RecordNotFound)
 
+        if (oldKey.lastUpdatedAt.isAfter(updatedKey.lastUpdatedAt))
+            return failure(ServiceErrors.InvalidDataInput)
+
         return try {
             val accessKey = userProfileAccessKeysRepository.save(
                 oldKey.copy(
                     accessKey = updatedKey.accessKey,
                     description = updatedKey.description,
-                    lastUpdatedAt = LocalDateTime.now(),
+                    createdAt = updatedKey.createdAt,
+                    lastUpdatedAt = updatedKey.lastUpdatedAt
                 )
             )
             success(toOutputModel(accessKey))

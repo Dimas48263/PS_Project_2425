@@ -52,20 +52,20 @@ class BuildingTypesService(
         buildingTypeId: Long,
         updatedBuildingType: BuildingTypeInputModel
     ): Either<ServiceErrors, BuildingTypeOutputModel> {
-
-        if (updatedBuildingType.name.isBlank()
-            || updatedBuildingType.startDate.isAfter(updatedBuildingType.endDate ?: updatedBuildingType.startDate)
-        )
-            return failure(ServiceErrors.InvalidDataInput)
-
         val oldBuildingType =
             buildingTypeRepository.findById(buildingTypeId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        if (updatedBuildingType.name.isBlank()
+            || updatedBuildingType.startDate.isAfter(updatedBuildingType.endDate ?: updatedBuildingType.startDate) ||
+            oldBuildingType.lastUpdatedAt.isAfter(updatedBuildingType.lastUpdatedAt)
+        )
+            return failure(ServiceErrors.InvalidDataInput)
 
         val newRecord = oldBuildingType.copy(
             name = updatedBuildingType.name,
             startDate = updatedBuildingType.startDate,
             endDate = updatedBuildingType.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = updatedBuildingType.createdAt,
+            lastUpdatedAt = updatedBuildingType.lastUpdatedAt
         )
 
         return try {
@@ -80,7 +80,8 @@ class BuildingTypesService(
         name = inputData.name,
         startDate = inputData.startDate,
         endDate = inputData.endDate,
-        lastUpdatedAt = LocalDateTime.now()
+        createdAt = inputData.createdAt,
+        lastUpdatedAt = inputData.lastUpdatedAt
     )
 
     // Conversion from domain Model to OutputModel

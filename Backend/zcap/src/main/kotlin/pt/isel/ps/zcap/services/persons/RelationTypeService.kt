@@ -34,7 +34,9 @@ class RelationTypeService(
         val newRelationType = RelationType(
             name = relationTypeInput.name,
             startDate = relationTypeInput.startDate,
-            endDate = relationTypeInput.endDate
+            endDate = relationTypeInput.endDate,
+            createdAt = relationTypeInput.createdAt,
+            lastUpdatedAt = relationTypeInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newRelationType).toOutputModel())
@@ -51,13 +53,15 @@ class RelationTypeService(
         val relationType = repository.findById(id).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
         if (relationTypeInput.name.isBlank() ||
-            relationTypeInput.startDate.isAfter(relationTypeInput.endDate ?: relationTypeInput.startDate))
+            relationTypeInput.startDate.isAfter(relationTypeInput.endDate ?: relationTypeInput.startDate) ||
+            relationType.lastUpdatedAt.isAfter(relationTypeInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newRelationType = relationType.copy(
             name = relationTypeInput.name,
             startDate = relationTypeInput.startDate,
             endDate = relationTypeInput.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = relationTypeInput.createdAt,
+            lastUpdatedAt = relationTypeInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newRelationType).toOutputModel())

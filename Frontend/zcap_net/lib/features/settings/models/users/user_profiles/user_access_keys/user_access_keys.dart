@@ -36,14 +36,24 @@ class UserAccessKeys implements ApiTable {
 
   @override
   Map<String, dynamic> toJsonInput() {
-    return {'accessKey': accessKey, 'description': description};
+    return {
+      'accessKey': accessKey,
+      'description': description,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
+    };
   }
 
   @override
   Future<Map<String, dynamic>> toJsonInputAsync() async {
-    return {'accessKey': accessKey, 'description': description};
+    return {
+      'accessKey': accessKey,
+      'description': description,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
+    };
   }
-  
+
   UserAccessKeys copyWith({
     int? id,
     String? accessKey,

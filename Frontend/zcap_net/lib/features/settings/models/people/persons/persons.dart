@@ -82,7 +82,9 @@ class Persons implements ApiTable {
       'address': address,
       'niss': niss,
       'departureDestinationId': departureDestination?.remoteId,
-      'destinationContact': destinationContact
+      'destinationContact': destinationContact,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -100,7 +102,9 @@ class Persons implements ApiTable {
       'address': address,
       'niss': niss,
       'departureDestinationId': departureDestination?.remoteId,
-      'destinationContact': destinationContact
+      'destinationContact': destinationContact,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 

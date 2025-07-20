@@ -34,7 +34,9 @@ class SupportNeededService(
         val newSupportNeeded = SupportNeeded(
             name = supportNeededInput.name,
             startDate = supportNeededInput.startDate,
-            endDate = supportNeededInput.endDate
+            endDate = supportNeededInput.endDate,
+            createdAt = supportNeededInput.createdAt,
+            lastUpdatedAt = supportNeededInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newSupportNeeded).toOutputModel())
@@ -51,13 +53,15 @@ class SupportNeededService(
         val supportNeeded = repository.findById(id).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
         if (supportNeededInput.name.isBlank() ||
-            supportNeededInput.startDate.isAfter(supportNeededInput.endDate ?: supportNeededInput.startDate))
+            supportNeededInput.startDate.isAfter(supportNeededInput.endDate ?: supportNeededInput.startDate) ||
+            supportNeeded.lastUpdatedAt.isAfter(supportNeededInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newSupportNeeded = supportNeeded.copy(
             name = supportNeededInput.name,
             startDate = supportNeededInput.startDate,
             endDate = supportNeededInput.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = supportNeededInput.createdAt,
+            lastUpdatedAt = supportNeededInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newSupportNeeded).toOutputModel())

@@ -45,7 +45,9 @@ class IncidentZcapPersonService(
             incidentZcap = incidentZcap,
             person = person,
             startDate = input.startDate,
-            endDate = input.endDate
+            endDate = input.endDate,
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
         return try {
             success(repo.save(newIncidentZcapPerson).toOutputModel())
@@ -65,14 +67,16 @@ class IncidentZcapPersonService(
             ?: return failure(ServiceErrors.IncidentZcapNotFound)
         val person = personRepository.findById(input.personId).getOrNull()
             ?: return failure(ServiceErrors.PersonNotFound)
-        if (input.startDate.isAfter(input.endDate ?: input.startDate))
+        if (input.startDate.isAfter(input.endDate ?: input.startDate) ||
+            izp.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newIncidentZcapPerson = izp.copy(
             incidentZcap = incidentZcap,
             person = person,
             startDate = input.startDate,
             endDate = input.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
         return try {
             success(repo.save(newIncidentZcapPerson).toOutputModel())

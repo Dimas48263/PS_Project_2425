@@ -58,7 +58,9 @@ class ZcapService(
             longitude = input.longitude,
             entity = entity,
             startDate = input.startDate,
-            endDate = input.endDate
+            endDate = input.endDate,
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
 
         return try {
@@ -82,7 +84,8 @@ class ZcapService(
 
         if (input.name.isBlank() ||
             input.address.isBlank() ||
-            input.startDate.isAfter(input.endDate ?: input.startDate))
+            input.startDate.isAfter(input.endDate ?: input.startDate) ||
+            zcap.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newZcap = zcap.copy(
@@ -95,7 +98,8 @@ class ZcapService(
             entity = entity,
             startDate = input.startDate,
             endDate = input.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
 
         return try {

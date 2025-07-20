@@ -41,6 +41,8 @@ class Incidents implements ApiTable {
       'treeRecordId': treeRecord.remoteId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -51,6 +53,8 @@ class Incidents implements ApiTable {
       'treeRecordId': treeRecord.remoteId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 

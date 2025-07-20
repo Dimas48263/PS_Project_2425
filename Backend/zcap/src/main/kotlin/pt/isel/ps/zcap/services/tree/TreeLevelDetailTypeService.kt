@@ -46,8 +46,8 @@ class TreeLevelDetailTypeService(
             detailType = detailType,
             startDate = tldtInput.startDate,
             endDate = tldtInput.endDate,
-            createdAt = LocalDateTime.now(),
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = tldtInput.createdAt,
+            lastUpdatedAt = tldtInput.lastUpdatedAt
         )
         return try {
             success(repo.save(newtldt).toOutputModel())
@@ -68,7 +68,8 @@ class TreeLevelDetailTypeService(
         val detailType = detailTypeRepo.findById(tldtInput.detailTypeId).getOrNull()
             ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound)
 
-        if (tldtInput.startDate.isAfter(tldtInput.endDate ?: tldtInput.startDate))
+        if (tldtInput.startDate.isAfter(tldtInput.endDate ?: tldtInput.startDate) ||
+            tldt.lastUpdatedAt.isAfter(tldtInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newTldt = tldt.copy(
@@ -76,7 +77,8 @@ class TreeLevelDetailTypeService(
             detailType = detailType,
             startDate = tldtInput.startDate,
             endDate = tldtInput.endDate ?: tldt.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = tldtInput.createdAt,
+            lastUpdatedAt = tldtInput.lastUpdatedAt
         )
         return try {
             success(repo.save(newTldt).toOutputModel())

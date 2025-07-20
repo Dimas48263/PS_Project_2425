@@ -49,6 +49,13 @@ class _DepartureDestinationScreenState
   }
 
   @override
+  void dispose() {
+    _searchController.dispose();
+    departureDestinationStream?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     allowances = context.watch<UserAllowancesProvider>();
     canWrite = allowances

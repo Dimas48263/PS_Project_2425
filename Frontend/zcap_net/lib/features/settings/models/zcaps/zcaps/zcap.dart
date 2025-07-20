@@ -74,6 +74,8 @@ class Zcap implements ApiTable {
       'entityId': zcapEntity?.remoteId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -89,6 +91,8 @@ class Zcap implements ApiTable {
       'entityId': zcapEntity?.remoteId,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 

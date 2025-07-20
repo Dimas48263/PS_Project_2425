@@ -58,20 +58,21 @@ class EntityTypesService(
         entityTypeId: Long,
         updatedEntityType: EntityTypeInputModel
     ): Either<ServiceErrors, EntityTypeOutputModel> {
-
-        if (updatedEntityType.name.isBlank()
-            || updatedEntityType.startDate.isAfter(updatedEntityType.endDate ?: updatedEntityType.startDate)
-        )
-            return failure(ServiceErrors.InvalidDataInput)
-
         val oldEntityType =
             entityTypeRepository.findById(entityTypeId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+
+        if (updatedEntityType.name.isBlank()
+            || updatedEntityType.startDate.isAfter(updatedEntityType.endDate ?: updatedEntityType.startDate) ||
+            oldEntityType.lastUpdatedAt.isAfter(updatedEntityType.lastUpdatedAt)
+        )
+            return failure(ServiceErrors.InvalidDataInput)
 
         val newProfile = oldEntityType.copy(
             name = updatedEntityType.name,
             startDate = updatedEntityType.startDate,
             endDate = updatedEntityType.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = updatedEntityType.createdAt,
+            lastUpdatedAt = updatedEntityType.lastUpdatedAt
         )
 
         return try {

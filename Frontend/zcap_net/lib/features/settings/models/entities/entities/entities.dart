@@ -55,6 +55,8 @@ class Entity implements ApiTable {
       if (phone2 != null) 'phone2': phone2,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -68,6 +70,8 @@ class Entity implements ApiTable {
       if (phone2 != null) 'phone2': phone2,
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 }

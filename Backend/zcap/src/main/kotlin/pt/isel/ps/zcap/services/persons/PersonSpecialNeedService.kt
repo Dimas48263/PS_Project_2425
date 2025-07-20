@@ -46,7 +46,9 @@ class PersonSpecialNeedService(
             specialNeed = specialNeed,
             description = personSpecialNeedInput.description,
             startDate = personSpecialNeedInput.startDate,
-            endDate = personSpecialNeedInput.endDate
+            endDate = personSpecialNeedInput.endDate,
+            createdAt = personSpecialNeedInput.createdAt,
+            lastUpdatedAt = personSpecialNeedInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newPersonSpecialNeed).toOutputModel())
@@ -67,7 +69,8 @@ class PersonSpecialNeedService(
         val specialNeed = specialNeedRepository.findById(personSpecialNeedInput.specialNeedId).getOrNull()
             ?: return failure(ServiceErrors.SpecialNeedNotFound)
         if (personSpecialNeedInput.description?.isBlank() == true ||
-            personSpecialNeedInput.startDate.isAfter(personSpecialNeedInput.endDate ?: personSpecialNeedInput.startDate))
+            personSpecialNeedInput.startDate.isAfter(personSpecialNeedInput.endDate ?: personSpecialNeedInput.startDate) ||
+            personSpecialNeed.lastUpdatedAt.isAfter(personSpecialNeedInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newPersonSpecialNeed = personSpecialNeed.copy(
             person = person,
@@ -75,7 +78,8 @@ class PersonSpecialNeedService(
             description = personSpecialNeedInput.description,
             startDate = personSpecialNeedInput.startDate,
             endDate = personSpecialNeedInput.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = personSpecialNeedInput.createdAt,
+            lastUpdatedAt = personSpecialNeedInput.lastUpdatedAt
         )
         return try {
             success(repository.save(newPersonSpecialNeed).toOutputModel())

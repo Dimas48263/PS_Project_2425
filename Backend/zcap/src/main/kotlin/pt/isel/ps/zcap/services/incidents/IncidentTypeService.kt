@@ -34,7 +34,9 @@ class IncidentTypeService(
         val newIncidentType = IncidentType(
             name = input.name,
             startDate = input.startDate,
-            endDate = input.endDate
+            endDate = input.endDate,
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
         return try {
             success(repo.save(newIncidentType).toOutputModel())
@@ -50,13 +52,16 @@ class IncidentTypeService(
     ): Either<ServiceErrors, IncidentTypeOutputModel> {
         val incidentType = repo.findById(id).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
-        if (input.name.isBlank() || input.startDate.isAfter(input.endDate ?: input.startDate))
+        if (input.name.isBlank() ||
+            input.startDate.isAfter(input.endDate ?: input.startDate) ||
+            incidentType.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newIncidentType = incidentType.copy(
             name = input.name,
             startDate = input.startDate,
             endDate = input.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
         return try {
             success(repo.save(newIncidentType).toOutputModel())

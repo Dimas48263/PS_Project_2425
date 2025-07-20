@@ -1,6 +1,7 @@
 package pt.isel.ps.zcap.repository.dto.users
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 data class UserUpdateInputModel(
     val userName: String,
@@ -9,5 +10,7 @@ data class UserUpdateInputModel(
     val userProfileId: Long,
     val userDataProfileId: Long,
     val startDate: LocalDate,
-    val endDate: LocalDate? = null
+    val endDate: LocalDate? = null,
+    val createdAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime
 )

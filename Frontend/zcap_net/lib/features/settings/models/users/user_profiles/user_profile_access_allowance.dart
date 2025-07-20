@@ -42,6 +42,8 @@ class UserProfileAccessAllowance implements ApiTable {
     return {
       'userProfileAccessKeyId': remoteId,
       'accessType': accessType.index,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -50,6 +52,8 @@ class UserProfileAccessAllowance implements ApiTable {
     return {
       'userProfileAccessKeyId': remoteId,
       'accessType': accessType.index,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 }

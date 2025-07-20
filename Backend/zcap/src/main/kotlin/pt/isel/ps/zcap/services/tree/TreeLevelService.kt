@@ -44,7 +44,8 @@ class TreeLevelService(
         val treeLevel = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
         if (treeLevelUpdate.name.isBlank() ||
             treeLevelUpdate.description?.isBlank() == true ||
-            treeLevelUpdate.startDate.isAfter(treeLevelUpdate.endDate ?: treeLevelUpdate.startDate))
+            treeLevelUpdate.startDate.isAfter(treeLevelUpdate.endDate ?: treeLevelUpdate.startDate) ||
+            treeLevel.lastUpdatedAt.isAfter(treeLevelUpdate.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newTreeLevel = treeLevel.copy(
@@ -53,7 +54,8 @@ class TreeLevelService(
             description = treeLevelUpdate.description,
             startDate = treeLevelUpdate.startDate,
             endDate = treeLevelUpdate.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = treeLevelUpdate.createdAt,
+            lastUpdatedAt = treeLevelUpdate.lastUpdatedAt
         )
         return try {
             success(repo.save(newTreeLevel).toOutputModel())
@@ -81,6 +83,8 @@ class TreeLevelService(
         name = name,
         description = description,
         startDate = startDate,
-        endDate = endDate
+        endDate = endDate,
+        createdAt = createdAt,
+        lastUpdatedAt = lastUpdatedAt
     )
 }

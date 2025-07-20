@@ -48,7 +48,9 @@ class IncidentZcapService(
             zcap = zcap,
             entity = entity,
             startDate = input.startDate,
-            endDate = input.endDate
+            endDate = input.endDate,
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
 
         return try {
@@ -67,7 +69,8 @@ class IncidentZcapService(
             ?: return failure(ServiceErrors.ZcapNotFound)
         val entity = entitiesRepository.findById(input.entityId).getOrNull()
             ?: return failure(ServiceErrors.EntityNotFound)
-        if (input.startDate.isAfter(input.endDate ?: input.startDate))
+        if (input.startDate.isAfter(input.endDate ?: input.startDate) ||
+            incidentZcap.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
 
         val newIncidentZcap = incidentZcap.copy(
@@ -76,7 +79,8 @@ class IncidentZcapService(
             entity = entity,
             startDate = input.startDate,
             endDate = input.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
 
         return try {

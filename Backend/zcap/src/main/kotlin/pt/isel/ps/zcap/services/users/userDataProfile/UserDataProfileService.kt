@@ -61,7 +61,8 @@ class UserDataProfileService(
                 ?: return failure(ServiceErrors.RecordNotFound)
 
         if (updatedDataProfile.name.isBlank()
-            || updatedDataProfile.startDate.isAfter(updatedDataProfile.endDate ?: updatedDataProfile.startDate)
+            || updatedDataProfile.startDate.isAfter(updatedDataProfile.endDate ?: updatedDataProfile.startDate) ||
+            oldDataProfile.lastUpdatedAt.isAfter(updatedDataProfile.lastUpdatedAt)
         )
             return failure(ServiceErrors.InvalidDataInput)
 
@@ -69,7 +70,8 @@ class UserDataProfileService(
             name = updatedDataProfile.name,
             startDate = updatedDataProfile.startDate,
             endDate = updatedDataProfile.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = updatedDataProfile.createdAt,
+            lastUpdatedAt = updatedDataProfile.lastUpdatedAt
         )
 
         return try {
@@ -87,7 +89,8 @@ class UserDataProfileService(
         name = inputData.name,
         startDate = inputData.startDate,
         endDate = inputData.endDate,
-        lastUpdatedAt = LocalDateTime.now()
+        createdAt = inputData.createdAt,
+        lastUpdatedAt = inputData.lastUpdatedAt
     )
 
     // Conversion from domain Model to OutputModel

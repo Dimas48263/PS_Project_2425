@@ -46,8 +46,8 @@ class ZcapDetailTypeService(
             isMandatory = zcapDetailTypeInput.isMandatory,
             startDate = zcapDetailTypeInput.startDate,
             endDate = zcapDetailTypeInput.endDate,
-            createdAt = LocalDateTime.now(),
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = zcapDetailTypeInput.createdAt,
+            lastUpdatedAt = zcapDetailTypeInput.lastUpdatedAt
         )
         return try {
             success(repo.save(newZcapDetailType).toOutputModel())
@@ -64,7 +64,8 @@ class ZcapDetailTypeService(
         val zcapDetailType = repo.findById(id).getOrNull()
             ?: return failure(ServiceErrors.RecordNotFound)
         if (zcapDetailTypeInput.name.isBlank() ||
-            zcapDetailTypeInput.startDate.isAfter(zcapDetailTypeInput.endDate ?: zcapDetailTypeInput.startDate))
+            zcapDetailTypeInput.startDate.isAfter(zcapDetailTypeInput.endDate ?: zcapDetailTypeInput.startDate) ||
+            zcapDetailType.lastUpdatedAt.isAfter(zcapDetailTypeInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val detailTypeCategory = detailTypeCategoryRepository.findById(zcapDetailTypeInput.detailTypeCategoryId).getOrNull()
             ?: return failure(ServiceErrors.DetailTypeCategoryNotFound)
@@ -75,7 +76,8 @@ class ZcapDetailTypeService(
             isMandatory = zcapDetailTypeInput.isMandatory,
             startDate = zcapDetailTypeInput.startDate,
             endDate = zcapDetailTypeInput.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = zcapDetailTypeInput.createdAt,
+            lastUpdatedAt = zcapDetailTypeInput.lastUpdatedAt
         )
         return try {
             success(repo.save(newZcapDetailType).toOutputModel())

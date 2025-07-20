@@ -48,8 +48,8 @@ class ZcapDetailService(
             valueCol = input.valueCol,
             startDate = input.startDate,
             endDate = input.endDate,
-            createdAt = LocalDateTime.now(),
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
         return try {
             success(repo.save(newZcapDetail).toOutputModel())
@@ -70,7 +70,8 @@ class ZcapDetailService(
         val zcapDetailType = zcapDetailTypeRepo.findById(input.zcapDetailTypeId).getOrNull()
             ?: return failure(ServiceErrors.ZcapDetailTypeNotFound)
         if (zcapDetailType.isMandatory && input.valueCol.isBlank() ||
-            input.startDate.isAfter(input.endDate ?: input.startDate))
+            input.startDate.isAfter(input.endDate ?: input.startDate) ||
+            zcapDetail.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val newZcapDetail = zcapDetail.copy(
             zcap = zcap,
@@ -78,7 +79,8 @@ class ZcapDetailService(
             valueCol = input.valueCol,
             startDate = input.startDate,
             endDate = input.endDate,
-            lastUpdatedAt = LocalDateTime.now()
+            createdAt = input.createdAt,
+            lastUpdatedAt = input.lastUpdatedAt
         )
         return try {
             success(repo.save(newZcapDetail).toOutputModel())

@@ -247,6 +247,7 @@ class _TreeRecordDetailsScreenState extends State<TreeRecordDetailsScreen> {
                           setModalState(() {
                             detailType = value;
                             tree = null;
+                            valueController.text = ''; 
                             availableTreeLevelIds = treeLevelDetailTypes
                                 .where((e) =>
                                     e.detailType.value!.id == detailType!.id)

@@ -57,6 +57,8 @@ class Users implements ApiTable {
       'userDataProfileId': userDataProfile.remoteId,
       'startDate': startDate.toIso8601String(),
       if (endDate != null) 'endDate': endDate!.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 

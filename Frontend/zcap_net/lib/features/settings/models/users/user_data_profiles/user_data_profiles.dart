@@ -45,6 +45,8 @@ class UserDataProfile implements ApiTable {
 //          [], //no datallowances, need to use async version instead
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -61,6 +63,8 @@ class UserDataProfile implements ApiTable {
 //          dataAllowances.map((a) => a.toEntity().toJson()).toList(),
       'startDate': startDate.toIso8601String(),
       'endDate': endDate?.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 }

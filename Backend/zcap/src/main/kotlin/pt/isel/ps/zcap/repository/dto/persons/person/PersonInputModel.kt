@@ -15,5 +15,7 @@ data class PersonInputModel(
     val address: String?,
     val niss: String?,
     val departureDestinationId: Long?,
-    val destinationContact: String?
+    val destinationContact: String?,
+    val createdAt: LocalDateTime,
+    val lastUpdatedAt: LocalDateTime
 )

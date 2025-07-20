@@ -26,7 +26,9 @@ class Relations extends ApiTable {
     return {
       'personId1': person1.remoteId,
       'personId2': person2.remoteId,
-      'relationTypeId': relationType.remoteId
+      'relationTypeId': relationType.remoteId,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
@@ -43,7 +45,9 @@ class Relations extends ApiTable {
     return {
       'personId1': person1.remoteId,
       'personId2': person2.remoteId,
-      'relationTypeId': relationType.remoteId
+      'relationTypeId': relationType.remoteId,
+      'createdAt': createdAt.toIso8601String(),
+      'lastUpdatedAt': lastUpdatedAt.toIso8601String(),
     };
   }
 
