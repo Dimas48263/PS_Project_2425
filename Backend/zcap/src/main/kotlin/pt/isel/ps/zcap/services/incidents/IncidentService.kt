@@ -28,15 +28,15 @@ class IncidentService(
 
     fun getIncidentById(id: Long): Either<ServiceErrors, IncidentOutputModel> {
         val incident = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(incident.toOutputModel())
     }
 
     fun saveIncident(input: IncidentInputModel): Either<ServiceErrors, IncidentOutputModel> {
         val incidentType = incidentTypeRepo.findById(input.incidentTypeId).getOrNull()
-            ?: return failure(ServiceErrors.IncidentTypeNotFound)
+            ?: return failure(ServiceErrors.IncidentTypeNotFound(input.incidentTypeId))
         val tree = treeRepo.findById(input.treeRecordId).getOrNull()
-            ?: return failure(ServiceErrors.TreeNotFound)
+            ?: return failure(ServiceErrors.TreeNotFound(input.treeRecordId))
         if (input.startDate.isAfter(input.endDate ?: input.startDate))
             return failure(ServiceErrors.InvalidDataInput)
         val newIncident = Incident(
@@ -50,7 +50,7 @@ class IncidentService(
         return try {
             success(repo.save(newIncident).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -60,11 +60,11 @@ class IncidentService(
         input: IncidentInputModel
     ): Either<ServiceErrors, IncidentOutputModel> {
         val incident = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
-        val incidentType = incidentTypeRepo.findById(input.incidentTypeId).getOrNull()
-            ?: return failure(ServiceErrors.IncidentTypeNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(input.incidentTypeId))
+        val incidentType = incidentTypeRepo.findById(id).getOrNull()
+            ?: return failure(ServiceErrors.IncidentTypeNotFound(input.incidentTypeId))
         val tree = treeRepo.findById(input.treeRecordId).getOrNull()
-            ?: return failure(ServiceErrors.TreeNotFound)
+            ?: return failure(ServiceErrors.TreeNotFound(input.treeRecordId))
         if (input.startDate.isAfter(input.endDate ?: input.startDate) ||
             incident.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
@@ -88,7 +88,7 @@ class IncidentService(
 
     fun getIncidentsByIncidentTypeId(id: Long): Either<ServiceErrors, List<IncidentOutputModel>> {
         incidentTypeRepo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(repo.findByIncidentTypeId(id).map { it.toOutputModel() })
     }
 }

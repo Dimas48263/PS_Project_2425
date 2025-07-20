@@ -23,7 +23,7 @@ class DetailTypeCategoryService(
         repo.findAll().map { it.toOutputModel() }
 
     fun getDetailTypeCategoryById(id: Long): Either<ServiceErrors, DetailTypeCategoryOutputModel> {
-        val dtc = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        val dtc = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(dtc.toOutputModel())
     }
 
@@ -53,7 +53,7 @@ class DetailTypeCategoryService(
         inputModel: DetailTypeCategoryInputModel
     ): Either<ServiceErrors, DetailTypeCategoryOutputModel> {
         val detailTypeCategory = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
 
         if (inputModel.name.isBlank() || inputModel.startDate.isAfter(inputModel.endDate ?: inputModel.startDate) ||
             detailTypeCategory.lastUpdatedAt.isAfter(inputModel.lastUpdatedAt))
@@ -69,7 +69,7 @@ class DetailTypeCategoryService(
         return try {
             success(repo.save(newDetailTypeCategory).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.InsertFailed)
+            failure(ServiceErrors.UpdateFailed)
         }
     }
 

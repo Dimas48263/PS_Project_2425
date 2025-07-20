@@ -24,16 +24,16 @@ class TreeService(
     fun getAllTrees(): List<TreeOutputModel> = repo.findAll().map { it.toOutputModel() }
 
     fun getTreeById(id: Long): Either<ServiceErrors, TreeOutputModel> {
-        val tree = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        val tree = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(tree.toOutputModel())
     }
 
     fun saveTree(treeInput: TreeInputModel): Either<ServiceErrors, TreeOutputModel> {
         val treeLevel = treeLevelRepo.findById(treeInput.treeLevelId).getOrNull()
-            ?: return failure(ServiceErrors.TreeLevelNotFound)
+            ?: return failure(ServiceErrors.TreeLevelNotFound(treeInput.treeLevelId))
 
         val parent = treeInput.parentId?.let {
-            repo.findById(it).getOrNull() ?: return failure(ServiceErrors.ParentNotFound)
+            repo.findById(it).getOrNull() ?: return failure(ServiceErrors.ParentNotFound(treeInput.parentId))
         }
 
         if (treeInput.name.isBlank() || treeInput.startDate.isAfter(treeInput.endDate ?: treeInput.startDate))
@@ -42,18 +42,18 @@ class TreeService(
         return try {
             success(repo.save(treeInput.toTree(treeLevel, parent)).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
     @Transactional
     fun updateTreeById(id: Long, treeUpdate: TreeInputModel): Either<ServiceErrors, TreeOutputModel> {
-        val tree = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.TreeNotFound)
+        val tree = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.TreeNotFound(id))
         val treeLevel = treeLevelRepo.findById(treeUpdate.treeLevelId).getOrNull()
-            ?: return failure(ServiceErrors.TreeLevelNotFound)
+            ?: return failure(ServiceErrors.TreeLevelNotFound(treeUpdate.treeLevelId))
 
         val parent = treeUpdate.parentId?.let {
-            repo.findById(it).getOrNull() ?: return failure(ServiceErrors.ParentNotFound)
+            repo.findById(it).getOrNull() ?: return failure(ServiceErrors.ParentNotFound(treeUpdate.parentId))
         }
 
         if (treeUpdate.name.isBlank() ||
@@ -80,11 +80,11 @@ class TreeService(
     @Transactional
     fun deleteTreeById(id: Long): Either<ServiceErrors, Unit> {
         val exists = repo.existsById(id)
-        if (!exists) return failure(ServiceErrors.RecordNotFound)
+        if (!exists) return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repo.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 
@@ -98,17 +98,17 @@ class TreeService(
 
     fun getTreeByTreeLevelId(id: Long): Either<ServiceErrors,List<TreeOutputModel>> {
         treeLevelRepo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.TreeLevelNotFound)
+            ?: return failure(ServiceErrors.TreeLevelNotFound(id))
         return success(repo.findByTreeLevelId(id).map { it.toOutputModel() })
     }
 
     fun getAllDirectChildren(parentId: Long): Either<ServiceErrors, List<TreeOutputModel>> {
-        repo.findById(parentId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        repo.findById(parentId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(parentId))
         return success(repo.findByParent_TreeRecordId(parentId).map { it.toOutputModel() })
     }
 
     fun getAllChildren(parentId: Long): Either<ServiceErrors, List<TreeOutputModel>> {
-        repo.findById(parentId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        repo.findById(parentId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(parentId))
         val result = mutableListOf<Tree>()
         val childrenToVerify = repo.findByParent_TreeRecordId(parentId) as MutableList
         while (childrenToVerify.isNotEmpty()) {

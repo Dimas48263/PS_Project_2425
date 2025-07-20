@@ -29,17 +29,17 @@ class IncidentZcapService(
 
     fun getIncidentZcapById(id: Long): Either<ServiceErrors, IncidentZcapOutputModel> {
         val incidentZcap = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(incidentZcap.toOutputModel())
     }
 
     fun saveIncidentZcap(input: IncidentZcapInputModel): Either<ServiceErrors, IncidentZcapOutputModel> {
         val incident = incidentRepository.findById(input.incidentId).getOrNull()
-            ?: return failure(ServiceErrors.IncidentNotFound)
+            ?: return failure(ServiceErrors.IncidentNotFound(input.incidentId))
         val zcap = zcapRepository.findById(input.zcapId).getOrNull()
-            ?: return failure(ServiceErrors.ZcapNotFound)
+            ?: return failure(ServiceErrors.ZcapNotFound(input.zcapId))
         val entity = entitiesRepository.findById(input.entityId).getOrNull()
-            ?: return failure(ServiceErrors.EntityNotFound)
+            ?: return failure(ServiceErrors.EntityNotFound(input.entityId))
         if (input.startDate.isAfter(input.endDate ?: input.startDate))
             return failure(ServiceErrors.InvalidDataInput)
 
@@ -56,19 +56,19 @@ class IncidentZcapService(
         return try {
             success(repo.save(newIncidentZcap).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
     fun updateIncidentZcapById(id: Long, input: IncidentZcapInputModel): Either<ServiceErrors, IncidentZcapOutputModel> {
         val incidentZcap = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         val incident = incidentRepository.findById(input.incidentId).getOrNull()
-            ?: return failure(ServiceErrors.IncidentNotFound)
+            ?: return failure(ServiceErrors.IncidentNotFound(input.incidentId))
         val zcap = zcapRepository.findById(input.zcapId).getOrNull()
-            ?: return failure(ServiceErrors.ZcapNotFound)
+            ?: return failure(ServiceErrors.ZcapNotFound(input.zcapId))
         val entity = entitiesRepository.findById(input.entityId).getOrNull()
-            ?: return failure(ServiceErrors.EntityNotFound)
+            ?: return failure(ServiceErrors.EntityNotFound(input.entityId))
         if (input.startDate.isAfter(input.endDate ?: input.startDate) ||
             incidentZcap.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
@@ -95,19 +95,19 @@ class IncidentZcapService(
 
     fun getIncidentZcapsByIncidentId(id: Long): Either<ServiceErrors, List<IncidentZcapOutputModel>> {
         incidentRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.IncidentNotFound)
+            ?: return failure(ServiceErrors.IncidentNotFound(id))
         return success(repo.findByIncident_incidentId(id).map { it.toOutputModel() })
     }
 
     fun getIncidentZcapsByZcapId(id: Long): Either<ServiceErrors, List<IncidentZcapOutputModel>> {
         zcapRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.ZcapNotFound)
+            ?: return failure(ServiceErrors.ZcapNotFound(id))
         return success(repo.findByZcap_zcapId(id).map { it.toOutputModel() })
     }
 
     fun getIncidentZcapsByEntityId(id: Long): Either<ServiceErrors, List<IncidentZcapOutputModel>> {
         entitiesRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.EntityNotFound)
+            ?: return failure(ServiceErrors.EntityNotFound(id))
         return success(repo.findByEntity_entityId(id).map { it.toOutputModel() })
     }
 }

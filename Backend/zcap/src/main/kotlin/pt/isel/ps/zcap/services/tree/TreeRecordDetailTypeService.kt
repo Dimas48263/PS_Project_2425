@@ -23,7 +23,7 @@ class TreeRecordDetailTypeService(
 
     fun getTreeRecordDetailTypeById(id: Long): Either<ServiceErrors, TreeRecordDetailTypeOutputModel> {
         val trdt = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(trdt.toOutputModel())
     }
 
@@ -37,7 +37,7 @@ class TreeRecordDetailTypeService(
         return try {
             success(repo.save(treeRecordDetailTypeInput.toTreeRecordDetailType()).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
     @Transactional
@@ -46,7 +46,7 @@ class TreeRecordDetailTypeService(
         treeRecordDetailTypeInput: TreeRecordDetailTypeInputModel
     ): Either<ServiceErrors, TreeRecordDetailTypeOutputModel> {
         val trdt = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
 
         if (treeRecordDetailTypeInput.name.isBlank() ||
             treeRecordDetailTypeInput.startDate.isAfter(treeRecordDetailTypeInput.endDate ?: treeRecordDetailTypeInput.startDate) ||
@@ -71,7 +71,7 @@ class TreeRecordDetailTypeService(
     @Transactional
     fun deleteTreeRecordDetailTypeById(id: Long): Either<ServiceErrors, Unit> {
         val exists = repo.existsById(id)
-        if (!exists) return failure(ServiceErrors.RecordNotFound)
+        if (!exists) return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repo.deleteById(id))
         } catch (ex: Exception) {

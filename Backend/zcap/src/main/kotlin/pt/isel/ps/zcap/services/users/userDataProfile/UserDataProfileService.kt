@@ -33,7 +33,7 @@ class UserDataProfileService(
 
     fun getUserDataProfileById(userDataProfileId: Long): Either<ServiceErrors, UserDataProfileOutputModel> {
         val dataProfile = userDataProfileRepository.findById(userDataProfileId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(userDataProfileId))
 
         return success(toOutputModel(dataProfile))
     }
@@ -58,7 +58,7 @@ class UserDataProfileService(
 
         val oldDataProfile =
             userDataProfileRepository.findById(userDataProfileId).getOrNull()
-                ?: return failure(ServiceErrors.RecordNotFound)
+                ?: return failure(ServiceErrors.RecordNotFound(userDataProfileId))
 
         if (updatedDataProfile.name.isBlank()
             || updatedDataProfile.startDate.isAfter(updatedDataProfile.endDate ?: updatedDataProfile.startDate) ||

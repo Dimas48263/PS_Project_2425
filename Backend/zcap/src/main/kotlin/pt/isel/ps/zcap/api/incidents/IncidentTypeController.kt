@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -17,16 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.incidents.incidentType.IncidentTypeInputModel
 import pt.isel.ps.zcap.repository.dto.incidents.incidentType.IncidentTypeOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.incidents.IncidentTypeService
 import java.time.LocalDate
@@ -82,11 +75,7 @@ class IncidentTypeController(
     fun getIncidentTypeById(@PathVariable id: Long): ResponseEntity<*> =
         when(val incidentType = service.getIncidentTypeById(id)) {
             is Success -> ResponseEntity.ok(incidentType.value)
-            is Failure -> when (incidentType.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Incident Type", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentType.value.errorResponse, incidentType.value.httpStatus)
         }
 
     @Operation(
@@ -117,13 +106,7 @@ class IncidentTypeController(
     fun saveIncidentType(@RequestBody input: IncidentTypeInputModel): ResponseEntity<*> =
         when(val incidentType = service.saveIncidentType(input)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(incidentType.value)
-            is Failure -> when (incidentType.value) {
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentType.value.errorResponse, incidentType.value.httpStatus)
         }
 
     @Operation(
@@ -163,15 +146,7 @@ class IncidentTypeController(
     ): ResponseEntity<*> =
         when(val incidentType = service.updateIncidentTypeById(id, input)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(incidentType.value)
-            is Failure -> when (incidentType.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Incident Type", id))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentType.value.errorResponse, incidentType.value.httpStatus)
         }
 
     @Operation(

@@ -28,7 +28,7 @@ class IncidentZcapPersonService(
 
     fun getIncidentZcapPersonById(id: Long): Either<ServiceErrors, IncidentZcapPersonOutputModel> {
         val izp = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(izp.toOutputModel())
     }
 
@@ -36,9 +36,9 @@ class IncidentZcapPersonService(
         input: IncidentZcapPersonInputModel
     ): Either<ServiceErrors, IncidentZcapPersonOutputModel> {
         val incidentZcap = incidentZcapRepository.findById(input.incidentZcapId).getOrNull()
-            ?: return failure(ServiceErrors.IncidentZcapNotFound)
+            ?: return failure(ServiceErrors.IncidentZcapNotFound(input.incidentZcapId))
         val person = personRepository.findById(input.personId).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(input.personId))
         if (input.startDate.isAfter(input.endDate ?: input.startDate))
             return failure(ServiceErrors.InvalidDataInput)
         val newIncidentZcapPerson = IncidentZcapPerson(
@@ -52,7 +52,7 @@ class IncidentZcapPersonService(
         return try {
             success(repo.save(newIncidentZcapPerson).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -62,11 +62,11 @@ class IncidentZcapPersonService(
         input: IncidentZcapPersonInputModel
     ): Either<ServiceErrors, IncidentZcapPersonOutputModel> {
         val izp = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         val incidentZcap = incidentZcapRepository.findById(input.incidentZcapId).getOrNull()
-            ?: return failure(ServiceErrors.IncidentZcapNotFound)
+            ?: return failure(ServiceErrors.IncidentZcapNotFound(input.incidentZcapId))
         val person = personRepository.findById(input.personId).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(input.personId))
         if (input.startDate.isAfter(input.endDate ?: input.startDate) ||
             izp.lastUpdatedAt.isAfter(input.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
@@ -91,13 +91,13 @@ class IncidentZcapPersonService(
 
     fun getIncidentZcapPersonByIncidentZcapId(id: Long): Either<ServiceErrors, List<IncidentZcapPersonOutputModel>> {
         incidentZcapRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.IncidentNotFound)
+            ?: return failure(ServiceErrors.IncidentZcapNotFound(id))
         return success(repo.findByIncidentZcap_incidentZcapId(id).map { it.toOutputModel() })
     }
 
     fun getIncidentZcapPersonByPersonId(id: Long): Either<ServiceErrors, List<IncidentZcapPersonOutputModel>> {
         personRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.IncidentNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(id))
         return success(repo.findByPerson_personId(id).map { it.toOutputModel() })
     }
 }

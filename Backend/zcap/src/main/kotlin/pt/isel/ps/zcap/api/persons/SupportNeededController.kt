@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.persons.supportNeeded.SupportNeededInputModel
 import pt.isel.ps.zcap.repository.dto.persons.supportNeeded.SupportNeededOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.persons.SupportNeededService
 import java.time.LocalDate
@@ -78,11 +71,7 @@ class SupportNeededController(
     fun getSupportNeededById(@PathVariable id: Long): ResponseEntity<*> =
         when (val supportNeeded = service.getSupportNeededById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(supportNeeded.value)
-            is Failure -> when(supportNeeded.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Support Needed", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(supportNeeded.value.errorResponse, supportNeeded.value.httpStatus)
         }
 
     @Operation(
@@ -118,13 +107,7 @@ class SupportNeededController(
     ): ResponseEntity<*> =
         when (val supportNeeded = service.saveSupportNeeded(supportNeededInput)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(supportNeeded.value)
-            is Failure -> when(supportNeeded.value) {
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(supportNeeded.value.errorResponse, supportNeeded.value.httpStatus)
         }
 
     @Operation(
@@ -171,28 +154,14 @@ class SupportNeededController(
                 service.updateSupportNeededById(id, supportNeededInput)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(supportNeeded.value)
-            is Failure -> when(supportNeeded.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Support Needed", id))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(supportNeeded.value.errorResponse, supportNeeded.value.httpStatus)
         }
 
     @DeleteMapping("/{id}")
     fun deleteSupportNeededById(@PathVariable id: Long): ResponseEntity<*> =
         when (val deleted = service.deleteSupportNeededById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
-            is Failure -> when(deleted.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Support Needed", id))
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(deleted.value.errorResponse, deleted.value.httpStatus)
         }
 
     @Operation(

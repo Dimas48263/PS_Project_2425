@@ -49,9 +49,7 @@ class UserProfileAccessKeysController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -69,7 +67,7 @@ class UserProfileAccessKeysController(
     fun addAccessKey(@RequestBody accessKey: UserProfileAccessKeyInputModel): ResponseEntity<Any> {
         return when (val result = userProfileAccessKeysService.addAccessKey(accessKey)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
-            is Failure -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid accessKey input.")
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
     }
 
@@ -92,9 +90,7 @@ class UserProfileAccessKeysController(
     ): ResponseEntity<Any> {
         return when (val result = userProfileAccessKeysService.updateAccessKey(userProfileAccessKeyId, accessKey)) {
             is Success -> ResponseEntity.ok(result.value)
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
     }
 }

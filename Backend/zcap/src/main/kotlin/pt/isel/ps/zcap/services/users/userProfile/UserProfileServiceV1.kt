@@ -28,7 +28,7 @@ class UserProfileServiceV1(private val userProfileRepository: UserProfileReposit
 
     fun getUserProfileById(userProfileId: Long): Either<ServiceErrors, UserProfileOutputModel> {
         val profile = userProfileRepository.findById(userProfileId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(userProfileId))
 
         return success(toOutputModel(profile))
     }
@@ -58,7 +58,7 @@ class UserProfileServiceV1(private val userProfileRepository: UserProfileReposit
             return failure(ServiceErrors.InvalidDataInput)
 
         val oldProfile =
-            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(userProfileId))
 
         val newProfile = oldProfile.copy(
             name = updatedProfile.name,

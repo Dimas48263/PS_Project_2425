@@ -36,7 +36,7 @@ class UserService(
 
     fun getUserById(userId: Long): Either<ServiceErrors, UserOutputModel> {
         val user: User = userRepository.findById(userId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(userId))
 
         return success(toOutputModel(user))
     }
@@ -45,7 +45,7 @@ class UserService(
         val users: List<User> = userRepository.findByUserName(userName)
 
         return if (users.isEmpty())
-            failure(ServiceErrors.RecordNotFound)
+            failure(ServiceErrors.RecordNotFound(0))
         else
             success(users.map { toOutputModel(it) })
     }
@@ -111,7 +111,7 @@ class UserService(
 
     fun updateUser(userId: Long, user: UserUpdateInputModel): Either<ServiceErrors, UserOutputModel> {
         val existingUser = userRepository.findById(userId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(userId))
 
         val userProfile = userProfileService.internalGetUserProfileById(user.userProfileId)
             ?: return failure(ServiceErrors.InvalidDataInput)
@@ -152,7 +152,7 @@ class UserService(
     ): Either<ServiceErrors, UserOutputModel> {
 
         val user = userRepository.findById(userId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(userId))
 
         if (!verifyPassword(user.password, currentPassword)) {
             return failure(ServiceErrors.InvalidUserNameOrPassword)

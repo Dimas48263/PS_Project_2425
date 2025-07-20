@@ -33,7 +33,7 @@ class EntityTypesService(
 
     fun getEntityTypeById(entityTypeId: Long): Either<ServiceErrors, EntityTypeOutputModel> {
         val entityType = entityTypeRepository.findById(entityTypeId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(entityTypeId))
 
         return success(entityType.toOutputModel())
     }
@@ -59,7 +59,7 @@ class EntityTypesService(
         updatedEntityType: EntityTypeInputModel
     ): Either<ServiceErrors, EntityTypeOutputModel> {
         val oldEntityType =
-            entityTypeRepository.findById(entityTypeId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+            entityTypeRepository.findById(entityTypeId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(entityTypeId))
 
         if (updatedEntityType.name.isBlank()
             || updatedEntityType.startDate.isAfter(updatedEntityType.endDate ?: updatedEntityType.startDate) ||

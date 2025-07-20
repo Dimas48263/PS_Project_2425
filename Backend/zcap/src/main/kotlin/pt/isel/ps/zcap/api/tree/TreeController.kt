@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.trees.tree.TreeInputModel
 import pt.isel.ps.zcap.repository.dto.trees.tree.TreeOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeService
 import java.time.LocalDate
@@ -75,10 +68,7 @@ class TreeController(
     fun getTreeById(@PathVariable id: Long): ResponseEntity<*> =
         when (val tree = service.getTreeById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(tree.value)
-            is Failure -> when(tree.value) {
-                is ServiceErrors.RecordNotFound -> throw EntityNotFoundException(notFoundMessage("Tree", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(tree.value.errorResponse, tree.value.httpStatus)
         }
 
     @Operation(
@@ -118,17 +108,7 @@ class TreeController(
     fun saveTree(@RequestBody treeRequest: TreeInputModel): ResponseEntity<*> =
         when (val tree = service.saveTree(treeRequest)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(tree.value)
-            is Failure -> when(tree.value) {
-                is ServiceErrors.TreeLevelNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level", treeRequest.treeLevelId))
-                is ServiceErrors.ParentNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Parent", treeRequest.parentId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(tree.value.errorResponse, tree.value.httpStatus)
         }
 
     @Operation(
@@ -174,32 +154,14 @@ class TreeController(
                 service.updateTreeById(id, treeUpdateRequest)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(tree.value)
-            is Failure -> when(tree.value) {
-                is ServiceErrors.TreeLevelNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level", treeUpdateRequest.treeLevelId))
-                is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", id))
-                is ServiceErrors.ParentNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Parent", treeUpdateRequest.parentId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(tree.value.errorResponse, tree.value.httpStatus)
         }
 
     @DeleteMapping("/{id}")
     fun deleteTreeLevelById(@PathVariable id: Long): ResponseEntity<*> =
         when (val deleted = service.deleteTreeById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
-            is Failure -> when(deleted.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", id))
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException("Delete failed")
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(deleted.value.errorResponse, deleted.value.httpStatus)
         }
 
     @Operation(
@@ -255,14 +217,10 @@ class TreeController(
     @GetMapping("/name")
     fun getTreesByNameContaining(
         @RequestParam name: String
-    ): ResponseEntity<List<TreeOutputModel>> =
+    ): ResponseEntity<*> =
         when(val result = service.getTreesByNameContaining(name)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> when (result.value) {
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
 
@@ -298,10 +256,7 @@ class TreeController(
     fun getTreesByTreeLevelId(@PathVariable id: Long): ResponseEntity<*> =
         when(val trees = service.getTreeByTreeLevelId(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(trees.value)
-            is Failure -> when (trees.value) {
-                is ServiceErrors.TreeLevelNotFound -> throw EntityNotFoundException(notFoundMessage("Tree", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(trees.value.errorResponse, trees.value.httpStatus)
         }
 
     @Operation(
@@ -336,10 +291,7 @@ class TreeController(
     fun getAllDirectChildren(@PathVariable id: Long): ResponseEntity<*> =
         when(val trees = service.getAllDirectChildren(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(trees.value)
-            is Failure -> when (trees.value) {
-                is ServiceErrors.RecordNotFound -> throw EntityNotFoundException(notFoundMessage("Tree", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(trees.value.errorResponse, trees.value.httpStatus)
         }
 
     @Operation(
@@ -371,13 +323,10 @@ class TreeController(
         ],
     )
     @GetMapping("/allChildren/{id}")
-    fun getAllChildrenTree(@PathVariable id: Long): ResponseEntity<List<TreeOutputModel>> =
+    fun getAllChildrenTree(@PathVariable id: Long): ResponseEntity<*> =
         when (val trees = service.getAllChildren(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(trees.value)
-            is Failure -> when (trees.value) {
-                is ServiceErrors.RecordNotFound -> throw EntityNotFoundException(notFoundMessage("Tree", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(trees.value.errorResponse, trees.value.httpStatus)
         }
 
 

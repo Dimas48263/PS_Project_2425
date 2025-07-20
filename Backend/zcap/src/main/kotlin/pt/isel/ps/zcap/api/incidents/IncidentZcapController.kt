@@ -5,22 +5,15 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.incidents.incident.IncidentOutputModel
 import pt.isel.ps.zcap.repository.dto.incidents.incidentZcap.IncidentZcapInputModel
 import pt.isel.ps.zcap.repository.dto.incidents.incidentZcap.IncidentZcapOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.incidents.IncidentZcapService
 import java.time.LocalDate
@@ -74,14 +67,10 @@ class IncidentZcapController(
         ],
     )
     @GetMapping("/{id}")
-    fun getIncidentZcapById(@PathVariable id: Long): ResponseEntity<IncidentZcapOutputModel> =
+    fun getIncidentZcapById(@PathVariable id: Long): ResponseEntity<*> =
         when(val incidentZcap = service.getIncidentZcapById(id)) {
             is Success -> ResponseEntity.ok(incidentZcap.value)
-            is Failure -> when (incidentZcap.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Incident Zcap", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentZcap.value.errorResponse, incidentZcap.value.httpStatus)
         }
 
     @Operation(
@@ -116,22 +105,10 @@ class IncidentZcapController(
         ],
     )
     @PostMapping
-    fun saveIncidentZcap(@RequestBody input: IncidentZcapInputModel): ResponseEntity<IncidentZcapOutputModel> =
+    fun saveIncidentZcap(@RequestBody input: IncidentZcapInputModel): ResponseEntity<*> =
         when(val incidentZcap = service.saveIncidentZcap(input)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(incidentZcap.value)
-            is Failure -> when (incidentZcap.value) {
-                is ServiceErrors.IncidentNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Incident", input.incidentId))
-                is ServiceErrors.ZcapNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Zcap", input.zcapId))
-                is ServiceErrors.EntityNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Entity", input.entityId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentZcap.value.errorResponse, incidentZcap.value.httpStatus)
         }
 
     @Operation(
@@ -170,24 +147,10 @@ class IncidentZcapController(
     fun updateIncidentZcapById(
         @PathVariable id: Long,
         @RequestBody input: IncidentZcapInputModel
-    ): ResponseEntity<IncidentZcapOutputModel> =
+    ): ResponseEntity<*> =
         when(val incidentZcap = service.updateIncidentZcapById(id, input)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(incidentZcap.value)
-            is Failure -> when (incidentZcap.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Incident Zcap", id))
-                is ServiceErrors.IncidentNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Incident", input.incidentId))
-                is ServiceErrors.ZcapNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Zcap", input.zcapId))
-                is ServiceErrors.EntityNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Entity", input.entityId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentZcap.value.errorResponse, incidentZcap.value.httpStatus)
         }
 
     @Operation(
@@ -238,14 +201,10 @@ class IncidentZcapController(
         ],
     )
     @GetMapping("/incidents/{id}")
-    fun getIncidentZcapsByIncidentId(@PathVariable id: Long): ResponseEntity<List<IncidentZcapOutputModel>> =
+    fun getIncidentZcapsByIncidentId(@PathVariable id: Long): ResponseEntity<*> =
         when(val incidentZcap = service.getIncidentZcapsByIncidentId(id)) {
             is Success -> ResponseEntity.ok(incidentZcap.value)
-            is Failure -> when (incidentZcap.value) {
-                is ServiceErrors.IncidentNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Incident", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentZcap.value.errorResponse, incidentZcap.value.httpStatus)
         }
 
     @Operation(
@@ -270,14 +229,10 @@ class IncidentZcapController(
         ],
     )
     @GetMapping("/zcaps/{id}")
-    fun getIncidentZcapsByZcapId(@PathVariable id: Long): ResponseEntity<List<IncidentZcapOutputModel>> =
+    fun getIncidentZcapsByZcapId(@PathVariable id: Long): ResponseEntity<*> =
         when(val incidentZcap = service.getIncidentZcapsByZcapId(id)) {
             is Success -> ResponseEntity.ok(incidentZcap.value)
-            is Failure -> when (incidentZcap.value) {
-                is ServiceErrors.IncidentNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Zcap", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentZcap.value.errorResponse, incidentZcap.value.httpStatus)
         }
 
     @Operation(
@@ -302,13 +257,9 @@ class IncidentZcapController(
         ],
     )
     @GetMapping("/entities/{id}")
-    fun getIncidentZcapsByEntityId(@PathVariable id: Long): ResponseEntity<List<IncidentZcapOutputModel>> =
+    fun getIncidentZcapsByEntityId(@PathVariable id: Long): ResponseEntity<*> =
         when(val incidentZcap = service.getIncidentZcapsByEntityId(id)) {
             is Success -> ResponseEntity.ok(incidentZcap.value)
-            is Failure -> when (incidentZcap.value) {
-                is ServiceErrors.IncidentNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Entity", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(incidentZcap.value.errorResponse, incidentZcap.value.httpStatus)
         }
 }

@@ -29,15 +29,15 @@ class ZcapDetailService(
 
     fun getZcapDetailById(id: Long): Either<ServiceErrors, ZcapDetailOutputModel> {
         val zcapDetail = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(zcapDetail.toOutputModel())
     }
 
     fun saveZcapDetail(input: ZcapDetailInputModel): Either<ServiceErrors, ZcapDetailOutputModel> {
         val zcap = zcapRepo.findById(input.zcapId).getOrNull()
-            ?: return failure(ServiceErrors.ZcapNotFound)
+            ?: return failure(ServiceErrors.ZcapNotFound(input.zcapId))
         val zcapDetailType = zcapDetailTypeRepo.findById(input.zcapDetailTypeId).getOrNull()
-            ?: return failure(ServiceErrors.ZcapDetailTypeNotFound)
+            ?: return failure(ServiceErrors.ZcapDetailTypeNotFound(input.zcapDetailTypeId))
         if (
             //input.valueCol.isBlank() ||
             input.startDate.isAfter(input.endDate ?: input.startDate))
@@ -54,7 +54,7 @@ class ZcapDetailService(
         return try {
             success(repo.save(newZcapDetail).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -64,11 +64,11 @@ class ZcapDetailService(
         input: ZcapDetailInputModel
     ): Either<ServiceErrors, ZcapDetailOutputModel> {
         val zcapDetail = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         val zcap = zcapRepo.findById(input.zcapId).getOrNull()
-            ?: return failure(ServiceErrors.ZcapNotFound)
+            ?: return failure(ServiceErrors.ZcapNotFound(input.zcapId))
         val zcapDetailType = zcapDetailTypeRepo.findById(input.zcapDetailTypeId).getOrNull()
-            ?: return failure(ServiceErrors.ZcapDetailTypeNotFound)
+            ?: return failure(ServiceErrors.ZcapDetailTypeNotFound(input.zcapDetailTypeId))
         if (zcapDetailType.isMandatory && input.valueCol.isBlank() ||
             input.startDate.isAfter(input.endDate ?: input.startDate) ||
             zcapDetail.lastUpdatedAt.isAfter(input.lastUpdatedAt))

@@ -54,9 +54,7 @@ class UserDataProfilesController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -69,9 +67,7 @@ class UserDataProfilesController(
                 .status(HttpStatus.CREATED)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid user profile input.")
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -84,9 +80,7 @@ class UserDataProfilesController(
     ): ResponseEntity<out Any> =
         when (val result = userDataProfileService.updateUserDataProfile(userDataProfileId, userDataProfile)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -123,7 +117,7 @@ class UserDataProfilesController(
                 .header("Location", "/dataprofiles/${result.value.userDataProfileId}/details")
                 .body(result.value)
 
-            is Failure -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Insert failed")
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     @DeleteMapping("{userDataProfileId}/detail/{treeRecordId}")
@@ -139,7 +133,7 @@ class UserDataProfilesController(
             val result = userDataProfileDetailService.deleteDetailById(input)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).build()
-            is Failure -> ResponseEntity.status(result.value.httpStatus).body(result.value.toString())
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
     }
 }

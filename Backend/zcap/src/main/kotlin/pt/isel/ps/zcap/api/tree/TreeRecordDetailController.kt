@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.trees.treeRecordDetail.TreeRecordDetailInputModel
 import pt.isel.ps.zcap.repository.dto.trees.treeRecordDetail.TreeRecordDetailOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeRecordDetailService
 import java.time.LocalDate
@@ -75,11 +68,7 @@ class TreeRecordDetailController(
     fun getTreeRecordDetailById(@PathVariable id: Long): ResponseEntity<*> =
         when (val treeRecordDetail = service.getTreeRecordDetailById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(treeRecordDetail.value)
-            is Failure -> when(treeRecordDetail.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(treeRecordDetail.value.errorResponse, treeRecordDetail.value.httpStatus)
         }
 
     @Operation(
@@ -116,21 +105,11 @@ class TreeRecordDetailController(
     @PostMapping
     fun saveTreeRecordDetail(@RequestBody treeRecordDetailRequest: TreeRecordDetailInputModel): ResponseEntity<*> =
         when (
-            val tree =
+            val treeRecordDetail =
                 service.saveTreeRecordDetail(treeRecordDetailRequest)
         ) {
-            is Success -> ResponseEntity.status(HttpStatus.CREATED).body(tree.value)
-            is Failure -> when(tree.value) {
-                is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", treeRecordDetailRequest.treeRecordId))
-                is ServiceErrors.TreeRecordDetailTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail Type", treeRecordDetailRequest.detailTypeId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Success -> ResponseEntity.status(HttpStatus.CREATED).body(treeRecordDetail.value)
+            is Failure -> ResponseEntity(treeRecordDetail.value.errorResponse, treeRecordDetail.value.httpStatus)
         }
 
     @Operation(
@@ -176,32 +155,14 @@ class TreeRecordDetailController(
                 service.updateTreeRecordDetailById(id, treeRecordDetailUpdateRequest)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(treeRecordDetail.value)
-            is Failure -> when(treeRecordDetail.value) {
-                is ServiceErrors.TreeRecordDetailNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail", id))
-                is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", treeRecordDetailUpdateRequest.treeRecordId))
-                is ServiceErrors.TreeRecordDetailTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail Type", treeRecordDetailUpdateRequest.detailTypeId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(treeRecordDetail.value.errorResponse, treeRecordDetail.value.httpStatus)
         }
 
     @DeleteMapping("/{id}")
     fun deleteTreeRecordDetailById(@PathVariable id: Long): ResponseEntity<*> =
         when (val deleted = service.deleteTreeRecordDetailById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
-            is Failure -> when(deleted.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail", id))
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException("Failed to delete record into the database")
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(deleted.value.errorResponse, deleted.value.httpStatus)
         }
 
     @Operation(
@@ -265,10 +226,6 @@ class TreeRecordDetailController(
     fun getTreeRecordDetailsByTreeRecordDetailTypeId(@PathVariable id: Long): ResponseEntity<*> =
         when(val result = service.getTreeRecordDetailsByDetailTypeId(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> when(result.value) {
-                is ServiceErrors.TreeRecordDetailTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 }

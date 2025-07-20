@@ -48,11 +48,11 @@ class UserDataProfileDetailService(
     fun addDetail(input: UserDataProfileDetailInputModel): Either<ServiceErrors, UserDataProfileDetailOutputModel> {
 
         val userDataProfile = userDataProfileRepository.findById(input.userDataProfileId).getOrNull() ?: return failure(
-            ServiceErrors.RecordNotFound
+            ServiceErrors.RecordNotFound(input.userDataProfileId)
         )
 
         val treeRecord =
-            treeRepository.findById(input.treeRecordId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+            treeRepository.findById(input.treeRecordId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(input.treeRecordId))
 
         val detail = UserDataProfileDetail(
             userDataProfileDetailId = UserDataProfileDetailId(
@@ -81,7 +81,7 @@ class UserDataProfileDetailService(
             userDataProfileId = input.userDataProfileId, treeRecordId = input.treeRecordId
         )
 
-        val detail = userDataProfileDetailRepository.findByIdOrNull(id) ?: return failure(ServiceErrors.RecordNotFound)
+        val detail = userDataProfileDetailRepository.findByIdOrNull(id) ?: return failure(ServiceErrors.RecordNotFound(id.userDataProfileId))
 
         return try {
             userDataProfileDetailRepository.delete(detail)

@@ -28,7 +28,7 @@ class TreeRecordDetailService(
 
     fun getTreeRecordDetailById(id: Long): Either<ServiceErrors, TreeRecordDetailOutputModel> {
         val treeRecordDetail = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(treeRecordDetail.toOutputModel())
     }
 
@@ -36,10 +36,10 @@ class TreeRecordDetailService(
         treeRecordDetailInput: TreeRecordDetailInputModel
     ): Either<ServiceErrors, TreeRecordDetailOutputModel> {
         val tree = treeRepo.findById(treeRecordDetailInput.treeRecordId).getOrNull()
-            ?: return failure(ServiceErrors.TreeNotFound)
+            ?: return failure(ServiceErrors.TreeNotFound(treeRecordDetailInput.treeRecordId))
 
         val trdt = trdtRepo.findById(treeRecordDetailInput.detailTypeId).getOrNull()
-            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound)
+            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound(treeRecordDetailInput.detailTypeId))
 
         if (treeRecordDetailInput.valueCol.isBlank() ||
             treeRecordDetailInput.startDate.isAfter(treeRecordDetailInput.endDate ?: treeRecordDetailInput.startDate)
@@ -48,7 +48,7 @@ class TreeRecordDetailService(
         return try {
             success(repo.save(treeRecordDetailInput.toTreeRecordDetail(tree, trdt)).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -58,13 +58,13 @@ class TreeRecordDetailService(
         treeRecordDetailUpdate: TreeRecordDetailInputModel
     ): Either<ServiceErrors, TreeRecordDetailOutputModel> {
         val treeRecordDetail = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.TreeRecordDetailNotFound)
+            ?: return failure(ServiceErrors.TreeRecordDetailNotFound(id))
 
         val tree = treeRepo.findById(treeRecordDetailUpdate.treeRecordId).getOrNull()
-            ?: return failure(ServiceErrors.TreeNotFound)
+            ?: return failure(ServiceErrors.TreeNotFound(treeRecordDetailUpdate.treeRecordId))
 
         val trdt = trdtRepo.findById(treeRecordDetailUpdate.detailTypeId).getOrNull()
-            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound)
+            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound(treeRecordDetailUpdate.detailTypeId))
 
         if (treeRecordDetailUpdate.valueCol.isBlank() ||
             treeRecordDetailUpdate.startDate.isAfter(treeRecordDetailUpdate.endDate ?: treeRecordDetailUpdate.startDate) ||
@@ -90,11 +90,11 @@ class TreeRecordDetailService(
     @Transactional
     fun deleteTreeRecordDetailById(id: Long): Either<ServiceErrors, Unit> {
         val exists = repo.existsById(id)
-        if (!exists) return failure(ServiceErrors.RecordNotFound)
+        if (!exists) return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repo.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 
@@ -102,7 +102,7 @@ class TreeRecordDetailService(
         repo.findValidOnDate(date).map { it.toOutputModel() }
 
     fun getTreeRecordDetailsByDetailTypeId(id: Long): Either<ServiceErrors, List<TreeRecordDetailOutputModel>> {
-        trdtRepo.findById(id).getOrNull() ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound)
+        trdtRepo.findById(id).getOrNull() ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound(id))
         return success(repo.findByDetailType_DetailTypeId(id).map { it.toOutputModel() })
     }
 

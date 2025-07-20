@@ -5,20 +5,13 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.persons.person.PersonInputModel
 import pt.isel.ps.zcap.repository.dto.persons.person.PersonOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.persons.PersonService
 
@@ -73,11 +66,7 @@ class PersonController(
     fun getPersonById(@PathVariable id: Long): ResponseEntity<*> =
         when (val person = service.getPersonById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(person.value)
-            is Failure -> when(person.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Person", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(person.value.errorResponse, person.value.httpStatus)
         }
 
     @Operation(
@@ -116,19 +105,7 @@ class PersonController(
     fun savePerson(@RequestBody personInput: PersonInputModel): ResponseEntity<*> =
         when (val person = service.savePerson(personInput)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(person.value)
-            is Failure -> when(person.value) {
-                is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", personInput.placeOfResidenceId))
-                is ServiceErrors.NationalityNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Nationality", personInput.nationalityId))
-                is ServiceErrors.DepartureDestinationNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Departure Destination", personInput.departureDestinationId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(person.value.errorResponse, person.value.httpStatus)
         }
 
     @Operation(
@@ -170,21 +147,7 @@ class PersonController(
     ): ResponseEntity<*> =
         when (val person = service.updatePersonById(id, personInput)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(person.value)
-            is Failure -> when(person.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Person", id))
-                is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", personInput.placeOfResidenceId))
-                is ServiceErrors.NationalityNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Nationality", personInput.nationalityId))
-                is ServiceErrors.DepartureDestinationNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Departure Destination", personInput.departureDestinationId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(person.value.errorResponse, person.value.httpStatus)
         }
 
     @Operation(
@@ -219,11 +182,7 @@ class PersonController(
     fun deletePersonById(@PathVariable id: Long): ResponseEntity<*> =
         when (val delete = service.deletePersonById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(delete.value)
-            is Failure -> when(delete.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Person", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(delete.value.errorResponse, delete.value.httpStatus)
         }
 
     @Operation(
@@ -251,10 +210,6 @@ class PersonController(
     fun getPersonsByName(@RequestParam name: String): ResponseEntity<*> =
         when (val persons = service.getPersonsByName(name)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(persons.value)
-            is Failure -> when(persons.value) {
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(persons.value.errorResponse, persons.value.httpStatus)
         }
 }

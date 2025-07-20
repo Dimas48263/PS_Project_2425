@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.trees.treeLevelDetailType.TreeLevelDetailTypeInputModel
 import pt.isel.ps.zcap.repository.dto.trees.treeLevelDetailType.TreeLevelDetailTypeOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeLevelDetailTypeService
 import java.time.LocalDate
@@ -73,14 +66,10 @@ class TreeLevelDetailTypeController(
         ],
     )
     @GetMapping("/{id}")
-    fun getTreeLevelDetailTypeById(@PathVariable id: Long): ResponseEntity<TreeLevelDetailTypeOutputModel> =
+    fun getTreeLevelDetailTypeById(@PathVariable id: Long): ResponseEntity<*> =
         when (val tldt = service.getTreeById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(tldt.value)
-            is Failure -> when(tldt.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level Detail Type", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(tldt.value.errorResponse, tldt.value.httpStatus)
         }
 
     @Operation(
@@ -120,20 +109,10 @@ class TreeLevelDetailTypeController(
     @PostMapping
     fun saveTreeLevelDetailType(
         @RequestBody tldtRequest: TreeLevelDetailTypeInputModel
-    ): ResponseEntity<TreeLevelDetailTypeOutputModel> =
+    ): ResponseEntity<*> =
         when (val tldt = service.saveTreeLevelDetailType(tldtRequest)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(tldt.value)
-            is Failure -> when(tldt.value) {
-                is ServiceErrors.TreeLevelNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level", tldtRequest.treeLevelId))
-                is ServiceErrors.TreeRecordDetailTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Detail Type", tldtRequest.detailTypeId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(tldt.value.errorResponse, tldt.value.httpStatus)
         }
 
     @Operation(
@@ -173,25 +152,13 @@ class TreeLevelDetailTypeController(
     fun updateTreeLevelDetailTypeById(
         @PathVariable id: Long,
         @RequestBody tldtRequest: TreeLevelDetailTypeInputModel
-    ): ResponseEntity<TreeLevelDetailTypeOutputModel> =
+    ): ResponseEntity<*> =
         when (
             val tldt =
                 service.updateTreeLevelDetailTypeById(id, tldtRequest)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(tldt.value)
-            is Failure -> when(tldt.value) {
-                is ServiceErrors.TreeLevelNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level", tldtRequest.treeLevelId))
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level Detail Type", id))
-                is ServiceErrors.TreeRecordDetailTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Detail Type", tldtRequest.detailTypeId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(tldt.value.errorResponse, tldt.value.httpStatus)
         }
 
     @Operation(
@@ -253,14 +220,10 @@ class TreeLevelDetailTypeController(
         ],
     )
     @GetMapping("/treeLevel/{id}")
-    fun getTreeLevelDetailTypeByTreeLevelId(@PathVariable id: Long): ResponseEntity<List<TreeLevelDetailTypeOutputModel>> =
+    fun getTreeLevelDetailTypeByTreeLevelId(@PathVariable id: Long): ResponseEntity<*> =
         when(val tldt = service.getTreeLevelDetailTypeByTreeLevelId(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(tldt.value)
-            is Failure -> when (tldt.value) {
-                is ServiceErrors.TreeLevelNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(tldt.value.errorResponse, tldt.value.httpStatus)
         }
     @Operation(
         summary = "Obter todos os tipos de detalhe associados a um nível de árvore pelo o tipo de detalhe.",
@@ -291,13 +254,9 @@ class TreeLevelDetailTypeController(
         ],
     )
     @GetMapping("/detailType/{id}")
-    fun getTreeLevelDetailTypeByDetailTypeId(@PathVariable id: Long): ResponseEntity<List<TreeLevelDetailTypeOutputModel>> =
+    fun getTreeLevelDetailTypeByDetailTypeId(@PathVariable id: Long): ResponseEntity<*> =
         when(val tldt = service.getTreeLevelDetailTypeByDetailTypeId(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(tldt.value)
-            is Failure -> when (tldt.value) {
-                is ServiceErrors.TreeRecordDetailTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Detail Type", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(tldt.value.errorResponse, tldt.value.httpStatus)
         }
 }
