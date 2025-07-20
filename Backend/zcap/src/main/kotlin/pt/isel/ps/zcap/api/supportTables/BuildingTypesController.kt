@@ -7,18 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.BuildingTypeInputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.buildingTypes.BuildingTypeOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.supportTables.BuildingTypesService
 import java.time.LocalDate
@@ -105,15 +101,10 @@ class BuildingTypesController(
         ],
     )
     @GetMapping("{buildingTypeId}")
-    fun getBuildingTypeById(@PathVariable buildingTypeId: Long): ResponseEntity<BuildingTypeOutputModel> =
+    fun getBuildingTypeById(@PathVariable buildingTypeId: Long): ResponseEntity<*> =
         when (val result = buildingTypesService.getBuildingTypeById(buildingTypeId = buildingTypeId)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> {
-                when (result.value) {
-                    is ServiceErrors.RecordNotFound -> throw EntityNotFoundException("Entity with ID $buildingTypeId not found")
-                    else -> throw Exception("An error occurred while processing the request")
-                }
-            }
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     @Operation(
@@ -136,16 +127,10 @@ class BuildingTypesController(
         ],
     )
     @PostMapping
-    fun addBuildingType(@RequestBody buildingType: BuildingTypeInputModel): ResponseEntity<BuildingTypeOutputModel> =
+    fun addBuildingType(@RequestBody buildingType: BuildingTypeInputModel): ResponseEntity<*> =
         when (val result = buildingTypesService.addBuildingType(buildingType)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
-            is Failure -> {
-                when (result.value) {
-                    is ServiceErrors.InvalidDataInput -> throw InvalidDataException("Invalid data provided")
-                    is ServiceErrors.InsertFailed -> throw DatabaseInsertException("Failed to insert record into the database")
-                    else -> throw Exception("An error occurred while processing the request")
-                }
-            }
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     @Operation(
@@ -175,16 +160,9 @@ class BuildingTypesController(
     @PutMapping("{buildingTypeId}")
     fun updateBuildingType(
         @PathVariable buildingTypeId: Long, @RequestBody buildingType: BuildingTypeInputModel
-    ): ResponseEntity<BuildingTypeOutputModel> =
+    ): ResponseEntity<*> =
         when (val result = buildingTypesService.updateBuildingType(buildingTypeId, buildingType)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> {
-                when (result.value) {
-                    is ServiceErrors.InvalidDataInput -> throw InvalidDataException("Invalid data provided")
-                    is ServiceErrors.RecordNotFound -> throw EntityNotFoundException("Entity with ID $buildingTypeId not found")
-                    is ServiceErrors.InsertFailed -> throw DatabaseInsertException("Failed to insert record into the database")
-                    else -> throw Exception("An error occurred while processing the request")
-                }
-            }
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 }

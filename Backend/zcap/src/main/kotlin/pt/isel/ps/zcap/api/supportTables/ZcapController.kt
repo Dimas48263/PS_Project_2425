@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.supportTables.zcap.ZcapInputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.zcap.ZcapOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.supportTables.ZcapService
 import java.time.LocalDate
@@ -75,10 +68,7 @@ class ZcapController(
     fun getZcapById(@PathVariable id: Long): ResponseEntity<*> =
         when (val zcap = service.getZcapById(id)) {
             is Success -> ResponseEntity.ok(zcap.value)
-            is Failure -> when(zcap.value) {
-                is ServiceErrors.RecordNotFound -> throw EntityNotFoundException(notFoundMessage("Zcap", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(zcap.value.errorResponse, zcap.value.httpStatus)
         }
 
     @Operation(
@@ -118,19 +108,7 @@ class ZcapController(
     fun saveZcap(@RequestBody input: ZcapInputModel): ResponseEntity<*> =
         when (val zcap = service.saveZcap(input)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(zcap.value)
-            is Failure -> when(zcap.value) {
-                is ServiceErrors.BuildingTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Building Type", input.buildingTypeId))
-                is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", input.treeRecordId))
-                is ServiceErrors.EntityNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Entity", input.entityId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(zcap.value.errorResponse, zcap.value.httpStatus)
         }
 
     @Operation(
@@ -169,19 +147,7 @@ class ZcapController(
     fun updateZcapById(@PathVariable id: Long, @RequestBody input: ZcapInputModel): ResponseEntity<*> =
         when (val zcap = service.updateZcapById(id, input)) {
             is Success -> ResponseEntity.ok(zcap.value)
-            is Failure -> when(zcap.value) {
-                is ServiceErrors.BuildingTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Building Type", input.buildingTypeId))
-                is ServiceErrors.TreeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree", input.treeRecordId))
-                is ServiceErrors.EntityNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Entity", input.entityId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(zcap.value.errorResponse, zcap.value.httpStatus)
         }
 
     @Operation(
@@ -239,11 +205,7 @@ class ZcapController(
     fun getZcapsByBuildingTypeId(@PathVariable id: Long): ResponseEntity<*> =
         when (val zcap = service.getZcapsByBuildingTypeId(id)) {
             is Success -> ResponseEntity.ok(zcap.value)
-            is Failure -> when(zcap.value) {
-                is ServiceErrors.BuildingTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Building Type", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(zcap.value.errorResponse, zcap.value.httpStatus)
         }
 
     @Operation(
@@ -276,11 +238,7 @@ class ZcapController(
     fun getZcapsByEntityId(@PathVariable id: Long): ResponseEntity<*> =
         when (val zcap = service.getZcapsByEntityId(id)) {
             is Success -> ResponseEntity.ok(zcap.value)
-            is Failure -> when(zcap.value) {
-                is ServiceErrors.BuildingTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Entity", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(zcap.value.errorResponse, zcap.value.httpStatus)
         }
 
 }

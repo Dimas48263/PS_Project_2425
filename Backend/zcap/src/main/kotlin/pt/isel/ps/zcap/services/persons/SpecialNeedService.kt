@@ -23,7 +23,7 @@ class SpecialNeedService(
 
     fun getSpecialNeedById(id: Long): Either<ServiceErrors, SpecialNeedOutputModel> {
         val specialNeed = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(specialNeed.toOutputModel())
     }
 
@@ -41,7 +41,7 @@ class SpecialNeedService(
         return try {
             success(repository.save(newSpecialNeed).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -51,7 +51,7 @@ class SpecialNeedService(
         specialNeedInput: SpecialNeedInputModel
     ): Either<ServiceErrors, SpecialNeedOutputModel> {
         val specialNeed = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         if (specialNeedInput.name.isBlank() ||
             specialNeedInput.startDate.isAfter(specialNeedInput.endDate ?: specialNeedInput.startDate) ||
             specialNeed.lastUpdatedAt.isAfter(specialNeedInput.lastUpdatedAt))
@@ -73,11 +73,11 @@ class SpecialNeedService(
     @Transactional
     fun deleteSpecialNeedById(id: Long): Either<ServiceErrors, Unit> {
         repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repository.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 

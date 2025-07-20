@@ -30,18 +30,18 @@ class TreeLevelService(
         return try {
             success(repo.save(treeLevelInputModel.toTreeLevel()).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
     fun getTreeLevelById(id: Long): Either<ServiceErrors, TreeLevelOutputModel> {
-        val treeLevel = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        val treeLevel = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(treeLevel.toOutputModel())
     }
 
     @Transactional
     fun updateTreeLevel(id: Long, treeLevelUpdate: TreeLevelInputModel): Either<ServiceErrors, TreeLevelOutputModel> {
-        val treeLevel = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        val treeLevel = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(id))
         if (treeLevelUpdate.name.isBlank() ||
             treeLevelUpdate.description?.isBlank() == true ||
             treeLevelUpdate.startDate.isAfter(treeLevelUpdate.endDate ?: treeLevelUpdate.startDate) ||
@@ -67,11 +67,11 @@ class TreeLevelService(
     @Transactional
     fun deleteTreeLevelById(id: Long): Either<ServiceErrors, Unit> {
         val exists = repo.existsById(id)
-        if (!exists) return failure(ServiceErrors.RecordNotFound)
+        if (!exists) return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repo.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 

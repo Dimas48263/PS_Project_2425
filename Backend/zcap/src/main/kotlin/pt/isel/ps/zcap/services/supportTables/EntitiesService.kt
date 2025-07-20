@@ -32,7 +32,7 @@ class EntitiesService(
 
     fun getEntityById(entityId: Long): Either<ServiceErrors, EntitiesOutputModel> {
         val entity = entitiesRepository.findById(entityId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(entityId))
 
         return success(entity.toOutputModel())
     }
@@ -43,7 +43,7 @@ class EntitiesService(
         ) return failure(ServiceErrors.InvalidDataInput)
 
         val entityType = entityTypesService.getEntityTypeByIdInternal(newEntity.entityTypeId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(newEntity.entityTypeId))
 
         return try {
             success(entitiesRepository.save(newEntity.toEntity(entityType)).toOutputModel())
@@ -57,10 +57,10 @@ class EntitiesService(
         updatedEntity: EntitiesInputModel
     ): Either<ServiceErrors, EntitiesOutputModel> {
         val oldEntity =
-            entitiesRepository.findById(entityId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+            entitiesRepository.findById(entityId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(entityId))
 
         val entityType = entityTypesService.getEntityTypeByIdInternal(updatedEntity.entityTypeId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(updatedEntity.entityTypeId))
 
         if (updatedEntity.name.isBlank()
             || updatedEntity.startDate.isAfter(updatedEntity.endDate ?: updatedEntity.startDate) ||

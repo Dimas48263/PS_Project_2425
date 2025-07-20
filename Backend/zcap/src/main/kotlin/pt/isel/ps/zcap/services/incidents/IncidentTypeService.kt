@@ -24,7 +24,7 @@ class IncidentTypeService(
 
     fun getIncidentTypeById(id: Long): Either<ServiceErrors, IncidentTypeOutputModel> {
         val incidentType = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(incidentType.toOutputModel())
     }
 
@@ -41,7 +41,7 @@ class IncidentTypeService(
         return try {
             success(repo.save(newIncidentType).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -51,7 +51,7 @@ class IncidentTypeService(
         input: IncidentTypeInputModel
     ): Either<ServiceErrors, IncidentTypeOutputModel> {
         val incidentType = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         if (input.name.isBlank() ||
             input.startDate.isAfter(input.endDate ?: input.startDate) ||
             incidentType.lastUpdatedAt.isAfter(input.lastUpdatedAt))

@@ -25,7 +25,7 @@ class TreeLevelDetailTypeService(
     fun getAllTreeLevelDetailType(): List<TreeLevelDetailTypeOutputModel> = repo.findAll().map { it.toOutputModel() }
 
     fun getTreeById(id: Long): Either<ServiceErrors, TreeLevelDetailTypeOutputModel> {
-        val tldt = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        val tldt = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(tldt.toOutputModel())
     }
 
@@ -33,10 +33,10 @@ class TreeLevelDetailTypeService(
         tldtInput: TreeLevelDetailTypeInputModel
     ): Either<ServiceErrors, TreeLevelDetailTypeOutputModel> {
         val treeLevel = treeLevelRepo.findById(tldtInput.treeLevelId).getOrNull()
-            ?: return failure(ServiceErrors.TreeLevelNotFound)
+            ?: return failure(ServiceErrors.TreeLevelNotFound(tldtInput.treeLevelId))
 
         val detailType = detailTypeRepo.findById(tldtInput.detailTypeId).getOrNull()
-            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound)
+            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound(tldtInput.detailTypeId))
 
         if (tldtInput.startDate.isAfter(tldtInput.endDate ?: tldtInput.startDate))
             return failure(ServiceErrors.InvalidDataInput)
@@ -52,7 +52,7 @@ class TreeLevelDetailTypeService(
         return try {
             success(repo.save(newtldt).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -61,12 +61,12 @@ class TreeLevelDetailTypeService(
         id: Long,
         tldtInput: TreeLevelDetailTypeInputModel
     ): Either<ServiceErrors, TreeLevelDetailTypeOutputModel> {
-        val tldt = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        val tldt = repo.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(id))
         val treeLevel = treeLevelRepo.findById(tldtInput.treeLevelId).getOrNull()
-            ?: return failure(ServiceErrors.TreeLevelNotFound)
+            ?: return failure(ServiceErrors.TreeLevelNotFound(tldtInput.treeLevelId))
 
         val detailType = detailTypeRepo.findById(tldtInput.detailTypeId).getOrNull()
-            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound)
+            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound(tldtInput.detailTypeId))
 
         if (tldtInput.startDate.isAfter(tldtInput.endDate ?: tldtInput.startDate) ||
             tldt.lastUpdatedAt.isAfter(tldtInput.lastUpdatedAt))
@@ -92,13 +92,13 @@ class TreeLevelDetailTypeService(
 
     fun getTreeLevelDetailTypeByTreeLevelId(id: Long): Either<ServiceErrors, List<TreeLevelDetailTypeOutputModel>> {
         treeLevelRepo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.TreeLevelNotFound)
+            ?: return failure(ServiceErrors.TreeLevelNotFound(id))
         return success(repo.findByTreeLevel_TreeLevelId(id).map { it.toOutputModel() })
     }
 
     fun getTreeLevelDetailTypeByDetailTypeId(id: Long): Either<ServiceErrors, List<TreeLevelDetailTypeOutputModel>> {
         detailTypeRepo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound)
+            ?: return failure(ServiceErrors.TreeRecordDetailTypeNotFound(id))
         return success(repo.findByDetailType_DetailTypeId(id).map { it.toOutputModel() })
     }
 

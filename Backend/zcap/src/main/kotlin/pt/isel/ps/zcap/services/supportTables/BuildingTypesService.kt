@@ -29,7 +29,7 @@ class BuildingTypesService(
 
     fun getBuildingTypeById(buildingTypeId: Long): Either<ServiceErrors, BuildingTypeOutputModel> {
         val buildingType = buildingTypeRepository.findById(buildingTypeId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(buildingTypeId))
 
         return success(toOutputModel(buildingType))
     }
@@ -53,7 +53,8 @@ class BuildingTypesService(
         updatedBuildingType: BuildingTypeInputModel
     ): Either<ServiceErrors, BuildingTypeOutputModel> {
         val oldBuildingType =
-            buildingTypeRepository.findById(buildingTypeId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+            buildingTypeRepository.findById(buildingTypeId).getOrNull()
+                ?: return failure(ServiceErrors.RecordNotFound(buildingTypeId))
         if (updatedBuildingType.name.isBlank()
             || updatedBuildingType.startDate.isAfter(updatedBuildingType.endDate ?: updatedBuildingType.startDate) ||
             oldBuildingType.lastUpdatedAt.isAfter(updatedBuildingType.lastUpdatedAt)

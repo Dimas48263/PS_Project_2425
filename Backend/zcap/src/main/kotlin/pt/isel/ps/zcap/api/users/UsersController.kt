@@ -55,9 +55,7 @@ class UsersController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -70,9 +68,7 @@ class UsersController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -85,9 +81,7 @@ class UsersController(
                 .status(HttpStatus.CREATED)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid user input.")
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -100,9 +94,7 @@ class UsersController(
     ): ResponseEntity<Any> =
         when (val result = userService.updateUser(userId, user)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     @PutMapping("{userId}/password")
@@ -121,9 +113,7 @@ class UsersController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid change") //TODO: Insert better error messages
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
     }
 }

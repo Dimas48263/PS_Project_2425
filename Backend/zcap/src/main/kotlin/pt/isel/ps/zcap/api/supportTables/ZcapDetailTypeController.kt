@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.supportTables.zcapDetailTypes.ZcapDetailTypeInputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.zcapDetailTypes.ZcapDetailTypeOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.supportTables.ZcapDetailTypeService
 import java.time.LocalDate
@@ -73,14 +66,10 @@ class ZcapDetailTypeController(
         ],
     )
     @GetMapping("/{id}")
-    fun getZcapDetailTypeById(@PathVariable id: Long): ResponseEntity<ZcapDetailTypeOutputModel> =
+    fun getZcapDetailTypeById(@PathVariable id: Long): ResponseEntity<*> =
         when (val zcapDetailType = service.getZcapDetailTypeById(id)) {
             is Success -> ResponseEntity.ok(zcapDetailType.value)
-            is Failure -> when(zcapDetailType.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Zcap Detail Type", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(zcapDetailType.value.errorResponse, zcapDetailType.value.httpStatus)
         }
 
     @Operation(
@@ -117,21 +106,13 @@ class ZcapDetailTypeController(
         ],
     )
     @PostMapping
-    fun saveZcapDetailTypes(@RequestBody input: ZcapDetailTypeInputModel): ResponseEntity<ZcapDetailTypeOutputModel> =
+    fun saveZcapDetailTypes(@RequestBody input: ZcapDetailTypeInputModel): ResponseEntity<*> =
         when (val zcapDetailType = service.saveZcapDetailType(input)) {
             is Success -> {
                 print(zcapDetailType)
                 ResponseEntity.status(HttpStatus.CREATED).body(zcapDetailType.value)
             }
-            is Failure -> when(zcapDetailType.value) {
-                is ServiceErrors.DetailTypeCategoryNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Detail Type Category", input.detailTypeCategoryId))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(zcapDetailType.value.errorResponse, zcapDetailType.value.httpStatus)
         }
 
     @Operation(
@@ -169,20 +150,10 @@ class ZcapDetailTypeController(
     @PutMapping("/{id}")
     fun updateZcapDetailTypeById(
         @PathVariable id: Long,
-        @RequestBody input: ZcapDetailTypeInputModel): ResponseEntity<ZcapDetailTypeOutputModel> =
+        @RequestBody input: ZcapDetailTypeInputModel): ResponseEntity<*> =
         when (val zcapDetailType = service.updateZcapDetailTypeById(id, input)) {
             is Success -> ResponseEntity.ok(zcapDetailType.value)
-            is Failure -> when(zcapDetailType.value) {
-                is ServiceErrors.BuildingTypeNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Detail Type Category", input.detailTypeCategoryId))
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Zcap Detail Type", id))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(zcapDetailType.value.errorResponse, zcapDetailType.value.httpStatus)
         }
 
     @Operation(

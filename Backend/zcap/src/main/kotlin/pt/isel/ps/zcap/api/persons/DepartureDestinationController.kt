@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.persons.departureDestination.DepartureDestinationInputModel
 import pt.isel.ps.zcap.repository.dto.persons.departureDestination.DepartureDestinationOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.persons.DepartureDestinationService
 import java.time.LocalDate
@@ -75,11 +68,7 @@ class DepartureDestinationController(
     fun getDepartureDestinationById(@PathVariable id: Long): ResponseEntity<*> =
         when (val departureDestination = service.getDepartureDestinationById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(departureDestination.value)
-            is Failure -> when(departureDestination.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Departure Destination", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(departureDestination.value.errorResponse, departureDestination.value.httpStatus)
         }
 
     @Operation(
@@ -113,13 +102,7 @@ class DepartureDestinationController(
     ): ResponseEntity<*> =
         when (val departureDestination = service.saveDepartureDestination(departureDestinationInput)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(departureDestination.value)
-            is Failure -> when(departureDestination.value) {
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(departureDestination.value.errorResponse, departureDestination.value.httpStatus)
         }
 
     @Operation(
@@ -162,28 +145,14 @@ class DepartureDestinationController(
                 service.updateDepartureDestinationById(id, departureDestinationInput)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(departureDestination.value)
-            is Failure -> when(departureDestination.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Departure Destination", id))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(departureDestination.value.errorResponse, departureDestination.value.httpStatus)
         }
 
     @DeleteMapping("/{id}")
     fun deleteDepartureDestinationById(@PathVariable id: Long): ResponseEntity<*> =
         when (val deleted = service.deleteDepartureDestinationById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
-            is Failure -> when(deleted.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Departure Destination", id))
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(deleted.value.errorResponse, deleted.value.httpStatus)
         }
 
     @Operation(

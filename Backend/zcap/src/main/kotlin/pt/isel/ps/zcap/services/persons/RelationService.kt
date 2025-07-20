@@ -29,18 +29,18 @@ class RelationService(
 
     fun getRelationById(id: Long): Either<ServiceErrors, RelationOutputModel> {
         val relation = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(relation.toOutputModel())
     }
 
     fun saveRelation(relationInput: RelationInputModel): Either<ServiceErrors, RelationOutputModel> {
         if (relationInput.personId1 == relationInput.personId2) return failure(ServiceErrors.InvalidDataInput)
         val person1 = personRepository.findById(relationInput.personId1).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(relationInput.personId1))
         val person2 = personRepository.findById(relationInput.personId2).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(relationInput.personId2))
         val relationType = relationTypeRepository.findById(relationInput.relationTypeId).getOrNull()
-            ?: return failure(ServiceErrors.RelationTypeNotFound)
+            ?: return failure(ServiceErrors.RelationTypeNotFound(relationInput.relationTypeId))
 
         if (repository.existsByPersonsAndType(
                 relationInput.personId1,
@@ -59,24 +59,24 @@ class RelationService(
         return try {
             success(repository.save(newRelation).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
     @Transactional
     fun deleteRelationById(id: Long): Either<ServiceErrors, Unit> {
         repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repository.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 
     fun findAllByPerson1Id(id: Long): Either<ServiceErrors, List<RelationOutputModel>> {
         personRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(id))
         return success(repository.findAllByPerson1Id(id).map { it.toOutputModel() })
     }
 

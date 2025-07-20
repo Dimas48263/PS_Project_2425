@@ -27,7 +27,7 @@ class PersonSupportNeededService(
 
     fun getPersonSupportNeededById(id: Long): Either<ServiceErrors, PersonSupportNeededOutputModel> {
         val personSupportNeeded = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(personSupportNeeded.toOutputModel())
     }
 
@@ -35,9 +35,9 @@ class PersonSupportNeededService(
         personSupportNeededInput: PersonSupportNeededInputModel
     ): Either<ServiceErrors, PersonSupportNeededOutputModel> {
         val person = personRepository.findById(personSupportNeededInput.personId).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(personSupportNeededInput.personId))
         val supportNeeded = supportNeededRepository.findById(personSupportNeededInput.supportNeededId).getOrNull()
-            ?: return failure(ServiceErrors.SupportNeededNotFound)
+            ?: return failure(ServiceErrors.SupportNeededNotFound(personSupportNeededInput.supportNeededId))
         if (personSupportNeededInput.description?.isBlank() == true ||
             personSupportNeededInput.startDate.isAfter(personSupportNeededInput.endDate ?: personSupportNeededInput.startDate))
             return failure(ServiceErrors.InvalidDataInput)
@@ -55,7 +55,7 @@ class PersonSupportNeededService(
         return try {
             success(repository.save(newPersonSupportNeeded).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -65,11 +65,11 @@ class PersonSupportNeededService(
         personSupportNeededInput: PersonSupportNeededInputModel
     ): Either<ServiceErrors, PersonSupportNeededOutputModel> {
         val personSupportNeeded = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         val person = personRepository.findById(personSupportNeededInput.personId).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(personSupportNeededInput.personId))
         val supportNeeded = supportNeededRepository.findById(personSupportNeededInput.supportNeededId).getOrNull()
-            ?: return failure(ServiceErrors.SupportNeededNotFound)
+            ?: return failure(ServiceErrors.SupportNeededNotFound(personSupportNeededInput.supportNeededId))
         if (personSupportNeededInput.description?.isBlank() == true ||
             personSupportNeededInput.startDate.isAfter(personSupportNeededInput.endDate ?: personSupportNeededInput.startDate) ||
             personSupportNeeded.lastUpdatedAt.isAfter(personSupportNeededInput.lastUpdatedAt))
@@ -94,11 +94,11 @@ class PersonSupportNeededService(
 
     @Transactional
     fun deletePersonSupportNeededById(id: Long): Either<ServiceErrors, Unit> {
-        repository.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        repository.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repository.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 
@@ -106,7 +106,7 @@ class PersonSupportNeededService(
         repository.findValidOnDate(date).map { it.toOutputModel() }
 
     fun getPersonSupportNeededByPersonId(id: Long): Either<ServiceErrors, List<PersonSupportNeededOutputModel>> {
-        personRepository.findById(id).getOrNull() ?: return failure(ServiceErrors.PersonNotFound)
+        personRepository.findById(id).getOrNull() ?: return failure(ServiceErrors.PersonNotFound(id))
         return success(repository.findByPerson_PersonId(id).map { it.toOutputModel() })
     }
 

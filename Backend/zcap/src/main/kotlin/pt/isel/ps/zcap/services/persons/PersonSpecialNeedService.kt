@@ -27,7 +27,7 @@ class PersonSpecialNeedService(
 
     fun getPersonSpecialNeedById(id: Long): Either<ServiceErrors, PersonSpecialNeedOutputModel> {
         val personSpecialNeed = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(personSpecialNeed.toOutputModel())
     }
 
@@ -35,9 +35,9 @@ class PersonSpecialNeedService(
         personSpecialNeedInput: PersonSpecialNeedInputModel
     ): Either<ServiceErrors, PersonSpecialNeedOutputModel> {
         val person = personRepository.findById(personSpecialNeedInput.personId).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(personSpecialNeedInput.personId))
         val specialNeed = specialNeedRepository.findById(personSpecialNeedInput.specialNeedId).getOrNull()
-            ?: return failure(ServiceErrors.SpecialNeedNotFound)
+            ?: return failure(ServiceErrors.SpecialNeedNotFound(personSpecialNeedInput.specialNeedId))
         if (personSpecialNeedInput.description?.isBlank() == true ||
             personSpecialNeedInput.startDate.isAfter(personSpecialNeedInput.endDate ?: personSpecialNeedInput.startDate))
             return failure(ServiceErrors.InvalidDataInput)
@@ -53,7 +53,7 @@ class PersonSpecialNeedService(
         return try {
             success(repository.save(newPersonSpecialNeed).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -63,11 +63,11 @@ class PersonSpecialNeedService(
         personSpecialNeedInput: PersonSpecialNeedInputModel
     ): Either<ServiceErrors, PersonSpecialNeedOutputModel> {
         val personSpecialNeed = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         val person = personRepository.findById(personSpecialNeedInput.personId).getOrNull()
-            ?: return failure(ServiceErrors.PersonNotFound)
+            ?: return failure(ServiceErrors.PersonNotFound(personSpecialNeedInput.personId))
         val specialNeed = specialNeedRepository.findById(personSpecialNeedInput.specialNeedId).getOrNull()
-            ?: return failure(ServiceErrors.SpecialNeedNotFound)
+            ?: return failure(ServiceErrors.SpecialNeedNotFound(personSpecialNeedInput.specialNeedId))
         if (personSpecialNeedInput.description?.isBlank() == true ||
             personSpecialNeedInput.startDate.isAfter(personSpecialNeedInput.endDate ?: personSpecialNeedInput.startDate) ||
             personSpecialNeed.lastUpdatedAt.isAfter(personSpecialNeedInput.lastUpdatedAt))
@@ -93,11 +93,11 @@ class PersonSpecialNeedService(
         id: Long
     ): Either<ServiceErrors, Unit> {
         repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repository.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 
@@ -105,7 +105,7 @@ class PersonSpecialNeedService(
         repository.findValidOnDate(date).map { it.toOutputModel() }
 
     fun getPersonSpecialNeedsByPersonId(id: Long): Either<ServiceErrors, List<PersonSpecialNeedOutputModel>> {
-        personRepository.findById(id).getOrNull() ?: return failure(ServiceErrors.PersonNotFound)
+        personRepository.findById(id).getOrNull() ?: return failure(ServiceErrors.PersonNotFound(id))
         return success(repository.findByPerson_PersonId(id).map { it.toOutputModel() })
     }
 }

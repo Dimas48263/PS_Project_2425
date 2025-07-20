@@ -31,18 +31,18 @@ class ZcapService(
 
     fun getZcapById(id: Long): Either<ServiceErrors, ZcapOutputModel> {
         val zcap = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(zcap.toOutputModel())
     }
 
     fun saveZcap(input: ZcapInputModel): Either<ServiceErrors, ZcapOutputModel> {
         val buildingType = buildingTypeRepository.findById(input.buildingTypeId).getOrNull()
-            ?: return failure(ServiceErrors.BuildingTypeNotFound)
+            ?: return failure(ServiceErrors.BuildingTypeNotFound(input.buildingTypeId))
         val tree = input.treeRecordId?.let {
-            treeRepository.findById(it).getOrNull() ?: return failure(ServiceErrors.TreeNotFound)
+            treeRepository.findById(it).getOrNull() ?: return failure(ServiceErrors.TreeNotFound(input.treeRecordId))
         }
         val entity = entitiesRepository.findById(input.entityId).getOrNull()
-            ?: return failure(ServiceErrors.EntityNotFound)
+            ?: return failure(ServiceErrors.EntityNotFound(input.entityId))
 
         if (input.name.isBlank() ||
             input.address.isBlank() ||
@@ -66,21 +66,21 @@ class ZcapService(
         return try {
             success(repo.save(newZcap).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
     @Transactional
     fun updateZcapById(id: Long, input: ZcapInputModel): Either<ServiceErrors, ZcapOutputModel> {
         val zcap = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         val buildingType = buildingTypeRepository.findById(input.buildingTypeId).getOrNull()
-            ?: return failure(ServiceErrors.BuildingTypeNotFound)
+            ?: return failure(ServiceErrors.BuildingTypeNotFound(input.buildingTypeId))
         val tree = input.treeRecordId?.let {
-            treeRepository.findById(it).getOrNull() ?: return failure(ServiceErrors.TreeNotFound)
+            treeRepository.findById(it).getOrNull() ?: return failure(ServiceErrors.TreeNotFound(input.treeRecordId))
         }
         val entity = entitiesRepository.findById(input.entityId).getOrNull()
-            ?: return failure(ServiceErrors.EntityNotFound)
+            ?: return failure(ServiceErrors.EntityNotFound(input.entityId))
 
         if (input.name.isBlank() ||
             input.address.isBlank() ||
@@ -114,13 +114,13 @@ class ZcapService(
 
     fun getZcapsByBuildingTypeId(id: Long): Either<ServiceErrors, List<ZcapOutputModel>> {
         buildingTypeRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.BuildingTypeNotFound)
+            ?: return failure(ServiceErrors.BuildingTypeNotFound(id))
         return success(repo.findByBuildingType_buildingTypeId(id).map { it.toOutputModel() })
     }
 
     fun getZcapsByEntityId(id: Long): Either<ServiceErrors, List<ZcapOutputModel>> {
         entitiesRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.BuildingTypeNotFound)
+            ?: return failure(ServiceErrors.EntityNotFound(id))
         return success(repo.findByEntity_entityId(id).map { it.toOutputModel() })
     }
 }

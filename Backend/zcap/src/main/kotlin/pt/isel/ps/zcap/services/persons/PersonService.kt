@@ -28,20 +28,20 @@ class PersonService(
 
     fun getPersonById(id: Long): Either<ServiceErrors, PersonOutputModel> {
         val person = personRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(person.toOutputModel())
     }
 
     fun savePerson(personInput: PersonInputModel): Either<ServiceErrors, PersonOutputModel> {
         val placeOfResidence = treeRepository.findById(personInput.placeOfResidenceId).getOrNull()
-            ?: return failure(ServiceErrors.TreeNotFound)
+            ?: return failure(ServiceErrors.TreeNotFound(personInput.placeOfResidenceId))
         val nationality = personInput.nationalityId?.let {
             treeRecordDetailRepository.findById(it).getOrNull()
-                ?: return failure(ServiceErrors.NationalityNotFound)
+                ?: return failure(ServiceErrors.NationalityNotFound(personInput.nationalityId))
         }
         val departureDestination = personInput.departureDestinationId?.let {
             departureDestinationRepository.findById(it).getOrNull()
-                ?: return failure(ServiceErrors.DepartureDestinationNotFound)
+                ?: return failure(ServiceErrors.DepartureDestinationNotFound(personInput.departureDestinationId))
         }
         if(personInput.name.isBlank() ||
             personInput.entryDateTime.isAfter(personInput.departureDateTime ?: personInput.entryDateTime) ||
@@ -68,23 +68,23 @@ class PersonService(
         return try {
             success(personRepository.save(newPerson).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
     @Transactional
     fun updatePersonById(id: Long, personInput: PersonInputModel): Either<ServiceErrors, PersonOutputModel> {
         val person = personRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         val placeOfResidence = treeRepository.findById(personInput.placeOfResidenceId).getOrNull()
-            ?: return failure(ServiceErrors.TreeNotFound)
+            ?: return failure(ServiceErrors.TreeNotFound(personInput.placeOfResidenceId))
         val nationality = personInput.nationalityId?.let {
             treeRecordDetailRepository.findById(it).getOrNull()
-                ?: return failure(ServiceErrors.NationalityNotFound)
+                ?: return failure(ServiceErrors.NationalityNotFound(personInput.nationalityId))
         }
         val departureDestination = personInput.departureDestinationId?.let {
             departureDestinationRepository.findById(it).getOrNull()
-                ?: return failure(ServiceErrors.DepartureDestinationNotFound)
+                ?: return failure(ServiceErrors.DepartureDestinationNotFound(personInput.departureDestinationId))
         }
         if(personInput.name.isBlank() ||
             personInput.entryDateTime.isAfter(personInput.departureDateTime ?: personInput.entryDateTime) ||
@@ -119,11 +119,11 @@ class PersonService(
     @Transactional
     fun deletePersonById(id: Long): Either<ServiceErrors, Unit> {
         personRepository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(personRepository.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 

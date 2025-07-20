@@ -27,7 +27,7 @@ class ZcapDetailTypeService(
 
     fun getZcapDetailTypeById(id: Long): Either<ServiceErrors, ZcapDetailTypeOutputModel> {
         val zdt = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(zdt.toOutputModel())
     }
 
@@ -38,7 +38,7 @@ class ZcapDetailTypeService(
             zcapDetailTypeInput.startDate.isAfter(zcapDetailTypeInput.endDate ?: zcapDetailTypeInput.startDate))
             return failure(ServiceErrors.InvalidDataInput)
         val detailTypeCategory = detailTypeCategoryRepository.findById(zcapDetailTypeInput.detailTypeCategoryId).getOrNull()
-            ?: return failure(ServiceErrors.DetailTypeCategoryNotFound)
+            ?: return failure(ServiceErrors.DetailTypeCategoryNotFound(zcapDetailTypeInput.detailTypeCategoryId))
         val newZcapDetailType = ZcapDetailType(
             name = zcapDetailTypeInput.name,
             detailTypeCategory = detailTypeCategory,
@@ -52,7 +52,7 @@ class ZcapDetailTypeService(
         return try {
             success(repo.save(newZcapDetailType).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -62,13 +62,13 @@ class ZcapDetailTypeService(
         zcapDetailTypeInput: ZcapDetailTypeInputModel
     ): Either<ServiceErrors, ZcapDetailTypeOutputModel> {
         val zcapDetailType = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         if (zcapDetailTypeInput.name.isBlank() ||
             zcapDetailTypeInput.startDate.isAfter(zcapDetailTypeInput.endDate ?: zcapDetailTypeInput.startDate) ||
             zcapDetailType.lastUpdatedAt.isAfter(zcapDetailTypeInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
         val detailTypeCategory = detailTypeCategoryRepository.findById(zcapDetailTypeInput.detailTypeCategoryId).getOrNull()
-            ?: return failure(ServiceErrors.DetailTypeCategoryNotFound)
+            ?: return failure(ServiceErrors.DetailTypeCategoryNotFound(zcapDetailTypeInput.detailTypeCategoryId))
         val newZcapDetailType = zcapDetailType.copy(
             name = zcapDetailTypeInput.name,
             detailTypeCategory = detailTypeCategory,

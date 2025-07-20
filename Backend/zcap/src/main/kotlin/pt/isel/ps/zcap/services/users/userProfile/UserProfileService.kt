@@ -41,7 +41,7 @@ class UserProfileService(
 
     fun getUserProfileById(userProfileId: Long): Either<ServiceErrors, UserProfileOutputModel> {
         val profile =
-            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(userProfileId))
 
         val userProfileAllowances = userProfileAccessAllowanceRepository.findByUserProfile(profile)
         return success(toOutputModel(profile))
@@ -87,7 +87,7 @@ class UserProfileService(
         userProfileId: Long, updatedProfile: UserProfileInputModel
     ): Either<ServiceErrors, UserProfileOutputModel> {
         val oldProfile =
-            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+            userProfileRepository.findById(userProfileId).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(userProfileId))
 
         if (updatedProfile.name.isBlank() || updatedProfile.startDate.isAfter(
                 updatedProfile.endDate ?: updatedProfile.startDate

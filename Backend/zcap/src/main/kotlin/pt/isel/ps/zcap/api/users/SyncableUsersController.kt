@@ -49,9 +49,7 @@ class SyncableUsersController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -64,9 +62,7 @@ class SyncableUsersController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -79,9 +75,7 @@ class SyncableUsersController(
                 .status(HttpStatus.CREATED)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid user input.")
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -94,9 +88,7 @@ class SyncableUsersController(
     ): ResponseEntity<Any> =
         when (val result = userService.syncableUpdateUser(userId, user)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     @PutMapping("{userId}/password")
@@ -115,9 +107,7 @@ class SyncableUsersController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid change") //TODO: Insert better error messages
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
     }
 }

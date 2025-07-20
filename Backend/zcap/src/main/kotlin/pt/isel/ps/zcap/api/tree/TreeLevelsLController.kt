@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
-import pt.isel.ps.zcap.api.notFoundMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.trees.treeLevel.TreeLevelInputModel
 import pt.isel.ps.zcap.repository.dto.trees.treeLevel.TreeLevelOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeLevelService
 import java.time.LocalDate
@@ -80,13 +73,7 @@ class TreeLevelsLController(private val service: TreeLevelService) {
                 service.saveTreeLevel(treeLevelRequest)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(treeLevel.value)
-            is Failure -> when(treeLevel.value) {
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(treeLevel.value.errorResponse, treeLevel.value.httpStatus)
         }
 
     @Operation(
@@ -118,11 +105,7 @@ class TreeLevelsLController(private val service: TreeLevelService) {
     fun getTreeLevelById(@PathVariable id: Long): ResponseEntity<*> =
         when(val treeLevel = service.getTreeLevelById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(treeLevel.value)
-            is Failure -> when(treeLevel.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(treeLevel.value.errorResponse, treeLevel.value.httpStatus)
         }
 
     @Operation(
@@ -170,28 +153,14 @@ class TreeLevelsLController(private val service: TreeLevelService) {
                 service.updateTreeLevel(id, treeLevelUpdateRequest)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(treeLevel.value)
-            is Failure -> when(treeLevel.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level", id))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(treeLevel.value.errorResponse, treeLevel.value.httpStatus)
         }
 
     @DeleteMapping("/{id}")
     fun deleteTreeLevelById(@PathVariable id: Long): ResponseEntity<*> =
         when (val deleted = service.deleteTreeLevelById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
-            is Failure -> when(deleted.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Level", id))
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(deleted.value.errorResponse, deleted.value.httpStatus)
         }
 
     @Operation(

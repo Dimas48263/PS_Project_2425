@@ -5,21 +5,14 @@ import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.insertionFailedErrorMessage
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
-import pt.isel.ps.zcap.api.notFoundMessage
-import pt.isel.ps.zcap.api.invalidDataErrorMessage
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.trees.treeRecordDetailType.TreeRecordDetailTypeInputModel
 import pt.isel.ps.zcap.repository.dto.trees.treeRecordDetailType.TreeRecordDetailTypeOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeRecordDetailTypeService
 import java.time.LocalDate
@@ -75,11 +68,7 @@ class TreeRecordDetailTypeController(
     fun getTreeRecordDetailTypeById(@PathVariable id: Long): ResponseEntity<*> =
         when (val trdt = service.getTreeRecordDetailTypeById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(trdt.value)
-            is Failure -> when(trdt.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail Type", id))
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(trdt.value.errorResponse, trdt.value.httpStatus)
         }
 
     @Operation(
@@ -116,13 +105,7 @@ class TreeRecordDetailTypeController(
                 service.saveTreeRecordDetailType(treeRecordDetailTypeRequest)
         ) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(trdt.value)
-            is Failure -> when(trdt.value) {
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(trdt.value.errorResponse, trdt.value.httpStatus)
         }
 
     @Operation(
@@ -166,28 +149,14 @@ class TreeRecordDetailTypeController(
                 treeRecordDetailTypeUpdateRequest
             )) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(trdt.value)
-            is Failure -> when(trdt.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail Type", id))
-                is ServiceErrors.InvalidDataInput ->
-                    throw InvalidDataException(invalidDataErrorMessage)
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(trdt.value.errorResponse, trdt.value.httpStatus)
         }
 
     @DeleteMapping("/{id}")
     fun deleteTreeRecordDetailTypeById(@PathVariable id: Long): ResponseEntity<*> =
         when (val deleted = service.deleteTreeRecordDetailTypeById(id)) {
             is Success -> ResponseEntity.status(HttpStatus.NO_CONTENT).body(null)
-            is Failure -> when(deleted.value) {
-                is ServiceErrors.RecordNotFound ->
-                    throw EntityNotFoundException(notFoundMessage("Tree Record Detail Type", id))
-                is ServiceErrors.UpdateFailed ->
-                    throw DatabaseInsertException(insertionFailedErrorMessage)
-                else -> throw Exception("NOT SUPPOSED TO BE HERE")
-            }
+            is Failure -> ResponseEntity(deleted.value.errorResponse, deleted.value.httpStatus)
         }
 
     @Operation(

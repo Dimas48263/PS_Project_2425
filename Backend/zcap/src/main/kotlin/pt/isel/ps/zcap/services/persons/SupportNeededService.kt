@@ -23,7 +23,7 @@ class SupportNeededService(
 
     fun getSupportNeededById(id: Long): Either<ServiceErrors, SupportNeededOutputModel> {
         val supportNeeded = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(supportNeeded.toOutputModel())
     }
 
@@ -41,7 +41,7 @@ class SupportNeededService(
         return try {
             success(repository.save(newSupportNeeded).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -51,7 +51,7 @@ class SupportNeededService(
         supportNeededInput: SupportNeededInputModel
     ): Either<ServiceErrors, SupportNeededOutputModel> {
         val supportNeeded = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         if (supportNeededInput.name.isBlank() ||
             supportNeededInput.startDate.isAfter(supportNeededInput.endDate ?: supportNeededInput.startDate) ||
             supportNeeded.lastUpdatedAt.isAfter(supportNeededInput.lastUpdatedAt))
@@ -73,11 +73,11 @@ class SupportNeededService(
     @Transactional
     fun deleteSupportNeededById(id: Long): Either<ServiceErrors, Unit> {
         repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repository.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 

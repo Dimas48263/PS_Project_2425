@@ -23,7 +23,7 @@ class RelationTypeService(
 
     fun getRelationTypeById(id: Long): Either<ServiceErrors, RelationTypeOutputModel> {
         val relationType = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(relationType.toOutputModel())
     }
 
@@ -41,7 +41,7 @@ class RelationTypeService(
         return try {
             success(repository.save(newRelationType).toOutputModel())
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -51,7 +51,7 @@ class RelationTypeService(
         relationTypeInput: RelationTypeInputModel
     ): Either<ServiceErrors, RelationTypeOutputModel> {
         val relationType = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         if (relationTypeInput.name.isBlank() ||
             relationTypeInput.startDate.isAfter(relationTypeInput.endDate ?: relationTypeInput.startDate) ||
             relationType.lastUpdatedAt.isAfter(relationTypeInput.lastUpdatedAt))
@@ -72,11 +72,11 @@ class RelationTypeService(
 
     @Transactional
     fun deleteRelationTypeById(id: Long): Either<ServiceErrors, Unit> {
-        repository.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound)
+        repository.findById(id).getOrNull() ?: return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repository.deleteById(id))
         } catch (ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 

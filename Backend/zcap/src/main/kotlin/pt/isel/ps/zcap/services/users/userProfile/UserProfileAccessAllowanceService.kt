@@ -24,7 +24,7 @@ class UserProfileAccessAllowanceService(
 
     fun getAllAllowancesById(userAccessAllowanceId: Long): Either<ServiceErrors, UserProfileAccessAllowanceOutputModel> {
         val allowances = userProfileAccessAllowanceRepository.findById(userAccessAllowanceId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(userAccessAllowanceId))
 
         return success(toOutputModel(allowances))
     }

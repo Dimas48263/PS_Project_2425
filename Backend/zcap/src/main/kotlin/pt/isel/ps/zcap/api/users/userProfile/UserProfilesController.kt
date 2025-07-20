@@ -8,7 +8,6 @@ import pt.isel.ps.zcap.repository.dto.users.userProfile.UserProfileOutputModel
 import pt.isel.ps.zcap.services.Failure
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.users.userProfile.UserProfileService
-import pt.isel.ps.zcap.services.users.userProfile.UserProfileServiceV1
 import java.time.LocalDate
 
 @RestController
@@ -52,9 +51,7 @@ class UserProfilesController(
                 .status(HttpStatus.OK)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -67,9 +64,7 @@ class UserProfilesController(
                 .status(HttpStatus.CREATED)
                 .body(result.value)
 
-            is Failure -> ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body("Invalid user profile input.")
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     /**
@@ -82,8 +77,6 @@ class UserProfilesController(
     ): ResponseEntity<out Any> =
         when (val result = userProfileService.updateUserProfile(userProfileId, userProfile)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body("Record not found") //TODO: Add Errors
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 }

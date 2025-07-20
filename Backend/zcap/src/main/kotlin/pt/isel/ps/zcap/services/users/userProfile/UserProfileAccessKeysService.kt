@@ -24,7 +24,7 @@ class UserProfileAccessKeysService(
 
     fun getAccessKeyById(accessKeyId: Long): Either<ServiceErrors, UserProfileAccessKeyOutputModel> {
         val accessKey = userProfileAccessKeysRepository.findById(accessKeyId).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(accessKeyId))
 
         return success(toOutputModel(accessKey))
     }
@@ -54,7 +54,7 @@ class UserProfileAccessKeysService(
         updatedKey: UserProfileAccessKeyInputModel
     ): Either<ServiceErrors, UserProfileAccessKeyOutputModel> {
         val oldKey = userProfileAccessKeysRepository.findById(userProfileAccessKeyId).orElse(null)
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(userProfileAccessKeyId))
 
         if (oldKey.lastUpdatedAt.isAfter(updatedKey.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)

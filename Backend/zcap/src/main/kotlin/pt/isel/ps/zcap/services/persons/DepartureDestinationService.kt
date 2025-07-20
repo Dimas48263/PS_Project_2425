@@ -23,7 +23,7 @@ class DepartureDestinationService(
 
     fun getDepartureDestinationById(id: Long): Either<ServiceErrors,DepartureDestinationOutputModel> {
         val departureDestination = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return success(departureDestination.toOutputModel())
     }
 
@@ -44,7 +44,7 @@ class DepartureDestinationService(
         return try {
             success(repository.save(newDepartureDestination).toOutputModel())
         } catch(ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.InsertFailed)
         }
     }
 
@@ -54,7 +54,7 @@ class DepartureDestinationService(
         departureDestinationInput: DepartureDestinationInputModel
     ): Either<ServiceErrors,DepartureDestinationOutputModel> {
         val departureDestination = repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
 
         if (departureDestinationInput.name.isBlank() ||
             departureDestinationInput.startDate.isAfter(departureDestinationInput.endDate ?: departureDestinationInput.startDate) ||
@@ -81,11 +81,11 @@ class DepartureDestinationService(
     @Transactional
     fun deleteDepartureDestinationById(id: Long): Either<ServiceErrors,Unit> {
         repository.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.RecordNotFound)
+            ?: return failure(ServiceErrors.RecordNotFound(id))
         return try {
             success(repository.deleteById(id))
         } catch(ex: Exception) {
-            failure(ServiceErrors.UpdateFailed)
+            failure(ServiceErrors.DeleteFailed)
         }
     }
 }

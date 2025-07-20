@@ -7,18 +7,14 @@ import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 import io.swagger.v3.oas.annotations.security.SecurityRequirement
 import io.swagger.v3.oas.annotations.tags.Tag
-import jakarta.persistence.EntityNotFoundException
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import pt.isel.ps.zcap.api.exceptions.DatabaseInsertException
-import pt.isel.ps.zcap.api.exceptions.InvalidDataException
 import pt.isel.ps.zcap.repository.dto.ErrorResponse
 import pt.isel.ps.zcap.repository.dto.supportTables.entityTypes.EntityTypeInputModel
 import pt.isel.ps.zcap.repository.dto.supportTables.entityTypes.EntityTypeOutputModel
 import pt.isel.ps.zcap.services.Failure
-import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.supportTables.EntityTypesService
 import java.time.LocalDate
@@ -99,15 +95,10 @@ class EntityTypesController(
         ],
     )
     @GetMapping("{entityTypeId}")
-    fun getEntityTypeById(@PathVariable entityTypeId: Long): ResponseEntity<EntityTypeOutputModel> =
+    fun getEntityTypeById(@PathVariable entityTypeId: Long): ResponseEntity<*> =
         when (val result = entityTypesService.getEntityTypeById(entityTypeId = entityTypeId)) {
             is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-            is Failure -> {
-                when (result.value) {
-                    is ServiceErrors.RecordNotFound -> throw EntityNotFoundException("Entity with ID $entityTypeId not found")
-                    else -> throw Exception("An error occurred while processing the request")
-                }
-            }
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     @Operation(
@@ -130,16 +121,10 @@ class EntityTypesController(
         ],
     )
     @PostMapping
-    fun addEntityType(@RequestBody entityType: EntityTypeInputModel): ResponseEntity<EntityTypeOutputModel> =
+    fun addEntityType(@RequestBody entityType: EntityTypeInputModel): ResponseEntity<*> =
         when (val result = entityTypesService.addEntityType(entityType)) {
             is Success -> ResponseEntity.status(HttpStatus.CREATED).body(result.value)
-            is Failure -> {
-                when (result.value) {
-                    is ServiceErrors.InvalidDataInput -> throw InvalidDataException("Invalid data provided")
-                    is ServiceErrors.InsertFailed -> throw DatabaseInsertException("Failed to insert record into the database")
-                    else -> throw Exception("An error occurred while processing the request")
-                }
-            }
+            is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
         }
 
     @Operation(
@@ -169,15 +154,8 @@ class EntityTypesController(
     @PutMapping("{entityTypeId}")
     fun updateEntityType(
         @PathVariable entityTypeId: Long, @RequestBody entityType: EntityTypeInputModel
-    ): ResponseEntity<EntityTypeOutputModel> = when (val result = entityTypesService.updateEntityType(entityTypeId, entityType)) {
+    ): ResponseEntity<*> = when (val result = entityTypesService.updateEntityType(entityTypeId, entityType)) {
         is Success -> ResponseEntity.status(HttpStatus.OK).body(result.value)
-        is Failure -> {
-            when (result.value) {
-                is ServiceErrors.InvalidDataInput -> throw InvalidDataException("Invalid data provided")
-                is ServiceErrors.RecordNotFound -> throw EntityNotFoundException("Entity with ID $entityTypeId not found")
-                is ServiceErrors.InsertFailed -> throw DatabaseInsertException("Failed to insert record into the database")
-                else -> throw Exception("An error occurred while processing the request")
-            }
-        }
+        is Failure -> ResponseEntity(result.value.errorResponse, result.value.httpStatus)
     }
 }
