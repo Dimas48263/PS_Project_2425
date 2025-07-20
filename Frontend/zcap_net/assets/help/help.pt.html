@@ -212,8 +212,6 @@
   </br><hr>
   
   <h1>ZCAPNet - Sistema de apoio à Proteção Cívil</h1>
-  <h2>Indice</h2>
-  <h1>TODO</h1>
 
 
   <h2>Entrar no ZCAPNet</h2>
@@ -243,7 +241,7 @@
     <li><strong>Data do sistema</strong> - Data de referência do sistema, usado para filtrar informação nos menus de ZCAPs e Incidentes. Por defeito assume o mês atual. Para consultar dados de meses anteriores alterar a data.</li>
     <li><strong>Modo dia/noite</strong> - Permite alternar entre o modo diurno e noturno.</li>
     <li><strong>Indicador de estado e sincronização</strong> - Indica se a base de dados remota está disponível para receção e envio de atualizações.</p>
-		<table class="status-table">
+		<table class="status-table" id="status">
 		  <caption>Estado</caption>
 		  <tr>
 		    <th>Online</th>
@@ -297,8 +295,7 @@
 		  <tr><td><img src="./images/icons/geo.svg" class="icon"></td><td><strong>Localização</strong> - Mostra no mapa a licalização da ZCAP (requer informação de Latitude e Longitude)</tr>
 		  <tr><td><img src="./images/icons/sync_pending.svg" class="icon"></td><td><strong>Sincronização Pendente</strong> - Representa um registo modificado a aguardar sincronização. (ver <a href="#sync">Sincronização</a>)</tr>
 		  <tr><td><img src="./images/icons/edit.svg" class="icon"></td><td><strong>Editar</strong> - Editar dados da ZCAP seleccionada.</tr>
-		  <tr><td><img src="./images/icons/delete.svg" class="icon"></td><td><strong>Eliminar</strong> - Elimina o registo seleccionado na base de dados local. <strong>Atenção:</strong><u>Registos eliminados localmente mas existentes na base de dados central podem ser repostos após sincronização. Para deixar de ver uma ZCAP listada, usar as datas inicio/fim.</u></tr>
-
+		  <tr><td><img src="./images/icons/delete.svg" class="icon"></td><td><strong>Eliminar</strong> - Elimina o registo seleccionado na base de dados local. <strong>Atenção:</strong><u>Registos eliminados localmente mas existentes na base de dados central são repostos após sincronização. Para deixar de ver uma ZCAP listada, usar as datas inicio/fim.</u></tr>
 		</table>
   </ol>
   <img src="./images/pt/zcap_screen.png" />
@@ -347,22 +344,195 @@
   <hr>
   <h2 id="incidents">Incidentes</h2>
   <p>Incidentes</p>
+  <br />
+  <p>O ecrã de Incidentes é o ecrã onde se desenrola a ação principal do sistema a quando da necessidade de abertura e gestão de uma ZCAP para acolhimento de população.</p>
+  <p>O processo iniciar-se-á pela criação de um novo incidente para depois se poder associar (abrir) uma ou várias ZCAPs ao incidente e em cada uma das ZCAPs acolher utilizadores.</>
 
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li>Regresso para o menu/ecrã anterior</li>
+    <li><strong>Pesquisa</strong> - Pesquisa pela designação do tipo de incidente mostrando todos a apenas os resultados da palavra inserida</li>
+    <li><strong>Data/Sincronização</strong> - Nesta zona encontram-se dois botões:
+		<table>
+		  <tr><td><img src="./images/icons/date_picker.svg" class="icon"></td><td><strong>Data</strong> - Permite seleccionar/alterar o mês de trabalho da aplicação. A lista de ZCAPs visível na lista é sempre as que se encontram ativas no mês seleccionado (data inicio anterior ao final do mês e data fim posterior ao inicio).</tr>
+		  <tr><td><img src="./images/icons/sync.svg" class="icon"></td><td><strong>Sincronização</strong> - Inicia o processo de envio/receção de dados com a base de dados central. (ver <a href="#sync">Sincronização</a>)</tr>
+		</table>
+	</li>
+    <li><strong>Novo - </strong>Adicionar um novo Incidente (ver <a href="#new_incident">Novo/Editar Incidente</a>)</li>
+    <li><strong>Árvore Hierarquica - </strong>A árvore hierarquica associada aos Incidentes permite associar um incidente em qualquer um dos níveis existentes. O número de níveis e o seu significado depende da configuração de níveis (ver <a href="#config">Configuração</a>).</li>
+    <li><strong>Incidente - </strong>Cartão resumo dos dados do incidente. Disponibiliza também as opções:</li>
+			<table>
+		  <tr><td><img src="./images/icons/sync_pending.svg" class="icon"></td><td><strong>Sincronização Pendente</strong> - Representa um registo modificado a aguardar sincronização. (ver <a href="#sync">Sincronização</a>)</tr>
+		  <tr><td><img src="./images/icons/edit.svg" class="icon"></td><td><strong>Editar</strong> - Editar dados da ZCAP seleccionada.</tr>
+		  <tr><td><img src="./images/icons/delete.svg" class="icon"></td><td><strong>Eliminar</strong> - Elimina o registo seleccionado na base de dados local. <strong>Atenção:</strong><u>Registos eliminados localmente mas existentes na base de dados central são repostos após sincronização.</u></tr>
+		</table>
+	<li><strong>ZCAPs - </strong>Lista de ZCAPs já associada ao Incidente</li>
+	<li><strong>Adicionar - ZCAP</strong>Adicionar uma nova ZCAP ao incidente (ver <a href="#add_zcap">Adicionar ZCAP</a>)</li>
+	<li><strong>Pessoas - </strong>Aceder ao menu de gestão de utilizadores da ZCAP</li>
+  </ol>
+  <img src="./images/pt/incidents_1.png" />
+  <br />
+  <h3 id="new_incident">Novo/Editar Incidente</h3>
+  <p>Criar um novo Incidente ou editar uma existente. Preencha ou altere os dados do formulário conforme adequado.</p>
+    <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Seleccionar Nível - </strong>Nível da árvore onde será posicionada a árvore. Lista de valores editável nas <a href="#config">configurações</a> do sistema.</li>
+	<li><strong>Árvore - </strong>Valor do nível da árvore à qual pertencerá o Incidente. Lista de valores editável nas <a href="#config">configurações</a> do sistema.</li>
+	<li><strong>Tipo de Incidente -	</strong>Seleccione da lista o tipo de incidente a registar.Lista de valores editável nas <a href="#config">configurações</a> do sistema.</li>
+	<li><strong>Data Inicio/Fim</strong> - Define o período da ocorrência do Incidente, a dafa fim não é obrigatória ficando o registo aberto até que seja definido o fim do Incidente.<br/>
+	<li><strong>Cancelar/Guardar/Fechar</strong> - Dependendo do perfil de utilizador, as opções disponíveis são:
+	  <ul style="margin-left: 2rem; padding-left: 1rem;">
+	    <li><strong>Cancelar/Guardar</strong> - O utilizador tem permissões para editar e guardar registos.</li>
+		<li><strong>Fechar</strong> - O utilizador tem apenas permissões de consulta.</li>
+	  </ul>
+	</li>
+	</ol>
+  <img src="./images/pt/incidents_new.png" />
+  <br />
+
+  <h3 id="add_zcap">Adicionar ZCAP ao Incidente</h3>
+
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+	<li><strong>ZCAP - </strong>Seleccione da lista a ZCAP pretendia</li>
+	<li><strong>Entidade - </strong>Indique da lista qual a entidade responsável</li>
+	<li><strong>Cancelar/Guardar/Fechar</strong> - Dependendo do perfil de utilizador, as opções disponíveis são:
+	  <ul style="margin-left: 2rem; padding-left: 1rem;">
+	    <li><strong>Cancelar/Guardar</strong> - O utilizador tem permissões para editar e guardar registos.</li>
+		<li><strong>Fechar</strong> - O utilizador tem apenas permissões de consulta.</li>
+	  </ul>
+	</li>
+  </ol>
+  <img src="./images/pt/incidents_new_zcap.png" />
+  <br />
+
+  <h3 id="add_zcap">Gestão de utilizadores da ZCAP no Incidente</h3>
+  <p>Ao aceder ao ecrã de Pessoas da ZCAP é apresentada a lista de utilizadores já acolhidos assim como o seu estado. Cada utilizador tem disponível várias opções:
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li>Regresso para o menu/ecrã anterior</li>
+    <li><strong>Pesquisa - </strong>Pesquisa por nome mostrando todos a apenas os resultados da palavra inserida</li>
+    <li><strong>Sincronização - </strong>Inicia o processo de envio/receção de dados com a base de dados central. (ver <a href="#sync">Sincronização</a>)</li>
+    <li><strong>Novo - </strong>Adicionar um novo utilizador (ver <a href="#add_person">Adicionar Pessoa</a>)</li>
+
+    <li><strong>Pessoa - </strong>Cartão resumo dos dados do utilizador. À esquerda do nome, a cor do icone representa o estado do utilizador na ZCAP.<br /><strong><span style="color: green;">Verde</span></strong> - ainda se encontra a receber apoio na ZCAP. <br /> <strong><span style="color: red;">Vermelho</span></strong> - já não se encontra a receber apoio na ZCAP (ver <a href="#person_exit">Saída</a>).<br />
+		Disponibiliza também as opções:</li>
+		<table>
+		  <tr><td><img src="./images/icons/sync_pending.svg" class="icon"></td><td><strong>Sincronização Pendente</strong> - Representa um registo modificado a aguardar sincronização. (ver <a href="#sync">Sincronização</a>)</tr>
+		  <tr><td><img src="./images/icons/edit.svg" class="icon"></td><td><strong>Editar</strong> - Editar dados da Pessoa seleccionada.</tr>
+		  <tr><td><img src="./images/icons/delete.svg" class="icon"></td><td><strong>Eliminar</strong> - Elimina o registo seleccionado na base de dados local. <strong>Atenção:</strong><u>Registos eliminados localmente mas existentes na base de dados central são repostos após sincronização.</u></tr>
+		</table>
+	<li><strong>Familiares - </strong>Adicionar ou alterar relação familiar com outros utilizadores.(ver <a href="#person_relations">Familiares</a>)</li>
+	<li><strong>Saída - </strong>Registar saída do utilizador (ver <a href="#person_exit">Saída</a>)</li>
+	<li><strong>Apoio Necessário - </strong>Gestão das necessidades de apoio do utilizador (ver <a href="#person_support_needed">Apoio Necessario</a>)</li>
+	<li><strong>Necessidades Especiais - </strong>Gestão das necessidades especiais do utilizador´(ver <a href="#person_special_needs">Necessidades especiais</a>)</li>
+  </ol>
+  <img src="./images/pt/incidents_persons.png" />
+	
+	
+  <h3 id="add_person">Adicionar Pessoa à ZCAP no Incidente</h3>
+	<p>Adicionar um utilizador à ZCAP. Preencha os campos do formulário:</p>
+	  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Nome - </strong>Nome do utilizador</li>
+    <li><strong>Idade - </strong>Idade do utilizador</li>
+    <li><strong>Contacto - </strong>Contacto do utilizador</li>
+    <li><strong>Nível - </strong>Nível da arvore hierarquica do local de residência do utilizador</li>
+    <li><strong>Local de residência - </strong>Local de residência do utilizador, os valores da lista dependem da escolha do Nível da árvore.</li>
+    <li><strong>Data de entrada - </strong>Data/hora da entrada do utilizador na ZCAP</li>
+  </ol>
+  <img src="./images/pt/incidents_persons_add.png" />
+
+  <h3 id="person_relations">Familiares</h3>
+	<p>É apresentada a lista de parentes já associados ao utilizador. É possível eliminar um registo desde que este não tenha sido ainda sincronizado com a base de dados central.</p>
+  <img src="./images/pt/incidents_persons_relations.png" />
+	<p>Para adicionar um familiar, este já tem de estar adicionado como utilizador na ZCAP. 
+	Seleccione o grau de parentesco do utilizador (ex.: Filha), selecionar a Pessoa (ex.: Matilta) e o grau desta com o utilizador (ex: Pai).
+	No exemplo: <i>Gonçalo é Pai de Matilda que é sua Filha</i>.</p>
+    <img src="./images/pt/incidents_persons_relations_add.png" />
+
+  <h3 id="person_exit">Saída</h3>
+	<p>Quando um utilizador deixa as instalações, de forma definitiva, é necessário registas esta saída e, se possível, conservar informação do seu destino e um contacto em caso de necessidade.</p>
+    <img src="./images/pt/incidents_persons_exit.png" />
+
+  <h3 id="person_support_needed">Apoio Necessário</h3>
+	<p>Cada utilizador requer um ou vários tipos de apoio, disponíveis na ZCAP. Este menu lista os tipos de apoio solicitados e disponibilizados ao utilizador.</p>
+	<p>Adicione ou edite um novo tipo de apoio. É possível também eliminar um registo, desde que não tenha sido já sincronizado com a base de dados central. Se a remoção for por o apoio deixar de ser necessário utilize os campos data inicio/fim do apoio.</p>
+		<img src="./images/pt/incidents_persons_support.png" />
+	<p>Para adicionar um novo apoio, seleccione da lista o tipo de apoio solicitado. É possível descrever o detalhe do apoio e também o período em que esse apoio é necessário (data inicio/fim). Não estando previsto o final do apoio, deixe sem preencher.</p>
+    <img src="./images/pt/incidents_persons_support_add.png" />
+	
+  <h3 id="person_special_needs">Necessidades Especiais</h3>  
+	<p>Um utilizador pode ser portador de uma necessidade especial como por exemplo, ser portador de uma doença ou condição. Este menu lista os tipos de necessidade especial assossiados ao utilizador.</p>
+	<p>Adicione ou edite um novo tipo de necessidade especial. É possível também eliminar um registo, desde que não tenha sido já sincronizado com a base de dados central. Se a remoção for por deixar de ser necessário utilize os campos data inicio/fim.</p>
+  	<img src="./images/pt/incidents_persons_special.png" />
+	<p>Para adicionar uma nova necessidade especial, seleccione da lista o tipo de necessidade especial. É possível descrever o detalhe da necessidade especial e também o período em que essa necessidade está associada ao utilizador. Não estando previsto o final da necessidade especial, deixe sem preencher.</p>
+	<img src="./images/pt/incidents_persons_special_add.png" />	
   <hr>
+
   <h2 id="config">Configurações</h2>
-  <p>Configurações</p>
+  <p>É a partir do ecrã de Configurações que se determina o comportamento de toda a aplicação pois é possível definir ou redefinir desde a Estrutura (Árvore Hierarquica e ZCAPs) às opções disponíveis para seleção nos diferentes menus (listas de Tipos de necessidades, tipos de incidentes, graus de parentesco, etc...) assim como os acessos e perfis de utilizador.</p>
+	<p>Este ecrã está dividido em:</p>
 
-  <hr>
-  <h2 id="help">Ajuda</h2>
-  <p>Ajuda</p>
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <ul><strong>Estrutura - </strong>Também descrita como "Árvore Hierárquica", este menu subdivide-se nas diversas tabelas que constroem a estrutura do sistema (ver <a href="#config_structure">Estrutura</a>)</ul>
+    <ul><strong>Incidentes - </strong>aqui é possível definir a lista de Tipos de Incidentes (ver <a href="#config_incidents">Incidentes</a>).</ul>
+    <ul><strong>Utilizadores - </strong>Menu onde é possível gerir Utilizadores, Perfis de Utilizador e Acesso a dados (ver <a href="#config_users">Utilizadores</a>).</ul>
+    <ul><strong>Tabelas de suporte - </strong>Definição das opções disponíveis para uso em tabelas que limitam os valores a utilizar (ver <a href="#config_support_tables">Tabelas de Suporte</a>).</ul>
+  </ol>
+	<img src="./images/pt/configs.png" />
+
+   <h2 id="config_structure">Estrutura</h2>
+  <p>A estrutura da aplicação define a organização da mesma e é composta pelas tabelas:</p>
+	  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Níveis de Arvore - </strong>Define quantos e quais os níveis da árvore que podem ser utiizados e o que representam (ver <a href="#tree_levels">Niveis de Árvore</a>).</li>
+    <li><strong>Elementos da Árvore - </strong>Registos que constroem a árvore hierarquica e que podem associar ZCAPS, Incidentes e Pessoas (ver <a href="#tree_elements">Niveis de Árvore</a>)</li>
+    <li><strong>Tipos de detalhe - </strong>Agrupador de características que podem ser associadas a um registo da árvore (ver <a href="#tree_detail_type">Tipos de detalhe</a>).</li>
+    <li><strong>Detalhes - </strong>Detalhes possíveis para associar a um elemento da árvore (ver <a href="#tree_detail">Detalhe</a>)</li>
+    <li><strong>ZCAPS - </strong>Ecrã destinado à gestão das ZCAPS, semelhante ao menu inicial (ver <a href="#zcaps">ZCAPs</a>) mas sem a visualização da associação na árvore.</li>
+  </ol>
+	
+	<h3 id="tree_levels">Níveis de Árvore</h3>
+	<p>O ecrã lista todos os níveis de árvore e disponibiliza os icones de adicionar, alterar ou eliminar registo. É também possível despoletar a sincronização nos icones de sincronização.</p>
+	<img src="./images/pt/tree_levels.png" />
+	
+	<h3 id="tree_elements">Níveis de Árvore</h3>
+	<p>O ecrã lista todos os elementos da árvore e disponibiliza os icones de adicionar, alterar ou eliminar registo. É também possível despoletar a sincronização nos icones de sincronização.</p>
+	<img src="./images/pt/tree_elements.png" />
+	<p>Os elementos da árvore depois de corretamente associados constroem a árvore hierarquica visível e utilizada por todo o sistema para a associação de dados entre Zcaps, Incidentes, Pessoas, Acessos de utilizadores.</p>
+	<img src="./images/pt/tree.png" />
+	<p>Adicionar um elemento da árvore requer definir o seu Nome, o nível a que pertence e qual o elemento "pai" (se existir). A data incio/fim determina a visibilidade do registo ao longo do tempo.</p>
+	<img src="./images/pt/tree_add.png" />
+
+	<h3 id="tree_detail_type">Tipos de detalhe</h3>
+	<p>O ecrã lista todos os Tipos de detalhe e disponibiliza os icones de adicionar, alterar ou eliminar registo. É também possível despoletar a sincronização nos icones de sincronização.</p>
+	<img src="./images/pt/tree_detail_type.png" />
+	<p>Adicionar um novo tipo de detalhe requer preencher o Nome, o tipo de dados (numero inteiro, numero real, string, boleano, etc...)</p>
+	<p>Desta forma é possível adicionar novos detalhes aos formulários sem perder o controlo dos dados possíveis de associar.</p>
+	<img src="./images/pt/tree_detail_type_add.png" />
+	
+	<h3 id="tree_detail">Detalhe</h3>
+	<p>O ecrã lista todos os Detalhes e disponibiliza os icones de adicionar, alterar ou eliminar registo. É também possível despoletar a sincronização nos icones de sincronização.</p>
+	<img src="./images/pt/tree_detail.png" />
+	
+	
+	<h2 id="config_incidents">Incidentes</h2>
+  <p>Nesta categoria encontra-se a tabela de Tiposde Incidente.</p>
+	<p>São listados os Tipos de Incidente passíveis de serem usados na criação de um Incidente e disponibiliza os icones de adicionar, alterar ou eliminar registo. É também possível despoletar a sincronização nos icones de sincronização.</p>
+	<img src="./images/pt/incident_type.png" />
+		
+		
+	<h2 id="config_users">Utilizadores</h2>
+  <p>A categoria de utilizadores é composta por 3 tabelas:</p>
+	  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <li><strong>Utilizadores - </strong></li>
+    <li><strong>Perfil - </strong></li>
+    <li><strong>Acesso a dados - </strong></li>
+  </ol>
+	
+	<h2 id="config_support_tables">Tabelas de suporte</h2>
+  <p>Utilizadores</p>
 
   <hr>
   <h2 id="sync">Sincronização</h2>
-  <p>Sincronização</p>
+  <p>O serviço de sincronização é definido para ser executado períodicamente de forma automática. Este serviço envia todos os dados novos ou alterados para a base de dados central e recebe atualizações que podem ser novos registos ou atualizações de registos existentes.</p>
+	<p>Este serviço pode ser despoletado manualmente em qualquer dos ícones de sincronização disponíveis em todos os ecras (canto superior direito) ou no indicador de estado no menu principal (ver <a href="#status">Indicador de estado</a>).</p>
   
-  <hr>
-  <h2 id="about">Sobre</h2>
-  <p>Configurações</p>
 </main>
 
 </body>
@@ -370,10 +540,11 @@
 
 
   <ol style="margin-left: 2rem; padding-left: 1rem;">
-    <li><strong>A</strong> - </li>
-    <li><strong>A</strong> - </li>
-    <li><strong>A</strong> - </li>
-    <li><strong>A</strong> - </li>
-    <li><strong>A</strong> - </li>
+    <li><strong>A - </strong></li>
+    <li><strong>A - </strong></li>
+    <li><strong>A - </strong></li>
+    <li><strong>A - </strong></li>
+    <li><strong>A - </strong></li>
+    <li><strong>A - </strong></li>
   </ol>
   

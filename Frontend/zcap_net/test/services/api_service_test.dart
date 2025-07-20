@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:zcap_net_app/core/services/app_config.dart';
+import 'package:zcap_net_app/core/services/log_service.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -25,6 +26,7 @@ void main() {
       "logToFile": false,
       "logFileName": "log.txt"
     });
+    LogService.init(AppConfig.instance);
     mockClient = MockClient();
     apiService = ApiService(client: mockClient);
   });
