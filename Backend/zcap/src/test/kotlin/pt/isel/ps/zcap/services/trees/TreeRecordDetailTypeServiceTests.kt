@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetailType
 import pt.isel.ps.zcap.repository.dto.trees.treeRecordDetailType.TreeRecordDetailTypeInputModel
 import pt.isel.ps.zcap.repository.models.trees.TreeRecordDetailTypeRepository
@@ -14,6 +15,7 @@ import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeRecordDetailTypeService
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -36,7 +38,7 @@ class TreeRecordDetailTypeServiceTests {
         servicesTests = TreeRecordDetailTypeService(repository)
         val testTreeRecordDetailType = TreeRecordDetailType(
             name = "TRDT1",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now(),
         )
         entityManager.persistAndFlush(testTreeRecordDetailType)
@@ -50,7 +52,7 @@ class TreeRecordDetailTypeServiceTests {
         assertEquals("TRDT1", treeRecordDetailTypes.first().name)
         val anotherTreeRecordDetailType = TreeRecordDetailType(
             name = "TRDT2",
-            unit = "int",
+            unit = DataTypes.INT,
             startDate = LocalDate.now(),
         )
         entityManager.persistAndFlush(anotherTreeRecordDetailType)
@@ -75,16 +77,30 @@ class TreeRecordDetailTypeServiceTests {
 
     @Test
     fun `save Tree Record Detail Type`() {
-        val treeRecordDetailTypeInput = TreeRecordDetailTypeInputModel("nameTest", "unitTest", LocalDate.now(), null)
+        val treeRecordDetailTypeInput = TreeRecordDetailTypeInputModel(
+            "nameTest",
+            DataTypes.STRING,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val save = servicesTests.saveTreeRecordDetailType(treeRecordDetailTypeInput)
         assertTrue(save is Success)
         assertEquals("nameTest", save.value.name)
-        assertEquals("unitTest", save.value.unit)
+        assertEquals(DataTypes.STRING, save.value.unit)
     }
 
     @Test
     fun `Failed to save Tree Record Detail Type by name`() {
-        val treeRecordDetailTypeInput = TreeRecordDetailTypeInputModel("", "unitTest", LocalDate.now(), null)
+        val treeRecordDetailTypeInput = TreeRecordDetailTypeInputModel(
+            "",
+            DataTypes.STRING,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val save = servicesTests.saveTreeRecordDetailType(treeRecordDetailTypeInput)
         assertTrue(save is Failure)
         assertTrue(save.value is ServiceErrors.InvalidDataInput)
@@ -94,23 +110,27 @@ class TreeRecordDetailTypeServiceTests {
     fun `update Tree Record Detail Type`() {
         val treeRecordDetailTypeUpdate = TreeRecordDetailTypeInputModel(
             "UpdatedName",
-            "UpdatedUnit",
+            DataTypes.STRING,
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val update = servicesTests.updateTreeRecordDetailTypeById(currentSavedId, treeRecordDetailTypeUpdate)
         assertTrue(update is Success)
         assertEquals("UpdatedName", update.value.name)
-        assertEquals("UpdatedUnit", update.value.unit)
+        assertEquals(DataTypes.STRING, update.value.unit)
     }
 
     @Test
     fun `update Tree Record Detail Type with wrong date`() {
         val treeRecordDetailTypeUpdate = TreeRecordDetailTypeInputModel(
             "UpdatedName",
-            "UpdatedUnit",
+            DataTypes.STRING,
             LocalDate.MAX,
-            LocalDate.MIN
+            LocalDate.MIN,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val update = servicesTests.updateTreeRecordDetailTypeById(currentSavedId, treeRecordDetailTypeUpdate)
         assertTrue(update is Failure)
@@ -121,9 +141,11 @@ class TreeRecordDetailTypeServiceTests {
     fun `update Tree Record Detail Type with wrong id`() {
         val treeRecordDetailTypeUpdate = TreeRecordDetailTypeInputModel(
             "UpdatedName",
-            "UpdatedUnit",
+            DataTypes.STRING,
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val update = servicesTests.updateTreeRecordDetailTypeById(99, treeRecordDetailTypeUpdate)
         assertTrue(update is Failure)

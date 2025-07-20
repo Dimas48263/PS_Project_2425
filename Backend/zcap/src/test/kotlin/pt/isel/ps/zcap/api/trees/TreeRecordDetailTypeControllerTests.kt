@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetailType
 import pt.isel.ps.zcap.domain.users.User
 import pt.isel.ps.zcap.domain.users.userDataProfile.UserDataProfile
@@ -23,6 +24,8 @@ import pt.isel.ps.zcap.repository.models.users.userProfile.UserProfileRepository
 import pt.isel.ps.zcap.repository.models.users.UserRepository
 import pt.isel.ps.zcap.utils.PasswordEncoder
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
 import kotlin.properties.Delegates
 import kotlin.test.assertNotNull
 
@@ -92,8 +95,10 @@ class TreeRecordDetailTypeControllerTests(
         clean()
         val treeRecordDetailType = TreeRecordDetailType(
             name = "TreeRecordDetailType1",
-            unit = "string",
-            startDate = LocalDate.now()
+            unit = DataTypes.STRING,
+            startDate = LocalDate.now(),
+            createdAt = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0),
+            lastUpdatedAt = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0)
         )
         val saved = repository.save(treeRecordDetailType)
         currentSavedId = saved.detailTypeId
@@ -106,7 +111,7 @@ class TreeRecordDetailTypeControllerTests(
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(1))
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("TreeRecordDetailType1"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].unit").value("string"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$[0].unit").value("STRING"))
     }
 
     @Test
@@ -114,7 +119,7 @@ class TreeRecordDetailTypeControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.get("/api/tree-record-detail-types/$currentSavedId").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("TreeRecordDetailType1"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.unit").value("string"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.unit").value("STRING"))
     }
 
     @Test
@@ -122,8 +127,8 @@ class TreeRecordDetailTypeControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.get("/api/tree-record-detail-types/${99}").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail Type with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
 
     @Test
@@ -131,9 +136,11 @@ class TreeRecordDetailTypeControllerTests(
         val jsonBody = """
         {
             "name": "TreeRecordDetailType2",
-            "unit": "unit Test",
+            "unit": "STRING",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -144,7 +151,7 @@ class TreeRecordDetailTypeControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("TreeRecordDetailType2"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.unit").value("unit Test"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.unit").value("STRING"))
     }
 
     @Test
@@ -152,31 +159,11 @@ class TreeRecordDetailTypeControllerTests(
         val jsonBody = """
         {
             "name": "",
-            "unit": "unit Test",
+            "unit": "STRING",
             "startDate": "2025-01-01",
-            "endDate": null
-        }
-    """.trimIndent()
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/tree-record-detail-types")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonBody)
-                .cookie(cookie)
-        )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("INVALID_DATA"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value(null))
-    }
-
-    @Test
-    fun `Failed save (POST) tree record detail with invalid unit`() {
-        val jsonBody = """
-        {
-            "name": "TreeRecordDetailType2",
-            "unit": "",
-            "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -196,9 +183,11 @@ class TreeRecordDetailTypeControllerTests(
         val jsonBody = """
         {
             "name": "Updated Name",
-            "unit": "Updated unit",
+            "unit": "STRING",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -209,7 +198,7 @@ class TreeRecordDetailTypeControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Updated Name"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.unit").value("Updated unit"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.unit").value("STRING"))
     }
 
     @Test
@@ -217,9 +206,11 @@ class TreeRecordDetailTypeControllerTests(
         val jsonBody = """
         {
             "name": "Updated Name",
-            "unit": "Updated unit",
+            "unit": "STRING",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -230,8 +221,8 @@ class TreeRecordDetailTypeControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail Type with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
 
     @Test
@@ -239,9 +230,11 @@ class TreeRecordDetailTypeControllerTests(
         val jsonBody = """
         {
             "name": "Updated Name",
-            "unit": "Updated unit",
+            "unit": "STRING",
             "startDate": "2025-01-01",
-            "endDate": "2024-01-01"
+            "endDate": "2024-01-01",
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -268,7 +261,7 @@ class TreeRecordDetailTypeControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/tree-record-detail-types/${99}").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail Type with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.Tree
 import pt.isel.ps.zcap.domain.tree.TreeLevel
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetail
@@ -19,6 +20,7 @@ import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeRecordDetailService
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -67,7 +69,7 @@ class TreeRecordDetailServiceTests {
 
         val testTreeRecordDetailType = TreeRecordDetailType(
             name = "TRDT1",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now(),
         )
         entityManager.persistAndFlush(testTreeRecordDetailType)
@@ -114,7 +116,9 @@ class TreeRecordDetailServiceTests {
             currentTreeRecordDetailTypeSavedId,
             "value2",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.saveTreeRecordDetail(treeRecordDetailInput)
         assertTrue(save is Success)
@@ -128,7 +132,9 @@ class TreeRecordDetailServiceTests {
             currentTreeRecordDetailTypeSavedId,
             "",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.saveTreeRecordDetail(treeRecordDetailInput)
         assertTrue(save is Failure)
@@ -142,7 +148,9 @@ class TreeRecordDetailServiceTests {
             currentTreeRecordDetailTypeSavedId,
             "value2",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.saveTreeRecordDetail(treeRecordDetailInput)
         assertTrue(save is Failure)
@@ -156,7 +164,9 @@ class TreeRecordDetailServiceTests {
             99,
             "value2",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.saveTreeRecordDetail(treeRecordDetailInput)
         assertTrue(save is Failure)
@@ -170,7 +180,9 @@ class TreeRecordDetailServiceTests {
             currentTreeRecordDetailTypeSavedId,
             "Updated",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val update = servicesTests.updateTreeRecordDetailById(currentSavedId, treeRecordDetailUpdate)
         assertTrue(update is Success)
@@ -184,7 +196,9 @@ class TreeRecordDetailServiceTests {
             currentTreeRecordDetailTypeSavedId,
             "Updated",
             LocalDate.MAX,
-            LocalDate.MIN
+            LocalDate.MIN,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val update = servicesTests.updateTreeRecordDetailById(currentSavedId, treeRecordDetailUpdate)
         assertTrue(update is Failure)
@@ -198,11 +212,13 @@ class TreeRecordDetailServiceTests {
             currentTreeRecordDetailTypeSavedId,
             "Updated",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val update = servicesTests.updateTreeRecordDetailById(99, treeRecordDetailUpdate)
         assertTrue(update is Failure)
-        assertTrue(update.value is ServiceErrors.TreeRecordDetailNotFound)
+        assertTrue(update.value is ServiceErrors.RecordNotFound)
     }
 
     @Test
@@ -212,7 +228,9 @@ class TreeRecordDetailServiceTests {
             currentTreeRecordDetailTypeSavedId,
             "Updated",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val update = servicesTests.updateTreeRecordDetailById(currentSavedId, treeRecordDetailUpdate)
         assertTrue(update is Failure)
@@ -226,7 +244,9 @@ class TreeRecordDetailServiceTests {
             99,
             "Updated",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val update = servicesTests.updateTreeRecordDetailById(currentSavedId, treeRecordDetailUpdate)
         assertTrue(update is Failure)

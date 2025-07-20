@@ -9,7 +9,7 @@ sealed class ServiceErrors(val httpStatus: HttpStatus, val errorResponse: ErrorR
         HttpStatus.BAD_REQUEST,
         ErrorResponse(
             errorCode = "INVALID_DATA",
-            errorMessage = "Invalid data input.",
+            errorMessage = "Invalid data provided.",
             details = "Invalid username or password."
         )
     )
@@ -17,7 +17,7 @@ sealed class ServiceErrors(val httpStatus: HttpStatus, val errorResponse: ErrorR
         HttpStatus.BAD_REQUEST,
         ErrorResponse(
             errorCode = "INVALID_DATA",
-            errorMessage = "Invalid data input.",
+            errorMessage = "Invalid data provided.",
             details = "Invalid password complexity."
         )
     )
@@ -25,7 +25,7 @@ sealed class ServiceErrors(val httpStatus: HttpStatus, val errorResponse: ErrorR
         HttpStatus.BAD_REQUEST,
         ErrorResponse(
             errorCode = "INVALID_DATA",
-            errorMessage = "Invalid data input."
+            errorMessage = "Invalid data provided."
         )
     )
 
@@ -33,7 +33,7 @@ sealed class ServiceErrors(val httpStatus: HttpStatus, val errorResponse: ErrorR
         HttpStatus.BAD_REQUEST,
         ErrorResponse(
             errorCode = "INVALID_DATA",
-            errorMessage = "Invalid data input.",
+            errorMessage = "Invalid data provided.",
             details = "Record already exists."
         )
     )
@@ -65,160 +65,160 @@ sealed class ServiceErrors(val httpStatus: HttpStatus, val errorResponse: ErrorR
     data class RecordNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Record with id $id not found."
         )
     )
     data class TreeNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Tree with id $id not found."
         )
     )
     data class TreeLevelNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Tree Level with id $id not found."
         )
     )
     data class ParentNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Parent with id $id not found."
         )
     )
     data class TreeRecordDetailTypeNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Tree Record Detail Type with id $id not found."
         )
     )
     data class TreeRecordDetailNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Tree Record Detail with id $id not found."
         )
     )
     data class NationalityNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Nationality with id $id not found."
         )
     )
     data class DepartureDestinationNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Departure Destination with id $id not found."
         )
     )
     data class PersonNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Person with id $id not found."
         )
     )
     data class SpecialNeedNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Special Need with id $id not found."
         )
     )
     data class SupportNeededNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Support Needed with id $id not found."
         )
     )
     data class RelationTypeNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Relation Type with id $id not found."
         )
     )
     data class IncidentTypeNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Incident Type with id $id not found."
         )
     )
     data class BuildingTypeNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Building Type with id $id not found."
         )
     )
     data class EntityNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Entity with id $id not found."
         )
     )
     data class IncidentNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Incident with id $id not found."
         )
     )
     data class ZcapNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "ZCAP with id $id not found."
         )
     )
     data class IncidentZcapNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Incident ZCAP with id $id not found."
         )
     )
     data class DetailTypeCategoryNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "Detail Type Category with id $id not found."
         )
     )
     data class ZcapDetailTypeNotFound(val id: Long) : ServiceErrors(
         HttpStatus.NOT_FOUND,
         ErrorResponse(
-            errorCode = "ELEMENT_NOT_FOUND",
-            errorMessage = "Requested element was not found.",
+            errorCode = "ENTITY_NOT_FOUND",
+            errorMessage = "Requested record was not found.",
             details = "ZCAP Detail Type with id $id not found."
         )
     )

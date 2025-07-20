@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.Tree
 import pt.isel.ps.zcap.domain.tree.TreeLevel
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetail
@@ -47,7 +48,7 @@ class TreeRecordDetailRepositoryTests {
         entityManager.persistAndFlush(testTree)
         testTrdt = TreeRecordDetailType(
             name = "Test1",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now()
         )
         entityManager.persistAndFlush(testTrdt)

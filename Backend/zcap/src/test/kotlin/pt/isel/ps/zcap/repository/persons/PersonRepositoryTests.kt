@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
 import pt.isel.ps.zcap.domain.persons.Person
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.Tree
 import pt.isel.ps.zcap.domain.tree.TreeLevel
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetail
@@ -54,7 +55,7 @@ class PersonRepositoryTests {
 
         val treeRecordDetailType = TreeRecordDetailType(
             name = "Tree Record Detail Type test",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now()
         )
         val saveTreeRecordDetailType = entityManager.persistAndFlush(treeRecordDetailType)
@@ -72,7 +73,6 @@ class PersonRepositoryTests {
             name = "Person test",
             age = 20,
             contact = "987654321",
-            countryCode = saveCountryCode,
             placeOfResidence = saveTree,
             entryDatetime = LocalDateTime.now()
         )
@@ -93,7 +93,6 @@ class PersonRepositoryTests {
             name = "New person",
             age = 20,
             contact = "987654321",
-            countryCode = currentCountryCode,
             placeOfResidence = currentPlaceOdResidence,
             entryDatetime = LocalDateTime.now()
         )

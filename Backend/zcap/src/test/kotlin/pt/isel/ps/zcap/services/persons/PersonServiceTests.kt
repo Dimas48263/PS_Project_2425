@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.test.context.ActiveProfiles
 import pt.isel.ps.zcap.domain.persons.Person
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.Tree
 import pt.isel.ps.zcap.domain.tree.TreeLevel
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetail
@@ -88,25 +89,15 @@ class PersonServiceTests {
 
         val treeRecordDetailType = TreeRecordDetailType(
             name = "Tree Record Detail Type test",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now()
         )
         val saveTreeRecordDetailType = treeRecordDetailTypeRepository.save(treeRecordDetailType)
-
-        val countryCode = TreeRecordDetail(
-            treeRecord = saveTree,
-            detailType = saveTreeRecordDetailType,
-            valueCol = "country code test",
-            startDate = LocalDate.now()
-        )
-        val saveCountryCode = treeRecordDetailRepository.save(countryCode)
-        currentCountryCodeId = saveCountryCode.detailId
 
         val person = Person(
             name = "Person test",
             age = 20,
             contact = "987654321",
-            countryCode = saveCountryCode,
             placeOfResidence = saveTree,
             entryDatetime = LocalDateTime.now()
         )
@@ -141,7 +132,6 @@ class PersonServiceTests {
             "New Person",
             18,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -150,13 +140,14 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.savePerson(newPerson)
         assertIs<Success<PersonOutputModel>>(person)
         assertEquals("New Person", person.value.name)
         assertEquals("123456789", person.value.contact)
-        assertEquals("country code test", person.value.countryCode.valueCol)
     }
 
     @Test
@@ -165,7 +156,6 @@ class PersonServiceTests {
             "",
             18,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -174,33 +164,13 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.savePerson(newPerson)
         assertIs<Failure<ServiceErrors>>(person)
         assertIs<ServiceErrors.InvalidDataInput>(person.value)
-    }
-
-    @Test
-    fun `Failed save person with invalid country code`() {
-        val newPerson = PersonInputModel(
-            "New Person",
-            18,
-            "123456789",
-            99,
-            currentPlaceOdResidenceId,
-            LocalDateTime.now(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
-        val person = servicesTests.savePerson(newPerson)
-        assertIs<Failure<ServiceErrors>>(person)
-        assertIs<ServiceErrors.CountryCodeNotFound>(person.value)
     }
 
     @Test
@@ -209,7 +179,6 @@ class PersonServiceTests {
             "New Person",
             18,
             "123456789",
-            currentCountryCodeId,
             99,
             LocalDateTime.now(),
             null,
@@ -218,7 +187,9 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.savePerson(newPerson)
         assertIs<Failure<ServiceErrors>>(person)
@@ -231,7 +202,6 @@ class PersonServiceTests {
             "New Person",
             18,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -240,7 +210,9 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.savePerson(newPerson)
         assertIs<Failure<ServiceErrors>>(person)
@@ -253,7 +225,6 @@ class PersonServiceTests {
             "",
             18,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -262,7 +233,9 @@ class PersonServiceTests {
             null,
             null,
             99,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.savePerson(newPerson)
         assertIs<Failure<ServiceErrors>>(person)
@@ -275,7 +248,6 @@ class PersonServiceTests {
             "Updated",
             18,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -284,7 +256,9 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.updatePersonById(currentSavedId, newPerson)
         assertIs<Success<PersonOutputModel>>(person)
@@ -297,7 +271,6 @@ class PersonServiceTests {
             "",
             21,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -306,7 +279,9 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.updatePersonById(currentSavedId, newPerson)
         assertIs<Failure<ServiceErrors>>(person)
@@ -319,7 +294,6 @@ class PersonServiceTests {
             "Updated",
             18,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -328,33 +302,13 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.updatePersonById(99, newPerson)
         assertIs<Failure<ServiceErrors>>(person)
         assertIs<ServiceErrors.RecordNotFound>(person.value)
-    }
-
-    @Test
-    fun `Failed update person by id with invalid country code`() {
-        val newPerson = PersonInputModel(
-            "Updated",
-            18,
-            "123456789",
-            99,
-            currentPlaceOdResidenceId,
-            LocalDateTime.now(),
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
-        val person = servicesTests.updatePersonById(currentSavedId, newPerson)
-        assertIs<Failure<ServiceErrors>>(person)
-        assertIs<ServiceErrors.CountryCodeNotFound>(person.value)
     }
 
     @Test
@@ -363,7 +317,6 @@ class PersonServiceTests {
             "Updated",
             18,
             "123456789",
-            currentCountryCodeId,
             99,
             LocalDateTime.now(),
             null,
@@ -372,7 +325,9 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.updatePersonById(currentSavedId, newPerson)
         assertIs<Failure<ServiceErrors>>(person)
@@ -385,7 +340,6 @@ class PersonServiceTests {
             "Updated",
             18,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -394,7 +348,9 @@ class PersonServiceTests {
             null,
             null,
             null,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.updatePersonById(currentSavedId, newPerson)
         assertIs<Failure<ServiceErrors>>(person)
@@ -407,7 +363,6 @@ class PersonServiceTests {
             "Updated",
             18,
             "123456789",
-            currentCountryCodeId,
             currentPlaceOdResidenceId,
             LocalDateTime.now(),
             null,
@@ -416,7 +371,9 @@ class PersonServiceTests {
             null,
             null,
             99,
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val person = servicesTests.updatePersonById(currentSavedId, newPerson)
         assertIs<Failure<ServiceErrors>>(person)

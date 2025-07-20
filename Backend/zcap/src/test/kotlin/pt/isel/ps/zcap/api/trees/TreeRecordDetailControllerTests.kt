@@ -13,6 +13,7 @@ import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.Tree
 import pt.isel.ps.zcap.domain.tree.TreeLevel
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetail
@@ -29,6 +30,8 @@ import pt.isel.ps.zcap.repository.models.users.userProfile.UserProfileRepository
 import pt.isel.ps.zcap.repository.models.users.UserRepository
 import pt.isel.ps.zcap.utils.PasswordEncoder
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
 import kotlin.properties.Delegates
 import kotlin.test.assertNotNull
 
@@ -129,7 +132,7 @@ class TreeRecordDetailControllerTests(
 
         val treeRecordDetailType = TreeRecordDetailType(
             name = "TreeRecordDetailType1",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now()
         )
         val treeRecordDetailTypeSave = treeRecordDetailTypeRepository.save(treeRecordDetailType)
@@ -139,7 +142,9 @@ class TreeRecordDetailControllerTests(
             treeRecord = treeSave,
             detailType = treeRecordDetailTypeSave,
             valueCol = "test value",
-            startDate = LocalDate.now()
+            startDate = LocalDate.now(),
+            createdAt = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0),
+            lastUpdatedAt = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0)
         )
         val treeRecordDetailSave = treeRecordDetailRepository.save(treeRecordDetail)
         currentTreeRecordDetailSavedId = treeRecordDetailSave.detailId
@@ -170,8 +175,8 @@ class TreeRecordDetailControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.get("/api/tree-record-details/${99}").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
 
     @Test
@@ -182,7 +187,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": $currentTreeRecordDetailTypeSavedId,
             "valueCol": "test value 2",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -205,7 +212,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": $currentTreeRecordDetailTypeSavedId,
             "valueCol": "test value 2",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -216,8 +225,8 @@ class TreeRecordDetailControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree with id 99 not found."))
     }
 
     @Test
@@ -228,7 +237,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": ${99},
             "valueCol": "test value 2",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -239,8 +250,8 @@ class TreeRecordDetailControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail Type with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail Type with id 99 not found."))
     }
 
     @Test
@@ -251,7 +262,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": $currentTreeRecordDetailTypeSavedId,
             "valueCol": "",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -274,7 +287,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": $currentTreeRecordDetailTypeSavedId,
             "valueCol": "Updated value",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -297,7 +312,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": $currentTreeRecordDetailTypeSavedId,
             "valueCol": "Updated value",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -308,8 +325,8 @@ class TreeRecordDetailControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
     @Test
     fun `Failed update (PUT) tree record details with invalid tree id`() {
@@ -319,7 +336,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": $currentTreeRecordDetailTypeSavedId,
             "valueCol": "Updated value",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -330,8 +349,8 @@ class TreeRecordDetailControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree with id 99 not found."))
     }
 
     @Test
@@ -342,7 +361,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": ${99},
             "valueCol": "Updated value",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -353,8 +374,8 @@ class TreeRecordDetailControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail Type with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail Type with id 99 not found."))
     }
 
     @Test
@@ -365,7 +386,9 @@ class TreeRecordDetailControllerTests(
             "detailTypeId": $currentTreeRecordDetailTypeSavedId,
             "valueCol": "",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -392,7 +415,7 @@ class TreeRecordDetailControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/tree-record-details/${99}").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree Record Detail with ID 99 not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
 }

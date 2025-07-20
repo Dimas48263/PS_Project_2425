@@ -23,6 +23,8 @@ import pt.isel.ps.zcap.repository.models.users.userProfile.UserProfileRepository
 import pt.isel.ps.zcap.repository.models.users.UserRepository
 import pt.isel.ps.zcap.utils.PasswordEncoder
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.Month
 import kotlin.properties.Delegates
 import kotlin.test.assertNotNull
 
@@ -93,7 +95,9 @@ class DepartureDestinationControllerTests(
         clean()
         val departureDestination = DepartureDestination(
             name = "departure destination test",
-            startDate = LocalDate.now()
+            startDate = LocalDate.now(),
+            createdAt = LocalDateTime.of(2025,Month.JANUARY, 1, 0, 0),
+            lastUpdatedAt = LocalDateTime.of(2025,Month.JANUARY, 1, 0, 0)
         )
         val save = repository.save(departureDestination)
         currentSavedId = save.departureDestinationId
@@ -120,7 +124,7 @@ class DepartureDestinationControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.get("/api/departure-destinations/${99}").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -129,7 +133,9 @@ class DepartureDestinationControllerTests(
         {
             "name": "New departure destination",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -149,7 +155,9 @@ class DepartureDestinationControllerTests(
         {
             "name": "",
             "startDate": "2025-01-01",
-            "endDate": null
+            "endDate": null,
+            "createdAt": "2025-01-01T00:00:00",
+            "lastUpdatedAt": "2025-01-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -169,7 +177,9 @@ class DepartureDestinationControllerTests(
         {
             "name": "New departure destination",
             "startDate": "2025-01-01",
-            "endDate": "2024-01-01"
+            "endDate": "2024-01-01",
+            "createdAt": "2025-01-01T00:00:00",
+            "lastUpdatedAt": "2025-01-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -189,7 +199,9 @@ class DepartureDestinationControllerTests(
         {
             "name": "Updated departure destination",
             "startDate": "2025-01-01",
-            "endDate": "2025-12-25"
+            "endDate": "2025-12-25",
+            "createdAt": "2025-01-01T00:00:00",
+            "lastUpdatedAt": "2025-01-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -210,7 +222,9 @@ class DepartureDestinationControllerTests(
         {
             "name": "",
             "startDate": "2025-01-01",
-            "endDate": "2025-12-25"
+            "endDate": "2025-12-25",
+            "createdAt": "2025-01-01T00:00:00",
+            "lastUpdatedAt": "2025-01-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -230,7 +244,9 @@ class DepartureDestinationControllerTests(
         {
             "name": "Updated departure destination",
             "startDate": "2025-01-01",
-            "endDate": "2025-12-25"
+            "endDate": "2025-12-25",
+            "createdAt": "2025-01-01T00:00:00",
+            "lastUpdatedAt": "2025-01-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -241,7 +257,7 @@ class DepartureDestinationControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -256,6 +272,6 @@ class DepartureDestinationControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/departure-destinations/${99}").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 }

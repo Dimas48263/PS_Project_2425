@@ -14,6 +14,7 @@ import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeLevelService
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -74,7 +75,15 @@ class TreeLevelServicesTests {
 
     @Test
     fun `save Tree Level`() {
-        val treeLevelInput = TreeLevelInputModel(3, "Test2", null, LocalDate.now(), null)
+        val treeLevelInput = TreeLevelInputModel(
+            3,
+            "Test2",
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val save = servicesTests.saveTreeLevel(treeLevelInput)
         assertTrue(save is Success)
         assertEquals("Test2", save.value.name)
@@ -82,7 +91,15 @@ class TreeLevelServicesTests {
 
     @Test
     fun `Failed to save Tree Level by name`() {
-        val treeLevelInput = TreeLevelInputModel(3, "", null, LocalDate.now(), null)
+        val treeLevelInput = TreeLevelInputModel(
+            3,
+            "",
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val save = servicesTests.saveTreeLevel(treeLevelInput)
         assertTrue(save is Failure)
         assertTrue(save.value is ServiceErrors.InvalidDataInput)
@@ -90,7 +107,15 @@ class TreeLevelServicesTests {
 
     @Test
     fun `update Tree Level`() {
-        val treeLevelUpdate = TreeLevelInputModel(1, "Updated", null, LocalDate.now(), null)
+        val treeLevelUpdate = TreeLevelInputModel(
+            1,
+            "Updated",
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val update = servicesTests.updateTreeLevel(currentSavedId, treeLevelUpdate)
         assertTrue(update is Success)
         assertEquals("Updated", update.value.name)
@@ -98,7 +123,15 @@ class TreeLevelServicesTests {
 
     @Test
     fun `update Tree Level with wrong date`() {
-        val treeLevelUpdate = TreeLevelInputModel(1, "Updated", null, LocalDate.MAX, LocalDate.MIN)
+        val treeLevelUpdate = TreeLevelInputModel(
+            1,
+            "Updated",
+            null,
+            LocalDate.MAX,
+            LocalDate.MIN,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val update = servicesTests.updateTreeLevel(currentSavedId, treeLevelUpdate)
         assertTrue(update is Failure)
         assertTrue(update.value is ServiceErrors.InvalidDataInput)
@@ -106,7 +139,15 @@ class TreeLevelServicesTests {
 
     @Test
     fun `update Tree Level with wrong id`() {
-        val treeLevelUpdate = TreeLevelInputModel(1, "Updated", null, LocalDate.now(), null)
+        val treeLevelUpdate = TreeLevelInputModel(
+            1,
+            "Updated",
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val update = servicesTests.updateTreeLevel(99, treeLevelUpdate)
         assertTrue(update is Failure)
         assertTrue(update.value is ServiceErrors.RecordNotFound)

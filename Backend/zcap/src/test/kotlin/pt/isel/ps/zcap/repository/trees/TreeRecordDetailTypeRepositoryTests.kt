@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 import org.springframework.test.context.ActiveProfiles
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetailType
 import pt.isel.ps.zcap.repository.models.trees.TreeRecordDetailTypeRepository
 import java.time.LocalDate
@@ -27,7 +28,7 @@ class TreeRecordDetailTypeRepositoryTests {
     fun `should save and get a Tree Record Detail Type`() {
         val testTrdt = TreeRecordDetailType(
             name = "Test1",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now()
         )
         entityManager.persistAndFlush(testTrdt)
@@ -40,7 +41,7 @@ class TreeRecordDetailTypeRepositoryTests {
     fun `should update a Tree Record Detail Type`() {
         val testTrdt = TreeRecordDetailType(
             name = "Test1",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now()
         )
         entityManager.persistAndFlush(testTrdt)
@@ -50,14 +51,14 @@ class TreeRecordDetailTypeRepositoryTests {
         )
         val trdt = repository.save(newTrdt)
         assertEquals("Updated", trdt.name)
-        assertEquals("string", newTrdt.unit)
+        assertEquals(DataTypes.STRING, newTrdt.unit)
     }
 
     @Test
     fun `should delete a Tree Record Detail Type`() {
         val testTrdt = TreeRecordDetailType(
             name = "Test1",
-            unit = "string",
+            unit = DataTypes.STRING,
             startDate = LocalDate.now()
         )
         entityManager.persistAndFlush(testTrdt)

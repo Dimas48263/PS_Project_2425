@@ -58,7 +58,7 @@ class TreeRecordDetailService(
         treeRecordDetailUpdate: TreeRecordDetailInputModel
     ): Either<ServiceErrors, TreeRecordDetailOutputModel> {
         val treeRecordDetail = repo.findById(id).getOrNull()
-            ?: return failure(ServiceErrors.TreeRecordDetailNotFound(id))
+            ?: return failure(ServiceErrors.RecordNotFound(id))
 
         val tree = treeRepo.findById(treeRecordDetailUpdate.treeRecordId).getOrNull()
             ?: return failure(ServiceErrors.TreeNotFound(treeRecordDetailUpdate.treeRecordId))

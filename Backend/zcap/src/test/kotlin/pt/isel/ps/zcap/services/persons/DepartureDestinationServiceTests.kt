@@ -12,6 +12,7 @@ import pt.isel.ps.zcap.services.Failure
 import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -64,7 +65,9 @@ class DepartureDestinationServiceTests {
         val newDepartureDestination = DepartureDestinationInputModel(
             "Test 2",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.saveDepartureDestination(newDepartureDestination)
         assertTrue(save is Success)
@@ -76,7 +79,9 @@ class DepartureDestinationServiceTests {
         val newDepartureDestination = DepartureDestinationInputModel(
             "",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.saveDepartureDestination(newDepartureDestination)
         assertTrue(save is Failure)
@@ -88,7 +93,9 @@ class DepartureDestinationServiceTests {
         val newDepartureDestination = DepartureDestinationInputModel(
             "",
             LocalDate.parse("2025-01-01"),
-            LocalDate.parse("2024-01-01")
+            LocalDate.parse("2024-01-01"),
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.saveDepartureDestination(newDepartureDestination)
         assertTrue(save is Failure)
@@ -100,7 +107,9 @@ class DepartureDestinationServiceTests {
         val newDepartureDestination = DepartureDestinationInputModel(
             "Updated",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.updateDepartureDestinationById(currentSavedId, newDepartureDestination)
         assertTrue(save is Success)
@@ -113,7 +122,9 @@ class DepartureDestinationServiceTests {
         val newDepartureDestination = DepartureDestinationInputModel(
             "Updated",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.updateDepartureDestinationById(99, newDepartureDestination)
         assertTrue(save is Failure)
@@ -125,7 +136,9 @@ class DepartureDestinationServiceTests {
         val newDepartureDestination = DepartureDestinationInputModel(
             "",
             LocalDate.now(),
-            null
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
         )
         val save = servicesTests.updateDepartureDestinationById(currentSavedId, newDepartureDestination)
         assertTrue(save is Failure)

@@ -16,6 +16,7 @@ import pt.isel.ps.zcap.services.ServiceErrors
 import pt.isel.ps.zcap.services.Success
 import pt.isel.ps.zcap.services.tree.TreeService
 import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.properties.Delegates
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -96,7 +97,15 @@ class TreeServiceTests {
 
     @Test
     fun `save Tree`() {
-        val treeInput = TreeInputModel("Tree2", currentTreeLevelSavedId, null, LocalDate.now(), null )
+        val treeInput = TreeInputModel(
+            "Tree2",
+            currentTreeLevelSavedId,
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val save = servicesTests.saveTree(treeInput)
         assertTrue(save is Success)
         assertEquals("Tree2", save.value.name)
@@ -104,7 +113,15 @@ class TreeServiceTests {
 
     @Test
     fun `Failed to save Tree by name`() {
-        val treeInput = TreeInputModel("", currentTreeLevelSavedId, null, LocalDate.now(), null )
+        val treeInput = TreeInputModel(
+            "",
+            currentTreeLevelSavedId,
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val save = servicesTests.saveTree(treeInput)
         assertTrue(save is Failure)
         assertTrue(save.value is ServiceErrors.InvalidDataInput)
@@ -112,7 +129,15 @@ class TreeServiceTests {
 
     @Test
     fun `Failed to save Tree by parent`() {
-        val treeInput = TreeInputModel("Tree2", currentTreeLevelSavedId, 99, LocalDate.now(), null )
+        val treeInput = TreeInputModel(
+            "Tree2",
+            currentTreeLevelSavedId,
+            99,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val save = servicesTests.saveTree(treeInput)
         assertTrue(save is Failure)
         assertTrue(save.value is ServiceErrors.ParentNotFound)
@@ -120,7 +145,15 @@ class TreeServiceTests {
 
     @Test
     fun `Failed to save Tree by tree Level`() {
-        val treeInput = TreeInputModel("Tree2", 99, null, LocalDate.now(), null )
+        val treeInput = TreeInputModel(
+            "Tree2",
+            99,
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val save = servicesTests.saveTree(treeInput)
         assertTrue(save is Failure)
         assertTrue(save.value is ServiceErrors.TreeLevelNotFound)
@@ -128,7 +161,15 @@ class TreeServiceTests {
 
     @Test
     fun `update Tree`() {
-        val treeUpdate = TreeInputModel("Updated", currentTreeLevelSavedId, null, LocalDate.now(), null )
+        val treeUpdate = TreeInputModel(
+            "Updated",
+            currentTreeLevelSavedId,
+            null,
+            LocalDate.now(),
+            LocalDate.now(),
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val update = servicesTests.updateTreeById(currentSavedId, treeUpdate)
         assertTrue(update is Success)
         assertEquals("Updated", update.value.name)
@@ -136,7 +177,15 @@ class TreeServiceTests {
 
     @Test
     fun `update Tree with wrong date`() {
-        val treeUpdate = TreeInputModel("Updated", currentTreeLevelSavedId, null, LocalDate.MAX, LocalDate.MIN)
+        val treeUpdate = TreeInputModel(
+            "Updated",
+            currentTreeLevelSavedId,
+            null,
+            LocalDate.MAX,
+            LocalDate.MIN,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val update = servicesTests.updateTreeById(currentSavedId, treeUpdate)
         assertTrue(update is Failure)
         assertTrue(update.value is ServiceErrors.InvalidDataInput)
@@ -144,7 +193,15 @@ class TreeServiceTests {
 
     @Test
     fun `update Tree with wrong id`() {
-        val treeUpdate = TreeInputModel("Updated",currentTreeLevelSavedId, null, LocalDate.now(), null)
+        val treeUpdate = TreeInputModel(
+            "Updated",
+            currentTreeLevelSavedId,
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val update = servicesTests.updateTreeById(99, treeUpdate)
         assertTrue(update is Failure)
         assertTrue(update.value is ServiceErrors.TreeNotFound)
@@ -152,7 +209,15 @@ class TreeServiceTests {
 
     @Test
     fun `update Tree with wrong Tree Level Id`() {
-        val treeUpdate = TreeInputModel("Updated", 99, null, LocalDate.now(), null)
+        val treeUpdate = TreeInputModel(
+            "Updated",
+            99,
+            null,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val update = servicesTests.updateTreeById(currentSavedId, treeUpdate)
         assertTrue(update is Failure)
         assertTrue(update.value is ServiceErrors.TreeLevelNotFound)
@@ -160,7 +225,15 @@ class TreeServiceTests {
 
     @Test
     fun `update Tree with wrong Parent Id`() {
-        val treeUpdate = TreeInputModel("Updated", currentTreeLevelSavedId, 99, LocalDate.now(), null)
+        val treeUpdate = TreeInputModel(
+            "Updated",
+            currentTreeLevelSavedId,
+            99,
+            LocalDate.now(),
+            null,
+            LocalDateTime.now(),
+            LocalDateTime.now()
+        )
         val update = servicesTests.updateTreeById(currentSavedId, treeUpdate)
         assertTrue(update is Failure)
         assertTrue(update.value is ServiceErrors.ParentNotFound)

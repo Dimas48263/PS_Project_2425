@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import pt.isel.ps.zcap.domain.persons.Person
+import pt.isel.ps.zcap.domain.supportTables.DataTypes
 import pt.isel.ps.zcap.domain.tree.Tree
 import pt.isel.ps.zcap.domain.tree.TreeLevel
 import pt.isel.ps.zcap.domain.tree.TreeRecordDetail
@@ -32,6 +33,7 @@ import pt.isel.ps.zcap.repository.models.users.UserRepository
 import pt.isel.ps.zcap.utils.PasswordEncoder
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Month
 import kotlin.properties.Delegates
 import kotlin.test.assertNotNull
 
@@ -51,7 +53,6 @@ class PersonControllerTests(
     @Autowired private val userDataProfileRepository: UserDataProfileRepository
 ) {
     var currentPlaceOdResidenceId by Delegates.notNull<Long>()
-    var currentCountryCodeId by Delegates.notNull<Long>()
     var currentSavedId by Delegates.notNull<Long>()
     var cookie by Delegates.notNull<Cookie>()
 
@@ -128,29 +129,14 @@ class PersonControllerTests(
         val saveTree = treeRepository.save(tree)
         currentPlaceOdResidenceId = saveTree.treeRecordId
 
-        val treeRecordDetailType = TreeRecordDetailType(
-            name = "Tree Record Detail Type test",
-            unit = "string",
-            startDate = LocalDate.now()
-        )
-        val saveTreeRecordDetailType = treeRecordDetailTypeRepository.save(treeRecordDetailType)
-
-        val countryCode = TreeRecordDetail(
-            treeRecord = saveTree,
-            detailType = saveTreeRecordDetailType,
-            valueCol = "country code test",
-            startDate = LocalDate.now()
-        )
-        val saveCountryCode = treeRecordDetailRepository.save(countryCode)
-        currentCountryCodeId = saveCountryCode.detailId
-
         val person = Person(
             name = "Person test",
             age = 20,
             contact = "987654321",
-            countryCode = saveCountryCode,
             placeOfResidence = saveTree,
-            entryDatetime = LocalDateTime.now()
+            entryDatetime = LocalDateTime.now(),
+            createdAt = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0),
+            lastUpdatedAt = LocalDateTime.of(2025, Month.JANUARY, 1, 0, 0)
         )
         val savePerson = repository.save(person)
         currentSavedId = savePerson.personId
@@ -177,7 +163,7 @@ class PersonControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.get("/api/persons/${99}").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -186,8 +172,7 @@ class PersonControllerTests(
         {
             "name": "New person",
             "age": 18,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -196,7 +181,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -215,8 +202,7 @@ class PersonControllerTests(
         {
             "name": "",
             "age": 18,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -225,7 +211,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -240,42 +228,12 @@ class PersonControllerTests(
     }
 
     @Test
-    fun `Failed save (POST) Person with invalid country code id`() {
-        val jsonBody = """
-        {
-            "name": "New person",
-            "age": 18,
-            "contact": 123456789,
-            "countryCodeId": 99,
-            "placeOfResidenceId": $currentPlaceOdResidenceId,
-            "entryDateTime": "2025-01-01T10:15:30",
-            "departureDestinationTime": null,
-            "birthDate": null,
-            "nationalityId": null,
-            "address": null,
-            "niss": null,
-            "departureDestinationId": null,
-            "destinationContact": null
-        }
-    """.trimIndent()
-        mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/persons").cookie(cookie)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonBody)
-        )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-    }
-
-    @Test
     fun `Failed save (POST) Person with invalid place of residence id`() {
         val jsonBody = """
         {
             "name": "New person",
             "age": 18,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": 99,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -284,7 +242,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -295,7 +255,7 @@ class PersonControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -304,8 +264,7 @@ class PersonControllerTests(
         {
             "name": "New person",
             "age": 18,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -314,7 +273,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -325,7 +286,7 @@ class PersonControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -334,8 +295,7 @@ class PersonControllerTests(
         {
             "name": "New person",
             "age": 18,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -344,7 +304,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": 99,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -355,7 +317,7 @@ class PersonControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -364,8 +326,7 @@ class PersonControllerTests(
         {
             "name": "Updated person",
             "age": 21,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -374,7 +335,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -394,8 +357,7 @@ class PersonControllerTests(
         {
             "name": "Updated person",
             "age": 21,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -404,7 +366,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -415,37 +379,7 @@ class PersonControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
-    }
-
-    @Test
-    fun `Failed update (POST) Person by id with invalid country code id`() {
-        val jsonBody = """
-        {
-            "name": "Updated person",
-            "age": 21,
-            "contact": 123456789,
-            "countryCodeId": ${99},
-            "placeOfResidenceId": $currentPlaceOdResidenceId,
-            "entryDateTime": "2025-01-01T10:15:30",
-            "departureDestinationTime": null,
-            "birthDate": null,
-            "nationalityId": null,
-            "address": null,
-            "niss": null,
-            "departureDestinationId": null,
-            "destinationContact": null
-        }
-    """.trimIndent()
-        mockMvc.perform(
-            MockMvcRequestBuilders.put("/api/persons/$currentSavedId")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonBody)
-                .cookie(cookie)
-        )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -454,8 +388,7 @@ class PersonControllerTests(
         {
             "name": "Updated person",
             "age": 21,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": 99,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -464,7 +397,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -475,7 +410,7 @@ class PersonControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -484,8 +419,7 @@ class PersonControllerTests(
         {
             "name": "Updated person",
             "age": 21,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -494,7 +428,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -505,7 +441,7 @@ class PersonControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -514,8 +450,7 @@ class PersonControllerTests(
         {
             "name": "Updated person",
             "age": 21,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -524,7 +459,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": 99,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -535,7 +472,7 @@ class PersonControllerTests(
         )
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 
     @Test
@@ -544,8 +481,7 @@ class PersonControllerTests(
         {
             "name": "",
             "age": 21,
-            "contact": 123456789,
-            "countryCodeId": $currentCountryCodeId,
+            "contact": "123456789",
             "placeOfResidenceId": $currentPlaceOdResidenceId,
             "entryDateTime": "2025-01-01T10:15:30",
             "departureDestinationTime": null,
@@ -554,7 +490,9 @@ class PersonControllerTests(
             "address": null,
             "niss": null,
             "departureDestinationId": null,
-            "destinationContact": null
+            "destinationContact": null,
+            "createdAt": "2025-07-01T00:00:00",
+            "lastUpdatedAt": "2025-07-01T00:00:00"
         }
     """.trimIndent()
         mockMvc.perform(
@@ -580,6 +518,6 @@ class PersonControllerTests(
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/persons/${99}").cookie(cookie))
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("The entity with the given ID was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
     }
 }
