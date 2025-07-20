@@ -28,5 +28,15 @@
     "code": "it",
     "name": "Italiano",
     "flag": "assets/images/flags/it.png"
+  },
+    {
+    "code": "zh",
+    "name": "中文",
+    "flag": "assets/images/flags/zh.png"
+  },
+      {
+    "code": "ko",
+    "name": "한국어",
+    "flag": "assets/images/flags/ko.png"
   }
 ]
