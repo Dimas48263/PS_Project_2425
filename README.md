@@ -3,6 +3,9 @@ Projeto realizado por:
   - Gonçalo Dimas([github.com/Dimas48263](https://github.com/Dimas48263))
   - Luís Alves([github.com/zitosxj](https://github.com/zitosxj))
 
+Curso:
+  - Licenciatura em Engenharia Informática e de Computadores no semestre de verão 2024/2025
+
 # Resumo
 O alojamento temporário de emergência é uma valência do apoio psicossocial em emergência, essencial para proporcionar ao cidadão individual e às famílias um local seguro para permanecerem, antes, durante e após um acidente grave ou catástrofe, onde são igualmente asseguradas as suas necessidades básicas, bem como apoio psicossocial de emergência.
 Assim, o alojamento de emergência providenciado em caso de acidente grave, catástrofe ou outro tipo de ocorrência de caráter excecional é uma resposta temporária à existência de cidadãos que, no âmbito de uma evacuação, são deslocados das suas residências por não estarem numa zona segura, enquanto não é restabelecida a normalidade ou necessitam de apoio psicossocial em emergência.
