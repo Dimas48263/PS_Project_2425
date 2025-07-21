@@ -188,7 +188,7 @@ class DetailTypeCategoryController(
         ],
     )
     @GetMapping("/valid")
-    fun getValidTreeLevelsOn(
+    fun getValidDetailTypeCategoriesOn(
         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) date: LocalDate
     ): ResponseEntity<List<DetailTypeCategoryOutputModel>> {
         val result = service.getDetailTypeCategoriesValidOn(date)

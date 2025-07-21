@@ -168,7 +168,8 @@ class _TreeRecordDetailTypesScreenState
                   enabled: canWrite,
                   itemLabelBuilder: (value) => value.label,
                   label: 'data_type'.tr(),
-                  items: DataTypes.values,
+                  items: DataTypes.values.toList()
+                    ..sort((a, b) => a.label.compareTo(b.label)),
                   selectedItem: unitController,
                   onSelected: (value) => setState(() => unitController = value),
                   validator: (value) =>

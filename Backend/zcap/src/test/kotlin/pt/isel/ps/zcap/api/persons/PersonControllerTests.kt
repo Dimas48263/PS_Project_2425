@@ -164,6 +164,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
 
     @Test
@@ -225,6 +226,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("INVALID_DATA"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value(null))
     }
 
     @Test
@@ -256,6 +258,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree with id 99 not found."))
     }
 
     @Test
@@ -287,6 +290,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Nationality with id 99 not found."))
     }
 
     @Test
@@ -318,6 +322,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Departure Destination with id 99 not found."))
     }
 
     @Test
@@ -380,6 +385,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
 
     @Test
@@ -411,6 +417,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Tree with id 99 not found."))
     }
 
     @Test
@@ -442,6 +449,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Nationality with id 99 not found."))
     }
 
     @Test
@@ -473,6 +481,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Departure Destination with id 99 not found."))
     }
 
     @Test
@@ -504,6 +513,7 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("INVALID_DATA"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Invalid data provided."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value(null))
     }
 
     @Test
@@ -519,5 +529,6 @@ class PersonControllerTests(
             .andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorCode").value("ENTITY_NOT_FOUND"))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errorMessage").value("Requested record was not found."))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.details").value("Record with id 99 not found."))
     }
 }
