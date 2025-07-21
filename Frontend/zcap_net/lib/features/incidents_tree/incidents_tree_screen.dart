@@ -8,13 +8,6 @@ import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/data/app_date_provider.dart';
 import 'package:zcap_net_app/features/incidents_tree/persons_screen.dart';
-import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incident_types/incident_types_isar.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incident_zcaps/incident_zcaps_isar.dart';
-import 'package:zcap_net_app/features/settings/models/incidents/incidents/incidents_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
-import 'package:zcap_net_app/features/settings/models/trees/tree_levels/tree_level_isar.dart';
-import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/features/zcap_tree/tree_wrapper.dart';
 import 'package:zcap_net_app/shared/models.dart';
 

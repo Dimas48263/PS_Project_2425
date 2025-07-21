@@ -77,7 +77,7 @@ class TreeLevel implements ApiTable {
     DateTime? lastUpdatedAt,
   }) {
     return TreeLevel(
-      remoteId: id ?? this.remoteId,
+      remoteId: id ?? remoteId,
       levelId: levelId ?? this.levelId,
       name: name ?? this.name,
       description: description ?? this.description,

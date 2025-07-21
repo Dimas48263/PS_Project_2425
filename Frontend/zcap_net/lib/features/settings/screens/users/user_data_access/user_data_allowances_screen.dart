@@ -19,7 +19,7 @@ class UserDataAllowancesScreen extends StatefulWidget {
 
 class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
   TreeNode<dynamic> root =
-      TreeNode<dynamic>.root(data: 'screen_zcaps'.tr()); //TODO:translation
+      TreeNode<dynamic>.root(data: 'tree_root'.tr());
   TreeViewController<dynamic, TreeNode<dynamic>>? _controller;
 
   Set<int> checkedTreeIds = {};
@@ -63,7 +63,7 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
 
     final roots = allTreeRecords.where((t) => t.parent.value == null);
     final rootNode =
-        TreeNode<dynamic>.root(data: 'screen_zcaps'.tr()); //TODO:translation
+        TreeNode<dynamic>.root(data: 'tree_root'.tr());
 
     for (var rootTree in roots) {
       final node = await buildTreeNode(rootTree, treeMap);

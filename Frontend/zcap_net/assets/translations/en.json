@@ -216,6 +216,7 @@
   "zcap_screen_address": "Address",
   "zcap_screen_open_location": "Open Location",
   "zcap_screen_open_location_error": "Location view not available",
+  "tree_root": "ZCAPS",
   "user_access_change_app_reference_date": "Can change app working date",
   "user_access_password_change": "Menu option to allow user to change password",
   "user_access_reset_passwords": "Menu option to allow user to reset other users passwords",

@@ -517,16 +517,56 @@
 	<img src="./images/pt/incident_type.png" />
 		
 		
-	<h2 id="config_users">Utilizadores</h2>
+	<h2 id="users">Utilizadores</h2>
   <p>A categoria de utilizadores é composta por 3 tabelas:</p>
 	  <ol style="margin-left: 2rem; padding-left: 1rem;">
-    <li><strong>Utilizadores - </strong></li>
-    <li><strong>Perfil - </strong></li>
-    <li><strong>Acesso a dados - </strong></li>
+    <li><strong>Utilizadores - </strong>Os utilizadores são importantes para distinguir responsabilidaes mantendo a capacidade de colaboração entre os mesmos. Um utilizador é composto pelos campos Nome, Nome de Utilizador e palavra passe e também a atribuição de um Perfil e Acesso a dados.</li>
+    <li><strong>Perfil - </strong>O perfil de utilizador determina quais as opções de menu o utilizador pode utilizar.</li>
+    <li><strong>Acesso a dados - </strong> O Acesso a dados determina se o utlizador pode aceder à totalidade da "Estrutura"/"Árvore Hierarquica" ou apenas a parte dela.</li>
   </ol>
+
+	<h3 id="user">Utilizador</h3>
+	<p>O ecrã lista todos os utilizadores e disponibiliza os icones de adicionar, alterar ou eliminar registo. É também possível despoletar a sincronização nos icones de sincronização.</p>
+	<p>Adicionalmente existe uma opção para repor a palavras-passe do utizador.
+	<img src="./images/pt/users.png" />
+	
+	<p>Para adicionar um utilizador seleccione a opção "+" (adicionar) e preencha os campos conforme aplicável.</p>
+	<img src="./images/pt/users_add.png" />
+
+	<h3 id="user_profile">Perfil</h3>
+	<p>O ecrã lista todos os Perfis e disponibiliza os icones de adicionar, alterar ou eliminar registo. É também possível despoletar a sincronização nos icones de sincronização.</p>
+	<img src="./images/pt/user_profiles.png" />
+	<p>Cada Perfil tem um conjunto de permissões acessíveis no icone do cartão (chave).<br />
+	Cada Permissão tem associado um nível de acesso que pode ser:</p>
+	  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <ul><strong>Leitura/escrita - </strong>O utilizador pode aceder ao menu/opção e criar novos registos, alterar ou eliminar informação.</ul>
+    <ul><strong>Leitura - </strong>O utilizador não consegue efetuar alterações a registos existentes nem criar ou eliminar registos.</ul>
+    <ul><strong>Sem acesso - </strong>O utilizador não tem acesso ao menu/opção.</ul>
+  </ol>
+
+	<img src="./images/pt/user_profile_allowances.png" />
+	
+	<h3 id="user_data_access">Acesso a dados</h3>
+	<p>O ecrã lista todos os Acesos a Dados e disponibiliza as opções de adicionar, alterar ou eliminar registo. É também possível despoletar a sincronização nos icones de sincronização.</p>
+	<img src="./images/pt/user_data_profile.png" />
+	<p>A opção com o icone da estrutura (arvore), permite a edição dos acessos permitidos pelo Acesso a Dados seleccionado.<br />
+	No exemplo, o utilizador com este perfil irá visualizar apenas os dados associados aos items da árvore seleccionados (Albufeira e Albergaria-a-velha), eventualmente se existirem outros elementos associados ao item "Algarve" que não estejam visíveis por estar filtrado pela descrição, o utilizador tem também acesso aos mesmos.</p>
+	<img src="./images/pt/user_data_profile_allowances.png" />
 	
 	<h2 id="config_support_tables">Tabelas de suporte</h2>
-  <p>Utilizadores</p>
+  <p>As Tabelas de suporte são utilizadas para organizar e limitar as opções que o utilizador pode seleccionar nos diversos menus.
+	<br />Utilizam a mesma estrutura que a tabela "Tipos de Incidente" onde o ecrã lista as opções disponíveis e as opções de adicionar, editar e eliminar registos (ver <a href="#config_incidents">Tipos de Incidente</a>).</p>
+	<p>Tabelas de suporte:<p/>
+  <ol style="margin-left: 2rem; padding-left: 1rem;">
+    <ul><strong>Entidades</strong>Tabelas de suporte às Entidades. As entidades são posteriormente utilizadas na abertura de uma ZCAP para determinar a entidade responsável pela gestão da mesma (ver <a href="#new_zcap">Novo/Editar ZCAP</a>).
+		<ol style="margin-left: 2rem; padding-left: 1rem;">
+			<ul><strong>Tipos de entidade - </strong>Agrupador de entidades. Utilizado para agregar entidades semelhantes para fins estatísticos (ex.: Serviço Municipal de Proteção Cívil (SMPC), ...)</ul>
+			<ul><strong>Entidades - </strong>Entidades que são eventuais gestoras de ZCAPS (ex.: SMPC de Odivelas, SMPC de Loures,...)</ul>
+		</ol>
+		</ul>
+    <ul><strong>Edificios ZCAP</strong></ul>
+    <ul><strong>Pessoas</strong></ul>
+  </ol>
 
   <hr>
   <h2 id="sync">Sincronização</h2>

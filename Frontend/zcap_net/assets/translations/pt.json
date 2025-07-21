@@ -217,6 +217,7 @@
   "zcap_screen_open_location": "Ver localização",
   "zcap_screen_open_location_error": "Não foi possível abrir a localização",
   "screen_settings_incident_types": "Tipos de incidente",
+  "tree_root":"ZCAPS",
   "user_access_change_app_reference_date": "Utilizador pode alterar a data de referência da aplicação",
   "user_access_password_change": "Opção de menu que permite o utilizador alterar a sua password",
   "user_access_reset_passwords": "Permissão para alterar password de outros utilizadores",
