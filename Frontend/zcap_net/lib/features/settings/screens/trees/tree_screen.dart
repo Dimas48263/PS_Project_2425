@@ -181,7 +181,7 @@ class _TreesScreenState extends State<TreesScreen> {
     showDialog(
       context: context,
       builder: (context) {
-        final allowances = context.watch<UserAllowancesProvider>();
+        //final allowances = context.watch<UserAllowancesProvider>();
 
         return StatefulBuilder(builder: (context, setModalState) {
           return AlertDialog(

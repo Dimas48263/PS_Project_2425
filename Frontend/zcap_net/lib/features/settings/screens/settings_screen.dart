@@ -174,7 +174,7 @@ class SettingsScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    const UserDataAccessScreen()), //TODO: access data Screen
+                                    const UserDataAccessScreen()),
                           );
                         },
                       ),

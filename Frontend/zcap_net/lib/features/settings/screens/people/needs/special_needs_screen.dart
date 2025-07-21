@@ -198,7 +198,7 @@ class _SpecialNeedsScreenState extends State<SpecialNeedsScreen> {
         builder: (context) {
           return StatefulBuilder(
             builder: (context, setModalState) {
-              final allowances = context.watch<UserAllowancesProvider>();
+              //final allowances = context.watch<UserAllowancesProvider>();
 
               return AlertDialog(
                 title: Text(specialNeed != null

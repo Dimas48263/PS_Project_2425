@@ -78,7 +78,7 @@ class Tree implements ApiTable {
     DateTime? lastUpdatedAt,
   }) {
     return Tree(
-      remoteId: id ?? this.remoteId,
+      remoteId: id ?? remoteId,
       name: name ?? this.name,
       treeLevel: treeLevel ?? this.treeLevel,
       parent: parent ?? this.parent,

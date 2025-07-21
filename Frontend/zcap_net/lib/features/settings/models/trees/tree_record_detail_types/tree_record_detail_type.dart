@@ -71,7 +71,7 @@ class TreeRecordDetailType implements ApiTable {
     DateTime? lastUpdatedAt,
   }) {
     return TreeRecordDetailType(
-      remoteId: id ?? this.remoteId,
+      remoteId: id ?? remoteId,
       name: name ?? this.name,
       unit: unit ?? this.unit,
       startDate: startDate ?? this.startDate,

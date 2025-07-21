@@ -179,14 +179,14 @@ class _DepartureDestinationScreenState
                         context: context,
                       );
                       if (!isValid) return;
-                      final now = DateTime.now();
+                      //final now = DateTime.now();
                       await DatabaseService.db.writeTxn(() async {
                         final newDepartureDestination =
                             departureDestination ?? DepartureDestinationIsar();
                         newDepartureDestination.remoteId =
                             departureDestination?.remoteId ?? 0;
                         newDepartureDestination.name = nameController.text;
-                        newDepartureDestination.startDate = startDate ?? now;
+                        newDepartureDestination.startDate = startDate;
                         newDepartureDestination.endDate = endDate;
                         newDepartureDestination.isSynced = false;
 

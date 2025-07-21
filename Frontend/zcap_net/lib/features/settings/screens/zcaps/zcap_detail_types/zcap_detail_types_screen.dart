@@ -190,7 +190,7 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
       context: context,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
-          final allowances = context.watch<UserAllowancesProvider>();
+          //final allowances = context.watch<UserAllowancesProvider>();
 
           return AlertDialog(
             title: Text(zcapDetailType == null
