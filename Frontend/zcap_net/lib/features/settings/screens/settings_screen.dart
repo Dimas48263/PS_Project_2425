@@ -3,8 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/session_manager.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
-import 'package:zcap_net_app/features/settings/screens/admin/admin_expansion_tile.dart';
-import 'package:zcap_net_app/features/settings/screens/admin/isar_explorer.dart';
 import 'package:zcap_net_app/features/settings/screens/incidents/incident_types/incident_type_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/departure_destination/departure_destination_screen.dart';
 import 'package:zcap_net_app/features/settings/screens/people/needs/special_needs_screen.dart';
@@ -283,7 +281,8 @@ class SettingsScreen extends StatelessWidget {
                       if (allowances.canRead(
                           'user_access_settings_people_departure_destinations'))
                         ListTile(
-                          title: Text('screen_settings_departure_destinations'.tr()),
+                          title: Text(
+                              'screen_settings_departure_destinations'.tr()),
                           onTap: () {
                             Navigator.push(
                               context,
@@ -336,18 +335,6 @@ class SettingsScreen extends StatelessWidget {
                         ),
                     ]),
               ],
-            ),
-            AdminExpansionTile(
-              child: ListTile(
-                title: Text('screen_settings_isar_db_explorer'.tr()),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const IsarExplorerScreen()),
-                  );
-                },
-              ),
             ),
           ],
         ),
