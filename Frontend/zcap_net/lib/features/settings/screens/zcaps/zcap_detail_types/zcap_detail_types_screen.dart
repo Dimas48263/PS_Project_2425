@@ -224,7 +224,8 @@ class _ZcapDetailTypesScreenState extends State<ZcapDetailTypesScreen> {
               customDropdownSearch<DataTypes>(
                   enabled: canWrite,
                   itemLabelBuilder: (value) => value.label,
-                  items: DataTypes.values,
+                  items: DataTypes.values.toList()
+                    ..sort((a, b) => a.label.compareTo(b.label)),
                   selectedItem: dataType,
                   onSelected: (DataTypes? value) {
                     setModalState(() {
