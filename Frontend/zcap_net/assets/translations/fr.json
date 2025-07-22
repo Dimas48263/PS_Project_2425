@@ -130,6 +130,7 @@
   "screen_incidents": "Incidents",
   "screen_incident_type": "Type d'incident",
   "screen_entity_type_name": "Nom du type d'incident",
+	"screen_settings_incidents": "Incidents",
   "screen_main_menu": "Menu principal",
   "screen_profiles_profilename": "Nom du profil",
   "screen_relation_type": "Types de relation",

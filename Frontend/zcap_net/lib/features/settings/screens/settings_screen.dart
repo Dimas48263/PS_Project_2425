@@ -92,19 +92,6 @@ class SettingsScreen extends StatelessWidget {
                       );
                     },
                   ),
-                if (allowances.canRead('user_access_screen_zcaps'))
-                  ListTile(
-                    leading: const Icon(Icons.maps_home_work_outlined),
-                    title: Text('screen_zcaps'.tr()),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ZcapsScreen(userName: userName)),
-                      );
-                    },
-                  ),
               ],
             ),
             const Divider(),
@@ -268,6 +255,19 @@ class SettingsScreen extends StatelessWidget {
                               MaterialPageRoute(
                                   builder: (context) =>
                                       const ZcapDetailTypesScreen()),
+                            );
+                          },
+                        ),
+                      if (allowances.canRead('user_access_screen_zcaps'))
+                        ListTile(
+                          leading: const Icon(Icons.maps_home_work_outlined),
+                          title: Text('screen_zcaps'.tr()),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ZcapsScreen(userName: userName)),
                             );
                           },
                         ),

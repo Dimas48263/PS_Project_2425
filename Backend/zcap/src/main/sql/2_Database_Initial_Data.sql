@@ -27,8 +27,8 @@ IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 2 ) = 0
 BEGIN
 	-- INSERT NUTS 1
 	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Portugal Continental', 2, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Região Autonoma dos Acores', 2, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Região Autonoma da Madeira', 2, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Região Autónoma dos Açores', 2, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Região Autónoma da Madeira', 2, 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 3 ) = 0
@@ -398,12 +398,6 @@ BEGIN
 
 END
 
--- Freguesias
---IF (SELECT COUNT(*) FROM tree WHERE [treeLevelId] = 6 ) = 0
---BEGIN
---	INSERT tree ([name], [treeLevelId], [parentId], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('São Brás de Alportel', 6, 39, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
---END
-
 
 IF (SELECT COUNT(*) FROM treeRecordDetailTypes ) = 0
 BEGIN
@@ -647,18 +641,31 @@ print 'Inserting Zcap Tables initial data:'
 IF (SELECT COUNT(*) FROM buildingTypes ) = 0
 BEGIN
 -- INSERT BUILDINGTYPES
-	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Escola', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Pavilhão Municipal', '20000101', CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
-	INSERT buildingTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Tenda', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [buildingTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Escola', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [buildingTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Pavilhão Desportivo', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [buildingTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Tenda', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [buildingTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Centro Comunitário', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [buildingTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Campo de Tendas', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [buildingTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Campo de pré-fabricados', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 
 IF (SELECT COUNT(*) FROM entityTypes ) = 0
 BEGIN
 -- INSERT ENTITYTYPES
-	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Bombeiros', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Polícia de Segurança Pública', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT entityTypes ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('ANEPC', '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'SMPC - Serviço Municipail de Proteção Civil', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'ANEPC - Autoridade Nacional de Emergência e Proteção Civil', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Corpo de Bombeiros', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'PSP - Polícia de Segurança Pública', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'GNR - Guarda Nacional Repúblicana', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Polícia Municipal', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'INEM - Instituto Nacional de Emergência Médica', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Segurança Social', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Misericórdias', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Forças Armadas', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'CVP - Cruz Vermelha Portuguesa', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'IPSS - Instituição Pública de Solidariedade Social', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'ONG - Organização Não Governamental', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 --IF (SELECT COUNT(*) FROM datatypes ) = 0
@@ -674,38 +681,50 @@ END
 IF (SELECT COUNT(*) FROM entities ) = 0
 BEGIN
 -- INSERT ENTITIES
-	INSERT entities ([name], [entityTypeId], [email], [phone1], [phone2], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Bombeiros Voluntários de Odivelas', 1, 'email@domain.org', '219348290', NULL, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entities] ([name], [entityTypeId], [email], [phone1], [phone2], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Bombeiros Voluntários de Odivelas', 1, N'email@domain.org', N'219348290', NULL, CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entities] ([name], [entityTypeId], [email], [phone1], [phone2], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Segurança Social', 7, N'', N'22999999999', N'', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entities] ([name], [entityTypeId], [email], [phone1], [phone2], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Misericordia de Lisboa', 8, N'', N'21999999999', N'', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entities] ([name], [entityTypeId], [email], [phone1], [phone2], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Regimento de Infantaria 1', 9, N'', N'21999999999', N'', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entities] ([name], [entityTypeId], [email], [phone1], [phone2], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'SPMC - Montijo', 1, N'spmc@cmmontijo.pt', N'2122222222', N'', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM detailTypeCategories ) = 0
 BEGIN
 -- INSERT DETAILTYPECATEGORIES
-	INSERT detailTypeCategories ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Atributos Gerais', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT detailTypeCategories ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Específicos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT detailTypeCategories ([name], [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Área de Refeições', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [detailTypeCategories] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Atributos Gerais', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [detailTypeCategories] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Específicos', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [detailTypeCategories] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Área de Refeições', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [detailTypeCategories] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Capacidade Instalada', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [detailTypeCategories] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Instalações Sanitárias', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 --SELECT * FROM detailTypeCategories
 END
 
 IF (SELECT COUNT(*) FROM zcapDetailTypes ) = 0
 BEGIN
 -- INSERT ZCAPDETAILTYPES
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Área(m2)', 2, 'DOUBLE', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Acesso a veículos pesados', 2, 'BOOLEAN', 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Capacidade c/pernoita', 2, 'INT', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Capacidade s/pernoita', 2, 'INT', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Climatização', 2, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Cozinha', 3, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Capacidade de confeção refeições', 3, 'INT', 0, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT zcapDetailTypes ([name], detailTypeCategoryId, dataType, isMandatory, [startDate], [createdAt], [lastUpdatedAt]) VALUES ('Refeitório', 3, 'BOOLEAN', 1, '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Área(m2)', 2, N'DOUBLE', 1, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Acesso a veículos pesados', 2, N'BOOLEAN', 0, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Capacidade c/pernoita', 4, N'INT', 1, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Capacidade s/pernoita', 4, N'INT', 1, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Climatização', 2, N'BOOLEAN', 1, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Cozinha', 3, N'BOOLEAN', 1, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Capacidade de confeção refeições', 3, N'INT', 0, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Refeitório', 3, N'BOOLEAN', 1, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Nº WCs - Mulheres', 5, N'INT', 1, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Situação do equipamento', 2, N'STRING', 0, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Capacidade para receber pessoas acamadas', 2, N'BOOLEAN', 0, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Nº Lugares Sentados', 3, N'INT', 0, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Nº Balneários - Mulheres', 5, N'INT', 0, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Nº WCs - Homens', 5, N'INT', 1, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Condições para pessoas com mobilidade condicionada', 2, N'BOOLEAN', 0, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcapDetailTypes] ([name], [detailTypeCategoryId], [dataType], [isMandatory], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Nº Balneários - Homens', 5, N'INT', 0, CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+
 END
 
 IF (SELECT COUNT(*) FROM zcaps ) = 0
 BEGIN
-
-INSERT INTO [dbo].[zcaps] ([name],[buildingTypeId],[address],[treeRecordId],[latitude],[longitude],[entityId],[startDate],[createdAt],[lastUpdatedAt])
-		VALUES ('Escola Secundária de Odivelas', 1, 'Av. Prof. Dr. Augusto Abreu Lopes 23, 2675-300 Odivelas', 233, 38.794205, -9.179649, 1, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-INSERT INTO [dbo].[zcaps] ([name],[buildingTypeId],[address],[treeRecordId],[latitude],[longitude],[entityId],[startDate],[createdAt],[lastUpdatedAt])
-		VALUES ('Pavilhão Gimnodesportivo de Santa Cruz', 1, 'Caminho Francisco Freitas Branco, Machico', 345, 32.6890444, -16.7961675, 1, '20000101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcaps] ([name], [buildingTypeId], [address], [treeRecordId], [latitude], [longitude], [entityId], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Escola Secundária de Odivelas', 1, N'Av. Prof. Dr. Augusto Abreu Lopes 23, 2675-300 Odivelas', 233, 38.7942047, -9.179649, 1, CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcaps] ([name], [buildingTypeId], [address], [treeRecordId], [latitude], [longitude], [entityId], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Pavilhão Gimnodesportivo de Santa Cruz', 1, N'Caminho Francisco Freitas Branco, Machico', 345, 32.689045, -16.7961674, 1, CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM zcapDetails ) = 0
@@ -727,9 +746,11 @@ END
 print 'Inserting Person Tables initial data:'
 IF (SELECT COUNT(*) FROM departureDestination ) = 0
 BEGIN
-	INSERT INTO departureDestination([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('zcap', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Casa de familiares', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('residencia', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [departureDestination] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Outra ZCAP', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [departureDestination] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Casa de familiares', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [departureDestination] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Residência', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [departureDestination] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Hospital', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [departureDestination] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Referenciação a outra(s) entidade(s)', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM persons ) = 0
@@ -741,9 +762,14 @@ END
 
 IF (SELECT COUNT(*) FROM specialNeeds ) = 0
 BEGIN
-	INSERT INTO specialNeeds([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('Gravidez', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Doença', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('Medicamentos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) 
+	INSERT [specialNeeds] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Gravidez', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [specialNeeds] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Doença', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [specialNeeds] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Medicamentos', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [specialNeeds] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Outro', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [specialNeeds] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Necessidades alimentares especiais', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [specialNeeds] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Acamado', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [specialNeeds] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Andariliho/Canadiana/Bengala', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [specialNeeds] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Cadeira de Rodas', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM personSpecialNeeds ) = 0
@@ -754,11 +780,13 @@ END
 
 IF (SELECT COUNT(*) FROM supportNeeded ) = 0
 BEGIN
-	INSERT INTO supportNeeded([name], startDate, [createdAt], [lastUpdatedAt]) VALUES
-	('Alojamento', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Refeição', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), 
-	('Vestuário', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Cuidados médicos', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('Apoio psicológico', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), ('Procura de familiar', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-	('Outro', '20200101', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [supportNeeded] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Alojamento', CAST(N'2020-01-01' AS Date),			NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [supportNeeded] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Refeição', CAST(N'2020-01-01' AS Date),				NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [supportNeeded] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Vestuário', CAST(N'2020-01-01' AS Date),			NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [supportNeeded] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Cuidados médicos', CAST(N'2020-01-01' AS Date),		NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [supportNeeded] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Apoio psicológico', CAST(N'2020-01-01' AS Date),	NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [supportNeeded] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Procura de familiar', CAST(N'2020-01-01' AS Date),	NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [supportNeeded] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Outro', CAST(N'2020-01-01' AS Date),				NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM personSupportNeeded ) = 0

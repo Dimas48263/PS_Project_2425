@@ -1,0 +1,49 @@
+--> retirar acesso a configurações ao user lalves
+
+Abrir aplicação
+Demonstrar mudança de idioma 
+Entrar com user Admin (offline)
+Expicar a barra de estados (online/offline)
+Conceito da data e modo noturno
+Menu Principal (descrever opções possíveis)
+ - ZCAPS:
+   - Explicar Estrutura da árvore hierarquica
+	 - Demonstrar filtro
+	 - Demonstrar conceito da data
+	 - Criar uma ZCAP num nível não folha, explicar campos obrigatórios e validações
+	 - Apontar pendente de sincronização
+	 
+	- Incidentes:
+	 - Explicar novamente a arvore
+	 - Criar incidente
+	 - Associar ZCAPS (2)
+	 - Add Pessoas
+	   - Adicionar Pessoas (campos de recolha Fase 1 ??)
+		 - Necessidades especiais
+		 - Apoio necessário
+		 - Familiares
+		 - Saída
+
+/*****************************************************************************************/
+
+Configurações:
+  - Explicar Níveis, Elementos, Tipos de detalhe e detalhes. Pode-se entrar em Zcaps...
+	- Tipos de incidente
+	- Tabelas de suporte
+	  - Tipos de Entidade e Entidades
+		- Tipos de Edificio
+		- Tipos de Categoria de Detalhe
+		- Tipo de Detalhe das ZCAPS
+		
+		- Pessoas:
+		  - Destinos
+			- Graus de parentesco
+			- Tipos de necessidades 
+			- Tipos de Apoio
+			
+	- Utilizadores:
+		- Utilizadores
+		- Perfis
+		- Acesso a dados
+
+Sair e entrar com lalves, dar uma volta pelas zcaps, incidentes, não tem acesso a configurações e acesso a dados limitado.
