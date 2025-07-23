@@ -47,6 +47,7 @@ class PersonService(
             personInput.entryDateTime.isAfter(personInput.departureDateTime ?: personInput.entryDateTime) ||
             (personInput.address != null  && personInput.address.isBlank()) ||
             (personInput.niss != null && personInput.niss.isBlank()) ||
+            personInput.technicianName.isEmpty() ||
             (personInput.destinationContact != null && personInput.destinationContact.isBlank()))
             return failure(ServiceErrors.InvalidDataInput)
         val newPerson = Person(
@@ -55,6 +56,8 @@ class PersonService(
             contact = personInput.contact,
             placeOfResidence = placeOfResidence,
             entryDatetime = personInput.entryDateTime,
+            technicianName = personInput.technicianName,
+            bedNumber = personInput.bedNumber,
             departureDatetime = personInput.departureDateTime,
             birthDate = personInput.birthDate,
             nationality = nationality,
@@ -90,6 +93,7 @@ class PersonService(
             personInput.entryDateTime.isAfter(personInput.departureDateTime ?: personInput.entryDateTime) ||
             (personInput.address != null  && personInput.address.isBlank()) ||
             (personInput.niss != null && personInput.niss.isBlank()) ||
+            personInput.technicianName.isEmpty() ||
             (personInput.destinationContact != null && personInput.destinationContact.isBlank()) ||
             person.lastUpdatedAt.isAfter(personInput.lastUpdatedAt))
             return failure(ServiceErrors.InvalidDataInput)
@@ -99,6 +103,8 @@ class PersonService(
             contact = personInput.contact,
             placeOfResidence = placeOfResidence,
             entryDatetime = personInput.entryDateTime,
+            technicianName = personInput.technicianName,
+            bedNumber = personInput.bedNumber,
             departureDatetime = personInput.departureDateTime,
             birthDate = personInput.birthDate,
             nationality = nationality,

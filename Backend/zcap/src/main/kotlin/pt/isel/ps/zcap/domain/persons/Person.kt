@@ -22,6 +22,8 @@ data class Person(
     val placeOfResidence: Tree = Tree(),
 
     val entryDatetime: LocalDateTime = LocalDateTime.now(),
+    val technicianName: String = "",
+    val bedNumber: Int? = null,
     val departureDatetime: LocalDateTime? = null,
     val birthDate: LocalDate? = LocalDate.now(),
 

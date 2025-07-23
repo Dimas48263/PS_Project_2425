@@ -11,6 +11,8 @@ class Persons implements ApiTable {
   final String contact;
   final Tree placeOfResidence;
   final DateTime entryDateTime;
+  final String technicianName;
+  int? bedNumber;
   DateTime? departureDateTime;
   DateTime? birthDate;
   TreeRecordDetail? nationality;
@@ -30,6 +32,8 @@ class Persons implements ApiTable {
     required this.contact,
     required this.placeOfResidence,
     required this.entryDateTime,
+    required this.technicianName,
+    this.bedNumber,
     this.departureDateTime,
     this.birthDate,
     this.nationality,
@@ -49,6 +53,8 @@ class Persons implements ApiTable {
       contact: json['contact'],
       placeOfResidence: Tree.fromJson(json['placeOfResidence']),
       entryDateTime: DateTime.parse(json['entryDateTime']),
+      technicianName: json['technicianName'],
+      bedNumber: json['bedNumber'],
       departureDateTime: json['departureDateTime'] != null
           ? DateTime.parse(json['departureDateTime'])
           : null,
@@ -76,6 +82,8 @@ class Persons implements ApiTable {
       'contact': contact,
       'placeOfResidenceId': placeOfResidence.remoteId,
       'entryDateTime': entryDateTime.toIso8601String(),
+      'technicianName': technicianName,
+      'bedNumber': bedNumber,
       'departureDateTime': departureDateTime?.toIso8601String(),
       'birthDate': birthDate?.toIso8601String(),
       'nationalityId': nationality?.remoteId,
@@ -96,6 +104,8 @@ class Persons implements ApiTable {
       'contact': contact,
       'placeOfResidenceId': placeOfResidence.remoteId,
       'entryDateTime': entryDateTime.toIso8601String(),
+      'technicianName': technicianName,
+      'bedNumber': bedNumber,
       'departureDateTime': departureDateTime?.toIso8601String(),
       'birthDate': birthDate?.toIso8601String(),
       'nationalityId': nationality?.remoteId,
@@ -115,6 +125,8 @@ class Persons implements ApiTable {
     String? contact,
     Tree? placeOfResidence,
     DateTime? entryDateTime,
+    String? technicianName,
+    int? bedNumber,
     DateTime? departureDateTime,
     DateTime? birthDate,
     TreeRecordDetail? nationality,
@@ -132,6 +144,8 @@ class Persons implements ApiTable {
       contact: contact ?? this.contact,
       placeOfResidence: placeOfResidence ?? this.placeOfResidence,
       entryDateTime: entryDateTime ?? this.entryDateTime,
+      technicianName: technicianName ?? this.technicianName,
+      bedNumber: bedNumber ?? this.bedNumber,
       departureDateTime: departureDateTime ?? this.departureDateTime,
       birthDate: birthDate ?? this.birthDate,
       nationality: nationality ?? this.nationality,

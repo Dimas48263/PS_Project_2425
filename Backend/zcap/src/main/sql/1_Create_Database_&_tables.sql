@@ -423,6 +423,8 @@ CREATE TABLE persons (
 	[contact]  					NVARCHAR(255) 	NOT NULL,
 	[placeOfResidence]  		BIGINT 			NOT NULL REFERENCES tree(treeRecordId),		
 	[entryDatetime]				DATETIME 		NOT NULL,
+	[technicianName]            NVARCHAR(255)   NOT NULL,
+	[bedNumber]                 INT             NULL,
 	[departureDatetime]			DATETIME 		NULL,
 	[birthDate]					DATE 			NULL,
 	[nationalityId] 			BIGINT 			NULL REFERENCES treeRecordDetails(detailId),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
@@ -18,8 +20,7 @@ class UserDataAllowancesScreen extends StatefulWidget {
 }
 
 class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
-  TreeNode<dynamic> root =
-      TreeNode<dynamic>.root(data: 'tree_root'.tr());
+  TreeNode<dynamic> root = TreeNode<dynamic>.root(data: 'tree_root'.tr());
   TreeViewController<dynamic, TreeNode<dynamic>>? _controller;
 
   Set<int> checkedTreeIds = {};
@@ -27,9 +28,21 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
   String _searchTerm = '';
   final TextEditingController _searchController = TextEditingController();
 
+  List<TreeIsar> allTreeRecords = [];
+  StreamSubscription? _subscription;
+
   @override
   void initState() {
     super.initState();
+    _subscription = isarDb.treeIsars
+        .buildQuery<TreeIsar>()
+        .watch(fireImmediately: true)
+        .listen((data) {
+      setState(() {
+        allTreeRecords = data;
+      });
+      buildTree();
+    });
     _searchController.addListener(() {
       setState(() {
         _searchTerm = _searchController.text.toLowerCase();
@@ -41,8 +54,6 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
   }
 
   Future<void> buildTree() async {
-    final allTreeRecords = await isarDb.treeIsars.where().findAll();
-
     for (final t in allTreeRecords) {
       await t.parent.load();
     }
@@ -62,8 +73,7 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
     };
 
     final roots = allTreeRecords.where((t) => t.parent.value == null);
-    final rootNode =
-        TreeNode<dynamic>.root(data: 'tree_root'.tr());
+    final rootNode = TreeNode<dynamic>.root(data: 'tree_root'.tr());
 
     for (var rootTree in roots) {
       final node = await buildTreeNode(rootTree, treeMap);
@@ -157,8 +167,10 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
                               final treeId = data.id;
                               if (value == true) {
                                 checkedTreeIds.add(treeId);
+                                checkOrUnckeckAllChildren(treeId, true);
                               } else {
                                 checkedTreeIds.remove(treeId);
+                                checkOrUnckeckAllChildren(treeId, false);
                               }
                             });
                           },
@@ -181,6 +193,21 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
         ],
       ),
     );
+  }
+
+  void checkOrUnckeckAllChildren(int treeId, bool isCheck) {
+    List<TreeIsar> list = allTreeRecords;
+    for (var t in list) {
+      if (t.parent.value?.id == treeId) {
+        if (isCheck) {
+          checkedTreeIds.add(t.id);
+        }
+        else {
+          checkedTreeIds.remove(t.id);
+        }
+        checkOrUnckeckAllChildren(t.id, isCheck);
+      }
+    }
   }
 
   Future<void> _saveAllowances() async {

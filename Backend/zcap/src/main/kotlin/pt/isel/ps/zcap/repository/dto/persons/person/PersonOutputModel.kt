@@ -15,6 +15,8 @@ data class PersonOutputModel(
     val contact: String,
     val placeOfResidence: TreeOutputModel,
     val entryDateTime: LocalDateTime,
+    val technicianName: String,
+    val bedNumber: Int?,
     val departureDateTime: LocalDateTime?,
     val birthDate: LocalDate?,
     val nationality: TreeRecordDetailOutputModel?,

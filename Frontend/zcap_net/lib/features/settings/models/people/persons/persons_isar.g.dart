@@ -27,60 +27,70 @@ const PersonsIsarSchema = CollectionSchema(
       name: r'age',
       type: IsarType.long,
     ),
-    r'birthDate': PropertySchema(
+    r'bedNumber': PropertySchema(
       id: 2,
+      name: r'bedNumber',
+      type: IsarType.long,
+    ),
+    r'birthDate': PropertySchema(
+      id: 3,
       name: r'birthDate',
       type: IsarType.dateTime,
     ),
     r'contact': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'contact',
       type: IsarType.string,
     ),
     r'createdAt': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'departureDateTime': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'departureDateTime',
       type: IsarType.dateTime,
     ),
     r'destinationContact': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'destinationContact',
       type: IsarType.string,
     ),
     r'entryDateTime': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'entryDateTime',
       type: IsarType.dateTime,
     ),
     r'isSynced': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'isSynced',
       type: IsarType.bool,
     ),
     r'lastUpdatedAt': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'lastUpdatedAt',
       type: IsarType.dateTime,
     ),
     r'name': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'name',
       type: IsarType.string,
     ),
     r'niss': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'niss',
       type: IsarType.string,
     ),
     r'remoteId': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'remoteId',
       type: IsarType.long,
+    ),
+    r'technicianName': PropertySchema(
+      id: 14,
+      name: r'technicianName',
+      type: IsarType.string,
     )
   },
   estimateSize: _personsIsarEstimateSize,
@@ -156,6 +166,7 @@ int _personsIsarEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.technicianName.length * 3;
   return bytesCount;
 }
 
@@ -167,17 +178,19 @@ void _personsIsarSerialize(
 ) {
   writer.writeString(offsets[0], object.address);
   writer.writeLong(offsets[1], object.age);
-  writer.writeDateTime(offsets[2], object.birthDate);
-  writer.writeString(offsets[3], object.contact);
-  writer.writeDateTime(offsets[4], object.createdAt);
-  writer.writeDateTime(offsets[5], object.departureDateTime);
-  writer.writeString(offsets[6], object.destinationContact);
-  writer.writeDateTime(offsets[7], object.entryDateTime);
-  writer.writeBool(offsets[8], object.isSynced);
-  writer.writeDateTime(offsets[9], object.lastUpdatedAt);
-  writer.writeString(offsets[10], object.name);
-  writer.writeString(offsets[11], object.niss);
-  writer.writeLong(offsets[12], object.remoteId);
+  writer.writeLong(offsets[2], object.bedNumber);
+  writer.writeDateTime(offsets[3], object.birthDate);
+  writer.writeString(offsets[4], object.contact);
+  writer.writeDateTime(offsets[5], object.createdAt);
+  writer.writeDateTime(offsets[6], object.departureDateTime);
+  writer.writeString(offsets[7], object.destinationContact);
+  writer.writeDateTime(offsets[8], object.entryDateTime);
+  writer.writeBool(offsets[9], object.isSynced);
+  writer.writeDateTime(offsets[10], object.lastUpdatedAt);
+  writer.writeString(offsets[11], object.name);
+  writer.writeString(offsets[12], object.niss);
+  writer.writeLong(offsets[13], object.remoteId);
+  writer.writeString(offsets[14], object.technicianName);
 }
 
 PersonsIsar _personsIsarDeserialize(
@@ -189,18 +202,20 @@ PersonsIsar _personsIsarDeserialize(
   final object = PersonsIsar();
   object.address = reader.readStringOrNull(offsets[0]);
   object.age = reader.readLong(offsets[1]);
-  object.birthDate = reader.readDateTimeOrNull(offsets[2]);
-  object.contact = reader.readString(offsets[3]);
-  object.createdAt = reader.readDateTime(offsets[4]);
-  object.departureDateTime = reader.readDateTimeOrNull(offsets[5]);
-  object.destinationContact = reader.readStringOrNull(offsets[6]);
-  object.entryDateTime = reader.readDateTime(offsets[7]);
+  object.bedNumber = reader.readLongOrNull(offsets[2]);
+  object.birthDate = reader.readDateTimeOrNull(offsets[3]);
+  object.contact = reader.readString(offsets[4]);
+  object.createdAt = reader.readDateTime(offsets[5]);
+  object.departureDateTime = reader.readDateTimeOrNull(offsets[6]);
+  object.destinationContact = reader.readStringOrNull(offsets[7]);
+  object.entryDateTime = reader.readDateTime(offsets[8]);
   object.id = id;
-  object.isSynced = reader.readBool(offsets[8]);
-  object.lastUpdatedAt = reader.readDateTime(offsets[9]);
-  object.name = reader.readString(offsets[10]);
-  object.niss = reader.readStringOrNull(offsets[11]);
-  object.remoteId = reader.readLongOrNull(offsets[12]);
+  object.isSynced = reader.readBool(offsets[9]);
+  object.lastUpdatedAt = reader.readDateTime(offsets[10]);
+  object.name = reader.readString(offsets[11]);
+  object.niss = reader.readStringOrNull(offsets[12]);
+  object.remoteId = reader.readLongOrNull(offsets[13]);
+  object.technicianName = reader.readString(offsets[14]);
   return object;
 }
 
@@ -216,27 +231,31 @@ P _personsIsarDeserializeProp<P>(
     case 1:
       return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readDateTimeOrNull(offset)) as P;
-    case 3:
-      return (reader.readString(offset)) as P;
-    case 4:
-      return (reader.readDateTime(offset)) as P;
-    case 5:
-      return (reader.readDateTimeOrNull(offset)) as P;
-    case 6:
-      return (reader.readStringOrNull(offset)) as P;
-    case 7:
-      return (reader.readDateTime(offset)) as P;
-    case 8:
-      return (reader.readBool(offset)) as P;
-    case 9:
-      return (reader.readDateTime(offset)) as P;
-    case 10:
-      return (reader.readString(offset)) as P;
-    case 11:
-      return (reader.readStringOrNull(offset)) as P;
-    case 12:
       return (reader.readLongOrNull(offset)) as P;
+    case 3:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 4:
+      return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readDateTime(offset)) as P;
+    case 6:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 7:
+      return (reader.readStringOrNull(offset)) as P;
+    case 8:
+      return (reader.readDateTime(offset)) as P;
+    case 9:
+      return (reader.readBool(offset)) as P;
+    case 10:
+      return (reader.readDateTime(offset)) as P;
+    case 11:
+      return (reader.readString(offset)) as P;
+    case 12:
+      return (reader.readStringOrNull(offset)) as P;
+    case 13:
+      return (reader.readLongOrNull(offset)) as P;
+    case 14:
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -664,6 +683,80 @@ extension PersonsIsarQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'age',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      bedNumberIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'bedNumber',
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      bedNumberIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'bedNumber',
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      bedNumberEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bedNumber',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      bedNumberGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'bedNumber',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      bedNumberLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'bedNumber',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      bedNumberBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'bedNumber',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1690,6 +1783,142 @@ extension PersonsIsarQueryFilter
       ));
     });
   }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'technicianName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'technicianName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'technicianName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'technicianName',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'technicianName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'technicianName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'technicianName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'technicianName',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'technicianName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterFilterCondition>
+      technicianNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'technicianName',
+        value: '',
+      ));
+    });
+  }
 }
 
 extension PersonsIsarQueryObject
@@ -1763,6 +1992,18 @@ extension PersonsIsarQuerySortBy
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy> sortByAgeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'age', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy> sortByBedNumber() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bedNumber', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy> sortByBedNumberDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bedNumber', Sort.desc);
     });
   }
 
@@ -1903,6 +2144,19 @@ extension PersonsIsarQuerySortBy
       return query.addSortBy(r'remoteId', Sort.desc);
     });
   }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy> sortByTechnicianName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'technicianName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy>
+      sortByTechnicianNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'technicianName', Sort.desc);
+    });
+  }
 }
 
 extension PersonsIsarQuerySortThenBy
@@ -1928,6 +2182,18 @@ extension PersonsIsarQuerySortThenBy
   QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy> thenByAgeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'age', Sort.desc);
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy> thenByBedNumber() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bedNumber', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy> thenByBedNumberDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bedNumber', Sort.desc);
     });
   }
 
@@ -2080,6 +2346,19 @@ extension PersonsIsarQuerySortThenBy
       return query.addSortBy(r'remoteId', Sort.desc);
     });
   }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy> thenByTechnicianName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'technicianName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QAfterSortBy>
+      thenByTechnicianNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'technicianName', Sort.desc);
+    });
+  }
 }
 
 extension PersonsIsarQueryWhereDistinct
@@ -2094,6 +2373,12 @@ extension PersonsIsarQueryWhereDistinct
   QueryBuilder<PersonsIsar, PersonsIsar, QDistinct> distinctByAge() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'age');
+    });
+  }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QDistinct> distinctByBedNumber() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'bedNumber');
     });
   }
 
@@ -2168,6 +2453,14 @@ extension PersonsIsarQueryWhereDistinct
       return query.addDistinctBy(r'remoteId');
     });
   }
+
+  QueryBuilder<PersonsIsar, PersonsIsar, QDistinct> distinctByTechnicianName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'technicianName',
+          caseSensitive: caseSensitive);
+    });
+  }
 }
 
 extension PersonsIsarQueryProperty
@@ -2187,6 +2480,12 @@ extension PersonsIsarQueryProperty
   QueryBuilder<PersonsIsar, int, QQueryOperations> ageProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'age');
+    });
+  }
+
+  QueryBuilder<PersonsIsar, int?, QQueryOperations> bedNumberProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'bedNumber');
     });
   }
 
@@ -2257,6 +2556,12 @@ extension PersonsIsarQueryProperty
   QueryBuilder<PersonsIsar, int?, QQueryOperations> remoteIdProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'remoteId');
+    });
+  }
+
+  QueryBuilder<PersonsIsar, String, QQueryOperations> technicianNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'technicianName');
     });
   }
 }

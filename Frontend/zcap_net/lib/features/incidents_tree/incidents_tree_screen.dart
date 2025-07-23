@@ -6,6 +6,7 @@ import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/core/services/user/user_data_allowances_provider.dart';
 import 'package:zcap_net_app/data/app_date_provider.dart';
 import 'package:zcap_net_app/features/incidents_tree/persons_screen.dart';
 import 'package:zcap_net_app/features/zcap_tree/tree_wrapper.dart';
@@ -32,6 +33,9 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
   List<IncidentZcapPersonsIsar> incidentZcapPersons = [];
   StreamSubscription? incidentZcapPersonsStream;
 
+  List<TreeIsar> allTrees = [];
+  StreamSubscription? allTreesStream;
+
   Map<int, List<IncidentZcapsIsar>> zcapsByIncident = {};
 
   DateTime? _currentReferenceDate;
@@ -42,9 +46,18 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
   late UserAllowancesProvider allowances;
   late bool canWrite;
 
+  late UserDataAllowancesProvider dataProfileProvider;
+
   @override
   void initState() {
     super.initState();
+    dataProfileProvider = context.read<UserDataAllowancesProvider>();
+    allTreesStream = isarDb.treeIsars
+        .buildQuery<TreeIsar>()
+        .watch(fireImmediately: true)
+        .listen((data) async {
+      allTrees = data;
+    });
     incidentsStream = isarDb.incidentsIsars
         .buildQuery<IncidentsIsar>()
         .watch(fireImmediately: true)
@@ -74,9 +87,9 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
         .buildQuery<IncidentZcapPersonsIsar>()
         .watch(fireImmediately: true)
         .listen((data) async {
-          incidentZcapPersons = data;
-          await buildTree();
-        });
+      incidentZcapPersons = data;
+      await buildTree();
+    });
     _searchController.addListener(() {
       setState(() {
         _searchTerm = _searchController.text.toLowerCase();
@@ -98,7 +111,6 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
 
   Future<void> buildTree() async {
     final referenceDate = context.read<AppReferenceDateProvider>();
-    final isar = isarDb;
     final Map<int, List<IncidentsIsar>> incidentsByTree = {};
 
     for (final i in incidents) {
@@ -116,11 +128,12 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
       }
       final treeId = i.treeRecord.value?.id;
       if (treeId != null) {
-        incidentsByTree.putIfAbsent(treeId, () => []).add(i);
+        if (dataProfileProvider.hasAccessToTree(treeId)) {
+          incidentsByTree.putIfAbsent(treeId, () => []).add(i);
+        }
       }
     }
 
-    final allTrees = await isar.treeIsars.where().findAll();
     for (final t in allTrees) {
       await t.parent.load();
     }
@@ -132,10 +145,12 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
     final roots = allTrees.where((t) => t.parent.value == null);
     final rootNode = TreeNode<dynamic>.root(data: 'screen_incidents'.tr());
 
-    for (var rootTree in roots) {
-      final node = await buildTreeNode(rootTree, incidentsByTree, treeMap);
-      if (node.children.isNotEmpty) {
-        rootNode.add(node);
+    if (incidentsByTree.isNotEmpty) {
+      for (var rootTree in roots) {
+        final node = await buildTreeNode(rootTree, incidentsByTree, treeMap);
+        if (node.children.isNotEmpty) {
+          rootNode.add(node);
+        }
       }
     }
 
@@ -521,7 +536,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                     return value == null ? 'required_field'.tr() : null;
                   },
                 )
-              ]),
+              ], canWrite: canWrite),
               actions: [
                 TextButton(
                   child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),

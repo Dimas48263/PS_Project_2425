@@ -7,6 +7,7 @@ import 'package:isar/isar.dart';
 import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
+import 'package:zcap_net_app/core/services/user/user_data_allowances_provider.dart';
 import 'package:zcap_net_app/data/app_date_provider.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
@@ -43,10 +44,12 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
   late UserAllowancesProvider allowances;
   late bool canWrite;
 
+  late UserDataAllowancesProvider dataProfileProvider;
+
   @override
   void initState() {
     super.initState();
-
+    dataProfileProvider = context.read<UserDataAllowancesProvider>();
     _searchController.addListener(() {
       setState(() {
         _searchTerm = _searchController.text.toLowerCase();
@@ -106,7 +109,9 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
       }
       final treeId = z.tree.value?.id;
       if (treeId != null) {
-        zcapsByTree.putIfAbsent(treeId, () => []).add(z);
+        if (dataProfileProvider.hasAccessToTree(treeId)) {
+          zcapsByTree.putIfAbsent(treeId, () => []).add(z);
+        }
       }
     }
 
@@ -121,14 +126,14 @@ class _ZcapTreeScreenState extends State<ZcapTreeScreen> {
 
     final roots = allTrees.where((t) => t.parent.value == null);
     final rootNode = TreeNode<dynamic>.root(data: 'screen_zcaps'.tr());
-
-    for (var rootTree in roots) {
-      final node = await buildTreeNode(rootTree, zcapsByTree, treeMap);
-      if (node.children.isNotEmpty) {
-        rootNode.add(node);
+    if (zcapsByTree.isNotEmpty) {
+      for (var rootTree in roots) {
+        final node = await buildTreeNode(rootTree, zcapsByTree, treeMap);
+        if (node.children.isNotEmpty) {
+          rootNode.add(node);
+        }
       }
     }
-
     setState(() {
       root = rootNode;
     });
@@ -975,8 +980,7 @@ Future<Widget> detailsForm(
                     child: Text('save'.tr()),
                   ),
                 ),
-              ]
-              else ...[
+              ] else ...[
                 Expanded(
                   child: ElevatedButton(
                     onPressed: onClose,

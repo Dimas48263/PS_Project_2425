@@ -23,6 +23,8 @@ class PersonsIsar implements IsarTable<Persons> {
   late String contact;
   IsarLink<TreeIsar> placeOfResidence = IsarLink<TreeIsar>();
   late DateTime entryDateTime;
+  late String technicianName;
+  int? bedNumber;
   DateTime? departureDateTime;
   DateTime? birthDate;
   IsarLink<TreeRecordDetailIsar> nationality = IsarLink<TreeRecordDetailIsar>();
@@ -101,6 +103,8 @@ class PersonsIsar implements IsarTable<Persons> {
     ..contact = persons.contact
     ..placeOfResidence.value = await findOrBuildTree(persons.placeOfResidence)
     ..entryDateTime = persons.entryDateTime
+    ..technicianName = persons.technicianName
+    ..bedNumber = persons.bedNumber
     ..departureDateTime = persons.departureDateTime
     ..birthDate = persons.birthDate
     ..nationality.value = persons.nationality == null
@@ -126,6 +130,8 @@ class PersonsIsar implements IsarTable<Persons> {
       ..contact = contact
       ..placeOfResidence.value = placeOfResidence.value
       ..entryDateTime = entryDateTime
+      ..technicianName = technicianName
+      ..bedNumber = bedNumber
       ..departureDateTime = departureDateTime
       ..birthDate = birthDate
       ..nationality.value = nationality.value
@@ -146,6 +152,8 @@ class PersonsIsar implements IsarTable<Persons> {
       contact: contact,
       placeOfResidence: placeOfResidence.value!.toEntity(),
       entryDateTime: entryDateTime,
+      technicianName: technicianName,
+      bedNumber: bedNumber,
       departureDateTime: departureDateTime,
       birthDate: birthDate,
       nationality: nationality.value?.toEntity(),
@@ -164,6 +172,8 @@ class PersonsIsar implements IsarTable<Persons> {
     contact = person.contact;
     placeOfResidence.value = await findOrBuildTree(person.placeOfResidence);
     entryDateTime = person.entryDateTime;
+    technicianName = person.technicianName;
+    bedNumber = person.bedNumber;
     departureDateTime = person.departureDateTime;
     birthDate = person.birthDate;
     nationality.value = person.nationality != null

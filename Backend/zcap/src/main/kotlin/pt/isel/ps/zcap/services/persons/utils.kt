@@ -29,6 +29,8 @@ fun Person.toOutputModel(): PersonOutputModel =
         contact,
         placeOfResidence.toOutputModel(),
         entryDatetime,
+        technicianName,
+        bedNumber,
         departureDatetime,
         birthDate,
         nationality?.toOutputModel(),

@@ -9,6 +9,8 @@ data class PersonInputModel(
     val contact: String,
     val placeOfResidenceId: Long,
     val entryDateTime: LocalDateTime,
+    val technicianName: String,
+    val bedNumber: Int?,
     val departureDateTime: LocalDateTime?,
     val birthDate: LocalDate?,
     val nationalityId: Long?,

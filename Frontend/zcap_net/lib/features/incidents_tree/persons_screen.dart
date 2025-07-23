@@ -407,6 +407,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
     final nameController = TextEditingController(text: '');
     final ageController = TextEditingController(text: '');
     final contactController = TextEditingController(text: '');
+    final technicianName = TextEditingController(text: '');
     TreeIsar? placeOfResidence;
     DateTime? entryDateTime = now;
 
@@ -452,6 +453,10 @@ class _PersonsScreenState extends State<PersonsScreen> {
       TextControllersInputFormConfig(
         controller: contactController,
         label: '${'contact'.tr()}*',
+      ),
+      TextControllersInputFormConfig(
+        controller: technicianName,
+        label: '${'technician_name'.tr()}*',
       ),
     ];
 
@@ -551,6 +556,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                         newPerson.contact = contactController.text;
                         newPerson.placeOfResidence.value = placeOfResidence;
                         newPerson.entryDateTime = entryDateTime ?? now;
+                        newPerson.technicianName = technicianName.text;
                         newPerson.createdAt = now;
                         newPerson.lastUpdatedAt = now;
                         newPerson.isSynced = false;
@@ -621,6 +627,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
     final nameController = TextEditingController(text: person.name);
     final ageController = TextEditingController(text: person.age.toString());
     final contactController = TextEditingController(text: person.contact);
+    final bedNumberController = TextEditingController(text: person.bedNumber != null ? person.bedNumber.toString() : '');
     TreeIsar? placeOfResidence = person.placeOfResidence.value;
     TreeLevelIsar? treeLevel = placeOfResidence?.treeLevel.value;
     DateTime? birthDate = person.birthDate;
@@ -655,6 +662,20 @@ class _PersonsScreenState extends State<PersonsScreen> {
               return 'fill_data'.tr(namedArgs: {
                 'field': 'contact'.tr(),
               });
+            }
+            return null;
+          }),
+      TextControllersInputFormConfig(
+          controller: bedNumberController,
+          label: 'bed_number'.tr(),
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return null;
+            }
+            for (var c in value.characters) {
+              if (int.tryParse(c) == null) {
+                return 'wrong_format'.tr();
+              }
             }
             return null;
           }),
@@ -781,6 +802,9 @@ class _PersonsScreenState extends State<PersonsScreen> {
                         newPerson.name = nameController.text;
                         newPerson.age = int.parse(ageController.text);
                         newPerson.contact = contactController.text;
+                        newPerson.bedNumber = bedNumberController.text == ''
+                            ? null
+                            : int.parse(bedNumberController.text);
                         newPerson.placeOfResidence.value = placeOfResidence;
                         newPerson.birthDate = birthDate;
                         newPerson.nationality.value = nationality;
