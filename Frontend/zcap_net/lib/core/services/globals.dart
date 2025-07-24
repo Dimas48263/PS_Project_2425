@@ -2,6 +2,7 @@
 export 'package:easy_localization/easy_localization.dart';
 export 'package:zcap_net_app/core/services/log_service.dart';
 
+import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:zcap_net_app/core/services/api_service.dart';
 import 'package:zcap_net_app/core/services/database_service.dart';
@@ -11,6 +12,7 @@ import 'package:zcap_net_app/core/services/sync_service.dart';
 final apiService = ApiService();
 final Isar isarDb = DatabaseService.db;
 final syncService = SyncService(DatabaseService.db);
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 
 

@@ -81,6 +81,7 @@ class MyApp extends StatelessWidget {
       valueListenable: isDarkModeNotifier,
       builder: (context, isDarkMode, child) {
         return MaterialApp(
+          navigatorObservers: [routeObserver],
           debugShowCheckedModeBanner: false,
           title: 'ZCAP Net',
           theme: ThemeData(

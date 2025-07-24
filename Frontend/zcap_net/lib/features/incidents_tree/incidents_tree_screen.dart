@@ -21,7 +21,7 @@ class IncidentsTreeScreen extends StatefulWidget {
   State<IncidentsTreeScreen> createState() => _IncidentsTreeScreenState();
 }
 
-class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
+class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> with RouteAware {
   TreeViewController? _controller;
   late TreeNode<dynamic> root;
   List<IncidentsIsar> incidents = [];
@@ -102,6 +102,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
 
   @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     incidentsStream?.cancel();
     incidentsZcapsStream?.cancel();
     incidentZcapPersonsStream?.cancel();
@@ -210,12 +211,22 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context)! as PageRoute);
     final newReferenceDate =
         context.watch<AppReferenceDateProvider>().referenceDate;
     if (_currentReferenceDate != newReferenceDate) {
       _currentReferenceDate = newReferenceDate;
       buildTree();
     }
+  }
+
+  @override
+  void didPopNext() async {
+    final updated = await isarDb.incidentZcapPersonsIsars.where().findAll();
+    setState(() {
+      incidentZcapPersons = updated;
+    });
+    super.didPopNext();
   }
 
   @override
