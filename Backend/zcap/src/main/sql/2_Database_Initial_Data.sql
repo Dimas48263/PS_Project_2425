@@ -1,4 +1,3 @@
-
 USE ZCAPNET
 GO
 
@@ -653,7 +652,7 @@ END
 IF (SELECT COUNT(*) FROM entityTypes ) = 0
 BEGIN
 -- INSERT ENTITYTYPES
-	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'SMPC - Serviço Municipail de Proteção Civil', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'SMPC - Serviço Municipal de Proteção Civil', CAST(N'2020-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'ANEPC - Autoridade Nacional de Emergência e Proteção Civil', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Corpo de Bombeiros', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 	INSERT [entityTypes] ([name], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'PSP - Polícia de Segurança Pública', CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
@@ -723,8 +722,8 @@ END
 
 IF (SELECT COUNT(*) FROM zcaps ) = 0
 BEGIN
-	INSERT [zcaps] ([name], [buildingTypeId], [address], [treeRecordId], [latitude], [longitude], [entityId], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Escola Secundária de Odivelas', 1, N'Av. Prof. Dr. Augusto Abreu Lopes 23, 2675-300 Odivelas', 233, 38.7942047, -9.179649, 1, CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-	INSERT [zcaps] ([name], [buildingTypeId], [address], [treeRecordId], [latitude], [longitude], [entityId], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Pavilhão Gimnodesportivo de Santa Cruz', 1, N'Caminho Francisco Freitas Branco, Machico', 345, 32.689045, -16.7961674, 1, CAST(N'2000-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcaps] ([name], [buildingTypeId], [address], [treeRecordId], [latitude], [longitude], [entityId], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Escola Secundária de Odivelas', 1, N'Av. Prof. Dr. Augusto Abreu Lopes 23, 2675-300 Odivelas', 233, 38.7942047, -9.179649, 1, CAST(N'2024-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+	INSERT [zcaps] ([name], [buildingTypeId], [address], [treeRecordId], [latitude], [longitude], [entityId], [startDate], [endDate], [createdAt], [lastUpdatedAt]) VALUES (N'Pavilhão Gimnodesportivo de Santa Cruz', 1, N'Caminho Francisco Freitas Branco, Machico', 345, 32.689045, -16.7961674, 1, CAST(N'2024-01-01' AS Date), NULL, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
 END
 
 IF (SELECT COUNT(*) FROM zcapDetails ) = 0

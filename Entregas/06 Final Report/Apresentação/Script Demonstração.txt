@@ -30,7 +30,10 @@ Configurações:
   - Explicar Níveis, Elementos, Tipos de detalhe e detalhes. Pode-se entrar em Zcaps...
 	- Tipos de incidente
 	- Tabelas de suporte
-	  - Tipos de Entidade e Entidades
+	
+	>>>>>>>>>>>>>>>> Criar e Apagar registo localmente <<<<<<<<<<<<<<
+	
+    - Tipos de Entidade e Entidades
 		- Tipos de Edificio
 		- Tipos de Categoria de Detalhe
 		- Tipo de Detalhe das ZCAPS
@@ -46,4 +49,58 @@ Configurações:
 		- Perfis
 		- Acesso a dados
 
+Sincronização
+
 Sair e entrar com lalves, dar uma volta pelas zcaps, incidentes, não tem acesso a configurações e acesso a dados limitado.
+
+https://prociv.gov.pt/media/uqtisk2t/ct_prociv32_zcap.pdf
+
+http://localhost:8080/swagger-ui/index.html
+
+file:///C:/LUIS/ISEL/GitBeta/PS_Project_2425/Frontend/zcap_net/assets/help/help.pt.html
+
+
+C:\LUIS\ISEL\GitBeta\PS_Project_2425\Entregas\06 Final Report
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Incêndio 
+Sismo 
+Terramoto
+Tsunami 
+Maremoto
+Inundação
+Enxurrada
+Colapso
+Avalanche
+Onda de calor
+Vento
+Ciclone
+Tornado
+Tempestade
+Trovoada
+Epidemia
+Erupção 
+Desmoronamento
+Desastre aéreo
+Acidente
+Explosões
+Explosão nuclear 
+Conflito
+Guerra
