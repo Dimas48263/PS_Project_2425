@@ -3,6 +3,7 @@ import 'package:zcap_net_app/core/services/auth_service.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
 import 'package:zcap_net_app/core/services/notifiers.dart';
 import 'package:zcap_net_app/core/services/session_manager.dart';
+import 'package:zcap_net_app/core/utils/app_colors.dart';
 import 'package:zcap_net_app/widgets/custom_nok_snack_bar.dart';
 import 'package:zcap_net_app/widgets/custom_ok_snack_bar.dart';
 import 'package:zcap_net_app/widgets/custom_prompt_for_password.dart';
@@ -64,7 +65,7 @@ class StatusBar extends StatelessWidget {
                         },
                         child: Icon(
                           Icons.cloud_outlined,
-                          color: Colors.green,
+                          color: AppColors.online,
                           size: 25.0,
                         ),
                       )
@@ -106,7 +107,7 @@ class StatusBar extends StatelessWidget {
                         },
                         child: Icon(
                           Icons.cloud_off,
-                          color: Colors.red,
+                          color: AppColors.offline,
                           size: 25.0,
                         ),
                       );

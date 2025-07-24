@@ -10,4 +10,6 @@ class AppColors {
   static const Color error = Color(0xFFEEA29A);
   static const Color gradiantStartColor = Color(0xFF66B2B2);
   static const Color gradiantEndColor = Color(0xFFFFFFFF);
+  static const Color online = Colors.green;
+  static const Color offline = Colors.red;
 }

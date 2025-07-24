@@ -178,7 +178,7 @@
   "select_label": "Seleccionar {label}",
   "service_sync_auth_failed": "Fallo en la conexión remota.",
   "service_sync_cancel": "Sincronización cancelada.",
-  "service_sync_error": "Error de sincronización {error}",
+  "service_sync_error": "Error de sincronización",
   "service_sync_ok": "Sincronización exitosa.",
   "start": "Iniciar",
   "string_label": "Texto",

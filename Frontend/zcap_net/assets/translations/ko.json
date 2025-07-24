@@ -177,7 +177,7 @@
   "select_label": "{label} 선택",
   "service_sync_auth_failed": "원격 연결 실패.",
   "service_sync_cancel": "동기화 취소됨.",
-  "service_sync_error": "동기화 오류 {error}",
+  "service_sync_error": "동기화 오류",
   "service_sync_ok": "동기화 성공.",
   "start": "시작",
   "string_label": "텍스트",

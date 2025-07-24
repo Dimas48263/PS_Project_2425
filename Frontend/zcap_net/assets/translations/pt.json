@@ -177,7 +177,7 @@
   "select_label": "Seleccionar {label}",
   "service_sync_auth_failed": "Falha no login remoto.",
   "service_sync_cancel": "Sincronização cancelada.",
-  "service_sync_error": "Erro na sincronização {error}",
+  "service_sync_error": "Erro na sincronização",
   "service_sync_ok": "Sincronização concluída com sucesso.",
   "start": "Início",
   "special_needs": "Necessidades Especiais",

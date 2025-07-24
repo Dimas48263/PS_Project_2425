@@ -177,7 +177,7 @@
   "select_label": "选择 {label}",
   "service_sync_auth_failed": "远程连接失败。",
   "service_sync_cancel": "同步已取消。",
-  "service_sync_error": "同步错误 {error}",
+  "service_sync_error": "同步错误",
   "service_sync_ok": "同步成功。",
   "start": "开始",
   "string_label": "文本",

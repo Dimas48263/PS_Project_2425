@@ -178,7 +178,7 @@
   "select_label": "Select {label}",
   "service_sync_auth_failed": "Remote login failed.",
   "service_sync_cancel": "Canceled Synchronization.",
-  "service_sync_error": "Synchronization error {error}",
+  "service_sync_error": "Synchronization error",
   "service_sync_ok": "Successful Synchronization.",
   "start": "Start",
   "string_label": "Text",
