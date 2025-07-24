@@ -159,6 +159,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
     });
   }
 
+
   Future<TreeNode<dynamic>> buildTreeNode(
     TreeIsar tree,
     Map<int, List<IncidentsIsar>> incidentsByTree,
@@ -354,6 +355,9 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                             data.zcap.value!.id)
                         .map((e) => e.person.value!)
                         .toList();
+                    final numberOfActivePersons = numberOfPersons
+                        .where((e) => e.departureDateTime == null)
+                        .toList();
                     return Card(
                       elevation: 2,
                       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -373,7 +377,7 @@ class _IncidentsTreeScreenState extends State<IncidentsTreeScreen> {
                                                       incidentZcapIsar: data)));
                                     },
                                     child: Text(
-                                        '${'screen_settings_people'.tr()} (${numberOfPersons.length})')),
+                                        '${'screen_settings_people'.tr()} (${numberOfActivePersons.length}/${numberOfPersons.length})')),
                               if (!data.isSynced) CustomUnsyncedIcon(),
                               if (allowances.canWrite('user_access_add_people'))
                                 IconButton(

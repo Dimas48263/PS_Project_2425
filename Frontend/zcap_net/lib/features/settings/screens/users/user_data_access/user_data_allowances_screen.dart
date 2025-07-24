@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profile_allowance_isar.dart';
 import 'package:zcap_net_app/features/settings/models/users/user_data_profiles/user_data_profiles_isar.dart';
@@ -31,9 +33,14 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
   List<TreeIsar> allTreeRecords = [];
   StreamSubscription? _subscription;
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
+    allowances = context.read<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_settings_users_data');
     _subscription = isarDb.treeIsars
         .buildQuery<TreeIsar>()
         .watch(fireImmediately: true)
@@ -51,6 +58,13 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
     });
 
     buildTree();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> buildTree() async {
@@ -132,6 +146,7 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: CustomSearchAndAddBar(
+              canWrite: canWrite,
               controller: _searchController,
               onSearchChanged: (value) => setState(() {
                 _searchTerm = value.toLowerCase();
@@ -163,6 +178,7 @@ class _UserDataAllowancesScreenState extends State<UserDataAllowancesScreen> {
                         Checkbox(
                           value: isChecked,
                           onChanged: (value) {
+                            if (!canWrite) return;
                             setState(() {
                               final treeId = data.id;
                               if (value == true) {

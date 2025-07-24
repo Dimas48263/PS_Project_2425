@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
+import 'package:provider/provider.dart';
 import 'package:zcap_net_app/core/services/globals.dart';
+import 'package:zcap_net_app/core/services/user/user_allowances_provider.dart';
 import 'package:zcap_net_app/features/settings/models/entities/entities/entities_isar.dart';
 import 'package:zcap_net_app/features/settings/models/trees/tree/tree_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/building_types/building_types_isar.dart';
@@ -12,7 +14,6 @@ import 'package:zcap_net_app/features/settings/models/zcaps/zcap_detail_types/zc
 import 'package:zcap_net_app/features/settings/models/zcaps/zcap_details/zcap_details_isar.dart';
 import 'package:zcap_net_app/features/settings/models/zcaps/zcaps/zcap_isar.dart';
 import 'package:zcap_net_app/shared/shared.dart';
-
 
 class ZcapsScreen extends StatefulWidget {
   final String? userName;
@@ -34,9 +35,14 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
   List<ZcapDetailsIsar> allDetails = [];
   StreamSubscription? allDetailsStream;
 
+  late UserAllowancesProvider allowances;
+  late bool canWrite;
+
   @override
   void initState() {
     super.initState();
+    allowances = context.read<UserAllowancesProvider>();
+    canWrite = allowances.canWrite('user_access_screen_zcaps');
     zcapsStream = isarDb.zcapIsars
         .buildQuery<ZcapIsar>()
         .watch(fireImmediately: true)
@@ -84,9 +90,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('screen_zcaps'.tr()),
-        actions: [
-          SyncButton()
-        ],
+        actions: [SyncButton()],
       ),
       body: Stack(
         children: [
@@ -199,34 +203,45 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                                 zcap.longitude.toString(),
                                           ),
                                       if (!zcap.isSynced) CustomUnsyncedIcon(),
-                                      IconButton(
-                                        onPressed: () {
-                                          _addOrEditZcap(zcap: zcap);
-                                        },
-                                        icon: const Icon(Icons.edit),
-                                      ),
-                                      IconButton(
-                                        onPressed: () async {
-                                          final confirm =
-                                              await showDialog<bool>(
-                                            context: context,
-                                            builder: (context) => ConfirmDialog(
-                                              title: 'confirm_delete'.tr(),
-                                              content:
-                                                  'confirm_delete_message'.tr(),
-                                            ),
-                                          );
-                                          if (confirm == true) {
-                                            await isarDb
-                                                .writeTxn(() async {
-                                              await isarDb.zcapIsars
-                                                  .delete(zcap.id);
-                                            });
-                                          }
-                                        },
-                                        icon: const Icon(Icons.delete,
-                                            color: Colors.red),
-                                      ),
+                                      if (canWrite) ...[
+                                        IconButton(
+                                          onPressed: () {
+                                            _addOrEditZcap(zcap: zcap);
+                                          },
+                                          icon: const Icon(Icons.edit),
+                                        ),
+                                        IconButton(
+                                          onPressed: () async {
+                                            final confirm =
+                                                await showDialog<bool>(
+                                              context: context,
+                                              builder: (context) =>
+                                                  ConfirmDialog(
+                                                title: 'confirm_delete'.tr(),
+                                                content:
+                                                    'confirm_delete_message'
+                                                        .tr(),
+                                              ),
+                                            );
+                                            if (confirm == true) {
+                                              await isarDb.writeTxn(() async {
+                                                await isarDb.zcapIsars
+                                                    .delete(zcap.id);
+                                              });
+                                            }
+                                          },
+                                          icon: const Icon(Icons.delete,
+                                              color: Colors.red),
+                                        ),
+                                      ] else
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.info_outline,
+                                            color: Colors.blue,
+                                          ),
+                                          onPressed: () =>
+                                              _addOrEditZcap(zcap: zcap),
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -342,6 +357,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         TextFormField(
+                          enabled: canWrite,
                           controller: nameController,
                           decoration: InputDecoration(
                               labelText: 'screen_zcap_name'.tr()),
@@ -356,6 +372,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           height: 12.0,
                         ),
                         DropdownSearch<EntitiesIsar>(
+                          enabled: canWrite,
                           selectedItem: zcapEntity,
                           popupProps: PopupProps.menu(
                             showSearchBox: true,
@@ -391,6 +408,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           height: 12.0,
                         ),
                         DropdownSearch<BuildingTypesIsar>(
+                          enabled: canWrite,
                           selectedItem: buildingType,
                           popupProps: PopupProps.menu(
                             showSearchBox: true,
@@ -426,6 +444,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           height: 12.0,
                         ),
                         TreeItemPicker(
+                          canWrite: canWrite,
                           initialTree: selectedTree,
                           onChanged: (tree) {
                             setModalState(() {
@@ -435,6 +454,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                         ),
                         const SizedBox(height: 12.0),
                         TextFormField(
+                          enabled: canWrite,
                           controller: addressController,
                           decoration: InputDecoration(
                               labelText: 'zcap_screen_address'.tr()),
@@ -449,6 +469,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           height: 12.0,
                         ),
                         CustomLocationInputField(
+                          canWrite: canWrite,
                           latitudeController: latitudeController,
                           longitudeController: longitudeController,
                         ),
@@ -456,6 +477,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                           height: 12.0,
                         ),
                         CustomDateRangePicker(
+                          canWrite: canWrite,
                           startDate: selectedStartDate,
                           endDate: selectedEndDate,
                           onStartDateChanged: (newStart) {
@@ -508,59 +530,62 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                   ),
                 ),
                 actions: [
-                  CancelTextButton(),
                   TextButton(
-                    onPressed: () async {
-                      if (formKey.currentState!.validate() &&
-                          nameController.text.isNotEmpty) {
-                        if (!detailsFormValidated) {
-                          setModalState(() {
-                            showDetailsError = true;
-                          });
-                          return;
-                        }
-                        final now = DateTime.now();
-                        final navigator = Navigator.of(context);
-
-                        final editedZcap = zcap ?? ZcapIsar();
-
-                        editedZcap.name = nameController.text.trim();
-                        editedZcap.address = addressController.text.trim();
-                        editedZcap.buildingType.value = buildingType;
-                        editedZcap.zcapEntity.value = zcapEntity;
-                        editedZcap.latitude =
-                            double.tryParse(latitudeController.text);
-                        editedZcap.longitude =
-                            double.tryParse(longitudeController.text);
-                        editedZcap.tree.value = selectedTree;
-                        editedZcap.startDate = selectedStartDate;
-                        editedZcap.endDate = selectedEndDate;
-                        editedZcap.lastUpdatedAt = now;
-                        editedZcap.isSynced = false;
-                        if (zcap == null) {
-                          editedZcap.createdAt = now;
-                        }
-                        isarDb.writeTxn(() async {
-                          await isarDb.zcapIsars.put(editedZcap);
-                          await editedZcap.buildingType.save();
-                          await editedZcap.zcapEntity.save();
-                          await editedZcap.tree.save();
-                          for (var m in zcapDetailsMap.keys) {
-                            final detail = zcapDetailsMap[m];
-                            if (detail != null) {
-                              detail.zcap.value = editedZcap;
-                              await isarDb.zcapDetailsIsars
-                                  .put(detail);
-                              await detail.zcap.save();
-                              await detail.zcapDetailType.save();
-                            }
-                          }
-                        });
-                        navigator.pop();
-                      }
-                    },
-                    child: Text('save'.tr()),
+                    child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
+                    onPressed: () => Navigator.pop(context),
                   ),
+                  if (canWrite)
+                    TextButton(
+                      onPressed: () async {
+                        if (formKey.currentState!.validate() &&
+                            nameController.text.isNotEmpty) {
+                          if (!detailsFormValidated) {
+                            setModalState(() {
+                              showDetailsError = true;
+                            });
+                            return;
+                          }
+                          final now = DateTime.now();
+                          final navigator = Navigator.of(context);
+
+                          final editedZcap = zcap ?? ZcapIsar();
+
+                          editedZcap.name = nameController.text.trim();
+                          editedZcap.address = addressController.text.trim();
+                          editedZcap.buildingType.value = buildingType;
+                          editedZcap.zcapEntity.value = zcapEntity;
+                          editedZcap.latitude =
+                              double.tryParse(latitudeController.text);
+                          editedZcap.longitude =
+                              double.tryParse(longitudeController.text);
+                          editedZcap.tree.value = selectedTree;
+                          editedZcap.startDate = selectedStartDate;
+                          editedZcap.endDate = selectedEndDate;
+                          editedZcap.lastUpdatedAt = now;
+                          editedZcap.isSynced = false;
+                          if (zcap == null) {
+                            editedZcap.createdAt = now;
+                          }
+                          isarDb.writeTxn(() async {
+                            await isarDb.zcapIsars.put(editedZcap);
+                            await editedZcap.buildingType.save();
+                            await editedZcap.zcapEntity.save();
+                            await editedZcap.tree.save();
+                            for (var m in zcapDetailsMap.keys) {
+                              final detail = zcapDetailsMap[m];
+                              if (detail != null) {
+                                detail.zcap.value = editedZcap;
+                                await isarDb.zcapDetailsIsars.put(detail);
+                                await detail.zcap.save();
+                                await detail.zcapDetailType.save();
+                              }
+                            }
+                          });
+                          navigator.pop();
+                        }
+                      },
+                      child: Text('save'.tr()),
+                    ),
                 ],
               );
             },
@@ -599,8 +624,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child:
-                    form,
+                child: form,
               ),
             ),
           ),
@@ -682,6 +706,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                       children: [
                         detailType.dataType.name != 'boolean'
                             ? TextFormField(
+                                enabled: canWrite,
                                 controller: detailControllers[detailType.id],
                                 decoration: InputDecoration(
                                   labelText: detailType.isMandatory
@@ -740,6 +765,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                           Checkbox(
                                             value: field.value == true,
                                             onChanged: (val) {
+                                              if (!canWrite) return;
                                               final newValue =
                                                   field.value == true
                                                       ? null
@@ -755,6 +781,7 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
                                           Checkbox(
                                             value: field.value == false,
                                             onChanged: (val) {
+                                              if (!canWrite) return;
                                               final newValue =
                                                   field.value == false
                                                       ? null
@@ -793,48 +820,49 @@ class _ZcapsScreenState extends State<ZcapsScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: ElevatedButton(
+                  child: TextButton(
                     onPressed: onClose,
-                    child: const Text('Cancelar'),
+                    child: Text(canWrite ? 'cancel'.tr() : 'close'.tr()),
                   ),
                 ),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      if (formKey.currentState?.validate() ?? false) {
-                        for (var detailType in detailTypeKeys) {
-                          final controller = detailControllers[detailType.id];
-                          final detail = typeDetailMap[detailType];
-                          if (detail == null) {
-                            typeDetailMap[detailType] = ZcapDetailsIsar()
-                              ..isSynced = false
-                              ..remoteId = 0
-                              ..valueCol = controller?.text ?? ''
-                              ..zcapDetailType.value = detailType
-                              ..startDate = DateTime.now()
-                              ..createdAt = DateTime.now()
-                              ..lastUpdatedAt = DateTime.now();
-                          } else {
-                            if (detail.valueCol != controller?.text) {
+                if (canWrite)
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (formKey.currentState?.validate() ?? false) {
+                          for (var detailType in detailTypeKeys) {
+                            final controller = detailControllers[detailType.id];
+                            final detail = typeDetailMap[detailType];
+                            if (detail == null) {
                               typeDetailMap[detailType] = ZcapDetailsIsar()
                                 ..isSynced = false
-                                ..remoteId = detail.remoteId
+                                ..remoteId = 0
                                 ..valueCol = controller?.text ?? ''
                                 ..zcapDetailType.value = detailType
                                 ..startDate = DateTime.now()
                                 ..createdAt = DateTime.now()
                                 ..lastUpdatedAt = DateTime.now();
+                            } else {
+                              if (detail.valueCol != controller?.text) {
+                                typeDetailMap[detailType] = ZcapDetailsIsar()
+                                  ..isSynced = false
+                                  ..remoteId = detail.remoteId
+                                  ..valueCol = controller?.text ?? ''
+                                  ..zcapDetailType.value = detailType
+                                  ..startDate = DateTime.now()
+                                  ..createdAt = DateTime.now()
+                                  ..lastUpdatedAt = DateTime.now();
+                              }
                             }
                           }
+                          onValidated?.call();
+                          onClose();
                         }
-                        onValidated?.call();
-                        onClose();
-                      }
-                    },
-                    child: const Text('Guardar'),
+                      },
+                      child: const Text('Guardar'),
+                    ),
                   ),
-                ),
               ],
             ),
           ],

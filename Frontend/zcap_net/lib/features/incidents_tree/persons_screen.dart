@@ -215,6 +215,14 @@ class _PersonsScreenState extends State<PersonsScreen> {
                                       child: Text('exit'.tr())),
                                   const SizedBox(width: 5),
                                 ],
+                                if (canWrite &&
+                                    person.departureDateTime != null) ...[
+                                  ElevatedButton(
+                                      onPressed: () =>
+                                          _reinstatementForm(person),
+                                      child: Text('return'.tr())),
+                                  const SizedBox(width: 5),
+                                ],
                                 ElevatedButton(
                                     onPressed: () => showDialog(
                                         context: context,
@@ -294,6 +302,26 @@ class _PersonsScreenState extends State<PersonsScreen> {
     );
   }
 
+  void _reinstatementForm(PersonsIsar person) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => ConfirmDialog(
+        title: 'confirm_return'.tr(),
+        content: 'confirm_return_message'.tr(),
+      ),
+    );
+    if (confirm == true) {
+      await isarDb.writeTxn(() async {
+        final newPerson = person;
+        newPerson.departureDateTime = null;
+        newPerson.departureDestination.value = null;
+        newPerson.destinationContact = null;
+        await isarDb.personsIsars.put(newPerson);
+        await newPerson.departureDestination.save();
+      });
+    }
+  }
+
   void _exitForm(PersonsIsar person) async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -327,7 +355,7 @@ class _PersonsScreenState extends State<PersonsScreen> {
                   [
                     TextControllersInputFormConfig(
                       controller: destinationContactController,
-                      label: '${'contact'.tr()}*',
+                      label: 'contact'.tr(),
                       validator: (value) => null,
                     ),
                   ],
@@ -627,7 +655,8 @@ class _PersonsScreenState extends State<PersonsScreen> {
     final nameController = TextEditingController(text: person.name);
     final ageController = TextEditingController(text: person.age.toString());
     final contactController = TextEditingController(text: person.contact);
-    final bedNumberController = TextEditingController(text: person.bedNumber != null ? person.bedNumber.toString() : '');
+    final bedNumberController = TextEditingController(
+        text: person.bedNumber != null ? person.bedNumber.toString() : '');
     TreeIsar? placeOfResidence = person.placeOfResidence.value;
     TreeLevelIsar? treeLevel = placeOfResidence?.treeLevel.value;
     DateTime? birthDate = person.birthDate;
