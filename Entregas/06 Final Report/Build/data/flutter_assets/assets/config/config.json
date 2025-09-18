@@ -1,0 +1,7 @@
+{
+  "apiUrl": "http://localhost:8080/api",
+  "apiSyncIntervalSeconds": 6000,
+  "appDataPath": "./",
+  "logToFile": true,
+  "logFileName": "app_log.txt"
+}
